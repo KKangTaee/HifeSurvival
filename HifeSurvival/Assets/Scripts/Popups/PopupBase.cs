@@ -4,6 +4,25 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 using System;
+using UniRx.Async;
+
+
+//-----------------
+// interfaces
+//-----------------
+
+public interface IPopupOpenAsync
+{
+    UniTask PrevOpenAsync();
+    UniTask PostOpenAsync();
+}
+
+
+public interface IPopupOpen
+{
+    void PrevOpen();
+    void PostOpen();
+}
 
 
 public abstract class PopupBase : MonoBehaviour
@@ -76,7 +95,7 @@ public abstract class PopupBase : MonoBehaviour
 
     public void Close(Action<PopupBase> inCloseCallback = null)
     {
-        PlayAnimation(EAnim.OPEN_SCALE_NORMAL, inCloseCallback);
+        PlayAnimation(EAnim.CLOSE_SCALE_NORMAL, inCloseCallback);
     }
 
 

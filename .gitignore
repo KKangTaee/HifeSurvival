@@ -61,3 +61,5 @@ crashlytics-build.properties
 
 HifeSurvival/Library/
 HifeSurvival/Logs/
+HifeSurvival/.vscode/
+HifeSurvival/Temp/

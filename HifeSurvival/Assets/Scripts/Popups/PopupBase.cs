@@ -10,7 +10,6 @@ using UniRx.Async;
 //-----------------
 // interfaces
 //-----------------
-
 public interface IPopupOpenAsync
 {
     UniTask PrevOpenAsync();
@@ -35,7 +34,8 @@ public abstract class PopupBase : MonoBehaviour
     public enum EAnim
     {
         OPEN_SCALE_NORMAL,  
-        CLOSE_SCALE_NORMAL
+        CLOSE_SCALE_NORMAL,
+        NONE,
     }
 
 
@@ -57,7 +57,12 @@ public abstract class PopupBase : MonoBehaviour
     // variables
     //------------------
 
-    public bool _isAnimatingNow;      // 지금 애니메이션 진행중인지 체크
+    protected bool  _isAnimatingNow;      // 지금 애니메이션 진행중인지 체크
+
+    protected EAnim _eOpenAnim;
+
+    protected EAnim _eCloseAnim;
+    
 
 
 
@@ -89,13 +94,13 @@ public abstract class PopupBase : MonoBehaviour
     {
         _canvas.sortingOrder = inLayerOrder;
 
-        PlayAnimation(EAnim.OPEN_SCALE_NORMAL, inOpenCallback);
+        PlayAnimation(_eOpenAnim, inOpenCallback);
     }
 
 
     public void Close(Action<PopupBase> inCloseCallback = null)
     {
-        PlayAnimation(EAnim.CLOSE_SCALE_NORMAL, inCloseCallback);
+        PlayAnimation(_eCloseAnim, inCloseCallback);
     }
 
 
@@ -123,7 +128,6 @@ public abstract class PopupBase : MonoBehaviour
             _isAnimatingNow = false;
         };
     }
-
 
     public void OnButton(Button inButton)
     {

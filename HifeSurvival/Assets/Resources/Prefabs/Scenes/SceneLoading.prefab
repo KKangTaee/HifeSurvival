@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5873487948791496486}
   - component: {fileID: 5873487948791496487}
   - component: {fileID: 5873487948791496484}
+  - component: {fileID: 377262261}
   m_Layer: 5
   m_Name: SceneLoading
   m_TagString: Untagged
@@ -102,6 +103,20 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &377262261
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5873487948791496485}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00fcfa2216ae842f78c1c977c16b4af0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IMG_LoadingBorder: {fileID: 5873487949070365852}
+  TXT_Loading: {fileID: 5873487949554177460}
 --- !u!1 &5873487949070365842
 GameObject:
   m_ObjectHideFlags: 0
@@ -160,15 +175,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Material: {fileID: 2100000, guid: 8fa08cd87dfb946b2aab5eeaf6bc113f, type: 2}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.6392157}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 00a393e57856e44f39f36c5e811878de, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

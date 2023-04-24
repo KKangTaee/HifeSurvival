@@ -27,7 +27,8 @@ public class SceneManager
 
     private const int MILLISECOND_DELAY = 33;
     private const int MILLISECOND_TIME_OUT = MILLISECOND_DELAY * 200;
-
+    private const string SCENE_LOADING_PREFAB_PATH = "Prefabs/Scenes/SceneLoading";
+    
     public const string SCENE_NAME_LOBBY = "LobbyScene";
     public const string SCENE_NAME_TITLE = "TitleScene";
 
@@ -38,6 +39,7 @@ public class SceneManager
         {nameof(TitleScene), new TitleScene()}
     };
 
+    private SceneLoading _sceneLoading;
 
     public string CurrSceneName { get; private set; }
 
@@ -103,7 +105,6 @@ public class SceneManager
 
     public async Task<bool> Unload(string inSceneName)
     {
-
         bool isSuccess = false;
 
         if (_sceneDic.TryGetValue(inSceneName, out var scene) == true)
@@ -133,6 +134,8 @@ public class SceneManager
 
         bool isSuccess = false;
         
+        await ShowLoadingAsync();
+
         // Unload
         if(CurrSceneName != null)
            isSuccess &= await Unload(CurrSceneName);
@@ -143,5 +146,43 @@ public class SceneManager
         // 성공했다면..? 이름 변경
         if(isSuccess == true)
            CurrSceneName = inSceneName;
+    
+        await HideLoadingAsync();
+    }
+
+
+    public async Task ShowLoadingAsync()
+    {
+        if(_sceneLoading == null)
+        {
+            var prefab    = Resources.Load<SceneLoading>(SCENE_LOADING_PREFAB_PATH);   
+            _sceneLoading = MonoBehaviour.Instantiate<SceneLoading>(prefab);
+            MonoBehaviour.DontDestroyOnLoad(_sceneLoading); 
+        }
+        
+        _sceneLoading.gameObject.SetActive(true);
+        var waiter = new AsyncWaiting();
+
+        _sceneLoading?.Show(_=>
+        {
+            waiter.Signal();
+        });
+
+        await waiter.Wait();
+    }
+
+
+    public async Task HideLoadingAsync()
+    {
+        var waiter = new AsyncWaiting();
+
+        _sceneLoading?.Hide(_=>
+        {
+            waiter.Signal();
+        });
+
+        await waiter.Wait();
+
+        _sceneLoading.gameObject.SetActive(false);
     }
 }

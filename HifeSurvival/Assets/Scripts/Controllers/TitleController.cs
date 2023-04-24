@@ -17,10 +17,4 @@ public class TitleController : MonoBehaviour
 
         await SceneManager.Instance.ChangeScene(SceneManager.SCENE_NAME_LOBBY);
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

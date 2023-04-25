@@ -8,6 +8,7 @@ public class LobbyController : MonoBehaviour
     void Start()
     {
         Debug.Log("로비 컨트롤러 호출");
+        TopHUD.Instance.Show();
     }
 
     // Update is called once per frame

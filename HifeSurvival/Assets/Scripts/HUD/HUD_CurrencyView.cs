@@ -18,8 +18,7 @@ public class HUD_CurrencyView : MonoBehaviour
 
     [SerializeField] private Image   IMG_Icon;
 
-    [SerializeField] private TextMeshProUGUI TXT_count;
-
+    [SerializeField] private TMP_Text TXT_count;
 
     [SerializeField] private Sprite [] _iconArr;
 

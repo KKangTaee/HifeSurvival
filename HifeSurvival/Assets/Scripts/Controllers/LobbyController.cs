@@ -7,7 +7,6 @@ public class LobbyController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("로비 컨트롤러 호출");
         TopHUD.Instance.Show();
     }
 

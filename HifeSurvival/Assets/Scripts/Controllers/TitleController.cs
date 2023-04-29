@@ -3,13 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Threading.Tasks;
 
+
+
 public class TitleController : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
     {
+        ServerRequestManager.Instance.Test();
         GoToLobby();
     }
+
+
 
     async void GoToLobby()
     {
@@ -17,4 +22,7 @@ public class TitleController : MonoBehaviour
 
         await SceneManager.Instance.ChangeScene(SceneManager.SCENE_NAME_LOBBY);
     }
+
+
+    
 }

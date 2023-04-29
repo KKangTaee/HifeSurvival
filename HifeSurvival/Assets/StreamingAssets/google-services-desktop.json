@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "213361373065",
+    "project_id": "planar-hangout-385012",
+    "storage_bucket": "planar-hangout-385012.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:213361373065:android:97c4d97ea5e49dcac2bb58",
+        "android_client_info": {
+          "package_name": "com.company.HifeSurvival"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "213361373065-efemj6qb2jebo50ptdlv4r3hdkrttvev.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAiFeYlNLSdVGKFOdtYK06Z4hxGVOMekGo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "213361373065-efemj6qb2jebo50ptdlv4r3hdkrttvev.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "213361373065-5s2lbq7jfg58nf2e5h3cvdeg6v5vjhus.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.company.HifeSurvival"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

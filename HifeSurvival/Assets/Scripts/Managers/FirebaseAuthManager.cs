@@ -1,0 +1,94 @@
+using Firebase;
+using Firebase.Auth;
+using Firebase.Extensions;
+using UnityEngine;
+using System.Threading.Tasks;
+
+// NOTE@taeho.kang 반드시 모노비헤이비어를 상속받아야 함.
+public class FirebaseAuthManager : MonoBehaviour
+{
+    private static FirebaseAuthManager _instance;
+
+    public static FirebaseAuthManager Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                _instance = FindObjectOfType<FirebaseAuthManager>();
+                if (_instance == null)
+                {
+                    GameObject obj = new GameObject("FirebaseAuthManager");
+                    _instance = obj.AddComponent<FirebaseAuthManager>();
+                }
+            }
+            return _instance;
+        }
+    }
+
+    public FirebaseAuth firebaseAuth;
+
+    public async Task Init()
+    {
+        await FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task =>
+        {
+            firebaseAuth = FirebaseAuth.DefaultInstance;
+        });
+    }
+
+
+    public void SignInWithGoogle()
+    {
+        // 구글 로그인을 구현한 코드를 여기에 추가하세요.
+        // 로그인에 성공하면 OnGoogleLoginSuccess 메서드를 호출합니다.
+    }
+
+    public void SignUpWithEmail(string email, string password)
+    {
+        firebaseAuth.CreateUserWithEmailAndPasswordAsync(email, password).ContinueWithOnMainThread(task =>
+        {
+            if (task.IsFaulted)
+            {
+                Debug.LogError("SignUpWithEmail(): Sign up failed.");
+                return;
+            }
+
+            Debug.Log("SignUpWithEmail(): Sign up successful.");
+            // 회원가입 성공 후 처리할 코드를 여기에 추가하세요.
+        });
+    }
+
+    public void SignInWithEmail(string email, string password)
+    {
+        firebaseAuth.SignInWithEmailAndPasswordAsync(email, password).ContinueWithOnMainThread(task =>
+        {
+            if (task.IsFaulted)
+            {
+                Debug.LogError("SignInWithEmail(): Sign in failed.");
+                return;
+            }
+
+            Debug.Log("SignInWithEmail(): Sign in successful.");
+            // 로그인 성공 후 처리할 코드를 여기에 추가하세요.
+        });
+    }
+
+    private void OnGoogleLoginSuccess(string idToken, string accessToken)
+    {
+        Credential credential = GoogleAuthProvider.GetCredential(idToken, accessToken);
+        firebaseAuth.SignInWithCredentialAsync(credential).ContinueWithOnMainThread(task =>
+        {
+            if (task.IsFaulted)
+            {
+                Debug.LogError("로그인에 실패했습니다: " + task.Exception);
+                return;
+            }
+
+            FirebaseUser newUser = task.Result;
+            Debug.LogFormat("로그인에 성공했습니다: {0} ({1})", newUser.DisplayName, newUser.UserId);
+
+            // Firestore에 데이터를 저장하거나 불러오려면 이 부분에 코드를 추가하세요.
+            FirestoreManager.Instance.LoadUserData(newUser.UserId);
+        });
+    }
+}

@@ -8,13 +8,23 @@ using System.Threading.Tasks;
 public class TitleController : MonoBehaviour
 {
     // Start is called before the first frame update
-    void Start()
+
+    void Awake()
     {
-        ServerRequestManager.Instance.Test();
-        GoToLobby();
+        Debug.Log("Awake 호출!");
+        
+        // FirestoreManager.Instance.Init();
     }
 
 
+    void Start()
+    {
+        // ServerRequestManager.Instance.Test();
+        
+        FirebaseAuthManager.Instance.Init();
+
+        // GoToLobby();
+    }
 
     async void GoToLobby()
     {
@@ -22,7 +32,4 @@ public class TitleController : MonoBehaviour
 
         await SceneManager.Instance.ChangeScene(SceneManager.SCENE_NAME_LOBBY);
     }
-
-
-    
 }

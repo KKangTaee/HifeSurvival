@@ -127,9 +127,11 @@ public class FirebaseAuthManager : MonoBehaviour
 
             FirebaseUser newUser = task.Result;
             Debug.LogFormat("로그인에 성공했습니다: {0} ({1})", newUser.DisplayName, newUser.UserId);
-            loginSuccessCallback?.Invoke(true);
+            
             // Firestore에 데이터를 저장하거나 불러오려면 이 부분에 코드를 추가하세요.
             FirestoreManager.Instance.LoadUserData(newUser.UserId);
+            
+            loginSuccessCallback?.Invoke(true);
         });
     }
 }

@@ -40,6 +40,7 @@ public class FirestoreManager : MonoBehaviour
 
     public void LoadUserData(string userId)
     {
+        Debug.Log("LoadUserData 호출!");
         DocumentReference userDocRef = db.Collection("users").Document(userId);
         userDocRef.GetSnapshotAsync().ContinueWithOnMainThread(task => {
             if (task.IsFaulted)

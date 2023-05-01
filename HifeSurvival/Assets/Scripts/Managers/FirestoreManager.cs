@@ -4,6 +4,7 @@ using Firebase.Extensions;
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
+using System.Threading.Tasks;
 
 public class FirestoreManager : MonoBehaviour
 {
@@ -29,11 +30,12 @@ public class FirestoreManager : MonoBehaviour
     private FirebaseFirestore db;
 
 
-    public void Init()
+    public async Task Init()
     {
-        FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task => 
+        await FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task => 
         {
             db = FirebaseFirestore.DefaultInstance;
+            Debug.Log($"[{nameof(FirestoreManager)}][{nameof(Init)}] 초기화 완료");
         });
     }
 
@@ -42,6 +44,8 @@ public class FirestoreManager : MonoBehaviour
     {
         Debug.Log("LoadUserData 호출!");
         DocumentReference userDocRef = db.Collection("users").Document(userId);
+        
+        Debug.Log("LoadUserData 호출2");
         userDocRef.GetSnapshotAsync().ContinueWithOnMainThread(task => {
             if (task.IsFaulted)
             {
@@ -61,6 +65,7 @@ public class FirestoreManager : MonoBehaviour
                 SaveNewUserData(userId);
             }
         });
+        Debug.Log("LoadUserData 호출3");
     }
 
     public void SaveNewUserData(string userId)

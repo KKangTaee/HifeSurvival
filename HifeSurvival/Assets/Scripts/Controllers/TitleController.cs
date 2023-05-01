@@ -20,21 +20,21 @@ public class TitleController : MonoBehaviour
 
     public async UniTaskVoid Init()
     {
-         // 1. 서버 스태틱 데이터 로드
+         // 1. 서버 스태틱 데이터 로드(테스트)
         ServerRequestManager.Instance.Test();
 
         // 2. 로그인 초기화
-        await FirebaseAuthManager.Instance.Init(isSuccess=>
-        {
-            if(isSuccess)
-            {
-                GoToLobby();
-            }
-        });
+        await FirebaseAuthManager.Instance.Init();
+
+        // 3. DB 초기화
+        await FirestoreManager.Instance.Init();
+
+        // 4. Go to GoToLobby
+        GoToLobby();
     }
 
 
-    async void GoToLobby()
+    private async void GoToLobby()
     {
         await Task.Delay(3000);
 

@@ -8,6 +8,12 @@ using System;
 
 
 // NOTE@taeho.kang 반드시 모노비헤이비어를 상속받아야 함.
+// < 파이어베이스 구글로그인 구현 과정>
+// 1. Firebase Console에서 프로젝트 만들기.
+// 2. 인증들어가서 "로그인 제공업체"에 "Google" 추가.
+// 3. 유니티에서 Keystore 생성 및 SHA-1 키 뽑기.
+// 4. Firebase Console에서 프로젝트 설정 - 안드로이드 - 여기서 디지털 지문추가에 SHA-1키 등록.
+
 public class FirebaseAuthManager : MonoBehaviour
 {
     private static FirebaseAuthManager _instance;
@@ -41,7 +47,7 @@ public class FirebaseAuthManager : MonoBehaviour
         await FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task =>
         {
             firebaseAuth = FirebaseAuth.DefaultInstance;
-            Debug.Log($"[{nameof(Init)}] 초기화 성공!");
+            Debug.Log($"[{nameof(FirebaseAuthManager)}] 초기화 성공!");
         });
 
         await _waiting.Wait();
@@ -58,11 +64,12 @@ public class FirebaseAuthManager : MonoBehaviour
 
         Debug.Log($"[SignInWithGoogle] 클라이언트 아이디 : {webClientId}");
 
-#if UNITY_EDITOR
+#if! UNITY_EDITOR
         // 에디터에서 테스트 중일 때 Google 로그인 시뮬레이션
         // string simulatedUserId = "SimulatedUserId";
         // string simulatedDisplayName = "SimulatedDisplayName";
         // OnGoogleLoginSuccess(simulatedUserId, simulatedDisplayName);
+        _waiting.Signal();
 #else
     // 실제 기기에서 실행 중일 때 Google 로그인 실행
     try
@@ -82,7 +89,6 @@ public class FirebaseAuthManager : MonoBehaviour
     {
         GoogleSignIn.DefaultInstance.SignOut();
     }
-
 
 
     public void SignUpWithEmail(string email, string password)
@@ -129,6 +135,10 @@ public class FirebaseAuthManager : MonoBehaviour
 
             FirebaseUser newUser = task.Result;
             Debug.LogFormat("로그인에 성공했습니다: {0} ({1})", newUser.DisplayName, newUser.UserId);
+        
+            // 유저아이디 처리.
+            ServerData.Instance.SetUserID(newUser.UserId);
+            _waiting.Signal();
         });
     }
 }

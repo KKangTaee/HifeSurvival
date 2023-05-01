@@ -127,6 +127,5 @@ public class ServerRequestManager
             URL =  $"{sheetsApiUrl}/{sheetId}/values/{sheetName}?key={apiKey}"
         });
     }
-
     
 }

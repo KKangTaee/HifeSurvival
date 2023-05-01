@@ -39,13 +39,10 @@ public class FirestoreManager : MonoBehaviour
         });
     }
 
-
     public void LoadUserData(string userId)
     {
-        Debug.Log("LoadUserData 호출!");
         DocumentReference userDocRef = db.Collection("users").Document(userId);
         
-        Debug.Log("LoadUserData 호출2");
         userDocRef.GetSnapshotAsync().ContinueWithOnMainThread(task => {
             if (task.IsFaulted)
             {
@@ -65,7 +62,6 @@ public class FirestoreManager : MonoBehaviour
                 SaveNewUserData(userId);
             }
         });
-        Debug.Log("LoadUserData 호출3");
     }
 
     public void SaveNewUserData(string userId)

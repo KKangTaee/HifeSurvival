@@ -31,18 +31,21 @@ public class FirebaseAuthManager : MonoBehaviour
 
 
     public FirebaseAuth firebaseAuth;
+    public Action<bool> loginSuccessCallback;
 
-    public async Task Init()
+    private string webClientId = "213361373065-efemj6qb2jebo50ptdlv4r3hdkrttvev.apps.googleusercontent.com"; // Google Developer Console에서 생성한 클라이언트 ID를 여기에 붙여넣습니다.
+
+    public async Task Init(Action<bool> inLoginSuccessCallback = null)
     {
         await FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task =>
         {
             firebaseAuth = FirebaseAuth.DefaultInstance;
+            loginSuccessCallback = inLoginSuccessCallback;
             Debug.Log($"[{nameof(Init)}] 초기화 성공!");
         });
     }
 
-    private string webClientId = "213361373065-efemj6qb2jebo50ptdlv4r3hdkrttvev.apps.googleusercontent.com"; // Google Developer Console에서 생성한 클라이언트 ID를 여기에 붙여넣습니다.
-
+                                    
     public async void SignInWithGoogle()
     {
         GoogleSignIn.Configuration = new GoogleSignInConfiguration
@@ -50,6 +53,8 @@ public class FirebaseAuthManager : MonoBehaviour
             RequestIdToken = true,
             WebClientId = webClientId
         };
+
+        Debug.Log($"[SignInWithGoogle] 클라이언트 아이디 : {webClientId}");
 
 #if UNITY_EDITOR
         // 에디터에서 테스트 중일 때 Google 로그인 시뮬레이션
@@ -116,12 +121,13 @@ public class FirebaseAuthManager : MonoBehaviour
             if (task.IsFaulted)
             {
                 Debug.LogError("로그인에 실패했습니다: " + task.Exception);
+                loginSuccessCallback?.Invoke(false);
                 return;
             }
 
             FirebaseUser newUser = task.Result;
             Debug.LogFormat("로그인에 성공했습니다: {0} ({1})", newUser.DisplayName, newUser.UserId);
-
+            loginSuccessCallback?.Invoke(true);
             // Firestore에 데이터를 저장하거나 불러오려면 이 부분에 코드를 추가하세요.
             FirestoreManager.Instance.LoadUserData(newUser.UserId);
         });

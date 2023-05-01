@@ -2,34 +2,47 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Threading.Tasks;
+using UniRx.Async;
+using UnityEngine.UI;
 
 
 
 public class TitleController : MonoBehaviour
 {
     // Start is called before the first frame update
-
-    void Awake()
-    {
-        Debug.Log("Awake 호출!");
-        
-        // FirestoreManager.Instance.Init();
-    }
+    [SerializeField] Button BTN_Google;
 
 
     void Start()
     {
-        // ServerRequestManager.Instance.Test();
-        
-        FirebaseAuthManager.Instance.Init();
-
-        // GoToLobby();
+        Init().Forget();
     }
+
+    public async UniTaskVoid Init()
+    {
+        // 1. 초기화
+        await FirebaseAuthManager.Instance.Init();
+
+        // 2. 서버 스태틱 데이터 로드
+        ServerRequestManager.Instance.Test();
+
+
+    }
+
 
     async void GoToLobby()
     {
         await Task.Delay(3000);
 
         await SceneManager.Instance.ChangeScene(SceneManager.SCENE_NAME_LOBBY);
+    }
+
+
+    public void OnButtonEvent(Button inButton)
+    {
+        if(inButton == BTN_Google)
+        {
+            FirebaseAuthManager.Instance.SignInWithGoogle();
+        }
     }
 }

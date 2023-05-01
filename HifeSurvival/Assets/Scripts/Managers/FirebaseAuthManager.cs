@@ -3,6 +3,9 @@ using Firebase.Auth;
 using Firebase.Extensions;
 using UnityEngine;
 using System.Threading.Tasks;
+using Google;
+using System;
+
 
 // NOTE@taeho.kang 반드시 모노비헤이비어를 상속받아야 함.
 public class FirebaseAuthManager : MonoBehaviour
@@ -26,6 +29,7 @@ public class FirebaseAuthManager : MonoBehaviour
         }
     }
 
+
     public FirebaseAuth firebaseAuth;
 
     public async Task Init()
@@ -33,15 +37,46 @@ public class FirebaseAuthManager : MonoBehaviour
         await FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task =>
         {
             firebaseAuth = FirebaseAuth.DefaultInstance;
+            Debug.Log($"[{nameof(Init)}] 초기화 성공!");
         });
     }
 
+    private string webClientId = "213361373065-efemj6qb2jebo50ptdlv4r3hdkrttvev.apps.googleusercontent.com"; // Google Developer Console에서 생성한 클라이언트 ID를 여기에 붙여넣습니다.
 
-    public void SignInWithGoogle()
+    public async void SignInWithGoogle()
     {
-        // 구글 로그인을 구현한 코드를 여기에 추가하세요.
-        // 로그인에 성공하면 OnGoogleLoginSuccess 메서드를 호출합니다.
+        GoogleSignIn.Configuration = new GoogleSignInConfiguration
+        {
+            RequestIdToken = true,
+            WebClientId = webClientId
+        };
+
+#if UNITY_EDITOR
+        // 에디터에서 테스트 중일 때 Google 로그인 시뮬레이션
+        // string simulatedUserId = "SimulatedUserId";
+        // string simulatedDisplayName = "SimulatedDisplayName";
+        // OnGoogleLoginSuccess(simulatedUserId, simulatedDisplayName);
+#else
+    // 실제 기기에서 실행 중일 때 Google 로그인 실행
+    try
+    {
+        var user = await GoogleSignIn.DefaultInstance.SignIn();
+        OnGoogleLoginSuccess(user.IdToken, user.AuthCode);
     }
+    catch (Exception e)
+    {
+        Debug.LogError("Google Sign In error: " + e);
+    }
+#endif
+    }
+
+
+    public void SignOutWithGoogle()
+    {
+        GoogleSignIn.DefaultInstance.SignOut();
+    }
+
+
 
     public void SignUpWithEmail(string email, string password)
     {

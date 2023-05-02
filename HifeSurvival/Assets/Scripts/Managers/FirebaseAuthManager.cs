@@ -35,12 +35,12 @@ public class FirebaseAuthManager : MonoBehaviour
         }
     }
 
-
-    public FirebaseAuth firebaseAuth;
-    
-    public AsyncWaiting _waiting = new AsyncWaiting();
-
     private string webClientId = "213361373065-efemj6qb2jebo50ptdlv4r3hdkrttvev.apps.googleusercontent.com"; // Google Developer Console에서 생성한 클라이언트 ID를 여기에 붙여넣습니다.
+
+    private FirebaseAuth firebaseAuth;
+        
+    private AsyncWaiting _waiting = new AsyncWaiting();
+
 
     public async Task Init()
     {
@@ -64,7 +64,7 @@ public class FirebaseAuthManager : MonoBehaviour
 
         Debug.Log($"[SignInWithGoogle] 클라이언트 아이디 : {webClientId}");
 
-#if! UNITY_EDITOR
+#if UNITY_EDITOR
         // 에디터에서 테스트 중일 때 Google 로그인 시뮬레이션
         // string simulatedUserId = "SimulatedUserId";
         // string simulatedDisplayName = "SimulatedDisplayName";

@@ -48,6 +48,7 @@ public class TitleController : MonoBehaviour
 
             // 여기서 로딩바 액션 처리
             SetProgress(i /(float)(processSchedulers.Count - 1));
+
             if(await process.action?.Invoke())
             {
                 // 성공처리
@@ -80,8 +81,6 @@ public class TitleController : MonoBehaviour
     {
         IMG_progress.fillAmount = inRatio;
     }
-
-
 
     private async Task<bool> PROC_LOAD_STATIC_DATA()
     {

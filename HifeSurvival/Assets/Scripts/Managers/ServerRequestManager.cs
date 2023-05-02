@@ -23,7 +23,6 @@ public class ServerRequestManager
     }
 
 
-
     //----------------
     // structs
     //----------------
@@ -31,7 +30,7 @@ public class ServerRequestManager
     public struct ServerRequestData
     {
         public string URL;
-        public Action<bool> doneCallback;
+        public Action<string> doneCallback;
     }
 
 
@@ -84,13 +83,12 @@ public class ServerRequestManager
                     if (webRequest.result != UnityWebRequest.Result.Success)
                     {
                         Debug.LogError($"[{nameof(RequestToServer)}] webRequest Error : {webRequest.error}");
-                        requestData.doneCallback?.Invoke(false);
+                        requestData.doneCallback?.Invoke(null);
                     }
                     else
                     {
                         // TODO@taeho.kang do something.
-                        Debug.Log(webRequest.downloadHandler.text);
-                        requestData.doneCallback?.Invoke(true);
+                        requestData.doneCallback?.Invoke(webRequest.downloadHandler.text);
                     }
                 }
             }
@@ -113,19 +111,12 @@ public class ServerRequestManager
         _isRunning = false;
         _cts?.Cancel();
     }
-    
-    
-    private string apiKey       = "AIzaSyABnRmQck9SP3Gv7syjremXAjDBDOky8so";
-    private string sheetId      = "104ZnnXWWorMZOAhuY0o1o1xIL2H41opJlrJLsSEk_C4";
-    private string sheetName    = "systems";
-    private string sheetsApiUrl = "https://sheets.googleapis.com/v4/spreadsheets";
-
-    public void Test()
-    {
-        AddRequestData(new ServerRequestData()
-        {
-            URL =  $"{sheetsApiUrl}/{sheetId}/values/{sheetName}?key={apiKey}"
-        });
-    }
-    
 }
+   // ServerRequestManager.Instance.AddRequestData(new ServerRequestManager.ServerRequestData()
+        // {
+        //     URL =  $"{sheetsApiUrl}/{sheetId}/values/{sheetName}?key={apiKey}",
+        //     doneCallback = (jsonStr) =>
+        //     {
+
+        //     }
+        // });

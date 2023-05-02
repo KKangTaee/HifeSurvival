@@ -89,7 +89,7 @@ public class TitleController : MonoBehaviour
         SetActiveLoginButton(false);  
 
         // 1. 서버 스태틱 데이터 로드(테스트)
-        ServerRequestManager.Instance.Test();
+        await StaticData.Instance.Init();
         return true;
     }
 

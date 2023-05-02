@@ -5,13 +5,15 @@ using System.Threading.Tasks;
 using UniRx.Async;
 using UnityEngine.UI;
 using System;
-
+using TMPro;
 
 public class TitleController : MonoBehaviour
 {
     // Start is called before the first frame update
     [SerializeField] Button BTN_Google;
+    [SerializeField] RectTransform RT_progressBG;
     [SerializeField] Image IMG_progress;
+    [SerializeField] TMP_Text TMP_progressDesc;
 
     List<(string desc, Func<Task<bool>> action)> processSchedulers;
 
@@ -39,7 +41,6 @@ public class TitleController : MonoBehaviour
         Init().Forget();
     }
 
-
     public async UniTaskVoid Init()
     {
         for(int i =0; i<processSchedulers?.Count; i++)
@@ -47,7 +48,7 @@ public class TitleController : MonoBehaviour
             var process = processSchedulers[i];
 
             // 여기서 로딩바 액션 처리
-            SetProgress(i /(float)(processSchedulers.Count - 1));
+            SetProgress(process.desc, i /(float)(processSchedulers.Count - 1));
 
             if(await process.action?.Invoke())
             {
@@ -77,13 +78,16 @@ public class TitleController : MonoBehaviour
         }
     }
 
-    public void SetProgress(float inRatio)
+    public void SetProgress(string inDesc, float inRatio)
     {
+        TMP_progressDesc.text = inDesc;
         IMG_progress.fillAmount = inRatio;
     }
 
     private async Task<bool> PROC_LOAD_STATIC_DATA()
     {
+        SetActiveLoginButton(false);  
+
         // 1. 서버 스태틱 데이터 로드(테스트)
         ServerRequestManager.Instance.Test();
         return true;
@@ -92,7 +96,13 @@ public class TitleController : MonoBehaviour
     public async Task<bool> PROC_LOGIN()
     {
         // 2. 로그인 초기화
+
+        SetActiveLoginButton(true);        
+
         await FirebaseAuthManager.Instance.Init();
+        
+        SetActiveLoginButton(false);
+
         return true;    
     }
 
@@ -107,5 +117,12 @@ public class TitleController : MonoBehaviour
         // 로비씬으로 이동
         GoToLobby();
         return true;
+    }
+
+
+    private void SetActiveLoginButton(bool isTrue)
+    {
+        BTN_Google.gameObject.SetActive(isTrue);
+        RT_progressBG.gameObject.SetActive(!isTrue);
     }
 }

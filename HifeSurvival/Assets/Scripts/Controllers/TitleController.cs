@@ -90,6 +90,8 @@ public class TitleController : MonoBehaviour
 
         // 1. 서버 스태틱 데이터 로드(테스트)
         await StaticData.Instance.Init();
+        
+
         return true;
     }
 

@@ -24,6 +24,8 @@ public interface IPopupOpen
 }
 
 
+
+[RequireComponent(typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster))]
 public abstract class PopupBase : MonoBehaviour
 {
 
@@ -57,6 +59,10 @@ public abstract class PopupBase : MonoBehaviour
     // variables
     //------------------
 
+    public const string BACKDIMMED_OBJ_NAME = "BackDimmed";
+    public const string BACKGROUND_OBJ_NAME = "Background";
+
+
     protected bool  _isAnimatingNow;      // 지금 애니메이션 진행중인지 체크
 
     protected EAnim _eOpenAnim;
@@ -78,9 +84,73 @@ public abstract class PopupBase : MonoBehaviour
     // unity events
     //-------------------
 
+    private void Reset()
+    {
+        if(_backDimmed == null)
+        {
+            for(int i =0; i<transform.childCount; i++)
+            {
+                var child = transform.GetChild(i);
+
+                if(child.name == BACKDIMMED_OBJ_NAME)
+                {
+                   _backDimmed = child.gameObject.AddComponent<Image>();
+                   break;
+                }
+            }
+
+            if(_backDimmed == null)
+            {
+                var emtpyDimmed = new GameObject();
+                emtpyDimmed.name = BACKDIMMED_OBJ_NAME;
+                emtpyDimmed.transform.parent = transform;
+                _backDimmed = emtpyDimmed.AddComponent<Image>();
+            }
+
+            _backDimmed.color = new Color(0,0,0,0.5f);
+
+            _backDimmed.rectTransform.anchorMin = Vector2.zero;
+            _backDimmed.rectTransform.anchorMax = Vector2.one;
+            _backDimmed.rectTransform.anchoredPosition = Vector3.zero;
+            _backDimmed.rectTransform.sizeDelta = Vector2.zero;
+        }
+
+        if(_background == null)
+        {
+            for(int i =0; i<_backDimmed.transform.childCount; i++)
+            {
+                var child = _backDimmed.transform.GetChild(i);
+
+                if(child.name == BACKGROUND_OBJ_NAME)
+                {
+                    _background = child.gameObject.GetComponent<RectTransform>();
+                    break;
+                }
+            }
+
+            if(_background == null)
+            {
+                var emptyBg = new GameObject();
+                emptyBg.name = BACKGROUND_OBJ_NAME;
+                emptyBg.transform.parent = _backDimmed.transform;
+
+                _background = emptyBg.AddComponent<RectTransform>();
+
+                _background.anchorMin = Vector2.zero;
+                _background.anchorMax = Vector2.one;
+                _background.anchoredPosition = Vector3.zero;
+                _background.sizeDelta = Vector2.zero;
+            }
+
+        }
+
+        _canvas = GetComponent<Canvas>();
+        _canvas.renderMode = RenderMode.ScreenSpaceCamera;
+    }
+
+
     private void Awake()
     {
-        _canvas.renderMode  = RenderMode.ScreenSpaceCamera; 
         _canvas.worldCamera = Camera.main;
     }
 

@@ -27,9 +27,9 @@ public class StaticData
     // variables
     //------------------
 
-    private string apiKey = "AIzaSyABnRmQck9SP3Gv7syjremXAjDBDOky8so";
-    private string sheetId = "104ZnnXWWorMZOAhuY0o1o1xIL2H41opJlrJLsSEk_C4";
-    private string sheetName = "heros";
+    private string apiKey       = "AIzaSyABnRmQck9SP3Gv7syjremXAjDBDOky8so";
+    private string sheetId      = "104ZnnXWWorMZOAhuY0o1o1xIL2H41opJlrJLsSEk_C4";
+    private string sheetName    = "heros";
     private string sheetsApiUrl = "https://sheets.googleapis.com/v4/spreadsheets";
 
 
@@ -43,7 +43,6 @@ public class StaticData
     public async UniTask Init()
     {
         // 구글 스프레드 시트의 모든 이름 가져오기
-
         var waiter = new AsyncWaiting();
         List<string> sheetNames = new List<string>();
 
@@ -66,6 +65,7 @@ public class StaticData
         await waiter.Wait();
         waiter.Reset();
 
+
         // 배치로 모든 스프레드 시트의 데이터 가져오기.
         string ranges = string.Join("&", sheetNames.Select(sheetName => $"ranges={Uri.EscapeDataString(sheetName)}"));
         string batchGetUrl = $"{sheetsApiUrl}/{sheetId}/values:batchGet?{ranges}&key={apiKey}";
@@ -82,7 +82,6 @@ public class StaticData
                 foreach (JSONNode node in batchDataJson["valueRanges"].AsArray)
                 {
                     var rangeValue = node["range"].ToString();
-                    Debug.Log(node);
 
                     if (rangeValue.Contains("systems"))
                     {
@@ -103,11 +102,6 @@ public class StaticData
         await waiter.Wait();
 
         Debug.Log(HeroDic["1"].name);
-    }
-
-    public void Test()
-    {
-
     }
 
 

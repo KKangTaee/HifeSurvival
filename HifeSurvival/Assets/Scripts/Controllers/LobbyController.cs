@@ -9,10 +9,5 @@ public class LobbyController : MonoBehaviour
     {
         TopHUD.Instance.Show();
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    
 }

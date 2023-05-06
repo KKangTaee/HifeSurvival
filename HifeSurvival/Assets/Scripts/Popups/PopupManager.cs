@@ -32,8 +32,8 @@ public class PopupManager : MonoBehaviour
     //-----------------
 
     Stack<PopupBase> _openedPopups      = new Stack<PopupBase>();
-    Queue<Action>    _reserverPopups     = new Queue<Action>();
-
+    Queue<Action>    _reserverPopups    = new Queue<Action>();
+    int              _currentLayerOlder = 1000;
 
 
     //------------------
@@ -60,14 +60,14 @@ public class PopupManager : MonoBehaviour
         {
             iOpen.PrevOpen();
 
-            popup.Open(0, popup => 
+            popup.Open(_currentLayerOlder++, popup => 
             { 
                 iOpen.PostOpen(); 
             });
         }
         else
         {
-            popup.Open(0);
+            popup.Open(_currentLayerOlder++);
         }
 
     }
@@ -87,7 +87,7 @@ public class PopupManager : MonoBehaviour
         {
             await iOpenAsync.PrevOpenAsync();
 
-            popup.Open(0, async (popup)=>
+            popup.Open(_currentLayerOlder++, async (popup)=>
             {
                 await iOpenAsync.PostOpenAsync();
             });
@@ -151,8 +151,9 @@ public class PopupManager : MonoBehaviour
 
             popup.Close(popup =>
             {
-                Destroy(popup);
+                _currentLayerOlder--;
 
+                Destroy(popup);
             });
         }
     }

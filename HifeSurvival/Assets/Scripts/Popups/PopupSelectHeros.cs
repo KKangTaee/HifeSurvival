@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+[Popup(PATH_IN_RESOURCES_FOLDER="Prefabs/Popups/PopupSelectHeros/PopupSelectHeros",
+       IN_RESOURCES_FORLDER = true)]
 public class PopupSelectHeros : PopupBase
 {
     [Header("PopupSelectHeros")]

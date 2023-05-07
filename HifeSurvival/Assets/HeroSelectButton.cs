@@ -24,7 +24,7 @@ public class HeroSelectButton : MonoBehaviour
 
     public void SetHeroImage(int inId)
     {
-        IMG_frame.sprite = Resources.Load<Sprite>($"Prefabs/Textures/Profiles/profile_{inId}.png");
+        IMG_hero.sprite = Resources.Load<Sprite>($"Prefabs/Textures/Profiles/profile_{inId}");
     }
 
     public void SetClick()

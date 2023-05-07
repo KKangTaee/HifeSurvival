@@ -35,7 +35,6 @@ public class TopHUD : MonoBehaviour
     }
 
     [SerializeField] private RectTransform      RT_background;
-
     [SerializeField] private Button             BTN_Settings;
 
     [SerializeField] private HUD_CurrencyView   HUD_Coin;

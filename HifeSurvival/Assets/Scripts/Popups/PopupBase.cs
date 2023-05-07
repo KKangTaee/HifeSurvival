@@ -149,9 +149,9 @@ public abstract class PopupBase : MonoBehaviour
     }
 
 
+
     protected virtual void Awake()
     {
-        _canvas.renderMode = RenderMode.ScreenSpaceCamera;
         _canvas.worldCamera = Camera.main;
     }
 
@@ -201,12 +201,21 @@ public abstract class PopupBase : MonoBehaviour
             break;
         }
 
-        anim.onComplete = ()=>
+        if(anim != null)
+        {
+            anim.onComplete = ()=>
+            {
+                inDoneCallback?.Invoke(this);
+                _isAnimatingNow = false;
+            };
+        }
+        else
         {
             inDoneCallback?.Invoke(this);
             _isAnimatingNow = false;
-        };
+        }
     }
+
 
     public void OnButton(Button inButton)
     {

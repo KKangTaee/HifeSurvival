@@ -100,8 +100,6 @@ public class StaticData
 
 
         await waiter.Wait();
-
-        Debug.Log(HeroDic["1"].name);
     }
 
 

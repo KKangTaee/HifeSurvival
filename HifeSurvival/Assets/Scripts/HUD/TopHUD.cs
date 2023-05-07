@@ -44,7 +44,7 @@ public class TopHUD : MonoBehaviour
     private const int ANIM_HIDE_POS_Y = 140;
 
     private const string TOP_HUD_PREFAB_PATH = "Prefabs/HUD/TopHUD";
-
+    
 
     //---------------
     // unity events

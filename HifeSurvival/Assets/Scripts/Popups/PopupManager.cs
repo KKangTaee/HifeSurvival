@@ -2,24 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Linq;
 
 
 public class PopupAttribute : System.Attribute
 {
     public string PATH_IN_NOT_RESOURCES_FOLDER;     // 리소스폴더 아닌 곳의 경로 (번들용도)
     public string PATH_IN_RESOURCES_FOLDER;         // 리소스폴더
-    public bool   IN_RESOURCES_FORLDER;             // 해당 팝업이 어디 경로에 있는지 유무 체크
+    public bool IN_RESOURCES_FORLDER;             // 해당 팝업이 어디 경로에 있는지 유무 체크
 }
 
 
-public class PopupManager : MonoBehaviour
+public class PopupManager
 {
     private static PopupManager _instacne;
 
-    public static PopupManager Instance {
+    public static PopupManager Instance
+    {
         get
         {
-            if(_instacne == null)
+            if (_instacne == null)
                 _instacne = new PopupManager();
 
             return _instacne;
@@ -31,9 +33,9 @@ public class PopupManager : MonoBehaviour
     // variables
     //-----------------
 
-    Stack<PopupBase> _openedPopups      = new Stack<PopupBase>();
-    Queue<Action>    _reserverPopups    = new Queue<Action>();
-    int              _currentLayerOlder = 1000;
+    List<PopupBase> _openedPopups = new List<PopupBase>();
+    Queue<Action> _reserverPopups = new Queue<Action>();
+    int _currentLayerOlder = 1000;
 
 
     //------------------
@@ -43,26 +45,26 @@ public class PopupManager : MonoBehaviour
     public void Show<T>(Action<T> inCreateCallback) where T : PopupBase
     {
         // 이미노출되었다면..? 열지 않는다
-        if(IsExposedNow<T>() == true)
+        if (IsExposedNow<T>() == true)
             return;
 
         T popup = CreatePopup<T>(inCreateCallback);
 
-        if(popup == null)
+        if (popup == null)
         {
             Debug.LogError($"[{nameof(Show)}] popup object is null or empty!");
             return;
         }
 
-        _openedPopups.Push(popup);
+        _openedPopups.Add(popup);
 
-        if(popup is IPopupOpen iOpen)
+        if (popup is IPopupOpen iOpen)
         {
             iOpen.PrevOpen();
 
-            popup.Open(_currentLayerOlder++, popup => 
-            { 
-                iOpen.PostOpen(); 
+            popup.Open(_currentLayerOlder++, popup =>
+            {
+                iOpen.PostOpen();
             });
         }
         else
@@ -77,17 +79,17 @@ public class PopupManager : MonoBehaviour
     {
         T popup = CreatePopup<T>(inCreateCallback);
 
-        if(popup == null)
+        if (popup == null)
         {
             Debug.LogError($"[{nameof(Show)}] popup object is null or empty!");
             return;
         }
 
-        if(popup is IPopupOpenAsync iOpenAsync)
+        if (popup is IPopupOpenAsync iOpenAsync)
         {
             await iOpenAsync.PrevOpenAsync();
 
-            popup.Open(_currentLayerOlder++, async (popup)=>
+            popup.Open(_currentLayerOlder++, async (popup) =>
             {
                 await iOpenAsync.PostOpenAsync();
             });
@@ -98,14 +100,14 @@ public class PopupManager : MonoBehaviour
     public void Reserve<T>(Action<T> inCreateCallback) where T : PopupBase
     {
         // 열려있는 팝업이 없다면..? 그냥 열어라
-        if(_openedPopups?.Count == 0)
+        if (_openedPopups?.Count == 0)
         {
             Show<T>(inCreateCallback);
         }
         // 예약걸어라.
         else
         {
-            _reserverPopups.Enqueue(()=> { Show<T>(inCreateCallback); });
+            _reserverPopups.Enqueue(() => { Show<T>(inCreateCallback); });
         }
     }
 
@@ -116,11 +118,11 @@ public class PopupManager : MonoBehaviour
 
         T popup = null;
 
-        foreach(var attr in popupType.GetCustomAttributes(true))
+        foreach (var attr in popupType.GetCustomAttributes(true))
         {
-            if(attr is PopupAttribute popupAttr)
+            if (attr is PopupAttribute popupAttr)
             {
-                if(popupAttr.IN_RESOURCES_FORLDER == true)
+                if (popupAttr.IN_RESOURCES_FORLDER == true)
                 {
                     popup = Resources.Load<T>(popupAttr.PATH_IN_RESOURCES_FOLDER);
                 }
@@ -130,41 +132,37 @@ public class PopupManager : MonoBehaviour
                 }
             }
         }
-     
-        if(popup == null)
+
+        if (popup == null)
         {
             Debug.LogError($"[{nameof(CreatePopup)}] popup asset is null!");
             return null;
         }
 
-        popup = Instantiate<T>(popup);
+        popup = MonoBehaviour.Instantiate<T>(popup);
 
         return popup;
     }
 
+    // 베이스팝업에서 close를 할 경우, 애니메이션 호출 후
+    // 팝업매니저에 담긴 _openedPopups에서 자신의 데이터를 제거해야함.
+    // 그런데, 이걸 어떻게 구현하는 것이 효율적인 방법인지 정확하게 알기 힘듬.
 
-    public void Close()
+    public void RemovePopup(PopupBase inPopup)
     {
-        if(_openedPopups?.Count > 0)
+        if(_openedPopups.Remove(inPopup) == true)
         {
-            var popup = _openedPopups.Pop();
-
-            popup.Close(popup =>
-            {
-                _currentLayerOlder--;
-
-                Destroy(popup);
-            });
+            Debug.Log("[RemovePopup]");
         }
     }
 
 
     public bool IsExposedNow<T>()
     {
-        foreach(var popup in _openedPopups)
+        foreach (var popup in _openedPopups)
         {
-            if(popup is T)
-               return true;
+            if (popup is T)
+                return true;
         }
 
         return false;

@@ -65,9 +65,9 @@ public abstract class PopupBase : MonoBehaviour
 
     protected bool  _isAnimatingNow;      // 지금 애니메이션 진행중인지 체크
 
-    protected EAnim _eOpenAnim;
+    protected EAnim _eOpenAnim  = EAnim.OPEN_SCALE_NORMAL;
 
-    protected EAnim _eCloseAnim;
+    protected EAnim _eCloseAnim = EAnim.CLOSE_SCALE_NORMAL;
     
 
 
@@ -170,7 +170,15 @@ public abstract class PopupBase : MonoBehaviour
 
     public void Close(Action<PopupBase> inCloseCallback = null)
     {
-        PlayAnimation(_eCloseAnim, inCloseCallback);
+        PlayAnimation(_eCloseAnim, (popup) =>
+        {
+            inCloseCallback?.Invoke(popup);
+            
+            // NOTE@taeho.kang 더 좋은 방법이 있으면 수정.
+            PopupManager.Instance.RemovePopup(this);
+
+            Destroy(gameObject);
+        });         
     }
 
 
@@ -184,11 +192,11 @@ public abstract class PopupBase : MonoBehaviour
         {
             case EAnim.OPEN_SCALE_NORMAL:
             _background.localScale = Vector2.zero;
-            anim = _background.DOScale(Vector3.one, 0.5f);
+            anim = _background.DOScale(Vector3.one, 0.3f);
             break;
 
             case EAnim.CLOSE_SCALE_NORMAL:
-            anim = _background.DOScale(Vector3.zero, 0.3f);
+            anim = _background.DOScale(Vector3.zero, 0.2f);
             break;
         }
 

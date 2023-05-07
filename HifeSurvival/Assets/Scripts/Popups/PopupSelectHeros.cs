@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UniRx;
+
 
 [Popup(PATH_IN_RESOURCES_FOLDER="Prefabs/Popups/PopupSelectHeros/PopupSelectHeros",
        IN_RESOURCES_FORLDER = true)]
@@ -12,10 +14,16 @@ public class PopupSelectHeros : PopupBase
     [SerializeField] RectTransform    RT_heroSelection;
     [SerializeField] HeroSelectButton _selectButtonPrefab;
 
-    private void Awake()
+    private Subject<int> _onClickFrame = new Subject<int>();
+
+
+    protected override void Awake()
     {
+        base.Awake();
+
         SetHeroButton();
     }
+
 
     private void SetHeroButton()
     {
@@ -31,9 +39,14 @@ public class PopupSelectHeros : PopupBase
         {
             var prefab = Instantiate<HeroSelectButton>(_selectButtonPrefab, RT_heroSelection);
 
+            _onClickFrame.Subscribe(id => { prefab.OnClickFrame(id); }).AddTo(this);
+
             prefab.SetInfo(data, (data)=>
             {
-                // 여기 호출.
+            
+
+                // 프레임 변경
+                _onClickFrame.OnNext(data.id);
             });
         }
     }

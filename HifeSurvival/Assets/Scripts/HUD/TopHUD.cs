@@ -74,6 +74,8 @@ public class TopHUD : MonoBehaviour
         });
 
         RT_background.anchoredPosition = new Vector2(0, ANIM_HIDE_POS_Y);
+
+        GetComponent<Canvas>().worldCamera = Camera.main;
     }
 
 

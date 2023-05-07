@@ -8,6 +8,11 @@ public class LobbyUI : MonoBehaviour
 
     [SerializeField] Button BTN_gameStart;
 
+    private void Awake()
+    {
+        GetComponent<Canvas>().worldCamera = Camera.main;
+    }
+
     public void OnButtonEvent(Button inButton)
     {
         if(inButton == BTN_gameStart)

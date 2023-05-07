@@ -16,6 +16,7 @@ public class HeroSelectButton : MonoBehaviour
     public void SetInfo(StaticData.Heros inData,  Action<StaticData.Heros> inClickCallback)
     {
         _data = inData;
+        _clickCallback = inClickCallback;
 
         SetHeroImage(_data.id);
 
@@ -33,5 +34,10 @@ public class HeroSelectButton : MonoBehaviour
         {
             _clickCallback?.Invoke(_data);
         });
+    }
+
+    public void OnClickFrame(int inId)
+    {
+        IMG_frame.color = inId == _data.id ? Color.magenta : Color.white;
     }
 }

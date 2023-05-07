@@ -149,8 +149,9 @@ public abstract class PopupBase : MonoBehaviour
     }
 
 
-    private void Awake()
+    protected virtual void Awake()
     {
+        _canvas.renderMode = RenderMode.ScreenSpaceCamera;
         _canvas.worldCamera = Camera.main;
     }
 

@@ -92,11 +92,11 @@ public class TopHUD : MonoBehaviour
         switch(inAnim)
         {
             case EAnim.SHOW:
-            tweener = RT_background.DOAnchorPosY(ANIM_SHOW_POS_Y, 1);
+            tweener = RT_background.DOAnchorPosY(ANIM_SHOW_POS_Y, 0.5f);
             break;
             
             case EAnim.HIDE:
-            tweener = RT_background.DOAnchorPosY(ANIM_HIDE_POS_Y, 1);
+            tweener = RT_background.DOAnchorPosY(ANIM_HIDE_POS_Y, 0.5f);
             break;
         }
 

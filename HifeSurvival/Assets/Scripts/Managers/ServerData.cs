@@ -16,20 +16,18 @@ public class ServerData
         }
     }
 
-    public string UserID { get; private set; }
-    
-    public void SetUserID(string inUserID) =>
-        UserID = inUserID;
+    public User UserData { get; private set; }
+
+    public void SetUserData(User inUser)
+    {
+        UserData = inUser;
+    }
 }
 
 
 public class User
 {
-    public string _id;
-    public int _cash;
-
-    public User(string inId, int inCash)
-    {
-
-    }
+    public string user_id;
+    public string nickname;
+    public string photo_url;
 }

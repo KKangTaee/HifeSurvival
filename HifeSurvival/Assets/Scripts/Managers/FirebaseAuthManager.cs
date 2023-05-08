@@ -137,7 +137,14 @@ public class FirebaseAuthManager : MonoBehaviour
             Debug.LogFormat("로그인에 성공했습니다: {0} ({1})", newUser.DisplayName, newUser.UserId);
         
             // 유저아이디 처리.
-            ServerData.Instance.SetUserID(newUser.UserId);
+                    
+            ServerData.Instance.SetUserData(new User()
+            {
+                user_id   = newUser.UserId,
+                nickname  = newUser.DisplayName,
+                photo_url = newUser.PhotoUrl.ToString(), 
+            });
+
             _waiting.Signal();
         });
     }

@@ -7,7 +7,7 @@ using ServerCore;
 using System;
 using System.Threading.Tasks;
 
-public class NetworkManager 
+public class NetworkManager : MonoBehaviour 
 {
     private static NetworkManager _instance;
     public static NetworkManager Instance
@@ -15,7 +15,13 @@ public class NetworkManager
         get
         {
             if(_instance == null)
+            {
+                var obj = new GameObject();
+                obj.name = nameof(NetworkManager);
+                DontDestroyOnLoad(obj);
+
                _instance = new NetworkManager();
+            }
 
             return _instance;
         }
@@ -23,6 +29,15 @@ public class NetworkManager
 
     private ServerSession _session = new ServerSession();
     
+    private void Update()
+    {
+        var packet = PacketQueue.Instance.Pop();
+
+        if(packet != null)
+        {
+            PacketManager.Instance.HandlePacket(_session, packet);
+        }
+    }
 
     public void ConnectToRealtimeServer()
     {
@@ -32,7 +47,7 @@ public class NetworkManager
         
 
         IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 7777);
-        
+
         // IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
 
         Connector connector = new Connector();

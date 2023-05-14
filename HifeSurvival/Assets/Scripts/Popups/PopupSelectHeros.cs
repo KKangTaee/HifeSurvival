@@ -22,6 +22,10 @@ public class PopupSelectHeros : PopupBase
     [SerializeField] TMP_Text TMP_dex;
     [SerializeField] TMP_Text TMP_hp;
 
+    [SerializeField] TMP_Text TMP_leftTime;
+
+
+
     private Subject<int> _onClickFrame = new Subject<int>();
 
 
@@ -33,6 +37,8 @@ public class PopupSelectHeros : PopupBase
         _eCloseAnim = EAnim.NONE;
 
         SetHeroButton();
+
+        StartCoroutine("Co_Timer");
     }
 
 
@@ -85,5 +91,31 @@ public class PopupSelectHeros : PopupBase
         {
             Close();
         }
+    }
+
+
+    IEnumerator Co_Timer()
+    {
+        float leftTime = 60;
+
+        while(true)
+        {
+            if(leftTime < 0.1f)
+               break;
+
+            leftTime -= Time.deltaTime;
+
+            TMP_leftTime.text = $"게임시작 {(int)leftTime}초 전";
+
+            yield return null;
+        }
+
+        GameStart();
+    }
+
+
+    private  void GameStart()
+    {
+        _ = SceneManager.Instance.ChangeScene(SceneManager.SCENE_NAME_INGAME);
     }
 }

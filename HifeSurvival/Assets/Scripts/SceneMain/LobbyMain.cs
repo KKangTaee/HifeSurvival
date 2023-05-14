@@ -7,12 +7,12 @@ public class LobbyMain : MonoBehaviour
 {
     [SerializeField] LobbyUI _lobbyUI;
 
-
     // Start is called before the first frame update
     void Start()
     {
         InitalizeAsync().Forget();
     }
+    
 
     public async UniTask InitalizeAsync()
     {

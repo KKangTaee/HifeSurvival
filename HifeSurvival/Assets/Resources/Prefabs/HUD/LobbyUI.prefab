@@ -1044,3 +1044,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BTN_gameStart: {fileID: 8693068589903411463}
+  IMG_profile: {fileID: 3111070309011554526}
+  TMP_profileName: {fileID: 7659743959953967789}

@@ -29,11 +29,11 @@ public abstract class SceneBase
 
 public class LobbyScene : SceneBase, ISceneLoad
 {
-    public override string SceneName => "LobbyScene";
+    public override string SceneName => nameof(LobbyScene);
 
     public override void Initialize()
     {
-
+        
     }
 
     public async Task<bool> PostLoadAsync()
@@ -52,10 +52,20 @@ public class LobbyScene : SceneBase, ISceneLoad
 
 public class TitleScene : SceneBase
 {
-    public override string SceneName => "TitleScene";
+    public override string SceneName => nameof(TitleScene);
 
     public override void Initialize()
     {
-        throw new System.NotImplementedException();
+
+    }
+}
+
+public class IngameScene : SceneBase
+{
+    public override string SceneName => nameof(IngameScene);
+
+    public override void Initialize()
+    {
+
     }
 }

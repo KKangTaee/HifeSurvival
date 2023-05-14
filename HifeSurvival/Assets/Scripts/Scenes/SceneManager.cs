@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
 using System.Threading.Tasks;
+using UniRx.Async;
 
 public class SceneManager
 {
@@ -29,14 +29,19 @@ public class SceneManager
     private const int MILLISECOND_TIME_OUT = MILLISECOND_DELAY * 200;
     private const string SCENE_LOADING_PREFAB_PATH = "Prefabs/Scenes/SceneLoading";
     
-    public const string SCENE_NAME_LOBBY = "LobbyScene";
-    public const string SCENE_NAME_TITLE = "TitleScene";
+
+    public const string SCENE_NAME_LOBBY  = "LobbyScene";
+    public const string SCENE_NAME_TITLE  = "TitleScene";
+    public const string SCENE_NAME_INGAME = "IngameScene";
 
 
     private Dictionary<string, SceneBase> _sceneDic = new Dictionary<string, SceneBase>()
     {
-        {nameof(LobbyScene), new LobbyScene()},
-        {nameof(TitleScene), new TitleScene()}
+        {nameof(LobbyScene),  new LobbyScene()},
+
+        {nameof(TitleScene),  new TitleScene()},
+        
+        {nameof(IngameScene), new IngameScene()},
     };
 
     private SceneLoading _sceneLoading;
@@ -44,23 +49,22 @@ public class SceneManager
     public string CurrSceneName { get; private set; }
 
 
-
     //------------
     // function
     //------------
 
 
-    private async Task<bool> LoadSceneAsync(string inSceneName)
+    private async UniTask<bool> LoadSceneAsync(string inSceneName)
     {
         return await CheckTimeout(UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(inSceneName));
     }
 
-    private async Task<bool> UnloadSceneAsync(string inSceneName)
+    private async UniTask<bool> UnloadSceneAsync(string inSceneName)
     {
         return await CheckTimeout(UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(inSceneName));
     }
 
-    private async Task<bool> CheckTimeout(AsyncOperation waiter)
+    private async UniTask<bool> CheckTimeout(AsyncOperation waiter)
     {
         int timer = 0;
 
@@ -76,7 +80,7 @@ public class SceneManager
         return true;
     }
 
-    public async Task<bool> Load(string inSceneName)
+    public async UniTask<bool> Load(string inSceneName)
     {
         bool isSuccess = false;
 
@@ -103,7 +107,7 @@ public class SceneManager
     }
 
 
-    public async Task<bool> Unload(string inSceneName)
+    public async UniTask<bool> Unload(string inSceneName)
     {
         bool isSuccess = false;
 
@@ -127,7 +131,7 @@ public class SceneManager
     }    
 
 
-    public async Task ChangeScene(string inSceneName)
+    public async UniTask ChangeScene(string inSceneName)
     {
         if(CurrSceneName == inSceneName)
            return;
@@ -151,7 +155,7 @@ public class SceneManager
     }
 
 
-    public async Task ShowLoadingAsync()
+    public async UniTask ShowLoadingAsync()
     {
         if(_sceneLoading == null)
         {
@@ -159,7 +163,7 @@ public class SceneManager
             _sceneLoading = MonoBehaviour.Instantiate<SceneLoading>(prefab);
             MonoBehaviour.DontDestroyOnLoad(_sceneLoading); 
         }
-        
+
         _sceneLoading.gameObject.SetActive(true);
         var waiter = new AsyncWaiting();
 
@@ -172,7 +176,7 @@ public class SceneManager
     }
 
 
-    public async Task HideLoadingAsync()
+    public async UniTask HideLoadingAsync()
     {
         var waiter = new AsyncWaiting();
 
@@ -185,4 +189,7 @@ public class SceneManager
 
         _sceneLoading.gameObject.SetActive(false);
     }
+
+
+    
 }

@@ -2660,6 +2660,7 @@ MonoBehaviour:
   TMP_def: {fileID: 5590331214370168723}
   TMP_dex: {fileID: 5724733893892301365}
   TMP_hp: {fileID: 3949603605463269273}
+  TMP_leftTime: {fileID: 1246413088468875586}
 --- !u!1 &8458530177792173692
 GameObject:
   m_ObjectHideFlags: 0

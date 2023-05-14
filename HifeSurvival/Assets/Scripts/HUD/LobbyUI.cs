@@ -34,6 +34,9 @@ public class LobbyUI : MonoBehaviour
     {
         var userData = ServerData.Instance.UserData;
 
+        if(userData == null)
+            return;
+
         // 닉네임
         TMP_profileName.text = userData.nickname != null ? userData.nickname
                                                          : "일반인";

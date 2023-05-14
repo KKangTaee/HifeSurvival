@@ -22,7 +22,8 @@ namespace Server
 			foreach (ClientSession s in _sessions)
 				s.Send(_pendingList);
 
-			Console.WriteLine($"Flushed {_pendingList.Count} items");
+			// Console.WriteLine($"Flushed {_pendingList.Count} items");
+			
 			_pendingList.Clear();
 		}
 

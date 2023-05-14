@@ -1,5 +1,4 @@
-﻿using DummyClient;
-using ServerCore;
+﻿using ServerCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,7 +10,7 @@ class PacketHandler
 		S_Chat chatPacket = packet as S_Chat;
 		ServerSession serverSession = session as ServerSession;
 
-	
-		Console.WriteLine($"player id : {chatPacket.playerId} chat : {chatPacket.chat}");
+		//if (chatPacket.playerId == 1)
+			//Console.WriteLine(chatPacket.chat);
 	}
 }

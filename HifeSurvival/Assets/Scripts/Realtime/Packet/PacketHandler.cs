@@ -13,4 +13,24 @@ class PacketHandler
 		//if (chatPacket.playerId == 1)
 			//Console.WriteLine(chatPacket.chat);
 	}
+
+    internal static void S_CountdownToGameHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static void S_JoinToGameHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static void S_ReslutSelectHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static void S_ResultToMatchHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -30,6 +30,16 @@ class PacketHandler
         throw new NotImplementedException();
     }
 
+    internal static void C_ReadyToGameHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static void C_ReadyToMatchHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
     internal static void C_ReslutSelectHandler(PacketSession session, IPacket packet)
     {
         throw new NotImplementedException();

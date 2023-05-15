@@ -9,35 +9,35 @@
 	  <string name="chat"/>
   </packet>
   
-  <packet name="S_ReadyToMatch">
+  <packet name="C_ReadyToMatch">
     <string name="userId"/>
   </packet>
 
-  <packet name="C_ResultToMatch">
+  <packet name="S_ResultToMatch">
     <bool name="isSuccess"/>
     <string name="userId"/>
     <int name="playerId"/>
     <int name="channelId"/>
   </packet>
 
-  <packet name ="S_ReadyToGame">
+  <packet name ="C_ReadyToGame">
     <int name="playerId"/>
     <int name="channelId"/>
     <int name="heroType"/>
   </packet>
 
-  <packet name="C_ReslutSelect">
+  <packet name="S_ReslutSelect">
     <list name="ReslutSelect">
       <int name ="playerId"/>
       <int name ="heroType"/>
     </list>
   </packet>
 
-  <packet name = "C_CountdownToGame">
+  <packet name = "S_CountdownToGame">
     <int name ="countdownSec"/>
   </packet>
 
-  <packet name = "C_JoinToGame">
+  <packet name = "S_JoinToGame">
     <bool name="isSuccess"/>
   </packet>
 </PDL>

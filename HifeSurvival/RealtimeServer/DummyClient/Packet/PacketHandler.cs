@@ -14,4 +14,15 @@ class PacketHandler
 	
 		Console.WriteLine($"player id : {chatPacket.playerId} chat : {chatPacket.chat}");
 	}
+
+    internal static void S_ReadyToGameHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static void S_ReadyToMatchHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+	
 }

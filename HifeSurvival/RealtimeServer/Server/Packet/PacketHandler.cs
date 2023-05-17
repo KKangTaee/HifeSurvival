@@ -15,20 +15,11 @@ class PacketHandler
 			return;
 
 		GameRoom room = clientSession.Room;
-		room.Push(
-			() => room.Broadcast(clientSession, chatPacket.chat)
+		
+        room.Push(
+            () => room.Broadcast(clientSession, chatPacket.chat)
 		);
 	}
-
-    internal static void C_CountdownToGameHandler(PacketSession session, IPacket packet)
-    {
-        throw new NotImplementedException();
-    }
-
-    internal static void C_JoinToGameHandler(PacketSession session, IPacket packet)
-    {
-        throw new NotImplementedException();
-    }
 
     internal static void C_ReadyToGameHandler(PacketSession session, IPacket packet)
     {
@@ -37,16 +28,6 @@ class PacketHandler
 
     internal static void C_ReadyToMatchHandler(PacketSession session, IPacket packet)
     {
-        throw new NotImplementedException();
-    }
-
-    internal static void C_ReslutSelectHandler(PacketSession session, IPacket packet)
-    {
-        throw new NotImplementedException();
-    }
-
-    internal static void C_ResultToMatchHandler(PacketSession session, IPacket packet)
-    {
-        throw new NotImplementedException();
+        
     }
 }

@@ -1,6 +1,7 @@
 {
     "version": "0.2.0",
     "configurations": [
+
       {
         "name": "DummyClient",
         "type": "coreclr",
@@ -22,7 +23,18 @@
         "cwd": "${workspaceFolder}/Server",
         "stopAtEntry": false,
         "console": "internalConsole"
-      }
+      },
+      {
+        "name": "PacketGenerator",
+        "type": "coreclr",
+        "request": "launch",
+        "preLaunchTask": "build",
+        "program": "${workspaceFolder}/PacketGenerator/bin/PacketGenerator.dll",
+        "args": [],
+        "cwd": "${workspaceFolder}/PacketGenerator",
+        "stopAtEntry": false,
+        "console": "internalConsole"
+      },
     ],
     "compounds": [
       {

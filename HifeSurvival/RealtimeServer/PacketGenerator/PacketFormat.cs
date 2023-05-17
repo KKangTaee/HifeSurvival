@@ -238,9 +238,10 @@ count += sizeof({1});";
 
 		// {0} 변수 이름
 		public static string writeStringFormat =
-@"ushort {0}Len = (ushort)Encoding.Unicode.GetBytes(this.{0}, 0, this.{0}.Length, segment.Array, segment.Offset + count + sizeof(ushort));
+@"ushort {0}Len = (ushort)Encoding.Unicode.GetByteCount(this.{0});
 success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), {0}Len);
 count += sizeof(ushort);
+Encoding.Unicode.GetBytes(this.{0}, s.Slice(count, s.Length - count));
 count += {0}Len;";
 
 		// {0} 리스트 이름 [대문자]

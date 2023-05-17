@@ -22,6 +22,8 @@ class PacketManager
 	{
 		_makeFunc.Add((ushort)PacketID.C_Chat, MakePacket<S_Chat>);
 		_handler.Add((ushort)PacketID.S_Chat, PacketHandler.S_ChatHandler);
+		_makeFunc.Add((ushort)PacketID.C_Chat, MakePacket<S_JoinToRoom>);
+		_handler.Add((ushort)PacketID.S_JoinToRoom, PacketHandler.S_JoinToRoomHandler);
 
 	}
 

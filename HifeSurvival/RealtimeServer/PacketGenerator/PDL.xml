@@ -9,4 +9,18 @@
 	  <string name="chat"/>
   </packet>
 
+  <packet name="C_JoinToRoom">
+    <string name ="userId"/>
+    <string name ="userName"/>
+  </packet>
+
+  <packet name = "S_JoinToRoom">
+    <list name = "JoinPlayer">
+      <string name = "userId"/>
+      <string name = "userName"/>
+      <int name = "playerId"/>
+      <int name ="heroType"/>
+    </list>
+    <int name="roomId"/>
+  </packet>
 </PDL>

@@ -251,5 +251,10 @@ count += sizeof(ushort);
 foreach ({0} {1} in this.{1}s)
 	success &= {1}.Write(s, ref count);";
 
+		public static string writeStructFormat =
+@"success &= {0}.Write(s,ref count);";
+
+		public static string readStructFormat =
+@"{0}.Read(s, ref count);";
 	}
 }

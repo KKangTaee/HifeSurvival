@@ -105,4 +105,32 @@ public class S_Chat : IPacket
 		return SendBufferHelper.Close(count);
 	}
 }
+public struct Vec3
+{
+	public float x;
+	public float y;
+	public float z;
 
+	public void Read(ReadOnlySpan<byte> s, ref ushort count)
+	{
+		this.x = BitConverter.ToSingle(s.Slice(count, s.Length - count));
+		count += sizeof(float);
+		this.y = BitConverter.ToSingle(s.Slice(count, s.Length - count));
+		count += sizeof(float);
+		this.z = BitConverter.ToSingle(s.Slice(count, s.Length - count));
+		count += sizeof(float);
+	}
+
+	public bool Write(Span<byte> s, ref ushort count)
+	{
+		bool success = true;
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.x);
+		count += sizeof(float);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.y);
+		count += sizeof(float);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.z);
+		count += sizeof(float);
+		return success;
+	}	
+}
+	

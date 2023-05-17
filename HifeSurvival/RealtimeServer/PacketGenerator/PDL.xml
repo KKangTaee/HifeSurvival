@@ -14,4 +14,8 @@
     <float name ="y"/>
     <float name ="z"/>
   </struct>
+
+  <!-- <packet name ="NewPack">
+    <struct_Vec3 name ="position"/>
+  </packet> -->
 </PDL>

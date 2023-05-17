@@ -22,10 +22,6 @@ class PacketManager
 	{
 		_makeFunc.Add((ushort)PacketID.C_Chat, MakePacket<C_Chat>);
 		_handler.Add((ushort)PacketID.C_Chat, PacketHandler.C_ChatHandler);
-		_makeFunc.Add((ushort)PacketID.C_Chat, MakePacket<C_ReadyToMatch>);
-		_handler.Add((ushort)PacketID.C_ReadyToMatch, PacketHandler.C_ReadyToMatchHandler);
-		_makeFunc.Add((ushort)PacketID.C_Chat, MakePacket<C_ReadyToGame>);
-		_handler.Add((ushort)PacketID.C_ReadyToGame, PacketHandler.C_ReadyToGameHandler);
 
 	}
 

@@ -38,41 +38,5 @@ namespace DummyClient
                 return session;
             }
         }
-
-        public async Task QuickMatch(int dummyId)
-        {
-            var session = _sessions[dummyId];
-
-            C_ReadyToMatch readyToMatch = new C_ReadyToMatch() 
-			{ 
-				userId = $"dummy_{dummyId}" 
-			};
-
-            var segment = readyToMatch.Write();
-            session.Send(segment);
-
-            while (session.quickMatch.Status != ServerSession.QuickMatch.EStatus.SELECT_TO_HERO)
-                await Task.Delay(33);
-
-			System.Console.WriteLine("영웅선택창으로!");
-
-			
-			C_ReadyToGame readyToGame = new C_ReadyToGame()
-			{
-				playerId  = session.quickMatch.PlayerId,
-				channelId = session.quickMatch.ChannelId,
-				heroType  = 1
-			};
-
-			while(session.quickMatch.Status != ServerSession.QuickMatch.EStatus.COUNTDOWN_GAME)
-				await Task.Delay(33);
-
-            System.Console.WriteLine("카운트타운 중");
-
-            while(session.quickMatch.Status != ServerSession.QuickMatch.EStatus.JOIN_TO_GAME)
-                await Task.Delay(33);
-
-            System.Console.WriteLine("게임시작");
-		}
     }
 }

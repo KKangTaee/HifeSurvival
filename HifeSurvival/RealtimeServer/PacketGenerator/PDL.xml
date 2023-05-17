@@ -9,35 +9,9 @@
 	  <string name="chat"/>
   </packet>
   
-  <packet name="C_ReadyToMatch">
-    <string name="userId"/>
-  </packet>
-
-  <packet name="S_ResultToMatch">
-    <bool name="isSuccess"/>
-    <string name="userId"/>
-    <int name="playerId"/>
-    <int name="channelId"/>
-  </packet>
-
-  <packet name ="C_ReadyToGame">
-    <int name="playerId"/>
-    <int name="channelId"/>
-    <int name="heroType"/>
-  </packet>
-
-  <packet name="S_ReslutSelect">
-    <list name="ReslutSelect">
-      <int name ="playerId"/>
-      <int name ="heroType"/>
-    </list>
-  </packet>
-
-  <packet name = "S_CountdownToGame">
-    <int name ="countdownSec"/>
-  </packet>
-
-  <packet name = "S_JoinToGame">
-    <bool name="isSuccess"/>
-  </packet>
+  <struct name ="Vec3">
+    <float name ="x"/>
+    <float name ="y"/>
+    <float name ="z"/>
+  </struct>
 </PDL>

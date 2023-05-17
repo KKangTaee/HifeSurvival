@@ -214,14 +214,14 @@ count += {0}Len;";
 		// {0} 리스트 이름 [대문자]
 		// {1} 리스트 이름 [소문자]
 		public static string readListFormat =
-@"this.{1}s.Clear();
+@"this.{1}List.Clear();
 ushort {1}Len = BitConverter.ToUInt16(s.Slice(count, s.Length - count));
 count += sizeof(ushort);
 for (int i = 0; i < {1}Len; i++)
 {{
 	{0} {1} = new {0}();
 	{1}.Read(s, ref count);
-	{1}s.Add({1});
+	{1}List.Add({1});
 }}";
 
 		// {0} 변수 이름
@@ -246,9 +246,9 @@ count += {0}Len;";
 		// {0} 리스트 이름 [대문자]
 		// {1} 리스트 이름 [소문자]
 		public static string writeListFormat =
-@"success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)this.{1}s.Count);
+@"success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)this.{1}List.Count);
 count += sizeof(ushort);
-foreach ({0} {1} in this.{1}s)
+foreach ({0} {1} in this.{1}List)
 	success &= {1}.Write(s, ref count);";
 
 		public static string writeStructFormat =
@@ -256,5 +256,8 @@ foreach ({0} {1} in this.{1}s)
 
 		public static string readStructFormat =
 @"{0}.Read(s, ref count);";
+
+		public static string memberStructFormat =
+@"public List<{0}> {1}List = new List<{0}>();";
 	}
 }

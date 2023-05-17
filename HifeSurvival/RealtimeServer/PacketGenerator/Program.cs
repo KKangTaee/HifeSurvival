@@ -15,7 +15,7 @@ namespace PacketGenerator
 
         static void Main(string[] args)
         {
-            string pdlPath = "../PDL.xml";
+            string pdlPath = "./PDL.xml";
 
             XmlReaderSettings settings = new XmlReaderSettings()
             {
@@ -33,10 +33,10 @@ namespace PacketGenerator
                 while (r.Read())
                 {
                     if (r.Depth == 1 && r.NodeType == XmlNodeType.Element)
-					{
+                    {
                         ParsePacket(r);
-						ParseSturct(r);
-					}
+                        ParseSturct(r);
+                    }
                     //Console.WriteLine(r.Name + " " + r["name"]);
                 }
 
@@ -96,9 +96,9 @@ namespace PacketGenerator
             }
 
             Tuple<string, string, string> t = ParseMembers(r);
-            genPackets += string.Format(PacketFormat.structFormat, 
-										FirstCharToUpper(packetName), 
-										t.Item1, t.Item2, t.Item3) + Environment.NewLine + "\t";
+            genPackets += string.Format(PacketFormat.structFormat,
+                                        FirstCharToUpper(packetName),
+                                        t.Item1, t.Item2, t.Item3) + Environment.NewLine + "\t";
         }
 
         // {1} 멤버 변수들
@@ -164,21 +164,25 @@ namespace PacketGenerator
                         writeCode += t.Item3;
                         break;
                     default:
-						var split = memberType.Split('_');
-						
-						if(split.Length == 2)
-						{
-							if(split[0] == "struct")
-							{
-								var structName = split[1];
+                        var split = memberType.Split('_');
 
-								memberCode += string.Format(PacketFormat.memberFormat,
-									FirstCharToUpper(structName),
-									memberName);
-								readCode += string.Format(PacketFormat.readStructFormat,   memberName);
-                        		writeCode += string.Format(PacketFormat.writeStructFormat, memberName);
-							}
-						}
+                        if (split[0] == "struct")
+                        {
+                            var structName = FirstCharToUpper(split[1]);
+
+                            if (split.Length == 2)
+                            {
+                                memberCode += string.Format(PacketFormat.memberFormat, structName, memberName);
+                                readCode += string.Format(PacketFormat.readStructFormat, memberName);
+                                writeCode += string.Format(PacketFormat.writeStructFormat, memberName);
+                            }
+                            else if (split.Length == 3 && split[2] == "list")
+                            {
+                                memberCode += string.Format(PacketFormat.memberStructFormat, structName, memberName);
+                                readCode += string.Format(PacketFormat.readListFormat, structName, memberName);
+                                writeCode += string.Format(PacketFormat.writeListFormat, structName, memberName);
+                            }
+                        }
 
                         break;
                 }

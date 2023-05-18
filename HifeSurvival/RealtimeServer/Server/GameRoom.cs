@@ -37,6 +37,7 @@ namespace Server
 
         public void Broadcast(IPacket inPacket)
         {
+            System.Console.WriteLine($"[{inPacket.GetType()}] 브로드 캐스팅 완료");
             _jobQueue.Push(()=>
             {
                 ArraySegment<byte> segment = inPacket.Write();

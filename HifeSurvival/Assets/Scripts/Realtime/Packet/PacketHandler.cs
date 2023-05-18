@@ -14,12 +14,33 @@ class PacketHandler
 			//Console.WriteLine(chatPacket.chat);
 	}
 
+    internal static void ReadyToGameHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static void SelectHeroHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static void S_CountdownHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
     internal static void S_CountdownToGameHandler(PacketSession session, IPacket packet)
     {
         throw new NotImplementedException();
     }
 
-    internal static void S_JoinToGameHandler(PacketSession session, IPacket packet)
+    public static void S_JoinToGameHandler(PacketSession session, IPacket packet)
+    {
+        S_JoinToGame joinToGame = packet as S_JoinToGame;
+        GameMode.Instance.OnJoinResult(joinToGame);
+    }
+
+    internal static void S_LeaveToGameHandler(PacketSession session, IPacket packet)
     {
         throw new NotImplementedException();
     }
@@ -30,6 +51,11 @@ class PacketHandler
     }
 
     internal static void S_ResultToMatchHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static void S_StartGameHandler(PacketSession session, IPacket packet)
     {
         throw new NotImplementedException();
     }

@@ -6,11 +6,12 @@ using ServerCore;
 using UnityEngine;
 
 
-class ServerSession : PacketSession
+public class ServerSession : PacketSession
 {
 	public override void OnConnected(EndPoint endPoint)
 	{
 		Debug.Log($"OnConnected : {endPoint}");
+		NetworkManager.Instance.OnConnectResult(true);
 	}
 
 	public override void OnDisconnected(EndPoint endPoint)
@@ -32,4 +33,3 @@ class ServerSession : PacketSession
 		//Console.WriteLine($"Transferred bytes: {numOfBytes}");
 	}
 }
-

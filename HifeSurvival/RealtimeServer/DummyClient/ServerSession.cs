@@ -11,7 +11,7 @@ namespace DummyClient
     {
         public override void OnConnected(EndPoint endPoint)
         {
-            
+             Console.WriteLine($"OnConnected 접속성공!!: {endPoint}");
         }
 
         public override void OnDisconnected(EndPoint endPoint)
@@ -43,17 +43,17 @@ namespace DummyClient
 
             public EGameStatus Status {get; set;}
 
-            private TaskCompletionSource<S_JoinToRoom> joinTask;
+            private TaskCompletionSource<S_JoinToGame> joinTask;
 
             public async Task<bool>  TryToJoin(ServerSession session, string inUserId)
             {
-                C_JoinToRoom joinToRoom = new C_JoinToRoom();
+                C_JoinToGame joinToRoom = new C_JoinToGame();
                 joinToRoom.userId = inUserId;
-                joinToRoom.userName = "탁공익";
+                joinToRoom.userName = "초이클럽";
 
                 session.Send(joinToRoom.Write());
 
-                joinTask = new TaskCompletionSource<S_JoinToRoom>();
+                joinTask =  new TaskCompletionSource<S_JoinToGame>();
 
                 var completedTask = await Task.WhenAny(joinTask.Task, Task.Delay(10000));
 

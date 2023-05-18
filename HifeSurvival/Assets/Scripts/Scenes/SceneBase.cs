@@ -44,9 +44,6 @@ public class LobbyScene : SceneBase, ISceneLoad
 
     public async Task<bool> PrevLoadAsync()
     {
-        // 실시간 서버연결
-        NetworkManager.Instance.ConnectToRealtimeServer();
-
         await Task.Delay(1000);
         return true;
     }

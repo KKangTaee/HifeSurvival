@@ -6,21 +6,23 @@ using System.Net;
 using ServerCore;
 using System;
 using System.Threading.Tasks;
+using System.Linq;
 
-public class NetworkManager : MonoBehaviour 
+public class NetworkManager : MonoBehaviour
 {
     private static NetworkManager _instance;
     public static NetworkManager Instance
     {
         get
         {
-            if(_instance == null)
+            if (_instance == null)
             {
                 var obj = new GameObject();
                 obj.name = nameof(NetworkManager);
+                
                 DontDestroyOnLoad(obj);
 
-               _instance = new NetworkManager();
+                _instance = obj.AddComponent<NetworkManager>();
             }
 
             return _instance;
@@ -28,44 +30,105 @@ public class NetworkManager : MonoBehaviour
     }
 
     private ServerSession _session = new ServerSession();
-    
+
+    private SimpleTaskCompletionSource<bool> _connectCompleted = new SimpleTaskCompletionSource<bool>();
+    private SimpleTaskCompletionSource<bool> _disconnectCompleted = new SimpleTaskCompletionSource<bool>();
+
+    public ServerSession SessionSelf => _session;
+
     private void Update()
     {
         var packet = PacketQueue.Instance.Pop();
 
-        if(packet != null)
+        if (packet != null)
         {
             PacketManager.Instance.HandlePacket(_session, packet);
         }
     }
 
-    public void ConnectToRealtimeServer()
+    public async Task<bool> ConnectAsync()
     {
         string host = Dns.GetHostName();
         IPHostEntry ipHost = Dns.GetHostEntry(host);
-        IPAddress ipAddr = ipHost.AddressList[0];
-        
+        IPAddress ipAddr = ipHost.AddressList.First(ip => ip.AddressFamily == AddressFamily.InterNetwork);
+        IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
 
-        IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 7777);
+        Debug.Log($"접속IP : {endPoint}");
+        // IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse("192.168.0.9"), 7777);
+        endPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 7777);
 
-        // IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
 
         Connector connector = new Connector();
-        connector.Connect(endPoint,()=> _session);
-    
-        DummyTest();
+        connector.Connect(endPoint, () => _session);
+
+        var waitResult = await _connectCompleted.Wait(5000);
+
+        if (waitResult.isSuccess == false)
+            return false;
+
+        return waitResult.result;
+    }
+
+    public async Task<bool> DisconnectAsync()
+    {
+        _session.Disconnect();
+
+        var waitResult = await _connectCompleted.Wait(5000);
+
+        if (waitResult.isSuccess == false)
+            return false;
+
+        return waitResult.result;
     }
 
 
-    public async void DummyTest()
+    public void Send(IPacket inPacket)
     {
-        await Task.Delay(1000);
+        _session.Send(inPacket.Write());
+    }
 
-        C_Chat chatPacket = new C_Chat();
-        chatPacket.chat = $"유니티에서 보낸다 !";
-        ArraySegment<byte> segment = chatPacket.Write();
+    public void OnConnectResult(bool inResult)
+    {
+        _connectCompleted.Signal(inResult);
+    }
+}
 
-        _session.Send(segment);
-        Debug.Log("보냄!!");
+
+public class SimpleTaskCompletionSource<T>
+{
+    TaskCompletionSource<T> _source;
+
+    public SimpleTaskCompletionSource()
+    {
+        Reset();
+    }
+
+    public void Reset()
+    {
+        _source = new TaskCompletionSource<T>();
+    }
+
+    public async Task<(bool isSuccess, T result)> Wait(int millisecondsDelay)
+    {
+        if (_source.Task.IsCompleted)
+        {
+            Debug.Log("이미 완료");
+            return (true, _source.Task.Result);
+        }
+
+        var completedTask = await Task.WhenAny(_source.Task, Task.Delay(millisecondsDelay));
+
+        if (completedTask != _source.Task)
+        {
+            Debug.LogError($"Timeout!  millisecondsDelay : {millisecondsDelay}");
+            return (false, default(T));
+        }
+
+        return (true, _source.Task.Result);
+    }
+
+    public void Signal(T inSignal)
+    {
+        _source.SetResult(inSignal);
     }
 }

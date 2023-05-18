@@ -110,6 +110,7 @@ namespace Server
                 userId = inPacket.userId,
                 playerId = inSessionId,
                 heroType = 1,
+                userName = inPacket.userName,
                 // info = null,
             };
 

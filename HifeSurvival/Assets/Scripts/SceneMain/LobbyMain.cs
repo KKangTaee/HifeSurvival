@@ -10,6 +10,8 @@ public class LobbyMain : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // _= NetworkManager.Instance.ConnectAsync();
+        // –NetworkManager.Instance.Connect();
         InitalizeAsync().Forget();
     }
     

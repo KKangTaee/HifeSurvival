@@ -21,12 +21,11 @@ namespace Server
 
         object _lock = new object();
 
-        public void EnterRoom(ClientSession session, )
+        public void EnterRoom(ClientSession session)
         {
             Push(()=> 
             {
-                var canJoinRoom = _gameRoomDic.Values.FirstOrDefault(x=>x.IsStartedGame == false && 
-                                                                    x.JoinedCount <MAX_PLAYER_COUNT_IN_ROOM);
+                var canJoinRoom = _gameRoomDic.Values.FirstOrDefault();
             
                 if(canJoinRoom != null)
                 {

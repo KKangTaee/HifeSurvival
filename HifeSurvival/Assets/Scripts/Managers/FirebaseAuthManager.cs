@@ -69,6 +69,14 @@ public class FirebaseAuthManager : MonoBehaviour
         // string simulatedUserId = "SimulatedUserId";
         // string simulatedDisplayName = "SimulatedDisplayName";
         // OnGoogleLoginSuccess(simulatedUserId, simulatedDisplayName);
+
+        ServerData.Instance.SetUserData(new User()
+        {
+            user_id   = "12345",
+            nickname  = "탁탁공익",
+            photo_url = null, 
+        });
+
         _waiting.Signal();
 #else
     // 실제 기기에서 실행 중일 때 Google 로그인 실행

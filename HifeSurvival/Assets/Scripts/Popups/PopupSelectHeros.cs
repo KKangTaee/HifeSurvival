@@ -24,10 +24,11 @@ public class PopupSelectHeros : PopupBase
 
     [SerializeField] TMP_Text TMP_leftTime;
 
-
+    [SerializeField] PlayerSelectView [] _playerSelectViewArr;
 
     private Subject<int> _onClickFrame = new Subject<int>();
 
+    private int _nextJoinIndex = 0;
 
     protected override void Awake()
     {
@@ -113,9 +114,18 @@ public class PopupSelectHeros : PopupBase
         GameStart();
     }
 
-
     private  void GameStart()
     {
         _ = SceneManager.Instance.ChangeScene(SceneManager.SCENE_NAME_INGAME);
+    }
+
+    public void Join()
+    {
+        
+    }
+
+    public void Leave()
+    {
+
     }
 }

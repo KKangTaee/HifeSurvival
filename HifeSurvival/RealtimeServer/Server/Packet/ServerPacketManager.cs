@@ -22,11 +22,11 @@ class PacketManager
 	{
 		_makeFunc.Add((ushort)PacketID.C_Chat, MakePacket<C_Chat>);
 		_handler.Add((ushort)PacketID.C_Chat, PacketHandler.C_ChatHandler);
-		_makeFunc.Add((ushort)PacketID.C_Chat, MakePacket<C_JoinToGame>);
+		_makeFunc.Add((ushort)PacketID.C_JoinToGame, MakePacket<C_JoinToGame>);
 		_handler.Add((ushort)PacketID.C_JoinToGame, PacketHandler.C_JoinToGameHandler);
-		_makeFunc.Add((ushort)PacketID.C_Chat, MakePacket<SelectHero>);
+		_makeFunc.Add((ushort)PacketID.SelectHero, MakePacket<SelectHero>);
 		_handler.Add((ushort)PacketID.SelectHero, PacketHandler.SelectHeroHandler);
-		_makeFunc.Add((ushort)PacketID.C_Chat, MakePacket<ReadyToGame>);
+		_makeFunc.Add((ushort)PacketID.ReadyToGame, MakePacket<ReadyToGame>);
 		_handler.Add((ushort)PacketID.ReadyToGame, PacketHandler.ReadyToGameHandler);
 
 	}

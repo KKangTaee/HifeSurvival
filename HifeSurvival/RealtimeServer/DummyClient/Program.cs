@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Linq;
 
 namespace DummyClient
 {
@@ -16,8 +17,10 @@ namespace DummyClient
 			// DNS (Domain Name System)
 			string host = Dns.GetHostName();
 			IPHostEntry ipHost = Dns.GetHostEntry(host);
-			IPAddress ipAddr = ipHost.AddressList[0];
+			IPAddress ipAddr = ipHost.AddressList.First(ip => ip.AddressFamily == AddressFamily.InterNetwork);
 			IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
+
+			// System.Console.WriteLine(ipAddr.Address);
 
 			Connector connector = new Connector();
 

@@ -26,9 +26,33 @@ public class LobbyUI : MonoBehaviour
     {
         if (inButton == BTN_gameStart)
         {
-            PopupManager.Instance.Show<PopupSelectHeros>(null);
+           JoinGame();
         }
     }
+
+    public async void JoinGame()
+    {
+        var isSuccess = await NetworkManager.Instance.ConnectAsync();
+
+        if(isSuccess == false)
+        {
+            Debug.LogError("네트워크 접속안됨");
+            return;
+        }
+
+
+        Debug.Log("네트워크 접속 성공!");
+        isSuccess = await GameMode.Instance.JoinAsync();
+
+        if(isSuccess == false)
+        {
+            Debug.Log("룸에 접속된 유저의 정보를 가지고 오지 못함");
+            return;
+        }
+
+        PopupManager.Instance.Show<PopupSelectHeros>(null);
+    }
+
 
     public async UniTask SetProfile()
     {

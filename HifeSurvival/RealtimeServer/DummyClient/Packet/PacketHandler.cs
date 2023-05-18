@@ -11,6 +11,8 @@ class PacketHandler
 	{
 		S_Chat chatPacket = packet as S_Chat;
 		ServerSession serverSession = session as ServerSession;
+
+        
 	}
 
     internal static void S_StartGameHandler(PacketSession session, IPacket packet)
@@ -29,6 +31,16 @@ class PacketHandler
     }
 
     internal static void ReadyToGameHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static void S_JoinToGameHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static void S_LeaveToGameHandler(PacketSession session, IPacket packet)
     {
         throw new NotImplementedException();
     }

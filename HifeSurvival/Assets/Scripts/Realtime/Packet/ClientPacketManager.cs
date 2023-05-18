@@ -22,8 +22,18 @@ class PacketManager
 	{
 		_makeFunc.Add((ushort)PacketID.C_Chat, MakePacket<S_Chat>);
 		_handler.Add((ushort)PacketID.S_Chat, PacketHandler.S_ChatHandler);
-		_makeFunc.Add((ushort)PacketID.C_Chat, MakePacket<S_JoinToRoom>);
-		_handler.Add((ushort)PacketID.S_JoinToRoom, PacketHandler.S_JoinToRoomHandler);
+		_makeFunc.Add((ushort)PacketID.C_Chat, MakePacket<S_JoinToGame>);
+		_handler.Add((ushort)PacketID.S_JoinToGame, PacketHandler.S_JoinToGameHandler);
+		_makeFunc.Add((ushort)PacketID.C_Chat, MakePacket<S_LeaveToGame>);
+		_handler.Add((ushort)PacketID.S_LeaveToGame, PacketHandler.S_LeaveToGameHandler);
+		_makeFunc.Add((ushort)PacketID.C_Chat, MakePacket<SelectHero>);
+		_handler.Add((ushort)PacketID.SelectHero, PacketHandler.SelectHeroHandler);
+		_makeFunc.Add((ushort)PacketID.C_Chat, MakePacket<ReadyToGame>);
+		_handler.Add((ushort)PacketID.ReadyToGame, PacketHandler.ReadyToGameHandler);
+		_makeFunc.Add((ushort)PacketID.C_Chat, MakePacket<S_Countdown>);
+		_handler.Add((ushort)PacketID.S_Countdown, PacketHandler.S_CountdownHandler);
+		_makeFunc.Add((ushort)PacketID.C_Chat, MakePacket<S_StartGame>);
+		_handler.Add((ushort)PacketID.S_StartGame, PacketHandler.S_StartGameHandler);
 
 	}
 

@@ -16,7 +16,6 @@ namespace Server
 
 		public override void OnConnected(EndPoint endPoint)
 		{
-			GameRoomManager.Instance.EnterRoom(this);
 			Console.WriteLine($"OnConnected : {endPoint}");
 		}
 

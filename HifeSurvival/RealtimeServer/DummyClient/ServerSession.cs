@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Net;
 using ServerCore;
+using System.Threading.Tasks;
 
 namespace DummyClient
 {
@@ -10,7 +11,7 @@ namespace DummyClient
     {
         public override void OnConnected(EndPoint endPoint)
         {
-            Console.WriteLine($"OnConnected : {endPoint}");
+            
         }
 
         public override void OnDisconnected(EndPoint endPoint)
@@ -28,36 +29,52 @@ namespace DummyClient
             Console.WriteLine($"Transferred bytes: {numOfBytes}");
         }
 
-
-        public class QuickMatch
+        public class PlayerDummy
         {
-            public enum EStatus
+            public enum EGameStatus
             {
-                READY_TO_MACTH,
+                TRY_TO_JOIN,
                 SELECT_TO_HERO,
                 READY_TO_GAME,
-                COUNTDOWN_GAME,
-                JOIN_TO_GAME,
-                NONE,
+                START_GAME,
+                GAME_PLAYING,
+                FINISH_GAME,
             }
 
-            public EStatus Status { get; private set; } = EStatus.NONE;
+            public EGameStatus Status {get; set;}
 
-            public int PlayerId { get; private set; }
+            private TaskCompletionSource<S_JoinToRoom> joinTask;
 
-            public int ChannelId { get; private set; }
+            public async Task<bool>  TryToJoin(ServerSession session, string inUserId)
+            {
+                C_JoinToRoom joinToRoom = new C_JoinToRoom();
+                joinToRoom.userId = inUserId;
+                joinToRoom.userName = "탁공익";
 
-            public void SetStatus(EStatus inStatus) =>
-                Status = inStatus;
+                session.Send(joinToRoom.Write());
 
-            public void SetPlayerId(int inPlayerId) =>
-                PlayerId = inPlayerId;
+                joinTask = new TaskCompletionSource<S_JoinToRoom>();
 
-            public void SetChannelId(int inChannelId) =>
-                ChannelId = inChannelId;
+                var completedTask = await Task.WhenAny(joinTask.Task, Task.Delay(10000));
 
+                if(completedTask != joinTask.Task)
+                    return false;
+
+                var packet = joinTask.Task.Result;
+
+                string log = null;
+
+                log +=$"룸 번호 : {packet.roomId}, ";
+                foreach(var player in packet.joinPlayerList)
+                {
+                    log += $"player : {player.playerId}, userid : {player.userName}";
+                }
+                System.Console.WriteLine(log);
+
+                return true;
+            }
         }
 
-        public QuickMatch quickMatch;
+        public PlayerDummy Self { get; set; } = new PlayerDummy();
     }
 }

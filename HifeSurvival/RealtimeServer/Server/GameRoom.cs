@@ -11,13 +11,15 @@ namespace Server
         JobQueue _jobQueue = new JobQueue();
         List<ArraySegment<byte>> _pendingList = new List<ArraySegment<byte>>();
 
-        public int ChannelId { get; private set; }
-        public int JoinedCount { get => _sessions.Count; }
-        public bool IsStartedGame { get; private set; }
+        public int RoomId { get; private set; }
 
-        public GameRoom(int inChannelId)
+        private GameMode _gameMode;
+        public GameMode Mode { get => _gameMode; }
+
+        public GameRoom(int inRoomId)
         {
-            ChannelId = inChannelId;
+            RoomId = inRoomId;
+            _gameMode = new GameMode(this);
         }
 
         public void Push(Action job)
@@ -33,26 +35,25 @@ namespace Server
             _pendingList.Clear();
         }
 
-        public void Broadcast(ClientSession session, string chat)
+        public void Broadcast(IPacket inPacket)
         {
-            S_Chat packet = new S_Chat();
-            packet.playerId = session.SessionId;
-            packet.chat = $"{chat} I am {packet.playerId}";
-            ArraySegment<byte> segment = packet.Write();
-
-            _pendingList.Add(segment);
+            _jobQueue.Push(()=>
+            {
+                ArraySegment<byte> segment = inPacket.Write();
+                _pendingList.Add(segment);
+            });
         }
 
         public void Enter(ClientSession session)
         {
             _sessions.Add(session);
             session.Room = this;
-			System.Console.WriteLine($"룸번호 :{ChannelId}, 현재인원 {_sessions.Count}");
         }
 
         public void Leave(ClientSession session)
         {
             _sessions.Remove(session);
+            _gameMode.Leave(session.SessionId);
         }
     }
 }

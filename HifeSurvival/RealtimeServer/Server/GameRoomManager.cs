@@ -21,7 +21,7 @@ namespace Server
 
         object _lock = new object();
 
-        public void EnterRoom(ClientSession session)
+        public void EnterRoom(ClientSession session, )
         {
             Push(()=> 
             {
@@ -36,7 +36,7 @@ namespace Server
                 {
                     var newRoom = new GameRoom(nextRoomNum++);
                     newRoom.Enter(session);
-                    _gameRoomDic.Add(newRoom.ChannelId, newRoom);    
+                    _gameRoomDic.Add(newRoom.RoomId, newRoom);    
                 }
             });
         }

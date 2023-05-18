@@ -9,12 +9,12 @@
 	  <string name="chat"/>
   </packet>
 
-  <packet name="C_JoinToRoom">
+  <packet name="C_JoinToGame">
     <string name ="userId"/>
     <string name ="userName"/>
   </packet>
 
-  <packet name = "S_JoinToRoom">
+  <packet name = "S_JoinToGame">
     <list name = "JoinPlayer">
       <string name = "userId"/>
       <string name = "userName"/>
@@ -23,4 +23,35 @@
     </list>
     <int name="roomId"/>
   </packet>
+
+  <packet name ="S_LeaveToGame">
+    <string name = "userId"/>
+  </packet>
+
+  <packet name="SelectHero">
+    <int  name="playerId"/>
+    <int  name="heroType"/>
+  </packet>
+
+  <packet name="ReadyToGame">
+    <int name ="playerId"/>
+  </packet>
+
+  <packet name="S_Countdown">
+    <int name ="countdownSec"/>
+  </packet>
+
+  <packet name="S_StartGame">
+    <list name="Player">
+      <int name="playerId"/>
+      <int name="heroType"/>
+    </list>
+    <list name="Monster">
+      <int name ="monsterId"/>
+      <int name ="monsterType"/>
+      <int name ="groupId"/>
+      <int name ="subId"/>
+    </list>
+  </packet>
+
 </PDL>

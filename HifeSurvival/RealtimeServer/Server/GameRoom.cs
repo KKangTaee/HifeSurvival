@@ -7,19 +7,26 @@ namespace Server
 {
     public class GameRoom : IJobQueue
     {
-        List<ClientSession> _sessions = new List<ClientSession>();
         JobQueue _jobQueue = new JobQueue();
+
+        List<ClientSession> _sessions = new List<ClientSession>();
         List<ArraySegment<byte>> _pendingList = new List<ArraySegment<byte>>();
 
-        public int RoomId { get; private set; }
 
         private GameMode _gameMode;
+
+        public int RoomId { get; private set; }
+        public bool IsRunning { get; private set; }
+
         public GameMode Mode { get => _gameMode; }
 
         public GameRoom(int inRoomId)
         {
             RoomId = inRoomId;
             _gameMode = new GameMode(this);
+            IsRunning = true;
+
+            FlushRoom();
         }
 
         public void Push(Action job)
@@ -37,9 +44,9 @@ namespace Server
 
         public void Broadcast(IPacket inPacket)
         {
-            System.Console.WriteLine($"[{inPacket.GetType()}] 브로드 캐스팅 완료");
-            _jobQueue.Push(()=>
+            _jobQueue.Push(() =>
             {
+                System.Console.WriteLine($"[{inPacket.GetType()}] 브로드 캐스팅 완료");
                 ArraySegment<byte> segment = inPacket.Write();
                 _pendingList.Add(segment);
             });
@@ -55,6 +62,18 @@ namespace Server
         {
             _sessions.Remove(session);
             _gameMode.Leave(session.SessionId);
+
+            if (_sessions.Count == 0)
+                IsRunning = false;
+        }
+
+        public void FlushRoom()
+        {
+            if (this != null && IsRunning == true)
+            {
+                Push(() => Flush());
+                JobTimer.Instance.Push(FlushRoom, 250);
+            }
         }
     }
 }

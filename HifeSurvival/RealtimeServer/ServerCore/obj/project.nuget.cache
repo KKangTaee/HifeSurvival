@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "C3x2WM5hWxSrKyvLwAs2MftVpDt58V+LK8E6QmR2KuKCYNew7xxtsuVK4ESFwyOWh/lD+1g1dKHPfB8kb2PmFQ==",
+  "dgSpecHash": "RQ0rcdhIL2ApDiEdz1LuXL5NEBw/WS8/Bg96d1ffFVQqDzloPRTrnOlEZY1KYLWL4S6bXKiIaloTBlR93eQFIg==",
   "success": true,
-  "projectFilePath": "/Users/taehokang/Documents/GitHub/HifeSurvival/HifeSurvival/RealtimeServer/ServerCore/ServerCore.csproj",
+  "projectFilePath": "C:\\Users\\user\\Documents\\카카오톡 받은 파일\\RealtimeServer\\RealtimeServer\\ServerCore\\ServerCore.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

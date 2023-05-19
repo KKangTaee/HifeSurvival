@@ -35,7 +35,8 @@ namespace Server
                 {
                     var newRoom = new GameRoom(nextRoomNum++);
                     newRoom.Enter(session);
-                    _gameRoomDic.Add(newRoom.RoomId, newRoom);    
+                    _gameRoomDic.Add(newRoom.RoomId, newRoom);   
+                     
                 }
             });
         }
@@ -59,5 +60,7 @@ namespace Server
         {
             _jobQueue.Push(job);
         }
+
+        
     }
 }

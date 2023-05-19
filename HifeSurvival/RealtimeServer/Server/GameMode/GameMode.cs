@@ -7,8 +7,8 @@ namespace Server
 {
     public class GameMode
     {
-        Dictionary<int, ServerPlayer> _playerInfoDic = new Dictionary<int, ServerPlayer>();
-        Dictionary<int, ServerMonster> _monsterInfoDic = new Dictionary<int, ServerMonster>();
+        Dictionary<int, PlayerEntity>  _playersDic  = new Dictionary<int, PlayerEntity>();
+        Dictionary<int, MonsterEntity> _monstersDic = new Dictionary<int, MonsterEntity>();
 
         private const int PLAYER_MAX_COUNT = 4;
 
@@ -33,7 +33,7 @@ namespace Server
             // 임시로 처리함.
             for (int i = 0; i < 9; i++)
             {
-                var info = new ServerMonster()
+                var info = new MonsterEntity()
                 {
                     monsterId = i,
                     groupId = i / 3,
@@ -41,12 +41,12 @@ namespace Server
                     subId = i % 3,
                 };
 
-                _monsterInfoDic.Add(i, info);
+                _monstersDic.Add(i, info);
             }
 
             var monsterList = new List<S_StartGame.Monster>();
 
-            foreach (var info in _monsterInfoDic.Values)
+            foreach (var info in _monstersDic.Values)
             {
                 var data = new S_StartGame.Monster()
                 {
@@ -66,7 +66,7 @@ namespace Server
         {
             var playerList = new List<S_StartGame.Player>();
 
-            foreach (var info in _playerInfoDic.Values)
+            foreach (var info in _playersDic.Values)
             {
                 var data = new S_StartGame.Player()
                 {
@@ -98,14 +98,14 @@ namespace Server
 
         public bool CanStartGame()
         {
-            return _playerInfoDic.Count == PLAYER_MAX_COUNT &&
-                   _playerInfoDic.Values.All(x => x.isReady);
+            return _playersDic.Count == PLAYER_MAX_COUNT &&
+                   _playersDic.Values.All(x => x.isReady);
         }
 
 
         public void Join(C_JoinToGame inPacket, int inSessionId)
         {
-            var playerInfo = new ServerPlayer()
+            var playerInfo = new PlayerEntity()
             {
                 userId = inPacket.userId,
                 playerId = inSessionId,
@@ -114,14 +114,14 @@ namespace Server
                 // info = null,
             };
 
-            _playerInfoDic.Add(inSessionId, playerInfo);
+            _playersDic.Add(inSessionId, playerInfo);
 
 
             // 브로드캐스팅
             S_JoinToGame packet = new S_JoinToGame();
             packet.joinPlayerList = new List<S_JoinToGame.JoinPlayer>();
 
-            foreach (var player in _playerInfoDic.Values)
+            foreach (var player in _playersDic.Values)
                 packet.joinPlayerList.Add(player.CreateJoinPlayerPacket());
 
             _room.Broadcast(packet);
@@ -130,12 +130,12 @@ namespace Server
 
         public void Leave(int inSessionId)
         {
-            var playerInfo = _playerInfoDic.Values.FirstOrDefault(x => x.playerId == inSessionId);
+            var playerInfo = _playersDic.Values.FirstOrDefault(x => x.playerId == inSessionId);
 
             if (playerInfo == null)
                 return;
 
-            _playerInfoDic.Remove(playerInfo.playerId);
+            _playersDic.Remove(playerInfo.playerId);
 
             // 브로드캐스팅
             S_LeaveToGame packet = new S_LeaveToGame()
@@ -145,5 +145,34 @@ namespace Server
 
             _room.Broadcast(packet);
         }
+
+
+        public void Attack(C_Attack inPacket)
+        {
+            // 플레이어를 공격했을 때
+            if(inPacket.toIdIsPlayer == true)
+            {
+
+            }
+            // 몬스터를 공격했을 때
+            else
+            {
+                if(_monstersDic.TryGetValue(inPacket.toId, out var monster) == true &&
+                   _playersDic.TryGetValue(inPacket.fromId, out var player) == true)
+                {
+                    // 공격행동처리
+                    var attackParam = new AttackParam()
+                    {
+                        damageValue = inPacket.damageValue,
+                        target = player,
+                    };
+
+                    player.OnAttack(attackParam);
+
+                    // 2. 여기서 브로드 캐스팅처리?
+                }
+            }
+        }
     }
 }
+

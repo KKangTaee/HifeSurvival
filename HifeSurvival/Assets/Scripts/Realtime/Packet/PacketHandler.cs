@@ -36,6 +36,7 @@ class PacketHandler
 
     public static void S_JoinToGameHandler(PacketSession session, IPacket packet)
     {
+        UnityEngine.Debug.Log("S_JoinToGameHandler 호출!");
         S_JoinToGame joinToGame = packet as S_JoinToGame;
         GameMode.Instance.OnJoinResult(joinToGame);
     }

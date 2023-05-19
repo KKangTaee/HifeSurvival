@@ -28,6 +28,8 @@ class PacketManager
 		_handler.Add((ushort)PacketID.SelectHero, PacketHandler.SelectHeroHandler);
 		_makeFunc.Add((ushort)PacketID.ReadyToGame, MakePacket<ReadyToGame>);
 		_handler.Add((ushort)PacketID.ReadyToGame, PacketHandler.ReadyToGameHandler);
+		_makeFunc.Add((ushort)PacketID.C_Attack, MakePacket<C_Attack>);
+		_handler.Add((ushort)PacketID.C_Attack, PacketHandler.C_AttackHandler);
 
 	}
 

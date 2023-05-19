@@ -1,57 +1,70 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <PDL>
-  <packet name="C_Chat">
-	  <string name="chat"/>
-  </packet>
-  
-  <packet name="S_Chat">
-	  <int name="playerId"/>
-	  <string name="chat"/>
-  </packet>
+	<packet name="C_Chat">
+		<string name="chat"/>
+	</packet>
 
-  <packet name="C_JoinToGame">
-    <string name ="userId"/>
-    <string name ="userName"/>
-  </packet>
+	<packet name="S_Chat">
+		<int name="playerId"/>
+		<string name="chat"/>
+	</packet>
 
-  <packet name = "S_JoinToGame">
-    <list name = "JoinPlayer">
-      <string name = "userId"/>
-      <string name = "userName"/>
-      <int name = "playerId"/>
-      <int name ="heroType"/>
-    </list>
-    <int name="roomId"/>
-  </packet>
+	<packet name="C_JoinToGame">
+		<string name ="userId"/>
+		<string name ="userName"/>
+	</packet>
 
-  <packet name ="S_LeaveToGame">
-    <string name = "userId"/>
-  </packet>
+	<packet name = "S_JoinToGame">
+		<list name = "JoinPlayer">
+			<string name = "userId"/>
+			<string name = "userName"/>
+			<int name = "playerId"/>
+			<int name ="heroType"/>
+		</list>
+		<int name="roomId"/>
+	</packet>
 
-  <packet name="SelectHero">
-    <int  name="playerId"/>
-    <int  name="heroType"/>
-  </packet>
+	<packet name ="S_LeaveToGame">
+		<string name = "userId"/>
+	</packet>
 
-  <packet name="ReadyToGame">
-    <int name ="playerId"/>
-  </packet>
+	<packet name="SelectHero">
+		<int  name="playerId"/>
+		<int  name="heroType"/>
+	</packet>
 
-  <packet name="S_Countdown">
-    <int name ="countdownSec"/>
-  </packet>
+	<packet name="ReadyToGame">
+		<int name ="playerId"/>
+	</packet>
 
-  <packet name="S_StartGame">
-    <list name="Player">
-      <int name="playerId"/>
-      <int name="heroType"/>
-    </list>
-    <list name="Monster">
-      <int name ="monsterId"/>
-      <int name ="monsterType"/>
-      <int name ="groupId"/>
-      <int name ="subId"/>
-    </list>
-  </packet>
+	<packet name="S_Countdown">
+		<int name ="countdownSec"/>
+	</packet>
+
+	<packet name="S_StartGame">
+		<list name="Player">
+			<int name="playerId"/>
+			<int name="heroType"/>
+		</list>
+		<list name="Monster">
+			<int name ="monsterId"/>
+			<int name ="monsterType"/>
+			<int name ="groupId"/>
+			<int name ="subId"/>
+		</list>
+	</packet>
+
+	<packet name ="C_Attack">
+		<bool name ="toIdIsPlayer"/>
+		<int name ="toId"/>
+		<int name ="fromId"/>
+		<int name ="damageValue"/>
+	</packet>
+
+	<struct name="Vec3">
+		<float name ="x"/>
+		<float name ="y"/>
+		<float name ="z"/>
+	</struct>
 
 </PDL>

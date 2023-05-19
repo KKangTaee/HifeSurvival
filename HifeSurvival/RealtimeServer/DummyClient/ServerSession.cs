@@ -49,7 +49,7 @@ namespace DummyClient
             {
                 C_JoinToGame joinToRoom = new C_JoinToGame();
                 joinToRoom.userId = inUserId;
-                joinToRoom.userName = "초이클럽";
+                joinToRoom.userName = "탁공익";
 
                 session.Send(joinToRoom.Write());
 
@@ -78,3 +78,5 @@ namespace DummyClient
         public PlayerDummy Self { get; set; } = new PlayerDummy();
     }
 }
+
+

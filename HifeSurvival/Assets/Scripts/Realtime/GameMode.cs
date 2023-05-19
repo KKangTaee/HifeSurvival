@@ -21,7 +21,7 @@ public class GameMode
 
         NetworkManager.Instance.Send(joinToGame);
  
-        var waitResult = await _joinCompleted.Wait(5000);
+        var waitResult = await _joinCompleted.Wait(10000);
 
         if(waitResult.isSuccess == false)
             return false;

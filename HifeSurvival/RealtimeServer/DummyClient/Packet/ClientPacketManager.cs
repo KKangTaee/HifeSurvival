@@ -20,7 +20,7 @@ class PacketManager
 		
 	public void Register()
 	{
-		_makeFunc.Add((ushort)PacketID.S_Chat, MakePacket<S_Chat>);
+	_makeFunc.Add((ushort)PacketID.S_Chat, MakePacket<S_Chat>);
 		_handler.Add((ushort)PacketID.S_Chat, PacketHandler.S_ChatHandler);
 		_makeFunc.Add((ushort)PacketID.S_JoinToGame, MakePacket<S_JoinToGame>);
 		_handler.Add((ushort)PacketID.S_JoinToGame, PacketHandler.S_JoinToGameHandler);

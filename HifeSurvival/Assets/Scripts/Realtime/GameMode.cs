@@ -17,8 +17,16 @@ public class GameMode
     private Action<PlayerEntity> _onRecvSelectCB;
     private Action<int> _onRecvLeaveCB;
 
-    public PlayerEntity EntitySelf { get; private set;}
+    public PlayerEntity EntitySelf { get; private set; }
 
+    public enum EStatus
+    {
+        JOIN,
+
+        NOT_JOIN,
+    }
+
+    private EStatus _status = EStatus.NOT_JOIN;
 
     public void AddPlayerEntity(PlayerEntity inEntity)
     {
@@ -48,11 +56,9 @@ public class GameMode
 
     public async Task<bool> JoinAsync()
     {
-        C_JoinToGame joinToGame = new C_JoinToGame();
-        joinToGame.userId = ServerData.Instance.UserData.user_id;
-        joinToGame.userName = ServerData.Instance.UserData.nickname;
+        _joinCompleted.Reset();
 
-        NetworkManager.Instance.Send(joinToGame);
+        OnSendJoinToGame();
 
         var waitResult = await _joinCompleted.Wait(10000);
 
@@ -60,47 +66,70 @@ public class GameMode
             return false;
 
         var joinPlayerList = waitResult.result.joinPlayerList;
-
+        
         foreach (var joinPlayer in joinPlayerList)
-        {
-            PlayerEntity entity = new PlayerEntity()
-            {
-                userId = joinPlayer.userId,
-                userName = joinPlayer.userName,
-                playerId = joinPlayer.playerId,
-                heroId = joinPlayer.heroId,
-            };
+            AddPlayerEntity(joinPlayer);
 
-            // 내 자신일 경우 따 갖고 있는다.
-            if(joinPlayer.userId == ServerData.Instance.UserData.user_id)
-                EntitySelf = entity;
-
-            PlayerEntitysDic.Add(joinPlayer.playerId, entity);
-        }
+        _status = EStatus.JOIN;
 
         return true;
     }
 
-    public void OnRecvJoin(S_JoinToGame inPacket)
+    public void Leave()
     {
-        _joinCompleted.Signal(inPacket);
+        _status = EStatus.NOT_JOIN;
+        PlayerEntitysDic.Clear();
     }
 
-    public void OnRecvAddJoinOther(S_JoinOther inPacket)
+
+    public void UpdatePlayerEntity(List<S_JoinToGame.JoinPlayer> joinPlayerList)
     {
+
+    }
+
+    public void AddPlayerEntity(S_JoinToGame.JoinPlayer joinPlayer)
+    {
+        // 이미 참가중인 유저에 대해서는 패스처리한다.
+        if (PlayerEntitysDic.ContainsKey(joinPlayer.playerId) == true)
+            return;
+
         PlayerEntity entity = new PlayerEntity()
         {
-            userId = inPacket.userId,
-            userName = inPacket.userName,
-            playerId = inPacket.plaeyrId,
-            heroId = inPacket.heroId,
+            userId = joinPlayer.userId,
+            userName = joinPlayer.userName,
+            playerId = joinPlayer.playerId,
+            heroId = joinPlayer.heroId,
         };
 
-        AddPlayerEntity(entity);
-        _onRecvJoinCB?.Invoke(entity);
+        // 내 자신일 경우 따 갖고 있는다.
+        if (joinPlayer.userId == ServerData.Instance.UserData.user_id)
+            EntitySelf = entity;
+
+        PlayerEntitysDic.Add(joinPlayer.playerId, entity);
     }
 
-    public void OnRecvLeaveOther(S_LeaveOther inPacket)
+    public void OnRecvJoin(S_JoinToGame inPacket)
+    {
+        if (_status == EStatus.JOIN)
+        {
+            // 이 미내가 참가 중이라면, 내려온 데이터에서 처리해야할 것들만 처리해주면 된다.
+            foreach (var joinPlayer in inPacket.joinPlayerList)
+            {
+                if (PlayerEntitysDic.ContainsKey(joinPlayer.playerId) == false)
+                {
+                    AddPlayerEntity(joinPlayer);
+                    _onRecvJoinCB?.Invoke(PlayerEntitysDic[joinPlayer.playerId]);
+                    break;
+                }
+            }
+        }
+        else
+        {
+            _joinCompleted.Signal(inPacket);
+        }
+    }
+
+    public void OnRecvLeave(S_LeaveOther inPacket)
     {
         RemovePlayerEntity(inPacket.playerId);
         _onRecvLeaveCB?.Invoke(inPacket.playerId);
@@ -108,6 +137,10 @@ public class GameMode
 
     public void OnRecvSelectHero(SelectHero inPacket)
     {
+        Debug.Log($"playerId : {inPacket.playerId}, inHeroId : {inPacket.heroId}");
+        if (EntitySelf.playerId == inPacket.playerId)
+            return;
+
         if (PlayerEntitysDic.TryGetValue(inPacket.playerId, out var entity) == true)
         {
             entity.heroId = inPacket.heroId;
@@ -117,6 +150,7 @@ public class GameMode
 
     public void OnSendSelectHero(int inPlayerId, int inHeroId)
     {
+    
         SelectHero packet = new SelectHero()
         {
             playerId = inPlayerId,
@@ -124,6 +158,17 @@ public class GameMode
         };
 
         NetworkManager.Instance.Send(packet);
+    }
+
+    public void OnSendJoinToGame()
+    {
+        C_JoinToGame joinToGame = new C_JoinToGame();
+
+        joinToGame.userId = ServerData.Instance.UserData.user_id;
+        joinToGame.userName = ServerData.Instance.UserData.nickname;
+
+
+        NetworkManager.Instance.Send(joinToGame);
     }
 }
 

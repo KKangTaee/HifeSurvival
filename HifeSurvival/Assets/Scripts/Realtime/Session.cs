@@ -101,9 +101,12 @@ namespace ServerCore
 		{
 			lock (_lock)
 			{
+				
 				_sendQueue.Enqueue(sendBuff);
 				if (_pendingList.Count == 0)
+				{
 					RegisterSend();
+				}
 			}
 		}
 
@@ -123,7 +126,10 @@ namespace ServerCore
 		void RegisterSend()
 		{
 			if (_disconnected == 1)
+			{
+				UnityEngine.Debug.LogWarning($"[{nameof(RegisterSend)}] 전송실패!");
 				return;
+			}
 
 			while (_sendQueue.Count > 0)
 			{

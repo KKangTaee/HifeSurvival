@@ -30,7 +30,9 @@ public class PopupSelectHeros : PopupBase
 
     private Subject<int> _onClickFrame = new Subject<int>();
     private Dictionary<int, Sprite> _heroImageDic = new Dictionary<int, Sprite>();
+    
     private Action <int, int> _onSendSelectHeroCB;
+    private Action      _disconnectCB;
 
     private int _playerIdSelf;
 
@@ -104,7 +106,7 @@ public class PopupSelectHeros : PopupBase
     {
         if(inButton == BTN_close)
         {
-            Close();
+            Close(_=>_disconnectCB?.Invoke());
         }
     }
 
@@ -125,7 +127,7 @@ public class PopupSelectHeros : PopupBase
             yield return null;
         }
 
-        GameStart();
+        // GameStart();
     }
 
     private  void GameStart()
@@ -208,9 +210,10 @@ public class PopupSelectHeros : PopupBase
         return _heroImageDic.TryGetValue(inHeroId, out var sprite) ? sprite : null; 
     }
 
-    public void AddEvent(Action<int, int> inOnSendSelectHero)
+    public void AddEvent(Action<int, int> inOnSendSelectHero, Action inDisconnect)
     {
         _onSendSelectHeroCB = inOnSendSelectHero;
+        _disconnectCB = inDisconnect;
     }
 
     public void RemoveEvent()

@@ -46,7 +46,7 @@ namespace Server
         {
             _jobQueue.Push(() =>
             {
-                System.Console.WriteLine($"[{inPacket.GetType()}] 브로드 캐스팅 완료");
+                System.Console.WriteLine($"[{inPacket.GetType()}] 브로드캐스팅");
                 ArraySegment<byte> segment = inPacket.Write();
                 _pendingList.Add(segment);
             });
@@ -61,7 +61,7 @@ namespace Server
         public void Leave(ClientSession session)
         {
             _sessions.Remove(session);
-            _gameMode.Leave(session.SessionId);
+            _gameMode.OnLeave(session.SessionId);
 
             if (_sessions.Count == 0)
                 IsRunning = false;

@@ -20,20 +20,24 @@ class PacketHandler
 
     public static void ReadyToGameHandler(PacketSession session, IPacket packet)
     {
-
+        
     }
 
     public static void SelectHeroHandler(PacketSession session, IPacket packet)
     {
+        SelectHero joinToGame = packet as SelectHero;
+		ClientSession client = session as ClientSession;
 
+        client.Room?.Mode.OnSelectHero(joinToGame);	
     }
 
     public static void C_JoinToGameHandler(PacketSession session, IPacket packet)
     {
+        System.Console.WriteLine("C_JoinToGame 호출됨!!!");
 		C_JoinToGame joinToGame = packet as C_JoinToGame;
 		ClientSession client = session as ClientSession;
 		
-		client.Room?.Mode.Join(joinToGame, client.SessionId);	
+		client.Room?.Mode.OnJoin(joinToGame, client.SessionId);	
     }
 
     internal static void C_AttackHandler(PacketSession session, IPacket packet)

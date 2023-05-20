@@ -16,7 +16,8 @@ public class ServerSession : PacketSession
 
 	public override void OnDisconnected(EndPoint endPoint)
 	{
-		Debug.Log($"OnConnected : {endPoint}");
+		Debug.Log($"OnDisConnected : {endPoint}");
+		NetworkManager.Instance.OnDisconnectResult(true);
 	}
 
 	public override void OnRecvPacket(ArraySegment<byte> buffer)
@@ -30,6 +31,6 @@ public class ServerSession : PacketSession
 
 	public override void OnSend(int numOfBytes)
 	{
-		//Console.WriteLine($"Transferred bytes: {numOfBytes}");
+		Debug.Log($"바이트 호출 완료 Transferred bytes: {numOfBytes}");
 	}
 }

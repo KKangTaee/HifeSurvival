@@ -29,7 +29,7 @@ public class NetworkManager : MonoBehaviour
         }
     }
 
-    private ServerSession _session = new ServerSession();
+    private ServerSession _session;
 
     private SimpleTaskCompletionSource<bool> _connectCompleted = new SimpleTaskCompletionSource<bool>();
     private SimpleTaskCompletionSource<bool> _disconnectCompleted = new SimpleTaskCompletionSource<bool>();
@@ -56,10 +56,12 @@ public class NetworkManager : MonoBehaviour
         Debug.Log($"접속IP : {endPoint}");
         endPoint = new IPEndPoint(IPAddress.Parse("192.168.0.9"), 7777);
         //endPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 7777);
-        
 
+        _session = new ServerSession();
         Connector connector = new Connector();
         connector.Connect(endPoint, () => _session);
+
+        _connectCompleted.Reset();
 
         var waitResult = await _connectCompleted.Wait(5000);
 
@@ -71,9 +73,11 @@ public class NetworkManager : MonoBehaviour
 
     public async Task<bool> DisconnectAsync()
     {
+        _disconnectCompleted.Reset();
+        
         _session.Disconnect();
 
-        var waitResult = await _connectCompleted.Wait(5000);
+        var waitResult = await _disconnectCompleted.Wait(2000);
 
         if (waitResult.isSuccess == false)
             return false;
@@ -90,6 +94,11 @@ public class NetworkManager : MonoBehaviour
     public void OnConnectResult(bool inResult)
     {
         _connectCompleted.Signal(inResult);
+    }
+
+    public void OnDisconnectResult(bool inResult)
+    {
+        _disconnectCompleted.Signal(inResult);
     }
 }
 

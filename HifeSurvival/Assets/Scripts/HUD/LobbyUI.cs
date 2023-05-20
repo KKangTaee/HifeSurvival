@@ -30,7 +30,7 @@ public class LobbyUI : MonoBehaviour
         }
     }
 
-    public async void JoinGame()
+    private async void JoinGame()
     {
         var isSuccess = await NetworkManager.Instance.ConnectAsync();
 
@@ -39,9 +39,13 @@ public class LobbyUI : MonoBehaviour
             Debug.LogError("네트워크 접속안됨");
             return;
         }
+        else
+        {
+            Debug.Log("네트워크 접속 성공!");
+        }
 
 
-        Debug.Log("네트워크 접속 성공!");
+        
         isSuccess = await GameMode.Instance.JoinAsync();
 
         if(isSuccess == false)
@@ -49,28 +53,44 @@ public class LobbyUI : MonoBehaviour
             Debug.Log("룸에 접속된 유저의 정보를 가지고 오지 못함");
             return;
         }
-
-        PopupManager.Instance.Show<PopupSelectHeros>(popup =>
+        else
         {
-            var currPlayerEntitys = GameMode.Instance.PlayerEntitysDic;
+            Debug.Log("방 데이터 가져옴!");
+        }
 
-            foreach(var entity in currPlayerEntitys.Values)
-                popup.AddPlayerView(entity);
+        PopupManager.Instance.Show<PopupSelectHeros>(
+            inCreateCallback : popup =>
+            {
+                var currPlayerEntitys = GameMode.Instance.PlayerEntitysDic;
 
-            popup.SetPlayerIdSelf(GameMode.Instance.EntitySelf.playerId);
+                foreach(var entity in currPlayerEntitys.Values)
+                    popup.AddPlayerView(entity);
 
-            GameMode.Instance.AddEvent(
-                inRecvJoinOther  : entity   => popup.OnRecvJoin(entity),
-                inRecvOther : playerId => popup.Leave(playerId),
-                inRecvSelect : entity => popup.OnRecvSelectHero(entity)
-            );
+                popup.SetPlayerIdSelf(GameMode.Instance.EntitySelf.playerId);
 
-            popup.AddEvent(
-                inOnSendSelectHero : (playerId, heroId) => GameMode.Instance.OnSendSelectHero(playerId,heroId)
-            );
-        });
+                GameMode.Instance.AddEvent(
+                    inRecvJoinOther  : entity =>  popup.OnRecvJoin(entity),
+                    inRecvOther : playerId => popup.Leave(playerId),
+                    inRecvSelect : entity => popup.OnRecvSelectHero(entity)
+                );
+
+                popup.AddEvent(
+                    inOnSendSelectHero : (playerId, heroId) => GameMode.Instance.OnSendSelectHero(playerId,heroId),
+                    inDisconnect : ()=>{ LeaveGame(); }
+                );
+            });
     }
 
+    private async void LeaveGame()
+    {
+        var isSuccess = await NetworkManager.Instance.DisconnectAsync();
+
+        if(isSuccess == true)
+        {
+            GameMode.Instance.Leave();
+        }
+    }
+    
 
     public async UniTask SetProfile()
     {

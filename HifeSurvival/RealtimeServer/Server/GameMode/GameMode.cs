@@ -103,7 +103,7 @@ namespace Server
         }
 
 
-        public void Join(C_JoinToGame inPacket, int inSessionId)
+        public void OnJoin(C_JoinToGame inPacket, int inSessionId)
         {
             var playerInfo = new PlayerEntity()
             {
@@ -116,7 +116,6 @@ namespace Server
 
             _playersDic.Add(inSessionId, playerInfo);
 
-
             // 브로드캐스팅
             S_JoinToGame packet = new S_JoinToGame();
             packet.joinPlayerList = new List<S_JoinToGame.JoinPlayer>();
@@ -128,7 +127,7 @@ namespace Server
         }
 
 
-        public void Leave(int inSessionId)
+        public void OnLeave(int inSessionId)
         {
             var playerInfo = _playersDic.Values.FirstOrDefault(x => x.playerId == inSessionId);
 
@@ -144,6 +143,12 @@ namespace Server
             };
 
             _room.Broadcast(packet);
+        }
+
+        public void OnSelectHero(SelectHero inPacket)
+        {
+            System.Console.WriteLine($"playerId : {inPacket.playerId}, heroId : {inPacket.heroId}");
+            _room.Broadcast(inPacket);
         }
 
 

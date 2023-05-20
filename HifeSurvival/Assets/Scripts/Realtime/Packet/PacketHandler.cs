@@ -21,7 +21,7 @@ class PacketHandler
 
     public static void SelectHeroHandler(PacketSession session, IPacket packet)
     {
-        SelectHero selectHero = new SelectHero();
+        SelectHero selectHero = packet as SelectHero;
         GameMode.Instance.OnRecvSelectHero(selectHero);
     }
 
@@ -69,12 +69,12 @@ class PacketHandler
     internal static void S_JoinOtherHandler(PacketSession session, IPacket packet)
     {
         S_JoinOther joinOther = packet as S_JoinOther;
-        GameMode.Instance.OnRecvAddJoinOther(joinOther);
+        // GameMode.Instance.OnRecvAddJoinOther(joinOther);
     }
 
     internal static void S_LeaveOtherHandler(PacketSession session, IPacket packet)
     {
         S_LeaveOther leaveOther = packet as S_LeaveOther;
-        GameMode.Instance.OnRecvLeaveOther(leaveOther);
+        GameMode.Instance.OnRecvLeave(leaveOther);
     }
 }

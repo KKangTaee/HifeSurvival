@@ -71,7 +71,7 @@ namespace Server
                 var data = new S_StartGame.Player()
                 {
                     playerId = info.playerId,
-                    heroType = info.heroType,
+                    heroId = info.heroType,
                 };
 
                 playerList.Add(data);
@@ -147,6 +147,7 @@ namespace Server
         }
 
 
+        // GameMode.Attack(C_Attack inPacket) 함수
         public void Attack(C_Attack inPacket)
         {
             // 플레이어를 공격했을 때
@@ -159,17 +160,21 @@ namespace Server
             {
                 if(_monstersDic.TryGetValue(inPacket.toId, out var monster) == true &&
                    _playersDic.TryGetValue(inPacket.fromId, out var player) == true)
-                {
-                    // 공격행동처리
-                    var attackParam = new AttackParam()
+                {                 
+                    var damagedParam = new DamagedParam<PlayerEntity>()
                     {
                         damageValue = inPacket.damageValue,
                         target = player,
                     };
 
-                    player.OnAttack(attackParam);
+                    var attackParam = new AttackParam<MonsterEntity>()
+                    {
+                        damageValue = inPacket.damageValue,
+                        target = monster,
+                    };
 
-                    // 2. 여기서 브로드 캐스팅처리?
+                    player.OnAttack(attackParam);
+                    monster.OnDamaged(damagedParam);
                 }
             }
         }

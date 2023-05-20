@@ -19,9 +19,10 @@ class PacketHandler
         throw new NotImplementedException();
     }
 
-    internal static void SelectHeroHandler(PacketSession session, IPacket packet)
+    public static void SelectHeroHandler(PacketSession session, IPacket packet)
     {
-        throw new NotImplementedException();
+        SelectHero selectHero = new SelectHero();
+        GameMode.Instance.OnRecvSelectHero(selectHero);
     }
 
     internal static void S_CountdownHandler(PacketSession session, IPacket packet)
@@ -36,9 +37,8 @@ class PacketHandler
 
     public static void S_JoinToGameHandler(PacketSession session, IPacket packet)
     {
-        UnityEngine.Debug.Log("S_JoinToGameHandler 호출!");
         S_JoinToGame joinToGame = packet as S_JoinToGame;
-        GameMode.Instance.OnJoinResult(joinToGame);
+        GameMode.Instance.OnRecvJoin(joinToGame);
     }
 
     internal static void S_LeaveToGameHandler(PacketSession session, IPacket packet)
@@ -59,5 +59,22 @@ class PacketHandler
     internal static void S_StartGameHandler(PacketSession session, IPacket packet)
     {
         throw new NotImplementedException();
+    }
+
+    internal static void S_AddJoinHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static void S_JoinOtherHandler(PacketSession session, IPacket packet)
+    {
+        S_JoinOther joinOther = packet as S_JoinOther;
+        GameMode.Instance.OnRecvAddJoinOther(joinOther);
+    }
+
+    internal static void S_LeaveOtherHandler(PacketSession session, IPacket packet)
+    {
+        S_LeaveOther leaveOther = packet as S_LeaveOther;
+        GameMode.Instance.OnRecvLeaveOther(leaveOther);
     }
 }

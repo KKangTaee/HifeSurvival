@@ -19,7 +19,8 @@ namespace DummyClient
 			IPHostEntry ipHost = Dns.GetHostEntry(host);
 			IPAddress ipAddr = ipHost.AddressList.First(ip => ip.AddressFamily == AddressFamily.InterNetwork);
 			IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
-
+			endPoint = new IPEndPoint(IPAddress.Parse("192.168.0.9"), 7777);
+			
 			// System.Console.WriteLine(ipAddr.Address);
 
 			Connector connector = new Connector();

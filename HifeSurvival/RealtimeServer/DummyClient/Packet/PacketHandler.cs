@@ -44,4 +44,14 @@ class PacketHandler
     {
         throw new NotImplementedException();
     }
+
+    internal static void S_JoinOtherHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static void S_LeaveOtherHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
 }

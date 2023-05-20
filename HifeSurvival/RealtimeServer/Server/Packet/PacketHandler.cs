@@ -35,4 +35,14 @@ class PacketHandler
 		
 		client.Room?.Mode.Join(joinToGame, client.SessionId);	
     }
+
+    internal static void C_AttackHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static void C_AddJoinHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -106,8 +106,8 @@ namespace Server
                         inSelf.OnFollowTarget(followTargetParam);
                     }
 
-                    // 1.여기서 브로드 캐스팅 처리?
-                    // 브로드 캐스팅을 하려면 GameRoom 객체를 가져와야하는데,
+                    // 여기에 브로드 캐스팅 처리
+                    // 3
                 }
             }
 
@@ -121,12 +121,12 @@ namespace Server
         {
             public void Enter<U>(MonsterEntity inSelf, in U inParam = default) where U : IStateParam
             {
-                // to do something after
+
             }
 
             public void Exit<U>(MonsterEntity inSelf, in U inParam = default) where U : IStateParam
             {
-                // to do something after            
+          
             }
         }
     }
@@ -137,12 +137,12 @@ namespace Server
         {
             public void Enter<U>(PlayerEntity inSelf, in U inParam = default) where U : IStateParam
             {
-                // to do something after
+
             }
 
             public void Exit<U>(PlayerEntity inSelf, in U inParam = default) where U : IStateParam
             {
-                // to do something after
+     
             }
         }
 
@@ -153,17 +153,19 @@ namespace Server
                 if (inParam is AttackParam<PlayerEntity> attack)
                 {
                     // 공격처리를 여기서 할꺼임.
+                    // 여기에서 공격에 대한 브로드 캐스팅 처리.
+                    // 2
                 }
             }
 
             public void Exit<U>(PlayerEntity inSelf, in U inParam = default) where U : IStateParam
             {
-                // to do something after
+       
             }
 
             public void Update(PlayerEntity inSelf, double deltaTime)
             {
-                // to do something after
+   
             }
         }
 
@@ -171,7 +173,7 @@ namespace Server
         {
             public void Enter<U>(PlayerEntity inSelf, in U inParam = default) where U : IStateParam
             {
-                // to do something after
+        
             }
 
             public void Exit<U>(PlayerEntity inSelf, in U inParam = default) where U : IStateParam

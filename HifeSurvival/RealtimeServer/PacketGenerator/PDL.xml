@@ -19,7 +19,7 @@
 			<string name = "userId"/>
 			<string name = "userName"/>
 			<int name = "playerId"/>
-			<int name ="heroType"/>
+			<int name ="heroId"/>
 		</list>
 		<int name="roomId"/>
 	</packet>
@@ -30,7 +30,7 @@
 
 	<packet name="SelectHero">
 		<int  name="playerId"/>
-		<int  name="heroType"/>
+		<int  name="heroId"/>
 	</packet>
 
 	<packet name="ReadyToGame">
@@ -44,7 +44,7 @@
 	<packet name="S_StartGame">
 		<list name="Player">
 			<int name="playerId"/>
-			<int name="heroType"/>
+			<int name="heroId"/>
 		</list>
 		<list name="Monster">
 			<int name ="monsterId"/>
@@ -66,5 +66,20 @@
 		<float name ="y"/>
 		<float name ="z"/>
 	</struct>
+
+
+	<packet name = "S_JoinOther">
+		<string name = "userId"/>
+		<string name= "userName"/>
+		<int name = "plaeyrId"/>
+		<int name = "heroId"/>
+	</packet>
+
+	<packet name ="S_LeaveOther">
+		<string name = "userId"/>
+		<int name = "playerId"/>
+	</packet>
+
+
 
 </PDL>

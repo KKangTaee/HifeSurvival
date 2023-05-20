@@ -13,19 +13,20 @@ public class HeroSelectButton : MonoBehaviour
     private StaticData.Heros _data;
     private Action<StaticData.Heros> _clickCallback;
 
-    public void SetInfo(StaticData.Heros inData,  Action<StaticData.Heros> inClickCallback)
+    public void SetInfo(StaticData.Heros inData,  Action<StaticData.Heros> inClickCallback, Sprite inSprite)
     {
         _data = inData;
         _clickCallback = inClickCallback;
 
-        SetHeroImage(_data.id);
+        SetHeroImage(inSprite);
 
         SetClick();
     }
 
-    public void SetHeroImage(int inId)
+    public void SetHeroImage(Sprite inSprite)
     {
-        IMG_hero.sprite = Resources.Load<Sprite>($"Prefabs/Textures/Profiles/profile_{inId}");
+        // IMG_hero.sprite =
+        IMG_hero.sprite = inSprite;
     }
 
     public void SetClick()

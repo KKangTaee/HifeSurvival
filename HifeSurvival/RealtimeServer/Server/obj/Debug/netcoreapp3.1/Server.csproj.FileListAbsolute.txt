@@ -32,20 +32,20 @@
 /Users/taehokang/Documents/GitHub/HifeSurvival/HifeSurvival/RealtimeServer/Server/obj/Debug/netcoreapp3.1/Server.dll
 /Users/taehokang/Documents/GitHub/HifeSurvival/HifeSurvival/RealtimeServer/Server/obj/Debug/netcoreapp3.1/Server.pdb
 /Users/taehokang/Documents/GitHub/HifeSurvival/HifeSurvival/RealtimeServer/Server/obj/Debug/netcoreapp3.1/Server.genruntimeconfig.cache
-C:\Users\user\Documents\카카오톡 받은 파일\RealtimeServer\RealtimeServer\Server\bin\Debug\netcoreapp3.1\Server.exe
-C:\Users\user\Documents\카카오톡 받은 파일\RealtimeServer\RealtimeServer\Server\bin\Debug\netcoreapp3.1\Server.deps.json
-C:\Users\user\Documents\카카오톡 받은 파일\RealtimeServer\RealtimeServer\Server\bin\Debug\netcoreapp3.1\Server.runtimeconfig.json
-C:\Users\user\Documents\카카오톡 받은 파일\RealtimeServer\RealtimeServer\Server\bin\Debug\netcoreapp3.1\Server.runtimeconfig.dev.json
-C:\Users\user\Documents\카카오톡 받은 파일\RealtimeServer\RealtimeServer\Server\bin\Debug\netcoreapp3.1\Server.dll
-C:\Users\user\Documents\카카오톡 받은 파일\RealtimeServer\RealtimeServer\Server\bin\Debug\netcoreapp3.1\Server.pdb
-C:\Users\user\Documents\카카오톡 받은 파일\RealtimeServer\RealtimeServer\Server\bin\Debug\netcoreapp3.1\ServerCore.dll
-C:\Users\user\Documents\카카오톡 받은 파일\RealtimeServer\RealtimeServer\Server\bin\Debug\netcoreapp3.1\ServerCore.pdb
-C:\Users\user\Documents\카카오톡 받은 파일\RealtimeServer\RealtimeServer\Server\obj\Debug\netcoreapp3.1\Server.csproj.AssemblyReference.cache
-C:\Users\user\Documents\카카오톡 받은 파일\RealtimeServer\RealtimeServer\Server\obj\Debug\netcoreapp3.1\Server.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\user\Documents\카카오톡 받은 파일\RealtimeServer\RealtimeServer\Server\obj\Debug\netcoreapp3.1\Server.AssemblyInfoInputs.cache
-C:\Users\user\Documents\카카오톡 받은 파일\RealtimeServer\RealtimeServer\Server\obj\Debug\netcoreapp3.1\Server.AssemblyInfo.cs
-C:\Users\user\Documents\카카오톡 받은 파일\RealtimeServer\RealtimeServer\Server\obj\Debug\netcoreapp3.1\Server.csproj.CoreCompileInputs.cache
-C:\Users\user\Documents\카카오톡 받은 파일\RealtimeServer\RealtimeServer\Server\obj\Debug\netcoreapp3.1\Server.csproj.CopyComplete
-C:\Users\user\Documents\카카오톡 받은 파일\RealtimeServer\RealtimeServer\Server\obj\Debug\netcoreapp3.1\Server.dll
-C:\Users\user\Documents\카카오톡 받은 파일\RealtimeServer\RealtimeServer\Server\obj\Debug\netcoreapp3.1\Server.pdb
-C:\Users\user\Documents\카카오톡 받은 파일\RealtimeServer\RealtimeServer\Server\obj\Debug\netcoreapp3.1\Server.genruntimeconfig.cache
+C:/Users/user/Documents/카카오톡 받은 파일/RealtimeServer/RealtimeServer/Server/bin/Debug/netcoreapp3.1/Server.exe
+C:/Users/user/Documents/카카오톡 받은 파일/RealtimeServer/RealtimeServer/Server/bin/Debug/netcoreapp3.1/Server.deps.json
+C:/Users/user/Documents/카카오톡 받은 파일/RealtimeServer/RealtimeServer/Server/bin/Debug/netcoreapp3.1/Server.runtimeconfig.json
+C:/Users/user/Documents/카카오톡 받은 파일/RealtimeServer/RealtimeServer/Server/bin/Debug/netcoreapp3.1/Server.runtimeconfig.dev.json
+C:/Users/user/Documents/카카오톡 받은 파일/RealtimeServer/RealtimeServer/Server/bin/Debug/netcoreapp3.1/Server.dll
+C:/Users/user/Documents/카카오톡 받은 파일/RealtimeServer/RealtimeServer/Server/bin/Debug/netcoreapp3.1/Server.pdb
+C:/Users/user/Documents/카카오톡 받은 파일/RealtimeServer/RealtimeServer/Server/bin/Debug/netcoreapp3.1/ServerCore.dll
+C:/Users/user/Documents/카카오톡 받은 파일/RealtimeServer/RealtimeServer/Server/bin/Debug/netcoreapp3.1/ServerCore.pdb
+C:/Users/user/Documents/카카오톡 받은 파일/RealtimeServer/RealtimeServer/Server/obj/Debug/netcoreapp3.1/Server.csproj.AssemblyReference.cache
+C:/Users/user/Documents/카카오톡 받은 파일/RealtimeServer/RealtimeServer/Server/obj/Debug/netcoreapp3.1/Server.GeneratedMSBuildEditorConfig.editorconfig
+C:/Users/user/Documents/카카오톡 받은 파일/RealtimeServer/RealtimeServer/Server/obj/Debug/netcoreapp3.1/Server.AssemblyInfoInputs.cache
+C:/Users/user/Documents/카카오톡 받은 파일/RealtimeServer/RealtimeServer/Server/obj/Debug/netcoreapp3.1/Server.AssemblyInfo.cs
+C:/Users/user/Documents/카카오톡 받은 파일/RealtimeServer/RealtimeServer/Server/obj/Debug/netcoreapp3.1/Server.csproj.CoreCompileInputs.cache
+C:/Users/user/Documents/카카오톡 받은 파일/RealtimeServer/RealtimeServer/Server/obj/Debug/netcoreapp3.1/Server.csproj.CopyComplete
+C:/Users/user/Documents/카카오톡 받은 파일/RealtimeServer/RealtimeServer/Server/obj/Debug/netcoreapp3.1/Server.dll
+C:/Users/user/Documents/카카오톡 받은 파일/RealtimeServer/RealtimeServer/Server/obj/Debug/netcoreapp3.1/Server.pdb
+C:/Users/user/Documents/카카오톡 받은 파일/RealtimeServer/RealtimeServer/Server/obj/Debug/netcoreapp3.1/Server.genruntimeconfig.cache

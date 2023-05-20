@@ -3357,6 +3357,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerSelectView
       objectReference: {fileID: 0}
+    - target: {fileID: 981590815987080764, guid: 0e16f7c8b501d4c11b11b0a1c9f6825d, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5909421107880314039, guid: 0e16f7c8b501d4c11b11b0a1c9f6825d, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

@@ -50,7 +50,25 @@ public class LobbyUI : MonoBehaviour
             return;
         }
 
-        PopupManager.Instance.Show<PopupSelectHeros>(null);
+        PopupManager.Instance.Show<PopupSelectHeros>(popup =>
+        {
+            var currPlayerEntitys = GameMode.Instance.PlayerEntitysDic;
+
+            foreach(var entity in currPlayerEntitys.Values)
+                popup.AddPlayerView(entity);
+
+            popup.SetPlayerIdSelf(GameMode.Instance.EntitySelf.playerId);
+
+            GameMode.Instance.AddEvent(
+                inRecvJoinOther  : entity   => popup.OnRecvJoin(entity),
+                inRecvOther : playerId => popup.Leave(playerId),
+                inRecvSelect : entity => popup.OnRecvSelectHero(entity)
+            );
+
+            popup.AddEvent(
+                inOnSendSelectHero : (playerId, heroId) => GameMode.Instance.OnSendSelectHero(playerId,heroId)
+            );
+        });
     }
 
 

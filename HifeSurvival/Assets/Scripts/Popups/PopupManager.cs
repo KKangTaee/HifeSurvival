@@ -140,7 +140,8 @@ public class PopupManager
         }
 
         popup = MonoBehaviour.Instantiate<T>(popup);
-
+        inCreateCallback?.Invoke(popup);
+        
         return popup;
     }
 
@@ -167,4 +168,14 @@ public class PopupManager
 
         return false;
     }
+
+
+    public T GetPopup<T>() where T : PopupBase
+    {
+        if(IsExposedNow<T>() == false)
+            return default;
+        
+        return _openedPopups.FirstOrDefault(x=>x.GetType() == typeof(T)) as T;
+    }
+
 }

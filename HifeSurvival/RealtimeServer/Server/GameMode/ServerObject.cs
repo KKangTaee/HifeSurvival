@@ -73,15 +73,15 @@ namespace Server
         }
 
 
-        public void OnAttack<T>(in AttackParam<T> other) where T : Entity<T>
+        public void OnAttack<T>(in AttackParam<T> inParam) where T : Entity<T>
         {
-            ChangeState(EStatus.ATTACK, other);
+            ChangeState(EStatus.ATTACK, inParam);
         }
 
 
-        public void OnFollowTarget<T>(in FollowTargetParam<T> other) where T : Entity<T>
+        public void OnFollowTarget<T>(in FollowTargetParam<T> inParam) where T : Entity<T>
         {
-            ChangeState(EStatus.FOLLOW_TARGET, other);
+            ChangeState(EStatus.FOLLOW_TARGET, inParam);
         }
 
 
@@ -90,9 +90,9 @@ namespace Server
             ChangeState(EStatus.IDLE, other);
         }
 
-        public void OnDamaged(in DamagedParam<MonsterEntity> other)
+        public void OnDamaged<T>(in DamagedParam<T> inParam)
         {
-            ChangeState(EStatus.DAMAGED, other);
+            ChangeState(EStatus.DAMAGED, inParam);
         }
 
 
@@ -131,12 +131,12 @@ namespace Server
                 userId = this.userId,
                 userName = this.userName,
                 playerId = this.playerId,
-                heroType = this.heroType
+                heroId = this.heroType
             };
         }
 
 
-        public void OnAttack(in AttackParam<PlayerEntity> inParam)
+        public void OnAttack<T>(in AttackParam<T> inParam) where T : Entity<T>
         {
             ChangeState(EStatus.ATTACK, inParam);
         }

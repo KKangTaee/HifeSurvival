@@ -34,6 +34,10 @@ class PacketManager
 		_handler.Add((ushort)PacketID.S_Countdown, PacketHandler.S_CountdownHandler);
 		_makeFunc.Add((ushort)PacketID.S_StartGame, MakePacket<S_StartGame>);
 		_handler.Add((ushort)PacketID.S_StartGame, PacketHandler.S_StartGameHandler);
+		_makeFunc.Add((ushort)PacketID.S_JoinOther, MakePacket<S_JoinOther>);
+		_handler.Add((ushort)PacketID.S_JoinOther, PacketHandler.S_JoinOtherHandler);
+		_makeFunc.Add((ushort)PacketID.S_LeaveOther, MakePacket<S_LeaveOther>);
+		_handler.Add((ushort)PacketID.S_LeaveOther, PacketHandler.S_LeaveOtherHandler);
 
 	}
 

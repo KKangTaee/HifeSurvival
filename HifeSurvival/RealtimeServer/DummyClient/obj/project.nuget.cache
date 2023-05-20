@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "++LrLSV6ELkgMq/r1nraC0v06h6CULkM1jLi68Fl0M4X7ySB9piub7dXFuxPvvWGJnw5KMvJv+Q3nb1gIfsBHg==",
+  "dgSpecHash": "0K+XQKA9LAM2Axf6Y9WxAm+Bfgdpr0d7F1kGFDUOgFkOBmpZ0tpUaQzcJ8kUhb3Rr9XyV6+MmvlbYHFY5SgBIw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\user\\Documents\\카카오톡 받은 파일\\RealtimeServer\\RealtimeServer\\DummyClient\\DummyClient.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "/Users/taehokang/Documents/GitHub/HifeSurvival/HifeSurvival/RealtimeServer/DummyClient/DummyClient.csproj",
+  "expectedPackageFiles": [
+    "/Users/taehokang/.nuget/packages/microsoft.netcore.app.host.osx-x64/3.1.32/microsoft.netcore.app.host.osx-x64.3.1.32.nupkg.sha512"
+  ],
   "logs": []
 }

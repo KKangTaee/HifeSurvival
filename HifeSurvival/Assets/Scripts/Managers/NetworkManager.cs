@@ -54,9 +54,9 @@ public class NetworkManager : MonoBehaviour
         IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
 
         Debug.Log($"접속IP : {endPoint}");
-        // IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse("192.168.0.9"), 7777);
-        endPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 7777);
-
+        endPoint = new IPEndPoint(IPAddress.Parse("192.168.0.9"), 7777);
+        //endPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 7777);
+        
 
         Connector connector = new Connector();
         connector.Connect(endPoint, () => _session);

@@ -17,7 +17,7 @@ public class ServerSession : PacketSession
 	public override void OnDisconnected(EndPoint endPoint)
 	{
 		Debug.Log($"OnDisConnected : {endPoint}");
-		NetworkManager.Instance.OnDisconnectResult(true);
+		NetworkManager.Instance.OnDisconnectResult();
 	}
 
 	public override void OnRecvPacket(ArraySegment<byte> buffer)

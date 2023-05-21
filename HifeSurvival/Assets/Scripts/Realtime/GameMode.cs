@@ -13,7 +13,10 @@ public class GameMode
 
     private Action<PlayerEntity> _onRecvJoinCB;
     private Action<PlayerEntity> _onRecvSelectCB;
+    private Action<PlayerEntity> _onRecvReadyCB;
     private Action<int> _onRecvLeaveCB;
+    private Action<int> _onRecvCountdownCB;
+
 
     public PlayerEntity EntitySelf { get; private set; }
     public int RoomId { get; private set; }
@@ -25,13 +28,7 @@ public class GameMode
         NOT_JOIN,
     }
 
-    private EStatus _status = EStatus.NOT_JOIN;
-
-    public void AddPlayerEntity(PlayerEntity inEntity)
-    {
-        if (PlayerEntitysDic.ContainsKey(inEntity.playerId) == false)
-            PlayerEntitysDic.Add(inEntity.playerId, inEntity);
-    }
+    public EStatus Status { get; private set; } = EStatus.NOT_JOIN;
 
     public void RemovePlayerEntity(int inPlayerId)
     {
@@ -39,13 +36,15 @@ public class GameMode
             PlayerEntitysDic.Remove(inPlayerId);
     }
 
-    public void AddEvent(Action<PlayerEntity> inRecvJoinOther,
-                         Action<int> inRecvOther,
-                         Action<PlayerEntity> inRecvSelect)
+    public void AddEvent(Action<PlayerEntity> inRecvJoin,
+                         Action<PlayerEntity> inRecvSelect,
+                         Action<PlayerEntity> inRecvReady,
+                         Action<int> inRecvLeave)
     {
-        _onRecvJoinCB = inRecvJoinOther;
-        _onRecvLeaveCB = inRecvOther;
+        _onRecvJoinCB = inRecvJoin;
+        _onRecvLeaveCB = inRecvLeave;
         _onRecvSelectCB = inRecvSelect;
+        _onRecvReadyCB = inRecvReady;
     }
 
 
@@ -71,14 +70,14 @@ public class GameMode
         foreach (var joinPlayer in joinPlayerList)
             AddPlayerEntity(joinPlayer);
 
-        _status = EStatus.JOIN;
+        Status = EStatus.JOIN;
 
         return true;
     }
 
     public void Leave()
     {
-        _status = EStatus.NOT_JOIN;
+        Status = EStatus.NOT_JOIN;
         PlayerEntitysDic.Clear();
     }
 
@@ -105,7 +104,7 @@ public class GameMode
 
     public void OnRecvJoin(S_JoinToGame inPacket)
     {
-        if (_status == EStatus.JOIN)
+        if (Status == EStatus.JOIN)
         {
             // 이미 내가 참가 중이라면, 내려온 데이터에서 처리해야할 것들만 처리해주면 된다.
             foreach (var joinPlayer in inPacket.joinPlayerList)
@@ -132,14 +131,29 @@ public class GameMode
 
     public void OnRecvSelectHero(SelectHero inPacket)
     {
-        if (EntitySelf.playerId == inPacket.playerId)
-            return;
-
         if (PlayerEntitysDic.TryGetValue(inPacket.playerId, out var entity) == true)
         {
             entity.heroId = inPacket.heroId;
-            _onRecvSelectCB?.Invoke(entity);
+
+            if (EntitySelf.playerId != inPacket.playerId)
+                _onRecvSelectCB?.Invoke(entity);
         }
+    }
+
+    public void OnRecvReadyToGame(ReadyToGame inPacket)
+    {
+        if (PlayerEntitysDic.TryGetValue(inPacket.playerId, out var entity) == true)
+        {
+            entity.isReady = true;
+
+            if (EntitySelf.playerId != inPacket.playerId)
+                _onRecvReadyCB?.Invoke(entity);
+        }
+    }
+
+    public void OnRecvCountdown(S_Countdown inPacket)
+    {
+
     }
 
     public void OnSendSelectHero(int inPlayerId, int inHeroId)
@@ -162,6 +176,12 @@ public class GameMode
 
         NetworkManager.Instance.Send(joinToGame);
     }
+
+    public void OnSendReadyToGame()
+    {
+        ReadyToGame readyToGame = new ReadyToGame();
+        readyToGame.playerId = EntitySelf.playerId;
+    }
 }
 
 
@@ -171,4 +191,5 @@ public class PlayerEntity
     public string userName;
     public int playerId;
     public int heroId;
+    public bool isReady;
 }

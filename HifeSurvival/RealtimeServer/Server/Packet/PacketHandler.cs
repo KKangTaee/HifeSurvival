@@ -20,7 +20,10 @@ class PacketHandler
 
     public static void ReadyToGameHandler(PacketSession session, IPacket packet)
     {
-        
+        ReadyToGame readyToGame = packet as ReadyToGame;
+        ClientSession client = session as ClientSession;
+
+        client.Room?.Mode.OnReadyToGame(readyToGame);
     }
 
     public static void SelectHeroHandler(PacketSession session, IPacket packet)
@@ -42,7 +45,6 @@ class PacketHandler
     internal static void C_AttackHandler(PacketSession session, IPacket packet)
     {
 
-        throw new NotImplementedException();
     }
 
     internal static void C_AddJoinHandler(PacketSession session, IPacket packet)

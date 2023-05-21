@@ -6,6 +6,7 @@ using UniRx;
 using TMPro;
 using System.Linq;
 using System;
+using DG.Tweening;
 
 
 [Popup(PATH_IN_RESOURCES_FOLDER="Prefabs/Popups/PopupSelectHeros/PopupSelectHeros",
@@ -14,6 +15,7 @@ public class PopupSelectHeros : PopupBase
 {
     [Header("[PopupSelectHeros]")]
     [SerializeField] Button           BTN_close;
+    [SerializeField] Button           BTN_ready;
     [SerializeField] RectTransform    RT_heroSelection;
     [SerializeField] HeroSelectButton _selectButtonPrefab;
 
@@ -32,7 +34,8 @@ public class PopupSelectHeros : PopupBase
     private Dictionary<int, Sprite> _heroImageDic = new Dictionary<int, Sprite>();
     
     private Action <int, int> _onSendSelectHeroCB;
-    private Action      _disconnectCB;
+    private Action _onSendReady;
+    private Action _disconnectCB;
 
     private int _playerIdSelf;
 
@@ -49,7 +52,7 @@ public class PopupSelectHeros : PopupBase
 
         SetHeroButton();
 
-        StartCoroutine("Co_Timer");
+        StartCoroutine(nameof(Co_Timer));
     }
 
 
@@ -108,12 +111,16 @@ public class PopupSelectHeros : PopupBase
         {
             Close(_=>_disconnectCB?.Invoke());
         }
+        else if(inButton == BTN_ready)
+        {
+            Ready();
+        }
     }
 
 
     IEnumerator Co_Timer()
     {
-        float leftTime = 60;
+        float leftTime = 30;
 
         while(true)
         {
@@ -122,12 +129,39 @@ public class PopupSelectHeros : PopupBase
 
             leftTime -= Time.deltaTime;
 
-            TMP_leftTime.text = $"게임시작 {(int)leftTime}초 전";
+            TMP_leftTime.text = $"캐릭터 선택 종료까지 {(int)leftTime}초 전";
 
             yield return null;
         }
 
-        // GameStart();
+
+    }
+
+    public void Ready()
+    {
+        _onSendReady?.Invoke();
+
+        BTN_ready.enabled = false;
+        var imgComp = BTN_ready.GetComponent<Image>();
+
+        Color col = imgComp.color;
+        col.a = 0.2f;
+        imgComp.color = col;
+
+        imgComp.DOFade(0.5f, 0.5f).SetEase(Ease.InOutSine).SetLoops(-1, LoopType.Yoyo);
+        BTN_close.gameObject.SetActive(false);
+
+        ReadyPlayerView(_playerIdSelf);
+    }
+
+    private void ReadyPlayerView(int inPlayerId)
+    {
+        var view = _playerSelectViewArr.FirstOrDefault(x=> x.PlayerId == inPlayerId);
+
+        if(view == null)
+            return;
+
+        view.Ready();
     }
 
     private  void GameStart()
@@ -140,7 +174,7 @@ public class PopupSelectHeros : PopupBase
         AddPlayerView(inEntity);
     }
 
-    public void Leave(int inPlayerId)
+    public void OnLeave(int inPlayerId)
     {
         var view = _playerSelectViewArr.FirstOrDefault(x=> x.PlayerId == inPlayerId);
 
@@ -153,6 +187,11 @@ public class PopupSelectHeros : PopupBase
     public void OnRecvSelectHero(PlayerEntity inEntity)
     {
        ChangeHeroView(inEntity.playerId, inEntity.heroId);
+    }
+
+    public void OnRecvReadyToGame(PlayerEntity inEntity)
+    {
+        ReadyPlayerView(inEntity.playerId);
     }
 
     public void ChangeHeroView(int inPlayerId, int inHeroId)
@@ -190,7 +229,6 @@ public class PopupSelectHeros : PopupBase
             view.Clear();
     }
 
-
     public void LoadHeroSprite()
     {
         _heroImageDic?.Clear();
@@ -210,9 +248,10 @@ public class PopupSelectHeros : PopupBase
         return _heroImageDic.TryGetValue(inHeroId, out var sprite) ? sprite : null; 
     }
 
-    public void AddEvent(Action<int, int> inOnSendSelectHero, Action inDisconnect)
+    public void AddEvent(Action<int, int> inOnSendSelectHero, Action inOnSendReadyToGame,  Action inDisconnect)
     {
         _onSendSelectHeroCB = inOnSendSelectHero;
+        _onSendReady = inOnSendReadyToGame;
         _disconnectCB = inDisconnect;
     }
 

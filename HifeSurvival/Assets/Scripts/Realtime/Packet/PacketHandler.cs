@@ -14,9 +14,10 @@ class PacketHandler
 			//Console.WriteLine(chatPacket.chat);
 	}
 
-    internal static void ReadyToGameHandler(PacketSession session, IPacket packet)
+    public static void ReadyToGameHandler(PacketSession session, IPacket packet)
     {
-        throw new NotImplementedException();
+        ReadyToGame readyToGame = packet as ReadyToGame;
+        GameMode.Instance.OnRecvReadyToGame(readyToGame);
     }
 
     public static void SelectHeroHandler(PacketSession session, IPacket packet)

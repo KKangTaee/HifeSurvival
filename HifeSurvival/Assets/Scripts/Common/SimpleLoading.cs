@@ -16,7 +16,7 @@ public class SimpleLoading : MonoBehaviour
     {
         var startIconPos = IMG_icon.rectTransform.anchoredPosition;
 
-        IMG_icon.rectTransform.DOAnchorPosY(startIconPos.y - 10f, 1)
+        IMG_icon.rectTransform.DOAnchorPosY(startIconPos.y - 15f, 1)
                               .SetEase(Ease.InOutSine)
                               .SetLoops(-1, LoopType.Yoyo);
         SetDesc(inDesc);
@@ -47,6 +47,7 @@ public class SimpleLoading : MonoBehaviour
 
     public static void Expose(string inDesc = null, Sprite inIcon = null)
     {
+        Debug.Log("Expose 호출");
         if(_obj == null)
         {
             var prefab = Resources.Load<SimpleLoading>($"Prefabs/Commons/{nameof(SimpleLoading)}");
@@ -61,7 +62,7 @@ public class SimpleLoading : MonoBehaviour
             DontDestroyOnLoad(_obj);
         }
 
-        _obj.SetActive(true);
+        _obj?.SetActive(true);
         _obj?.Show(inDesc, inIcon);
     }
 

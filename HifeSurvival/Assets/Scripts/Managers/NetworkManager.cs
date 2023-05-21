@@ -19,7 +19,7 @@ public class NetworkManager : MonoBehaviour
             {
                 var obj = new GameObject();
                 obj.name = nameof(NetworkManager);
-                
+
                 DontDestroyOnLoad(obj);
 
                 _instance = obj.AddComponent<NetworkManager>();
@@ -32,9 +32,15 @@ public class NetworkManager : MonoBehaviour
     private ServerSession _session;
 
     private SimpleTaskCompletionSource<bool> _connectCompleted = new SimpleTaskCompletionSource<bool>();
-    private SimpleTaskCompletionSource<bool> _disconnectCompleted = new SimpleTaskCompletionSource<bool>();
+    private Action _disconnectCB;
+    private bool _isConnected = false;
 
     public ServerSession SessionSelf => _session;
+
+
+    //----------------
+    // unity events
+    //----------------
 
     private void Update()
     {
@@ -45,6 +51,7 @@ public class NetworkManager : MonoBehaviour
             PacketManager.Instance.HandlePacket(_session, packet);
         }
     }
+
 
     public async Task<bool> ConnectAsync()
     {
@@ -68,21 +75,27 @@ public class NetworkManager : MonoBehaviour
         if (waitResult.isSuccess == false)
             return false;
 
+        _isConnected = waitResult.isSuccess;
+
         return waitResult.result;
     }
 
-    public async Task<bool> DisconnectAsync()
+
+    private async void RetryConnect(Action<bool> doneCallback = null)
     {
-        _disconnectCompleted.Reset();
-        
+        SimpleLoading.Expose("다시 접속중입니다.");
+
+        bool isSuccess = await ConnectAsync();
+
+        SimpleLoading.Hide();
+
+        doneCallback?.Invoke(isSuccess);
+    }
+
+    public void Disconnect(Action inDisconnectCB = null)
+    {
+        AddEvent(inDisconnectCB);
         _session.Disconnect();
-
-        var waitResult = await _disconnectCompleted.Wait(2000);
-
-        if (waitResult.isSuccess == false)
-            return false;
-
-        return waitResult.result;
     }
 
 
@@ -96,9 +109,30 @@ public class NetworkManager : MonoBehaviour
         _connectCompleted.Signal(inResult);
     }
 
-    public void OnDisconnectResult(bool inResult)
+    public void OnDisconnectResult()
     {
-        _disconnectCompleted.Signal(inResult);
+        if (GameMode.Instance.Status != GameMode.EStatus.NOT_JOIN)
+        {
+            // 게임에 참가중인 상태에서 이게 호출이 되었다면, 도중에 끊겼다는 뜻임.
+            RetryConnect(isSuccess =>
+            {
+                if(isSuccess == false)
+                {
+                    _isConnected = false;
+                    _disconnectCB?.Invoke();
+                }               
+            });
+        }
+        else
+        {
+            _isConnected = false;
+            _disconnectCB?.Invoke();
+        } 
+    }
+
+    public void AddEvent(Action inDisconnect)
+    {
+        _disconnectCB = inDisconnect;
     }
 }
 

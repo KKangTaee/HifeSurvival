@@ -11,6 +11,7 @@ namespace Server
         Dictionary<int, MonsterEntity> _monstersDic = new Dictionary<int, MonsterEntity>();
 
         private const int PLAYER_MAX_COUNT = 4;
+        private const int CONUTDOWN_SEC = 5;
 
         private GameRoom _room;
 
@@ -148,8 +149,23 @@ namespace Server
 
         public void OnSelectHero(SelectHero inPacket)
         {
-            System.Console.WriteLine($"playerId : {inPacket.playerId}, heroId : {inPacket.heroId}");
             _room.Broadcast(inPacket);
+        }
+
+        public void OnReadyToGame(ReadyToGame inPacket)
+        {
+            _room.Broadcast(inPacket);
+
+            // 모두 레디라면..? 게임시작
+            if(CanStartGame() == true)
+            {
+                S_Countdown countdown = new S_Countdown()
+                {
+                    countdownSec = CONUTDOWN_SEC
+                };
+
+                _room.Broadcast(countdown);
+            }
         }
 
 

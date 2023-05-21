@@ -46,6 +46,8 @@ class PacketManager
 		{
 			IPacket packet = func.Invoke(session, buffer);
 
+			System.Console.WriteLine($"[{nameof(OnRecvPacket)}] PacketType : {packet.GetType()}");
+
 			if(onRecvCallback != null)
 			   onRecvCallback.Invoke(session, packet);
 			else

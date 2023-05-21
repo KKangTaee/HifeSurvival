@@ -2045,7 +2045,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 740055198099132799}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8382097340600679719}
+        m_TargetAssemblyTypeName: PopupBase, Assembly-CSharp
+        m_MethodName: OnButton
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 634727098395534369}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.UI.Button, UnityEngine.UI
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &9145311903505346739
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2992,6 +3004,7 @@ MonoBehaviour:
   _background: {fileID: 8382097339520702032}
   _backDimmed: {fileID: 8382097339518577603}
   BTN_close: {fileID: 3371325970841452617}
+  BTN_ready: {fileID: 634727098395534369}
   RT_heroSelection: {fileID: 1453298178829101678}
   _selectButtonPrefab: {fileID: 7003024350919824769, guid: a18c33124381d451c9f1be3dc0053ce1, type: 3}
   TMP_name: {fileID: 129298694060073339}

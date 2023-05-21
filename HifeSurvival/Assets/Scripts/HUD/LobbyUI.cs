@@ -43,7 +43,7 @@ public class LobbyUI : MonoBehaviour
             return;
         }
 
-        SimpleLoading.Expose("잠시만 기다려주세요");
+        SimpleLoading.ChangeDesc("잠시만 기다려주세요");
         
         isSuccess = await GameMode.Instance.JoinAsync();
         await UniTask.Delay(delayTime);
@@ -51,12 +51,14 @@ public class LobbyUI : MonoBehaviour
         if(isSuccess == false)
         {
             Debug.Log("룸에 접속된 유저의 정보를 가지고 오지 못함");
-            await NetworkManager.Instance.DisconnectAsync();
+            NetworkManager.Instance.Disconnect();
             SimpleLoading.Hide();
             return;
         }
 
         SimpleLoading.Hide();
+
+        Debug.Log($"룸 접속 완료 : {GameMode.Instance.RoomId}");
 
         PopupManager.Instance.Show<PopupSelectHeros>(
             inCreateCallback : popup =>
@@ -69,27 +71,25 @@ public class LobbyUI : MonoBehaviour
                 popup.SetPlayerIdSelf(GameMode.Instance.EntitySelf.playerId);
 
                 GameMode.Instance.AddEvent(
-                    inRecvJoinOther  : entity =>  popup.OnRecvJoin(entity),
-                    inRecvOther : playerId => popup.Leave(playerId),
-                    inRecvSelect : entity => popup.OnRecvSelectHero(entity)
+                    inRecvJoin  : entity =>  popup.OnRecvJoin(entity),
+                    inRecvLeave : playerId => popup.OnLeave(playerId),
+                    inRecvSelect : entity => popup.OnRecvSelectHero(entity),
+                    inRecvReady : entity => popup.OnRecvReadyToGame(entity)
                 );
 
                 popup.AddEvent(
                     inOnSendSelectHero : (playerId, heroId) => GameMode.Instance.OnSendSelectHero(playerId,heroId),
-                    inDisconnect : ()=>{ LeaveGame(); }
+                    inOnSendReadyToGame : ()=> GameMode.Instance.OnSendReadyToGame(),
+                    inDisconnect : ()=> NetworkManager.Instance.Disconnect(GameMode.Instance.Leave)
+                );
+
+                NetworkManager.Instance.AddEvent(
+                    inDisconnect : () => popup.Close( _ => {GameMode.Instance.Leave(); })      
                 );
             });
     }
 
-    private async void LeaveGame()
-    {
-        var isSuccess = await NetworkManager.Instance.DisconnectAsync();
 
-        if(isSuccess == true)
-        {
-            GameMode.Instance.Leave();
-        }
-    }
     
 
     public async UniTask SetProfile()

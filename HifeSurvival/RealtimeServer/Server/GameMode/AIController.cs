@@ -56,7 +56,7 @@ namespace Server
 
         public class FollowTargetState : IState<MonsterEntity>, IUpdate<MonsterEntity>
         {
-            private PlayerEntity player;
+            // private PlayerEntity player;
 
             public void Enter<U>(MonsterEntity inSelf, in U inParam = default) where U : IStateParam
             {

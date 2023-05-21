@@ -121,7 +121,6 @@ public class SimpleTaskCompletionSource<T>
     {
         if (_source.Task.IsCompleted)
         {
-            Debug.Log("이미 완료");
             return (true, _source.Task.Result);
         }
 

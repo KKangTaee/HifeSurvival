@@ -8,9 +8,7 @@ public class GameMode
 {
     private static GameMode _instance = new GameMode();
     public static GameMode Instance { get => _instance; }
-
     public Dictionary<int, PlayerEntity> PlayerEntitysDic { get; private set; } = new Dictionary<int, PlayerEntity>();
-
     private SimpleTaskCompletionSource<S_JoinToGame> _joinCompleted = new SimpleTaskCompletionSource<S_JoinToGame>();
 
     private Action<PlayerEntity> _onRecvJoinCB;
@@ -18,6 +16,7 @@ public class GameMode
     private Action<int> _onRecvLeaveCB;
 
     public PlayerEntity EntitySelf { get; private set; }
+    public int RoomId { get; private set; }
 
     public enum EStatus
     {
@@ -65,8 +64,10 @@ public class GameMode
         if (waitResult.isSuccess == false)
             return false;
 
+        // 룸번호
+        RoomId = waitResult.result.roomId;
         var joinPlayerList = waitResult.result.joinPlayerList;
-        
+
         foreach (var joinPlayer in joinPlayerList)
             AddPlayerEntity(joinPlayer);
 
@@ -79,12 +80,6 @@ public class GameMode
     {
         _status = EStatus.NOT_JOIN;
         PlayerEntitysDic.Clear();
-    }
-
-
-    public void UpdatePlayerEntity(List<S_JoinToGame.JoinPlayer> joinPlayerList)
-    {
-
     }
 
     public void AddPlayerEntity(S_JoinToGame.JoinPlayer joinPlayer)
@@ -112,7 +107,7 @@ public class GameMode
     {
         if (_status == EStatus.JOIN)
         {
-            // 이 미내가 참가 중이라면, 내려온 데이터에서 처리해야할 것들만 처리해주면 된다.
+            // 이미 내가 참가 중이라면, 내려온 데이터에서 처리해야할 것들만 처리해주면 된다.
             foreach (var joinPlayer in inPacket.joinPlayerList)
             {
                 if (PlayerEntitysDic.ContainsKey(joinPlayer.playerId) == false)
@@ -129,7 +124,7 @@ public class GameMode
         }
     }
 
-    public void OnRecvLeave(S_LeaveOther inPacket)
+    public void OnRecvLeave(S_LeaveToGame inPacket)
     {
         RemovePlayerEntity(inPacket.playerId);
         _onRecvLeaveCB?.Invoke(inPacket.playerId);
@@ -137,7 +132,6 @@ public class GameMode
 
     public void OnRecvSelectHero(SelectHero inPacket)
     {
-        Debug.Log($"playerId : {inPacket.playerId}, inHeroId : {inPacket.heroId}");
         if (EntitySelf.playerId == inPacket.playerId)
             return;
 
@@ -150,7 +144,6 @@ public class GameMode
 
     public void OnSendSelectHero(int inPlayerId, int inHeroId)
     {
-    
         SelectHero packet = new SelectHero()
         {
             playerId = inPlayerId,
@@ -166,7 +159,6 @@ public class GameMode
 
         joinToGame.userId = ServerData.Instance.UserData.user_id;
         joinToGame.userName = ServerData.Instance.UserData.nickname;
-
 
         NetworkManager.Instance.Send(joinToGame);
     }

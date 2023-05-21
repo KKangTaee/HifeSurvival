@@ -20,7 +20,7 @@ class PacketManager
 		
 	public void Register()
 	{
-	_makeFunc.Add((ushort)PacketID.S_Chat, MakePacket<S_Chat>);
+		_makeFunc.Add((ushort)PacketID.S_Chat, MakePacket<S_Chat>);
 		_handler.Add((ushort)PacketID.S_Chat, PacketHandler.S_ChatHandler);
 		_makeFunc.Add((ushort)PacketID.S_JoinToGame, MakePacket<S_JoinToGame>);
 		_handler.Add((ushort)PacketID.S_JoinToGame, PacketHandler.S_JoinToGameHandler);
@@ -34,10 +34,6 @@ class PacketManager
 		_handler.Add((ushort)PacketID.S_Countdown, PacketHandler.S_CountdownHandler);
 		_makeFunc.Add((ushort)PacketID.S_StartGame, MakePacket<S_StartGame>);
 		_handler.Add((ushort)PacketID.S_StartGame, PacketHandler.S_StartGameHandler);
-		_makeFunc.Add((ushort)PacketID.S_JoinOther, MakePacket<S_JoinOther>);
-		_handler.Add((ushort)PacketID.S_JoinOther, PacketHandler.S_JoinOtherHandler);
-		_makeFunc.Add((ushort)PacketID.S_LeaveOther, MakePacket<S_LeaveOther>);
-		_handler.Add((ushort)PacketID.S_LeaveOther, PacketHandler.S_LeaveOtherHandler);
 
 	}
 

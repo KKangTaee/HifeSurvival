@@ -33,7 +33,6 @@ class PacketHandler
 
     public static void C_JoinToGameHandler(PacketSession session, IPacket packet)
     {
-        System.Console.WriteLine("C_JoinToGame 호출됨!!!");
 		C_JoinToGame joinToGame = packet as C_JoinToGame;
 		ClientSession client = session as ClientSession;
 		
@@ -42,6 +41,7 @@ class PacketHandler
 
     internal static void C_AttackHandler(PacketSession session, IPacket packet)
     {
+
         throw new NotImplementedException();
     }
 

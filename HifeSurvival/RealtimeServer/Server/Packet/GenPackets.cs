@@ -16,8 +16,6 @@ public enum PacketID
 	S_Countdown = 8,
 	S_StartGame = 9,
 	C_Attack = 10,
-	S_JoinOther = 11,
-	S_LeaveOther = 12,
 	
 }
 
@@ -267,6 +265,7 @@ public class S_JoinToGame : IPacket
 public class S_LeaveToGame : IPacket
 {
 	public string userId;
+	public int playerId;
 
 	public ushort Protocol { get { return (ushort)PacketID.S_LeaveToGame; } }
 
@@ -281,6 +280,8 @@ public class S_LeaveToGame : IPacket
 		count += sizeof(ushort);
 		this.userId = Encoding.Unicode.GetString(s.Slice(count, userIdLen));
 		count += userIdLen;
+		this.playerId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+		count += sizeof(int);
 	}
 
 	public ArraySegment<byte> Write()
@@ -299,6 +300,8 @@ public class S_LeaveToGame : IPacket
 		count += sizeof(ushort);
 		Encoding.Unicode.GetBytes(this.userId, s.Slice(count, s.Length - count));
 		count += userIdLen;
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.playerId);
+		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s, count);
 		if (success == false)
 			return null;
@@ -618,112 +621,3 @@ public struct Vec3
 	}	
 }
 	
-public class S_JoinOther : IPacket
-{
-	public string userId;
-	public string userName;
-	public int plaeyrId;
-	public int heroId;
-
-	public ushort Protocol { get { return (ushort)PacketID.S_JoinOther; } }
-
-	public void Read(ArraySegment<byte> segment)
-	{
-		ushort count = 0;
-
-		ReadOnlySpan<byte> s = new ReadOnlySpan<byte>(segment.Array, segment.Offset, segment.Count);
-		count += sizeof(ushort);
-		count += sizeof(ushort);
-		ushort userIdLen = BitConverter.ToUInt16(s.Slice(count, s.Length - count));
-		count += sizeof(ushort);
-		this.userId = Encoding.Unicode.GetString(s.Slice(count, userIdLen));
-		count += userIdLen;
-		ushort userNameLen = BitConverter.ToUInt16(s.Slice(count, s.Length - count));
-		count += sizeof(ushort);
-		this.userName = Encoding.Unicode.GetString(s.Slice(count, userNameLen));
-		count += userNameLen;
-		this.plaeyrId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
-		count += sizeof(int);
-		this.heroId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
-		count += sizeof(int);
-	}
-
-	public ArraySegment<byte> Write()
-	{
-		ArraySegment<byte> segment = SendBufferHelper.Open(4096);
-		ushort count = 0;
-		bool success = true;
-
-		Span<byte> s = new Span<byte>(segment.Array, segment.Offset, segment.Count);
-
-		count += sizeof(ushort);
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.S_JoinOther);
-		count += sizeof(ushort);
-		ushort userIdLen = (ushort)Encoding.Unicode.GetByteCount(this.userId);
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), userIdLen);
-		count += sizeof(ushort);
-		Encoding.Unicode.GetBytes(this.userId, s.Slice(count, s.Length - count));
-		count += userIdLen;
-		ushort userNameLen = (ushort)Encoding.Unicode.GetByteCount(this.userName);
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), userNameLen);
-		count += sizeof(ushort);
-		Encoding.Unicode.GetBytes(this.userName, s.Slice(count, s.Length - count));
-		count += userNameLen;
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.plaeyrId);
-		count += sizeof(int);
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.heroId);
-		count += sizeof(int);
-		success &= BitConverter.TryWriteBytes(s, count);
-		if (success == false)
-			return null;
-		return SendBufferHelper.Close(count);
-	}
-}
-
-public class S_LeaveOther : IPacket
-{
-	public string userId;
-	public int playerId;
-
-	public ushort Protocol { get { return (ushort)PacketID.S_LeaveOther; } }
-
-	public void Read(ArraySegment<byte> segment)
-	{
-		ushort count = 0;
-
-		ReadOnlySpan<byte> s = new ReadOnlySpan<byte>(segment.Array, segment.Offset, segment.Count);
-		count += sizeof(ushort);
-		count += sizeof(ushort);
-		ushort userIdLen = BitConverter.ToUInt16(s.Slice(count, s.Length - count));
-		count += sizeof(ushort);
-		this.userId = Encoding.Unicode.GetString(s.Slice(count, userIdLen));
-		count += userIdLen;
-		this.playerId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
-		count += sizeof(int);
-	}
-
-	public ArraySegment<byte> Write()
-	{
-		ArraySegment<byte> segment = SendBufferHelper.Open(4096);
-		ushort count = 0;
-		bool success = true;
-
-		Span<byte> s = new Span<byte>(segment.Array, segment.Offset, segment.Count);
-
-		count += sizeof(ushort);
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.S_LeaveOther);
-		count += sizeof(ushort);
-		ushort userIdLen = (ushort)Encoding.Unicode.GetByteCount(this.userId);
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), userIdLen);
-		count += sizeof(ushort);
-		Encoding.Unicode.GetBytes(this.userId, s.Slice(count, s.Length - count));
-		count += userIdLen;
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.playerId);
-		count += sizeof(int);
-		success &= BitConverter.TryWriteBytes(s, count);
-		if (success == false)
-			return null;
-		return SendBufferHelper.Close(count);
-	}
-}
-

@@ -43,7 +43,8 @@ class PacketHandler
 
     internal static void S_LeaveToGameHandler(PacketSession session, IPacket packet)
     {
-        throw new NotImplementedException();
+        S_LeaveToGame leaveToGame = packet as S_LeaveToGame;
+        GameMode.Instance.OnRecvLeave(leaveToGame);
     }
 
     internal static void S_ReslutSelectHandler(PacketSession session, IPacket packet)
@@ -64,17 +65,5 @@ class PacketHandler
     internal static void S_AddJoinHandler(PacketSession session, IPacket packet)
     {
         throw new NotImplementedException();
-    }
-
-    internal static void S_JoinOtherHandler(PacketSession session, IPacket packet)
-    {
-        S_JoinOther joinOther = packet as S_JoinOther;
-        // GameMode.Instance.OnRecvAddJoinOther(joinOther);
-    }
-
-    internal static void S_LeaveOtherHandler(PacketSession session, IPacket packet)
-    {
-        S_LeaveOther leaveOther = packet as S_LeaveOther;
-        GameMode.Instance.OnRecvLeave(leaveOther);
     }
 }

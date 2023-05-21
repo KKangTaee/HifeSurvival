@@ -9,9 +9,6 @@ using System.IO;
 
 public class LobbyUI : MonoBehaviour
 {
-
-
-
     [SerializeField] Button BTN_gameStart;
     [SerializeField] Image IMG_profile;
     [SerializeField] TMP_Text TMP_profileName;
@@ -32,31 +29,34 @@ public class LobbyUI : MonoBehaviour
 
     private async void JoinGame()
     {
+        var delayTime = 300;
+
+        SimpleLoading.Expose("네트워크 연결중입니다...");
+
         var isSuccess = await NetworkManager.Instance.ConnectAsync();
+        await UniTask.Delay(delayTime);
 
         if(isSuccess == false)
         {
             Debug.LogError("네트워크 접속안됨");
+            SimpleLoading.Hide();
             return;
         }
-        else
-        {
-            Debug.Log("네트워크 접속 성공!");
-        }
 
-
+        SimpleLoading.Expose("잠시만 기다려주세요");
         
         isSuccess = await GameMode.Instance.JoinAsync();
+        await UniTask.Delay(delayTime);
 
         if(isSuccess == false)
         {
             Debug.Log("룸에 접속된 유저의 정보를 가지고 오지 못함");
+            await NetworkManager.Instance.DisconnectAsync();
+            SimpleLoading.Hide();
             return;
         }
-        else
-        {
-            Debug.Log("방 데이터 가져옴!");
-        }
+
+        SimpleLoading.Hide();
 
         PopupManager.Instance.Show<PopupSelectHeros>(
             inCreateCallback : popup =>

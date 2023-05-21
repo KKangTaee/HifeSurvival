@@ -26,6 +26,7 @@
 
 	<packet name ="S_LeaveToGame">
 		<string name = "userId"/>
+		<int name ="playerId"/>
 	</packet>
 
 	<packet name="SelectHero">
@@ -66,20 +67,5 @@
 		<float name ="y"/>
 		<float name ="z"/>
 	</struct>
-
-
-	<packet name = "S_JoinOther">
-		<string name = "userId"/>
-		<string name= "userName"/>
-		<int name = "plaeyrId"/>
-		<int name = "heroId"/>
-	</packet>
-
-	<packet name ="S_LeaveOther">
-		<string name = "userId"/>
-		<int name = "playerId"/>
-	</packet>
-
-
 
 </PDL>

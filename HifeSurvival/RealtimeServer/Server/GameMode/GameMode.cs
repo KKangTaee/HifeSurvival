@@ -139,7 +139,8 @@ namespace Server
             // 브로드캐스팅
             S_LeaveToGame packet = new S_LeaveToGame()
             {
-                userId = playerInfo.userId
+                userId = playerInfo.userId,
+                playerId = playerInfo.playerId,
             };
 
             _room.Broadcast(packet);

@@ -42,7 +42,7 @@ public class PopupManager
     // functions
     //------------------
 
-    public void Show<T>(Action<T> inCreateCallback, Action<T> inCloseCallback = null) where T : PopupBase
+    public void Show<T>(Action<T> inCreateCallback) where T : PopupBase
     {
         // 이미노출되었다면..? 열지 않는다
         if (IsExposedNow<T>() == true)

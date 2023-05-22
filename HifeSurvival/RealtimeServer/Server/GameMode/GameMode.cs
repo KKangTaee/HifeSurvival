@@ -23,16 +23,16 @@ namespace Server
         }
 
 
-        Dictionary<int, PlayerEntity>  _playersDict  = new Dictionary<int, PlayerEntity>();
+        Dictionary<int, PlayerEntity> _playersDict = new Dictionary<int, PlayerEntity>();
         Dictionary<int, MonsterEntity> _monstersDict = new Dictionary<int, MonsterEntity>();
 
         private const int PLAYER_MAX_COUNT = 4;
-        private const int CONUTDOWN_SEC = 5;
+        private const int CONUTDOWN_SEC = 10;
 
         private int _roomId;
 
         IBroadcaster _broadcaster = null;
-        public EStatus  Status { get; private set;} = EStatus.NONE;
+        public EStatus Status { get; private set; } = EStatus.NONE;
 
         public GameMode(GameRoom inRoom)
         {
@@ -95,13 +95,12 @@ namespace Server
 
         public bool CanStartGame()
         {
-            return _playersDict.Count == PLAYER_MAX_COUNT &&
-                   _playersDict.Values.All(x => x.isReady);
+            return _playersDict.Values.All(x => x.isReady);
         }
 
         public bool CanJoinRoom()
         {
-            return Status == EStatus.READY && _playersDict.Count <PLAYER_MAX_COUNT;
+            return Status == EStatus.READY && _playersDict.Count < PLAYER_MAX_COUNT;
         }
 
         public void OnRecvJoin(C_JoinToGame inPacket, int inSessionId)
@@ -156,7 +155,7 @@ namespace Server
 
             gameStart.playerList = SetupPlayer();
             gameStart.monsterList = SetupMonster();
-            
+
             _broadcaster.Broadcast(gameStart);
 
             Status = EStatus.GAME_START;
@@ -164,12 +163,16 @@ namespace Server
 
         public void OnRecvReady(CS_ReadyToGame inPacket)
         {
-            _broadcaster.Broadcast(inPacket);
-
-            // 모두 레디라면..? 게임시작
-            if (CanStartGame() == true)
+            if (_playersDict.TryGetValue(inPacket.playerId, out var player) == true)
             {
-                OnCountdown();
+                player.isReady = true;
+                _broadcaster.Broadcast(inPacket);
+
+                // 모두 레디라면..? 게임시작
+                if (CanStartGame() == true)
+                {
+                    OnCountdown();
+                }
             }
         }
 
@@ -185,7 +188,7 @@ namespace Server
             Status = EStatus.COUNTDOWN;
 
             // N초 후 자동으로 호출
-            JobTimer.Instance.Push(OnStartGame, CONUTDOWN_SEC * 100);
+            JobTimer.Instance.Push(OnStartGame, CONUTDOWN_SEC * 1000);
         }
 
         public void OnRecvSelect(CS_SelectHero inPacket)
@@ -196,9 +199,9 @@ namespace Server
         public void OnRecvAttack(CS_Attack inPacket)
         {
             // 플레이어를 공격했을 때
-            if(inPacket.toIdIsPlayer == true)
+            if (inPacket.toIdIsPlayer == true)
             {
-                if (_playersDict.TryGetValue(inPacket.toId, out var   toTarget) == true&&
+                if (_playersDict.TryGetValue(inPacket.toId, out var toTarget) == true &&
                     _playersDict.TryGetValue(inPacket.fromId, out var fromTarget) == true)
                 {
                     var attackParam = new AttackParam<PlayerEntity>()
@@ -214,9 +217,9 @@ namespace Server
             // 몬스터를 공격했을 때
             else
             {
-                if(_monstersDict.TryGetValue(inPacket.toId, out var  toTarget) == true &&
+                if (_monstersDict.TryGetValue(inPacket.toId, out var toTarget) == true &&
                    _playersDict.TryGetValue(inPacket.fromId, out var fromTarget) == true)
-                {                 
+                {
                     var attackParam = new AttackParam<MonsterEntity>()
                     {
                         damageValue = inPacket.damageValue,
@@ -232,7 +235,7 @@ namespace Server
 
         public void OnRecvMove(CS_Move inPacket)
         {
-            if(_playersDict.TryGetValue(inPacket.targetId, out var player) == true)
+            if (_playersDict.TryGetValue(inPacket.targetId, out var player) == true)
             {
                 var moveParam = new MoveParam()
                 {

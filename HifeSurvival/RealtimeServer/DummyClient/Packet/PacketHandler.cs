@@ -52,4 +52,29 @@ class PacketHandler
     {
         throw new NotImplementedException();
     }
+
+    internal static void CS_SelectHeroHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static void CS_ReadyToGameHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static void CS_AttackHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static void CS_MoveHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static void CS_StopMoveHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -16,6 +16,7 @@ public class GameMode
     private Action<PlayerEntity> _onRecvReadyCB;
     private Action<int> _onRecvLeaveCB;
     private Action<int> _onRecvCountdownCB;
+    private Action      _onRecvStartGameCB;
 
 
     public PlayerEntity EntitySelf { get; private set; }
@@ -39,12 +40,16 @@ public class GameMode
     public void AddEvent(Action<PlayerEntity> inRecvJoin,
                          Action<PlayerEntity> inRecvSelect,
                          Action<PlayerEntity> inRecvReady,
-                         Action<int> inRecvLeave)
+                         Action<int> inRecvLeave,
+                         Action<int> inRecvCountdown,
+                         Action  inRecvGameStart)
     {
         _onRecvJoinCB = inRecvJoin;
         _onRecvLeaveCB = inRecvLeave;
         _onRecvSelectCB = inRecvSelect;
         _onRecvReadyCB = inRecvReady;
+        _onRecvCountdownCB = inRecvCountdown;
+        _onRecvStartGameCB = inRecvGameStart;
     }
 
 
@@ -129,7 +134,7 @@ public class GameMode
         _onRecvLeaveCB?.Invoke(inPacket.playerId);
     }
 
-    public void OnRecvSelectHero(SelectHero inPacket)
+    public void OnRecvSelectHero(CS_SelectHero inPacket)
     {
         if (PlayerEntitysDic.TryGetValue(inPacket.playerId, out var entity) == true)
         {
@@ -140,7 +145,7 @@ public class GameMode
         }
     }
 
-    public void OnRecvReadyToGame(ReadyToGame inPacket)
+    public void OnRecvReadyToGame(CS_ReadyToGame inPacket)
     {
         if (PlayerEntitysDic.TryGetValue(inPacket.playerId, out var entity) == true)
         {
@@ -151,14 +156,11 @@ public class GameMode
         }
     }
 
-    public void OnRecvCountdown(S_Countdown inPacket)
-    {
 
-    }
 
     public void OnSendSelectHero(int inPlayerId, int inHeroId)
     {
-        SelectHero packet = new SelectHero()
+        CS_SelectHero packet = new CS_SelectHero()
         {
             playerId = inPlayerId,
             heroId = inHeroId,
@@ -179,8 +181,20 @@ public class GameMode
 
     public void OnSendReadyToGame()
     {
-        ReadyToGame readyToGame = new ReadyToGame();
+        CS_ReadyToGame readyToGame = new CS_ReadyToGame();
         readyToGame.playerId = EntitySelf.playerId;
+
+        NetworkManager.Instance.Send(readyToGame);
+    }
+
+    public void OnRecvCountdown(S_Countdown inPacket)
+    {
+        _onRecvCountdownCB?.Invoke(inPacket.countdownSec);
+    }
+
+    public void OnRecvStartGame(S_StartGame inPacket)
+    {
+        _onRecvStartGameCB?.Invoke();
     }
 }
 

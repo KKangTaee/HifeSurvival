@@ -103,7 +103,7 @@ namespace Server
 
         public bool CanJoinRoom()
         {
-            return _gameMode.CanJoinRoom()
+            return _gameMode.CanJoinRoom();
         }
     }
 }

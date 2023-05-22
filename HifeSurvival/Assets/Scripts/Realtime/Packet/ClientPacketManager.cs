@@ -26,14 +26,20 @@ class PacketManager
 		_handler.Add((ushort)PacketID.S_JoinToGame, PacketHandler.S_JoinToGameHandler);
 		_makeFunc.Add((ushort)PacketID.S_LeaveToGame, MakePacket<S_LeaveToGame>);
 		_handler.Add((ushort)PacketID.S_LeaveToGame, PacketHandler.S_LeaveToGameHandler);
-		_makeFunc.Add((ushort)PacketID.SelectHero, MakePacket<SelectHero>);
-		_handler.Add((ushort)PacketID.SelectHero, PacketHandler.SelectHeroHandler);
-		_makeFunc.Add((ushort)PacketID.ReadyToGame, MakePacket<ReadyToGame>);
-		_handler.Add((ushort)PacketID.ReadyToGame, PacketHandler.ReadyToGameHandler);
+		_makeFunc.Add((ushort)PacketID.CS_SelectHero, MakePacket<CS_SelectHero>);
+		_handler.Add((ushort)PacketID.CS_SelectHero, PacketHandler.CS_SelectHeroHandler);
+		_makeFunc.Add((ushort)PacketID.CS_ReadyToGame, MakePacket<CS_ReadyToGame>);
+		_handler.Add((ushort)PacketID.CS_ReadyToGame, PacketHandler.CS_ReadyToGameHandler);
 		_makeFunc.Add((ushort)PacketID.S_Countdown, MakePacket<S_Countdown>);
 		_handler.Add((ushort)PacketID.S_Countdown, PacketHandler.S_CountdownHandler);
 		_makeFunc.Add((ushort)PacketID.S_StartGame, MakePacket<S_StartGame>);
 		_handler.Add((ushort)PacketID.S_StartGame, PacketHandler.S_StartGameHandler);
+		_makeFunc.Add((ushort)PacketID.CS_Attack, MakePacket<CS_Attack>);
+		_handler.Add((ushort)PacketID.CS_Attack, PacketHandler.CS_AttackHandler);
+		_makeFunc.Add((ushort)PacketID.CS_Move, MakePacket<CS_Move>);
+		_handler.Add((ushort)PacketID.CS_Move, PacketHandler.CS_MoveHandler);
+		_makeFunc.Add((ushort)PacketID.CS_StopMove, MakePacket<CS_StopMove>);
+		_handler.Add((ushort)PacketID.CS_StopMove, PacketHandler.CS_StopMoveHandler);
 
 	}
 
@@ -68,13 +74,6 @@ class PacketManager
 	{
 		Action<PacketSession, IPacket> action = null;
 		if (_handler.TryGetValue(inPacket.Protocol, out action))
-		{
-					
-			#if UNITY_EDITOR
-			UnityEngine.Debug.LogWarning($"{nameof(HandlePacket)} PacketType : {inPacket.GetType()}");
-			#endif
-
 			action.Invoke(inSession, inPacket);
-		}
 	}
 }

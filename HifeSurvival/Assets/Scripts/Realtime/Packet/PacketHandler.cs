@@ -14,26 +14,10 @@ class PacketHandler
 			//Console.WriteLine(chatPacket.chat);
 	}
 
-    public static void ReadyToGameHandler(PacketSession session, IPacket packet)
+    public static void S_CountdownHandler(PacketSession session, IPacket packet)
     {
-        ReadyToGame readyToGame = packet as ReadyToGame;
-        GameMode.Instance.OnRecvReadyToGame(readyToGame);
-    }
-
-    public static void SelectHeroHandler(PacketSession session, IPacket packet)
-    {
-        SelectHero selectHero = packet as SelectHero;
-        GameMode.Instance.OnRecvSelectHero(selectHero);
-    }
-
-    internal static void S_CountdownHandler(PacketSession session, IPacket packet)
-    {
-        throw new NotImplementedException();
-    }
-
-    internal static void S_CountdownToGameHandler(PacketSession session, IPacket packet)
-    {
-        throw new NotImplementedException();
+        S_Countdown countdown = packet as S_Countdown;
+        GameMode.Instance.OnRecvCountdown(countdown);
     }
 
     public static void S_JoinToGameHandler(PacketSession session, IPacket packet)
@@ -42,29 +26,42 @@ class PacketHandler
         GameMode.Instance.OnRecvJoin(joinToGame);
     }
 
-    internal static void S_LeaveToGameHandler(PacketSession session, IPacket packet)
+    public static void S_LeaveToGameHandler(PacketSession session, IPacket packet)
     {
         S_LeaveToGame leaveToGame = packet as S_LeaveToGame;
         GameMode.Instance.OnRecvLeave(leaveToGame);
     }
 
-    internal static void S_ReslutSelectHandler(PacketSession session, IPacket packet)
+    public static void S_StartGameHandler(PacketSession session, IPacket packet)
     {
-        throw new NotImplementedException();
+        S_StartGame startGame = packet as S_StartGame;
+        GameMode.Instance.OnRecvStartGame(startGame);
     }
 
-    internal static void S_ResultToMatchHandler(PacketSession session, IPacket packet)
+    internal static void CS_SelectHeroHandler(PacketSession session, IPacket packet)
     {
-        throw new NotImplementedException();
+        CS_SelectHero selectHero = packet as CS_SelectHero;
+        GameMode.Instance.OnRecvSelectHero(selectHero);
     }
 
-    internal static void S_StartGameHandler(PacketSession session, IPacket packet)
+    internal static void CS_ReadyToGameHandler(PacketSession session, IPacket packet)
     {
-        throw new NotImplementedException();
+        CS_ReadyToGame readyToGame = packet as CS_ReadyToGame;
+        GameMode.Instance.OnRecvReadyToGame(readyToGame);
     }
 
-    internal static void S_AddJoinHandler(PacketSession session, IPacket packet)
+    public static void CS_AttackHandler(PacketSession session, IPacket packet)
     {
-        throw new NotImplementedException();
+        
+    }
+
+    internal static void CS_MoveHandler(PacketSession session, IPacket packet)
+    {
+        
+    }
+
+    internal static void CS_StopMoveHandler(PacketSession session, IPacket packet)
+    {
+        
     }
 }

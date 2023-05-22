@@ -74,7 +74,9 @@ public class LobbyUI : MonoBehaviour
                     inRecvJoin  : entity =>  popup.OnRecvJoin(entity),
                     inRecvLeave : playerId => popup.OnLeave(playerId),
                     inRecvSelect : entity => popup.OnRecvSelectHero(entity),
-                    inRecvReady : entity => popup.OnRecvReadyToGame(entity)
+                    inRecvReady : entity => popup.OnRecvReadyToGame(entity),
+                    inRecvCountdown : sec => popup.OnRecvCountdown(sec),
+                    inRecvGameStart: ()=> popup.OnRecvStartGame()
                 );
 
                 popup.AddEvent(

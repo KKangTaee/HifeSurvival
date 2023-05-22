@@ -34,7 +34,7 @@ public class PopupSelectHeros : PopupBase
     private Dictionary<int, Sprite> _heroImageDic = new Dictionary<int, Sprite>();
     
     private Action <int, int> _onSendSelectHeroCB;
-    private Action _onSendReady;
+    private Action _onSendReadyCB;
     private Action _disconnectCB;
 
     private int _playerIdSelf;
@@ -52,7 +52,7 @@ public class PopupSelectHeros : PopupBase
 
         SetHeroButton();
 
-        StartCoroutine(nameof(Co_Timer));
+        StartCoroutine(nameof(Co_SelectTimer));
     }
 
 
@@ -118,7 +118,7 @@ public class PopupSelectHeros : PopupBase
     }
 
 
-    IEnumerator Co_Timer()
+    IEnumerator Co_SelectTimer()
     {
         float leftTime = 30;
 
@@ -133,13 +133,28 @@ public class PopupSelectHeros : PopupBase
 
             yield return null;
         }
+    }
 
+    IEnumerator Co_CountdownTimer(float inSec)
+    {
+        float leftTime = inSec;
 
+        while(true)
+        {
+            if(leftTime < 0.1f)
+               break;
+
+            leftTime -= Time.deltaTime;
+
+            TMP_leftTime.text = $"게임시작 {(int)leftTime}초 전";
+
+            yield return null;
+        }
     }
 
     public void Ready()
     {
-        _onSendReady?.Invoke();
+        _onSendReadyCB?.Invoke();
 
         BTN_ready.enabled = false;
         var imgComp = BTN_ready.GetComponent<Image>();
@@ -169,6 +184,7 @@ public class PopupSelectHeros : PopupBase
         _ = SceneManager.Instance.ChangeScene(SceneManager.SCENE_NAME_INGAME);
     }
 
+
     public void OnRecvJoin(PlayerEntity inEntity)
     {
         AddPlayerView(inEntity);
@@ -192,6 +208,17 @@ public class PopupSelectHeros : PopupBase
     public void OnRecvReadyToGame(PlayerEntity inEntity)
     {
         ReadyPlayerView(inEntity.playerId);
+    }
+
+    public void OnRecvCountdown(int inSec)
+    {
+        StopCoroutine(nameof(Co_SelectTimer));
+        StartCoroutine(Co_CountdownTimer(inSec));
+    }
+
+    public void OnRecvStartGame()
+    {
+        GameStart();
     }
 
     public void ChangeHeroView(int inPlayerId, int inHeroId)
@@ -251,7 +278,7 @@ public class PopupSelectHeros : PopupBase
     public void AddEvent(Action<int, int> inOnSendSelectHero, Action inOnSendReadyToGame,  Action inDisconnect)
     {
         _onSendSelectHeroCB = inOnSendSelectHero;
-        _onSendReady = inOnSendReadyToGame;
+        _onSendReadyCB = inOnSendReadyToGame;
         _disconnectCB = inDisconnect;
     }
 

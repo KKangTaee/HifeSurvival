@@ -8,7 +8,7 @@ using System;
 using System.Threading.Tasks;
 using System.Linq;
 
-public class NetworkManager : MonoBehaviour
+public class NetworkManager : MonoBehaviour, IJobQueue
 {
     private static NetworkManager _instance;
     public static NetworkManager Instance
@@ -36,6 +36,9 @@ public class NetworkManager : MonoBehaviour
     private bool _isConnected = false;
 
     public ServerSession SessionSelf => _session;
+
+    private JobQueue _jobQueue = new JobQueue();
+
 
 
     //----------------
@@ -111,28 +114,37 @@ public class NetworkManager : MonoBehaviour
 
     public void OnDisconnectResult()
     {
-        if (GameMode.Instance.Status != GameMode.EStatus.NOT_JOIN)
+        Push(() =>
         {
-            // 게임에 참가중인 상태에서 이게 호출이 되었다면, 도중에 끊겼다는 뜻임.
-            RetryConnect(isSuccess =>
+            // NOTE@ytaeho.kang Retry 내부의 UnityEngine 을 사용하기 위해 Push로 래핑처리함.
+            if (GameMode.Instance.Status != GameMode.EStatus.NOT_JOIN)
             {
-                if(isSuccess == false)
+                // 게임에 참가중인 상태에서 이게 호출이 되었다면, 도중에 끊겼다는 뜻임.
+                RetryConnect(isSuccess =>
                 {
-                    _isConnected = false;
-                    _disconnectCB?.Invoke();
-                }               
-            });
-        }
-        else
-        {
-            _isConnected = false;
-            _disconnectCB?.Invoke();
-        } 
+                    if (isSuccess == false)
+                    {
+                        _isConnected = false;
+                        _disconnectCB?.Invoke();
+                    }
+                });
+            }
+            else
+            {
+                _isConnected = false;
+                _disconnectCB?.Invoke();
+            }
+        });
     }
 
     public void AddEvent(Action inDisconnect)
     {
         _disconnectCB = inDisconnect;
+    }
+
+    public void Push(Action job)
+    {
+        _jobQueue.Push(job);
     }
 }
 

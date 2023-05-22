@@ -24,12 +24,16 @@ class PacketManager
 		_handler.Add((ushort)PacketID.C_Chat, PacketHandler.C_ChatHandler);
 		_makeFunc.Add((ushort)PacketID.C_JoinToGame, MakePacket<C_JoinToGame>);
 		_handler.Add((ushort)PacketID.C_JoinToGame, PacketHandler.C_JoinToGameHandler);
-		_makeFunc.Add((ushort)PacketID.SelectHero, MakePacket<SelectHero>);
-		_handler.Add((ushort)PacketID.SelectHero, PacketHandler.SelectHeroHandler);
-		_makeFunc.Add((ushort)PacketID.ReadyToGame, MakePacket<ReadyToGame>);
-		_handler.Add((ushort)PacketID.ReadyToGame, PacketHandler.ReadyToGameHandler);
-		_makeFunc.Add((ushort)PacketID.C_Attack, MakePacket<C_Attack>);
-		_handler.Add((ushort)PacketID.C_Attack, PacketHandler.C_AttackHandler);
+		_makeFunc.Add((ushort)PacketID.CS_SelectHero, MakePacket<CS_SelectHero>);
+		_handler.Add((ushort)PacketID.CS_SelectHero, PacketHandler.CS_SelectHeroHandler);
+		_makeFunc.Add((ushort)PacketID.CS_ReadyToGame, MakePacket<CS_ReadyToGame>);
+		_handler.Add((ushort)PacketID.CS_ReadyToGame, PacketHandler.CS_ReadyToGameHandler);
+		_makeFunc.Add((ushort)PacketID.CS_Attack, MakePacket<CS_Attack>);
+		_handler.Add((ushort)PacketID.CS_Attack, PacketHandler.CS_AttackHandler);
+		_makeFunc.Add((ushort)PacketID.CS_Move, MakePacket<CS_Move>);
+		_handler.Add((ushort)PacketID.CS_Move, PacketHandler.CS_MoveHandler);
+		_makeFunc.Add((ushort)PacketID.CS_StopMove, MakePacket<CS_StopMove>);
+		_handler.Add((ushort)PacketID.CS_StopMove, PacketHandler.CS_StopMoveHandler);
 
 	}
 

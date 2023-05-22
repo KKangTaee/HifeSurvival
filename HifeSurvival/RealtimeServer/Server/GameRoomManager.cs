@@ -11,21 +11,17 @@ namespace Server
         static GameRoomManager _instance = new GameRoomManager();
         public static GameRoomManager Instance { get => _instance; }
 
-        private Dictionary<int, GameRoom> _gameRoomDic = new Dictionary<int, GameRoom>();
+        private Dictionary<int, GameRoom> _gameRoomDict = new Dictionary<int, GameRoom>();
 
         private JobQueue _jobQueue = new JobQueue();
-
-        const int MAX_PLAYER_COUNT_IN_ROOM = 4;
         
-        private int nextRoomNum = 1;
-
-        object _lock = new object();
+        private int _nextRoomNum = 1;
 
         public void EnterRoom(ClientSession session)
         {
             Push(()=> 
             {
-                var canJoinRoom = _gameRoomDic.Values.FirstOrDefault();
+                var canJoinRoom = _gameRoomDict.Values.FirstOrDefault(x=>x.CanJoinRoom());
             
                 if(canJoinRoom != null)
                 {
@@ -33,9 +29,9 @@ namespace Server
                 }
                 else
                 {
-                    var newRoom = new GameRoom(nextRoomNum++);
+                    var newRoom = new GameRoom(_nextRoomNum++);
                     newRoom.Enter(session);
-                    _gameRoomDic.Add(newRoom.RoomId, newRoom);   
+                    _gameRoomDict.Add(newRoom.RoomId, newRoom);   
                      
                 }
             });
@@ -51,7 +47,6 @@ namespace Server
                 {
                     GameRoom room = session.Room;
 				    room.Push(() => room.Leave(session));
-				    session.Room = null;
                 }
             });
         }
@@ -60,7 +55,5 @@ namespace Server
         {
             _jobQueue.Push(job);
         }
-
-        
     }
 }

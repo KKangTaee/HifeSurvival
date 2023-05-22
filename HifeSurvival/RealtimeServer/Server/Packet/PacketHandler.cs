@@ -8,47 +8,60 @@ class PacketHandler
 {
 	public static void C_ChatHandler(PacketSession session, IPacket packet)
 	{
-		C_Chat chatPacket = packet as C_Chat;
-		ClientSession clientSession = session as ClientSession;
 
-		if (clientSession.Room == null)
-			return;
-
-		GameRoom room = clientSession.Room;
-        // room.Push( () => room.Broadcast(clientSession, chatPacket.chat));
 	}
 
-    public static void ReadyToGameHandler(PacketSession session, IPacket packet)
+    public static void CS_SelectHeroHandler(PacketSession session, IPacket packet)
     {
-        ReadyToGame readyToGame = packet as ReadyToGame;
-        ClientSession client = session as ClientSession;
-
-        client.Room?.Mode.OnReadyToGame(readyToGame);
-    }
-
-    public static void SelectHeroHandler(PacketSession session, IPacket packet)
-    {
-        SelectHero joinToGame = packet as SelectHero;
-		ClientSession client = session as ClientSession;
-
-        client.Room?.Mode.OnSelectHero(joinToGame);	
+        CS_SelectHero selectHero = packet as CS_SelectHero;  
+        Push(session, room => { room?.Mode.OnRecvSelect(selectHero); });
     }
 
     public static void C_JoinToGameHandler(PacketSession session, IPacket packet)
     {
 		C_JoinToGame joinToGame = packet as C_JoinToGame;
 		ClientSession client = session as ClientSession;
-		
-		client.Room?.Mode.OnJoin(joinToGame, client.SessionId);	
+
+        if (client.Room == null)
+            return;
+
+        GameRoom room = client.Room;
+
+        room.Push(() => room?.Mode.OnRecvJoin(joinToGame, client.SessionId));
     }
 
-    internal static void C_AttackHandler(PacketSession session, IPacket packet)
+    public static void CS_AttackHandler(PacketSession session, IPacket packet)
     {
-
+        CS_Attack attack = packet as CS_Attack;
+        Push(session, room => room?.Mode.OnRecvAttack(attack));
     }
 
-    internal static void C_AddJoinHandler(PacketSession session, IPacket packet)
+    public static void CS_MoveHandler(PacketSession session, IPacket packet)
     {
-        throw new NotImplementedException();
+        CS_Move move = packet as CS_Move;
+        Push(session, room => room?.Mode.OnRecvMove(move));
+    }
+
+    public static void CS_StopMoveHandler(PacketSession session, IPacket packet)
+    {
+        CS_StopMove stopMove = packet as CS_StopMove;
+        Push(session, room => room?.Mode.OnStopMove(stopMove));
+    }
+
+    public static void CS_ReadyToGameHandler(PacketSession session, IPacket packet)
+    {
+        CS_ReadyToGame readyToGame = packet as CS_ReadyToGame;
+        Push(session, room => room?.Mode.OnRecvReady(readyToGame));
+    }
+
+    public static void Push(PacketSession session, Action<GameRoom> job)
+    {
+        ClientSession client = session as ClientSession;
+
+        if (client.Room == null)
+            return;
+
+        GameRoom room = client.Room;
+        room?.Push(()=> job?.Invoke(room));
     }
 }

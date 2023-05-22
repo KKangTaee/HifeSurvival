@@ -27,11 +27,16 @@ namespace Server
         protected EStatus _status;
         protected IState<T> _state;
 
+
         protected Dictionary<EStatus, IState<T>> _stateMachine;
 
-        public Vec3 position;
-        public Vec3 dir;
+        public Vec3  pos;
+        public Vec3  dir;
+        public float speed;
+
         public Stat stat;
+
+        public IBroadcaster broadcaster;
 
         private void ChangeState<P>(IState<T> newState, P inParam) where P : IStateParam
         {
@@ -44,13 +49,7 @@ namespace Server
         {
             _status = inStatus;
             ChangeState(_stateMachine[_status], inParam);
-        }
-
-        public void Update(double deltaTime)
-        {
-            if (_state is IUpdate<T> update)
-                update.Update((T)this, deltaTime);
-        }
+        }    
     }
 
     public partial class MonsterEntity : Entity<MonsterEntity>
@@ -67,7 +66,7 @@ namespace Server
                 { EStatus.IDLE, new IdleState()},
                 { EStatus.FOLLOW_TARGET, new FollowTargetState()},
                 { EStatus.ATTACK, new AttackState()},
-                { EStatus.DAMAGED, new DamagedState()},
+                // { EStatus.DAMAGED, new DamagedState()},
                 { EStatus.BACK_TO_SPAWN, new BackToSpawnState() }
             };
         }
@@ -95,17 +94,20 @@ namespace Server
             ChangeState(EStatus.DAMAGED, inParam);
         }
 
-
         public bool CanAttack()
         {
             // 나중에 수정할것이며 임시로 만들어 놓음
             return false;
         }
+
+        public int Attack()
+        {
+            return 100;
+        }
     }
 
     public partial class PlayerEntity : Entity<PlayerEntity>
     {
-
         public string userId;
         public string userName;
 
@@ -117,8 +119,9 @@ namespace Server
         {
             _stateMachine = new Dictionary<EStatus, IState<PlayerEntity>>()
             {
+                {EStatus.IDLE, new IdleState()},
                 {EStatus.ATTACK,  new IdleState()},
-                {EStatus.DAMAGED, new DamagedState()},
+                // {EStatus.DAMAGED, new DamagedState()},
                 {EStatus.MOVE, new MoveState() },
                 {EStatus.USE_SKILL, new UseSkillState()}
             };
@@ -135,10 +138,24 @@ namespace Server
             };
         }
 
-
         public void OnAttack<T>(in AttackParam<T> inParam) where T : Entity<T>
         {
             ChangeState(EStatus.ATTACK, inParam);
+        }
+
+        public void OnIdle(in IdleParam other)
+        {
+            ChangeState(EStatus.IDLE, other);
+        }
+
+        public void OnDamaged<T>(in DamagedParam<T> inParam) where T : Entity<T>
+        {
+            ChangeState(EStatus.DAMAGED, inParam);
+        }
+
+        public void OnMove(in MoveParam inParam)
+        {
+            ChangeState(EStatus.MOVE, inParam);
         }
     }
 

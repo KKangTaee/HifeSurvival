@@ -7,26 +7,37 @@ namespace Server
 {
     public class GameMode
     {
-        Dictionary<int, PlayerEntity>  _playersDic  = new Dictionary<int, PlayerEntity>();
-        Dictionary<int, MonsterEntity> _monstersDic = new Dictionary<int, MonsterEntity>();
+        public enum EStatus
+        {
+            READY,
+
+            COUNTDOWN,
+
+            GAME_START,
+
+            RUNIING_GAME,
+
+            FINISH_GAME,
+
+            NONE,
+        }
+
+
+        Dictionary<int, PlayerEntity>  _playersDict  = new Dictionary<int, PlayerEntity>();
+        Dictionary<int, MonsterEntity> _monstersDict = new Dictionary<int, MonsterEntity>();
 
         private const int PLAYER_MAX_COUNT = 4;
         private const int CONUTDOWN_SEC = 5;
 
-        private GameRoom _room;
+        private int _roomId;
+
+        IBroadcaster _broadcaster = null;
+        public EStatus  Status { get; private set;} = EStatus.NONE;
 
         public GameMode(GameRoom inRoom)
         {
-            _room = inRoom;
-        }
-
-        public void StartGame()
-        {
-            // 패킷을 만든다.
-            S_StartGame gameStart = new S_StartGame();
-
-            gameStart.playerList = SetupPlayer();
-            gameStart.monsterList = SetupMonster();
+            _broadcaster = new RoomBroadcaster(inRoom);
+            _roomId = inRoom.RoomId;
         }
 
         public List<S_StartGame.Monster> SetupMonster()
@@ -42,12 +53,12 @@ namespace Server
                     subId = i % 3,
                 };
 
-                _monstersDic.Add(i, info);
+                _monstersDict.Add(i, info);
             }
 
             var monsterList = new List<S_StartGame.Monster>();
 
-            foreach (var info in _monstersDic.Values)
+            foreach (var info in _monstersDict.Values)
             {
                 var data = new S_StartGame.Monster()
                 {
@@ -67,7 +78,7 @@ namespace Server
         {
             var playerList = new List<S_StartGame.Player>();
 
-            foreach (var info in _playersDic.Values)
+            foreach (var info in _playersDict.Values)
             {
                 var data = new S_StartGame.Player()
                 {
@@ -81,30 +92,19 @@ namespace Server
             return playerList;
         }
 
-        public void Init()
-        {
-
-        }
-
-        public void Release()
-        {
-
-        }
-
-        public void Update(double deltaTime)
-        {
-
-        }
-
 
         public bool CanStartGame()
         {
-            return _playersDic.Count == PLAYER_MAX_COUNT &&
-                   _playersDic.Values.All(x => x.isReady);
+            return _playersDict.Count == PLAYER_MAX_COUNT &&
+                   _playersDict.Values.All(x => x.isReady);
         }
 
+        public bool CanJoinRoom()
+        {
+            return Status == EStatus.READY && _playersDict.Count <PLAYER_MAX_COUNT;
+        }
 
-        public void OnJoin(C_JoinToGame inPacket, int inSessionId)
+        public void OnRecvJoin(C_JoinToGame inPacket, int inSessionId)
         {
             var playerInfo = new PlayerEntity()
             {
@@ -112,92 +112,155 @@ namespace Server
                 playerId = inSessionId,
                 heroType = 1,
                 userName = inPacket.userName,
-                // info = null,
+                broadcaster = _broadcaster,
             };
 
-            _playersDic.Add(inSessionId, playerInfo);
+            _playersDict.Add(inSessionId, playerInfo);
+
+            System.Console.WriteLine($"[{nameof(OnRecvJoin)}] 접속! userId {playerInfo.userId}, roomId : {_roomId}");
 
             // 브로드캐스팅
             S_JoinToGame packet = new S_JoinToGame();
             packet.joinPlayerList = new List<S_JoinToGame.JoinPlayer>();
 
-            foreach (var player in _playersDic.Values)
+            foreach (var player in _playersDict.Values)
                 packet.joinPlayerList.Add(player.CreateJoinPlayerPacket());
 
-            _room.Broadcast(packet);
+            _broadcaster.Broadcast(packet);
+
+            Status = EStatus.READY;
         }
 
 
         public void OnLeave(int inSessionId)
         {
-            var playerInfo = _playersDic.Values.FirstOrDefault(x => x.playerId == inSessionId);
+            var playerInfo = _playersDict.Values.FirstOrDefault(x => x.playerId == inSessionId);
 
             if (playerInfo == null)
                 return;
 
-            _playersDic.Remove(playerInfo.playerId);
+            _playersDict.Remove(playerInfo.playerId);
 
-            // 브로드캐스팅
             S_LeaveToGame packet = new S_LeaveToGame()
             {
                 userId = playerInfo.userId,
                 playerId = playerInfo.playerId,
             };
 
-            _room.Broadcast(packet);
+            _broadcaster.Broadcast(packet);
         }
 
-        public void OnSelectHero(SelectHero inPacket)
+        public void OnStartGame()
         {
-            _room.Broadcast(inPacket);
+            S_StartGame gameStart = new S_StartGame();
+
+            gameStart.playerList = SetupPlayer();
+            gameStart.monsterList = SetupMonster();
+            
+            _broadcaster.Broadcast(gameStart);
+
+            Status = EStatus.GAME_START;
         }
 
-        public void OnReadyToGame(ReadyToGame inPacket)
+        public void OnRecvReady(CS_ReadyToGame inPacket)
         {
-            _room.Broadcast(inPacket);
+            _broadcaster.Broadcast(inPacket);
 
             // 모두 레디라면..? 게임시작
-            if(CanStartGame() == true)
+            if (CanStartGame() == true)
             {
-                S_Countdown countdown = new S_Countdown()
-                {
-                    countdownSec = CONUTDOWN_SEC
-                };
-
-                _room.Broadcast(countdown);
+                OnCountdown();
             }
         }
 
+        public void OnCountdown()
+        {
+            S_Countdown countdown = new S_Countdown()
+            {
+                countdownSec = CONUTDOWN_SEC
+            };
 
-        // GameMode.Attack(C_Attack inPacket) 함수
-        public void Attack(C_Attack inPacket)
+            _broadcaster.Broadcast(countdown);
+
+            Status = EStatus.COUNTDOWN;
+
+            // N초 후 자동으로 호출
+            JobTimer.Instance.Push(OnStartGame, CONUTDOWN_SEC * 100);
+        }
+
+        public void OnRecvSelect(CS_SelectHero inPacket)
+        {
+            _broadcaster.Broadcast(inPacket);
+        }
+
+        public void OnRecvAttack(CS_Attack inPacket)
         {
             // 플레이어를 공격했을 때
             if(inPacket.toIdIsPlayer == true)
             {
+                if (_playersDict.TryGetValue(inPacket.toId, out var   toTarget) == true&&
+                    _playersDict.TryGetValue(inPacket.fromId, out var fromTarget) == true)
+                {
+                    var attackParam = new AttackParam<PlayerEntity>()
+                    {
+                        damageValue = inPacket.damageValue,
+                        target = toTarget,
+                    };
 
+                    fromTarget.OnAttack(attackParam);
+                    _broadcaster.Broadcast(inPacket);
+                }
             }
             // 몬스터를 공격했을 때
             else
             {
-                if(_monstersDic.TryGetValue(inPacket.toId, out var monster) == true &&
-                   _playersDic.TryGetValue(inPacket.fromId, out var player) == true)
+                if(_monstersDict.TryGetValue(inPacket.toId, out var  toTarget) == true &&
+                   _playersDict.TryGetValue(inPacket.fromId, out var fromTarget) == true)
                 {                 
-                    var damagedParam = new DamagedParam<PlayerEntity>()
-                    {
-                        damageValue = inPacket.damageValue,
-                        target = player,
-                    };
-
                     var attackParam = new AttackParam<MonsterEntity>()
                     {
                         damageValue = inPacket.damageValue,
-                        target = monster,
+                        target = toTarget,
                     };
 
-                    player.OnAttack(attackParam);
-                    monster.OnDamaged(damagedParam);
+                    fromTarget.OnAttack(attackParam);
+                    _broadcaster.Broadcast(inPacket);
                 }
+            }
+        }
+
+
+        public void OnRecvMove(CS_Move inPacket)
+        {
+            if(_playersDict.TryGetValue(inPacket.targetId, out var player) == true)
+            {
+                var moveParam = new MoveParam()
+                {
+                    pos = inPacket.pos,
+                    dir = inPacket.dir,
+                    speed = inPacket.speed,
+                };
+
+                // TODO@taeho.kang 이동상태 처리
+                player.OnMove(moveParam);
+
+                _broadcaster.Broadcast(inPacket);
+            }
+        }
+
+
+        public void OnStopMove(CS_StopMove inPacket)
+        {
+            if (_playersDict.TryGetValue(inPacket.targetId, out var player) == true)
+            {
+                var idleParam = new IdleParam()
+                {
+
+                };
+
+                player.OnIdle(idleParam);
+
+                _broadcaster.Broadcast(inPacket);
             }
         }
     }

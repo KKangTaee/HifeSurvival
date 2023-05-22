@@ -29,12 +29,12 @@
 		<int name ="playerId"/>
 	</packet>
 
-	<packet name="SelectHero">
+	<packet name="CS_SelectHero">
 		<int  name="playerId"/>
 		<int  name="heroId"/>
 	</packet>
 
-	<packet name="ReadyToGame">
+	<packet name="CS_ReadyToGame">
 		<int name ="playerId"/>
 	</packet>
 
@@ -55,11 +55,25 @@
 		</list>
 	</packet>
 
-	<packet name ="C_Attack">
+	<packet name ="CS_Attack">
 		<bool name ="toIdIsPlayer"/>
 		<int name ="toId"/>
 		<int name ="fromId"/>
 		<int name ="damageValue"/>
+	</packet>
+
+	<packet name ="CS_Move">
+		<int name ="targetId"/>
+		<bool name ="isPlayer"/>
+		<struct_Vec3 name ="pos"/>
+		<struct_Vec3 name ="dir"/>
+		<float name ="speed"/>
+	</packet>
+	
+	<packet name ="CS_StopMove">
+		<int name ="targetId"/>
+		<bool name ="isPlayer"/>
+		<struct_Vec3 name ="pos"/>
 	</packet>
 
 	<struct name="Vec3">

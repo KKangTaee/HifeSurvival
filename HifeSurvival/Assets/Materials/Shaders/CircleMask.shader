@@ -1,4 +1,4 @@
-Shader "Unlit/CircleMask"
+Shader "Custom/UnlitCircleMask"
 {
     Properties
     {
@@ -6,75 +6,70 @@ Shader "Unlit/CircleMask"
         _Color ("Color", Color) = (1, 1, 1, 1)
         _Radius ("Radius", Range(0, 1)) = 0.5
     }
+
     SubShader
     {
-        Tags { "RenderType"="Transparent" "Queue"="Transparent" }
-        LOD 100
-
+        Tags { "RenderType"="Transparent" "RenderPipeline"="UniversalPipeline" }
         Blend SrcAlpha OneMinusSrcAlpha
-
         Pass
         {
-            CGPROGRAM
+
+            HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
 
-            #include "UnityCG.cginc"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
-            struct appdata
+            struct Attributes
             {
-                float4 vertex : POSITION;
+                float4 positionOS : POSITION;
                 float2 uv : TEXCOORD0;
             };
 
-            struct v2f
+            struct Varyings
             {
+                float4 positionCS : SV_POSITION;
                 float2 uv : TEXCOORD0;
-                float4 vertex : SV_POSITION;
             };
 
-            sampler2D _MainTex;
+            // CBUFFER_START(UnityPerMaterial)
+
+            TEXTURE2D(_MainTex);
+            SAMPLER(sampler_MainTex);
             float4 _MainTex_ST;
-
             float4 _Color;
             float _Radius;
 
-            v2f vert (appdata v) 
+            // CBUFFER_END
+            
+            Varyings vert (Attributes input)
             {
-                v2f o;
-                o.vertex = UnityObjectToClipPos(v.vertex);
-                o.uv = v.uv;
-                return o;
+                Varyings output;
+                output.positionCS = TransformObjectToHClip(input.positionOS.xyz);
+                output.uv = TRANSFORM_TEX(input.uv, _MainTex);
+                return output;
             }
 
-            fixed4 frag (v2f i) : SV_Target 
+            half4 frag (Varyings input) : SV_Target
             {
-                if(_Radius <= 0.01f)
+                // float aspectRatio = _MainTex_TexelSize.x / _MainTex_TexelSize.y;
+                // float2 correctedUV = float2(input.uv.x, input.uv.y / aspectRatio);
+                float2 center = float2(0.5, 0.5);
+                float dist = distance(input.uv, center);
+
+                half alphaFactor = 1;
+
+                if(_Radius > 0)
                 {
-                    return tex2D(_MainTex, i.uv);
+                    alphaFactor = saturate((dist - _Radius) * 100);
                 }
-                else
-                {
-                    // 텍스쳐의 가로세로 비율을 보정합니다.
-                    // float aspectRatio = _MainTex_ST.y / _MainTex_ST.x;
-                     float aspectRatio = _ScreenParams.y / _ScreenParams.x;
-                    float2 correctedUV = float2(i.uv.x, i.uv.y * aspectRatio);
 
-                    // 원의 중심은 (0.5, 0.5)입니다.
-                    float2 center = float2(0.5, 0.5 * aspectRatio);
-                    float dist = distance(correctedUV, center);
-
-                    // 원 안쪽에서부터 점점 반투명해지게 합니다.
-                    float alphaFactor = saturate((dist - _Radius) * 10.0);
-
-                    // 텍스처와 색상을 적용하고, 원 안쪽에서부터 반투명해지게 만듭니다.
-                    fixed4 col = tex2D(_MainTex, i.uv);
-                    col.rgb *= _Color.rgb;
-                    col.a *= alphaFactor;
-                    return col;
-                }
+                half4 col = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, input.uv);
+                col.rgb *= _Color.rgb;
+                col.a *= alphaFactor;
+                return col;
             }
-            ENDCG
+            ENDHLSL
         }
     }
 }

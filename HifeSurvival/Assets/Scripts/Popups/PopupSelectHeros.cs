@@ -9,14 +9,14 @@ using System;
 using DG.Tweening;
 
 
-[Popup(PATH_IN_RESOURCES_FOLDER="Prefabs/Popups/PopupSelectHeros/PopupSelectHeros",
+[Popup(PATH_IN_RESOURCES_FOLDER = "Prefabs/Popups/PopupSelectHeros/PopupSelectHeros",
        IN_RESOURCES_FORLDER = true)]
 public class PopupSelectHeros : PopupBase
 {
     [Header("[PopupSelectHeros]")]
-    [SerializeField] Button           BTN_close;
-    [SerializeField] Button           BTN_ready;
-    [SerializeField] RectTransform    RT_heroSelection;
+    [SerializeField] Button BTN_close;
+    [SerializeField] Button BTN_ready;
+    [SerializeField] RectTransform RT_heroSelection;
     [SerializeField] HeroSelectButton _selectButtonPrefab;
 
     [SerializeField] TMP_Text TMP_name;
@@ -25,26 +25,35 @@ public class PopupSelectHeros : PopupBase
     [SerializeField] TMP_Text TMP_def;
     [SerializeField] TMP_Text TMP_dex;
     [SerializeField] TMP_Text TMP_hp;
-
     [SerializeField] TMP_Text TMP_leftTime;
+    [SerializeField] RawImage RM_heroCapture;
 
-    [SerializeField] PlayerSelectView [] _playerSelectViewArr;
+    [SerializeField] PlayerSelectView[] _playerSelectViewArr;
 
     private Subject<int> _onClickFrame = new Subject<int>();
     private Dictionary<int, Sprite> _heroImageDic = new Dictionary<int, Sprite>();
-    
-    private Action <int, int> _onSendSelectHeroCB;
+
+    private Action<int, int> _onSendSelectHeroCB;
     private Action _onSendReadyCB;
     private Action _disconnectCB;
 
     private int _playerIdSelf;
+    private HeroRTCapture _capture;
+
+    
+    
+    //-------------------
+    // unity events
+    //-------------------
 
     protected override void Awake()
     {
         base.Awake();
 
-        _eOpenAnim  = EAnim.NONE;
+        _eOpenAnim = EAnim.NONE;
         _eCloseAnim = EAnim.NONE;
+
+        SetHeroCapture();
 
         ClearPlayerView();
 
@@ -56,36 +65,54 @@ public class PopupSelectHeros : PopupBase
     }
 
 
+
+    //-------------------
+    // override
+    //-------------------
+
+    protected override void OnButtonEvent(Button inButton)
+    {
+        if (inButton == BTN_close)
+        {
+            Close(_ => _disconnectCB?.Invoke());
+        }
+        else if (inButton == BTN_ready)
+        {
+            Ready();
+        }
+    }
+
+
     private void SetHeroButton()
     {
         var staticData = StaticData.Instance.HeroDic.Values;
 
-        if(staticData == null || _selectButtonPrefab == null)
+        if (staticData == null || _selectButtonPrefab == null)
         {
             Debug.LogError($"[{nameof(SetHeroButton)}] ");
             return;
         }
 
-        foreach(var data in staticData)
+        StaticData.Heros hero = null;
+
+        foreach (var data in staticData)
         {
             var prefab = Instantiate<HeroSelectButton>(_selectButtonPrefab, RT_heroSelection);
 
             _onClickFrame.Subscribe(id => { prefab.OnClickFrame(id); }).AddTo(this);
 
-            prefab.SetInfo(data, (data)=>
+            prefab.SetInfo(data, (data) =>
             {
-                SetHeroInfo(data);
-
-                // 프레임 변경
-                _onClickFrame.OnNext(data.id);
-
-                ChangeHeroView(_playerIdSelf, data.id);
-
-                // 서버전송
-                _onSendSelectHeroCB?.Invoke(_playerIdSelf, data.id);
+                OnClickSelectButton(data);
             }
             , GetHeroSprite(data.id));
+
+            if(hero == null)
+               hero = data;
         }
+
+        // 초기화때는 첫번째로 고정
+        OnClickSelectButton(hero);
     }
 
     public void SetHeroInfo(StaticData.Heros inData)
@@ -94,27 +121,32 @@ public class PopupSelectHeros : PopupBase
 
         TMP_desc.text = inData.desc;
 
-        TMP_str.text  = inData.str.ToString();
+        TMP_str.text = inData.str.ToString();
 
-        TMP_def.text  = inData.def.ToString();
+        TMP_def.text = inData.def.ToString();
 
-        TMP_dex.text  = inData.dex.ToString();
+        TMP_dex.text = inData.dex.ToString();
 
-        TMP_hp.text   = inData.hp.ToString();
+        TMP_hp.text = inData.hp.ToString();
     }
 
 
 
-    protected override void OnButtonEvent(Button inButton)
+    private void OnClickSelectButton(StaticData.Heros inData)
     {
-        if(inButton == BTN_close)
-        {
-            Close(_=>_disconnectCB?.Invoke());
-        }
-        else if(inButton == BTN_ready)
-        {
-            Ready();
-        }
+        SetHeroInfo(inData);
+
+        // 프레임 변경
+        _onClickFrame.OnNext(inData.id);
+
+        // 뷰 변경
+        ChangeHeroView(_playerIdSelf, inData.id);
+
+        // 서버전송
+        _onSendSelectHeroCB?.Invoke(_playerIdSelf, inData.id);
+
+        // 캐릭터 변경
+        _capture.GetAnimator().SetAnimatorController(inData.id -1);
     }
 
 
@@ -122,10 +154,10 @@ public class PopupSelectHeros : PopupBase
     {
         float leftTime = 30;
 
-        while(true)
+        while (true)
         {
-            if(leftTime < 0.1f)
-               break;
+            if (leftTime < 0.1f)
+                break;
 
             leftTime -= Time.deltaTime;
 
@@ -139,10 +171,10 @@ public class PopupSelectHeros : PopupBase
     {
         float leftTime = inSec;
 
-        while(true)
+        while (true)
         {
-            if(leftTime < 0.1f)
-               break;
+            if (leftTime < 0.1f)
+                break;
 
             leftTime -= Time.deltaTime;
 
@@ -151,6 +183,13 @@ public class PopupSelectHeros : PopupBase
             yield return null;
         }
     }
+
+    public void SetHeroCapture()
+    {
+        _capture = HeroRTCapture.GetInstance();
+        RM_heroCapture.texture = _capture.GetCaptureTexture();
+    }
+
 
     public void Ready()
     {
@@ -171,15 +210,15 @@ public class PopupSelectHeros : PopupBase
 
     private void ReadyPlayerView(int inPlayerId)
     {
-        var view = _playerSelectViewArr.FirstOrDefault(x=> x.PlayerId == inPlayerId);
+        var view = _playerSelectViewArr.FirstOrDefault(x => x.PlayerId == inPlayerId);
 
-        if(view == null)
+        if (view == null)
             return;
 
         view.Ready();
     }
 
-    private  void GameStart()
+    private void GameStart()
     {
         _ = SceneManager.Instance.ChangeScene(SceneManager.SCENE_NAME_INGAME);
     }
@@ -192,9 +231,9 @@ public class PopupSelectHeros : PopupBase
 
     public void OnLeave(int inPlayerId)
     {
-        var view = _playerSelectViewArr.FirstOrDefault(x=> x.PlayerId == inPlayerId);
+        var view = _playerSelectViewArr.FirstOrDefault(x => x.PlayerId == inPlayerId);
 
-        if(view == null)
+        if (view == null)
             return;
 
         view.Clear();
@@ -202,7 +241,7 @@ public class PopupSelectHeros : PopupBase
 
     public void OnRecvSelectHero(PlayerEntity inEntity)
     {
-       ChangeHeroView(inEntity.playerId, inEntity.heroId);
+        ChangeHeroView(inEntity.playerId, inEntity.heroId);
     }
 
     public void OnRecvReadyToGame(PlayerEntity inEntity)
@@ -223,36 +262,36 @@ public class PopupSelectHeros : PopupBase
 
     public void ChangeHeroView(int inPlayerId, int inHeroId)
     {
-         var view = _playerSelectViewArr.FirstOrDefault(x=>x.PlayerId == inPlayerId);
+        var view = _playerSelectViewArr.FirstOrDefault(x => x.PlayerId == inPlayerId);
 
-        if(view == null)
+        if (view == null)
             return;
 
-        if(StaticData.Instance.HeroDic.TryGetValue(inHeroId.ToString(), out var data) == false)
-           return;
+        if (StaticData.Instance.HeroDic.TryGetValue(inHeroId.ToString(), out var data) == false)
+            return;
 
         view.SetHero(GetHeroSprite(inHeroId), data.name);
     }
 
     public void AddPlayerView(PlayerEntity inEntity)
     {
-        var view = _playerSelectViewArr.FirstOrDefault(x=>x.IsUsing == false);
+        var view = _playerSelectViewArr.FirstOrDefault(x => x.IsUsing == false);
 
-        if(view == null)
+        if (view == null)
         {
             Debug.LogError($"[{nameof(AddPlayerView)}] 가득참!");
             return;
         }
 
-        if(StaticData.Instance.HeroDic.TryGetValue(inEntity.heroId.ToString(), out var data) == false)
-           return;
+        if (StaticData.Instance.HeroDic.TryGetValue(inEntity.heroId.ToString(), out var data) == false)
+            return;
 
         view.SetInfo(inEntity.playerId, GetHeroSprite(inEntity.heroId), inEntity.userName, data.name);
     }
 
     public void ClearPlayerView()
     {
-        foreach(var view in _playerSelectViewArr)
+        foreach (var view in _playerSelectViewArr)
             view.Clear();
     }
 
@@ -262,7 +301,7 @@ public class PopupSelectHeros : PopupBase
 
         var staticData = StaticData.Instance.HeroDic.Values;
 
-        foreach(var data in staticData)
+        foreach (var data in staticData)
         {
             //TODO@taeho.kang 후에 번들이나 다른방식으로 로드..
             var sprite = Resources.Load<Sprite>($"Prefabs/Textures/Profiles/profile_{data.id}");
@@ -272,10 +311,10 @@ public class PopupSelectHeros : PopupBase
 
     public Sprite GetHeroSprite(int inHeroId)
     {
-        return _heroImageDic.TryGetValue(inHeroId, out var sprite) ? sprite : null; 
+        return _heroImageDic.TryGetValue(inHeroId, out var sprite) ? sprite : null;
     }
 
-    public void AddEvent(Action<int, int> inOnSendSelectHero, Action inOnSendReadyToGame,  Action inDisconnect)
+    public void AddEvent(Action<int, int> inOnSendSelectHero, Action inOnSendReadyToGame, Action inDisconnect)
     {
         _onSendSelectHeroCB = inOnSendSelectHero;
         _onSendReadyCB = inOnSendReadyToGame;
@@ -284,6 +323,8 @@ public class PopupSelectHeros : PopupBase
 
     public void RemoveEvent()
     {
+        _disconnectCB = null;
+        _onSendReadyCB = null;
         _onSendSelectHeroCB = null;
     }
 

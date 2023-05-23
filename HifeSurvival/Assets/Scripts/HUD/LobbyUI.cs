@@ -17,6 +17,10 @@ public class LobbyUI : MonoBehaviour
     private void Awake()
     {
         GetComponent<Canvas>().worldCamera = Camera.main;
+
+
+        HeroRTCapture.GetInstance().GetCaptureTexture();
+        HeroRTCapture.GetInstance().GetAnimator().SetAnimatorController(0);
     }
 
     public void OnButtonEvent(Button inButton)
@@ -25,13 +29,14 @@ public class LobbyUI : MonoBehaviour
         {
            JoinGame();
         }
+
     }
 
     private async void JoinGame()
     {
         var delayTime = 300;
 
-        SimpleLoading.Expose("네트워크 연결중입니다...");
+        SimpleLoading.Show("네트워크 연결중입니다...");
 
         var isSuccess = await NetworkManager.Instance.ConnectAsync();
         await UniTask.Delay(delayTime);

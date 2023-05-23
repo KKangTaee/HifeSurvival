@@ -12,7 +12,7 @@ public class SimpleLoading : MonoBehaviour
     [SerializeField] Image IMG_icon;
     [SerializeField] TMP_Text TMP_desc;
 
-    public void Show(string inDesc = null, Sprite inIcon = null)
+    public void Open(string inDesc = null, Sprite inIcon = null)
     {
         var startIconPos = IMG_icon.rectTransform.anchoredPosition;
 
@@ -45,7 +45,7 @@ public class SimpleLoading : MonoBehaviour
 
     static SimpleLoading _obj = null;
 
-    public static void Expose(string inDesc = null, Sprite inIcon = null)
+    public static void Show(string inDesc = null, Sprite inIcon = null)
     {
         Debug.Log("Expose 호출");
         if(_obj == null)
@@ -54,7 +54,7 @@ public class SimpleLoading : MonoBehaviour
             
             if(prefab == null)
             {
-                Debug.LogError($"[{nameof(Show)}] prefab is not load");
+                Debug.LogError($"[{nameof(Open)}] prefab is not load");
                 return;
             }
             
@@ -63,7 +63,7 @@ public class SimpleLoading : MonoBehaviour
         }
 
         _obj?.SetActive(true);
-        _obj?.Show(inDesc, inIcon);
+        _obj?.Open(inDesc, inIcon);
     }
 
 

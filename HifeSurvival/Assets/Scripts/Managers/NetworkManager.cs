@@ -86,7 +86,7 @@ public class NetworkManager : MonoBehaviour, IJobQueue
 
     private async void RetryConnect(Action<bool> doneCallback = null)
     {
-        SimpleLoading.Expose("다시 접속중입니다.");
+        SimpleLoading.Show("다시 접속중입니다.");
 
         bool isSuccess = await ConnectAsync();
 

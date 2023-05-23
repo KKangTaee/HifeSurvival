@@ -17,6 +17,7 @@ public class TitleMain : MonoBehaviour
 
     List<(string desc, Func<Task<bool>> action)> processSchedulers;
 
+    [SerializeField] RawImage _img;
 
     void Awake()
     {

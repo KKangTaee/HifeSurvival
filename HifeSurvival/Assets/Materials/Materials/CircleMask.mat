@@ -40,7 +40,7 @@ Material:
     m_Floats:
     - _EnableExternalAlpha: 0
     - _MaskValue: 0
-    - _Radius: 1
+    - _Radius: 0
     m_Colors:
     - _Color: {r: 0.27365112, g: 0, b: 1, a: 1}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}

@@ -17,11 +17,11 @@ namespace Server
 		static void Main(string[] args)
 		{
 			// DNS (Domain Name System)
-			string host = Dns.GetHostName();
-			IPHostEntry ipHost = Dns.GetHostEntry(host);
-			IPAddress ipAddr = ipHost.AddressList.First(ip => ip.AddressFamily == AddressFamily.InterNetwork);
-			IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
-			endPoint = new IPEndPoint(IPAddress.Parse("192.168.0.9"), 7777);
+			// string host = Dns.GetHostName();
+			// IPHostEntry ipHost = Dns.GetHostEntry(host);
+			// IPAddress ipAddr = ipHost.AddressList.First(ip => ip.AddressFamily == AddressFamily.InterNetwork);
+			IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 7777);
+			// endPoint = new IPEndPoint(IPAddress.Parse("192.168.0.3"), 7777);
 
 			_listener.Init(endPoint, () => { return SessionManager.Instance.Generate(); });
 			

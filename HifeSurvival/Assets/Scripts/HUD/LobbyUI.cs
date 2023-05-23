@@ -43,7 +43,7 @@ public class LobbyUI : MonoBehaviour
 
         if(isSuccess == false)
         {
-            Debug.LogError("네트워크 접속안됨");
+            PopupManager.Instance.Show<PopupNotice>(popup=>popup.SetDesc("네트워크에 연결 할 수 없습니다./n네트워크를 확인해주세요"));
             SimpleLoading.Hide();
             return;
         }
@@ -55,7 +55,7 @@ public class LobbyUI : MonoBehaviour
 
         if(isSuccess == false)
         {
-            Debug.Log("룸에 접속된 유저의 정보를 가지고 오지 못함");
+            PopupManager.Instance.Show<PopupNotice>(popup=>popup.SetDesc("체널에 대한 정보를 가지고 올 수 없습니다"));
             NetworkManager.Instance.Disconnect();
             SimpleLoading.Hide();
             return;

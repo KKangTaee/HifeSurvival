@@ -835,6 +835,7 @@ MonoBehaviour:
   RT_progressBG: {fileID: 2116519177}
   IMG_progress: {fileID: 304239315}
   TMP_progressDesc: {fileID: 803445875}
+  _img: {fileID: 0}
 --- !u!4 &1928011849
 Transform:
   m_ObjectHideFlags: 0

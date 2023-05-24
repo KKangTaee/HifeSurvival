@@ -117,7 +117,7 @@ public class CameraController : ControllerBase, TouchController.ITouchUpdate
                 
                 _prevPos = INVALIED_VECTOR_VALUE;
 
-                // µå·¡±× ÆÄ¿ö°¡ ÀÖÀ» °æ¿ì¿¡¸¸ ½½¶óÀÌµù Ã³¸®
+                // ï¿½å·¡ï¿½ï¿½ ï¿½Ä¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ì¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ìµï¿½ Ã³ï¿½ï¿½
                 if (_dragPower > 0)
                     _eStatus = ECamearaStatus.SLIDING;
 
@@ -176,6 +176,4 @@ public class CameraController : ControllerBase, TouchController.ITouchUpdate
         _followingTarget  = inTarget;
         _follwingStartPos = inTarget.position;
     }
-
-
 }

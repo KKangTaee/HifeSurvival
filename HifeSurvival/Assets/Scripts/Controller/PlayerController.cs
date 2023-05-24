@@ -5,20 +5,14 @@ using System.Linq;
 
 public class PlayerController : ControllerBase, TouchController.ITouchUpdate
 {
-
-    public const string OBJ_NAME = nameof(PlayerController);
-
-
     [SerializeField] private Player _playerPrefab;
-
 
     private Dictionary<string, Player> _playerDic = new Dictionary<string, Player>();
 
-
     private CameraController _cameraController;
 
-    public Player Me { get; private set; }
-
+    public Player Self { get; private set; }
+    
 
 
     //------------------
@@ -27,10 +21,10 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
 
     private void Awake()
     {
-        Me = Instantiate(_playerPrefab);
-        Me.Initialzie(true, new Vector3(0, -17.5f, 0));
+        Self = Instantiate(_playerPrefab);
+        Self.Initialzie(true, new Vector3(0, -17.5f, 0));
 
-        _playerDic.Add("me", Me);
+        _playerDic.Add("me", Self);
     }
 
 
@@ -61,7 +55,6 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
                     var touchPos = inTouchPos.FirstOrDefault();
                     var endPos = _cameraController.MainCamera.ScreenToWorldPoint(touchPos);
 
-                    // 내 캐릭터 이동
                     MoveMeAuto(worldMap, endPos);
                 }
            
@@ -71,13 +64,9 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
 
                 var player = inCollider2D.GetComponent<Player>();
 
-                TouchPlayer(player);
-
                 break;
         }
     }
-
-
 
 
     //-----------------
@@ -87,7 +76,7 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
 
     public void MoveMeAuto(WorldMap inWorldMap, Vector2 inEndPos)
     {        
-        var moveList = inWorldMap.GetMoveList(Me.transform.position, inEndPos);
+        var moveList = inWorldMap.GetMoveList(Self.transform.position, inEndPos);
 
         if(moveList == null)
         {
@@ -95,27 +84,17 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
             return;
         }
 
-        Me.MoveAuto(moveList);
+        Self.MoveAuto(moveList);
 
-        _cameraController.FollowingTarget(Me.transform);
+        _cameraController.FollowingTarget(Self.transform);
     }
 
 
     public void MoveMeManual(Vector2 inDir)
     {
-        Me.MoveMenual(inDir);
-    }
-
-  
-    public void TouchPlayer(Player inPlayer)
-    {
-
+        Self.MoveMenual(inDir);
     }
 
 
-    public Player GetPlayer(string inId)
-    {
-        return _playerDic.TryGetValue(inId, out var player) == true ? player : null;
-    }
-
+    
 }

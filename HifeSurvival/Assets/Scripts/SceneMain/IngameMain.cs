@@ -4,15 +4,10 @@ using UnityEngine;
 
 public class IngameMain : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField] private WorldMap _worldMap;
 
-    // Update is called once per frame
-    void Update()
+    private void Awake()
     {
-        
+        ControllerManager.Instance.Init();
     }
 }

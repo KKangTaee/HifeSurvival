@@ -297,6 +297,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 2f54e04c282e9974fa282c5f24c0b640, type: 3}
   - {fileID: 21300000, guid: df98375cf28175442a62efc212bb6c30, type: 3}
   - {fileID: 21300000, guid: 245b1e5c3fd576f459a0bcb9b1abf3c6, type: 3}
+  - {fileID: 21300000, guid: b9582e5c4b10040b09b069c0a81f1240, type: 3}
   - {fileID: 21300000, guid: e36f146cca9c61c46bfa476c624759e5, type: 3}
   - {fileID: 21300000, guid: ccf8086ce1391004caf2d8fe9eb53de3, type: 3}
   - {fileID: 21300000, guid: f482e96cafc9ed849aa5b14b59d95b4d, type: 3}
@@ -340,6 +341,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: f43c57fe04fc4b041bd2035a199b4f96, type: 3}
   - {fileID: 21300000, guid: 951949fe22d8c98408f1d19a88cc260a, type: 3}
   - {fileID: 21300000, guid: 83f7c01fabea4a44e8482d2bf7ac7843, type: 3}
+  - {fileID: 21300000, guid: e6b27d2f9b35a492cb31ecc67f6b44fd, type: 3}
   - {fileID: 21300000, guid: 61ff7d2f444cada46bc7b947340994c5, type: 3}
   - {fileID: 21300000, guid: 1b60465f590b0e846bcab79a984e1fdf, type: 3}
   - {fileID: 21300000, guid: c5de095f10ed51b48b3b19348443f138, type: 3}
@@ -601,6 +603,7 @@ SpriteAtlas:
   - ISO_Overlay_StonePieces_01
   - ISO_Tile_Water_Shore_4S_04
   - ISO_Tile_Water_Shore_1C_02
+  - KakaoTalk_Photo_2023-05-24-15-52-01
   - ISO_Overlay_Path_Cross3_01
   - ISO_Tile_Water_Shore_2C_01
   - ISO_Tile_Flesh_01_Var01
@@ -644,6 +647,7 @@ SpriteAtlas:
   - ISO_Overlay_Shore_Corner_U
   - ISO_Tile_Mud_02
   - ISO_Overlay_Grass_Patch_03
+  - KakaoTalk_Photo_2023-05-24-16-27-24
   - ISO_Tile_Sand_03
   - Sprite_ISO_Collider_Round
   - Sprite_ISO_Collider 1

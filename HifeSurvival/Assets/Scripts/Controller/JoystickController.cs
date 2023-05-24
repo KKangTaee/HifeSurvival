@@ -12,6 +12,11 @@ public class JoystickController : ControllerBase
 
     private PlayerController        _playerController;
 
+
+    //------------------
+    // unity events
+    //------------------
+    
     private void Reset()
     {
         if(_joystickMachine == null)

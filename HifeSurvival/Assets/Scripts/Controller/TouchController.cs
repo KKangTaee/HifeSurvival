@@ -27,23 +27,23 @@ public class TouchController : ControllerBase
     public enum ETouchCommand : uint
     {
         //------------
-        // Ä«¸Þ¶ó °ü·Ã
+        // ì¹´ë©”ë¼ ê´€ë ¨
         //------------
-        CAMERA_ZOOM = 0,            // Ä«¸Þ¶ó ÁÜ
+        CAMERA_ZOOM = 0,            // ì¹´ë©”ë¼ ì¤Œ
 
-        CAMERA_MOVE,                // Ä«¸Þ¶ó ÀÌµ¿
+        CAMERA_MOVE,                // ì¹´ë©”ë¼ ë¬´ë¸Œ
 
-        CAMERA_MOVE_DONE,           // Ä«¸Þ¶ó ¹«ºùÀÌ ³¡³µÀ» ¶§.
+        CAMERA_MOVE_DONE,           // ì¹´ë©”ë¼ ë¬´ë¹™ëë‚¨
 
         CAMERA_COMMAND_END = 100,
 
 
         //-------------
-        // ÇÃ·¹ÀÌ¾î °ü·Ã
+        // ìž…ë ¥ ê´€ë ¨
         //-------------
-        WORLD_MAP_TOUCH = 201,      // ÇÃ·¹ÀÌ¾î ÀÌµ¿
+        WORLD_MAP_TOUCH = 201,      // ë§µ í„°ì¹˜
 
-        PLAYER_TOUCH,               // ³» ÇÃ·¹ÀÌ¾î ÅÍÄ¡
+        PLAYER_TOUCH,               // í”Œë ˆì´ì–´ í„°ì¹˜
 
         NONE,
     }
@@ -172,7 +172,7 @@ public class TouchController : ControllerBase
         TouchPhase  touchPhase = TouchPhase.Canceled;
 
 #if UNITY_EDITOR
-        // ¸¶¿ì½º ÈÙ Ã³¸®
+        // ï¿½ï¿½ï¿½ì½º ï¿½ï¿½ Ã³ï¿½ï¿½
         float mouseWheelInput = Input.mouseScrollDelta.y;
 
         if (Mathf.Abs(mouseWheelInput) > 0.01f)
@@ -371,6 +371,4 @@ public class TouchController : ControllerBase
 
         return hitInfo.collider;
     }
-
-
 }

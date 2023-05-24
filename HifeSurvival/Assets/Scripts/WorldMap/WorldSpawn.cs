@@ -17,8 +17,8 @@ public class WorldSpawn : WorldObjectBase
 
 
     [SerializeField] private ESpawnType _spawnType;
-    [SerializeField] private int        _groupId;
-    [SerializeField] Transform []       _pivotArr;
+    [SerializeField] private int _groupId;
+    [SerializeField] Transform[] _pivotArr;
 
 
     public ESpawnType SpawnType { get => _spawnType; }
@@ -30,6 +30,8 @@ public class WorldSpawn : WorldObjectBase
     //-----------------
 
 
+
+
     //-----------------
     // functions
     //-----------------
@@ -37,7 +39,7 @@ public class WorldSpawn : WorldObjectBase
 
     public Vector3 GetSpawnWorldPos(int inIdx)
     {
-        if(inIdx < 0 || inIdx >= _pivotArr.Length)
+        if (inIdx < 0 || inIdx >= _pivotArr.Length)
         {
             Debug.LogWarning("pivotArr is invalied");
             return default;
@@ -46,4 +48,26 @@ public class WorldSpawn : WorldObjectBase
         return _pivotArr[inIdx].position;
     }
 
+
+#if UNITY_EDITOR
+
+    int _prevPivotCount = 0;
+
+    private void OnValidate()
+    {
+        if (_prevPivotCount != _pivotArr?.Length)
+        {
+            for (int i = 0; i < _pivotArr.Length; i++)
+            {
+                if (_pivotArr[i] == null)
+                {
+                    GameObject newPivot = new GameObject($"pivot_{i}");
+                    newPivot.transform.parent = transform;
+                    _pivotArr[i] = newPivot.transform;
+                }
+            }
+        }
+    }
+
+#endif
 }

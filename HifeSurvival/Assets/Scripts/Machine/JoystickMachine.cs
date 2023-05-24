@@ -9,7 +9,8 @@ public class JoystickMachine : MonoBehaviour, IDragHandler, IPointerUpHandler, I
     [SerializeField] RectTransform joystickBackground;
     [SerializeField] RectTransform joystick;
 
-    private Action<Vector2> _dragCallback;
+    private Action<Vector2> _dragCB;
+    private Action      _pointUpCB;
 
     public Vector2 inputDirection;
     private bool isTouching;
@@ -26,7 +27,7 @@ public class JoystickMachine : MonoBehaviour, IDragHandler, IPointerUpHandler, I
 
         if (isTouching)
         {
-            _dragCallback?.Invoke(Vector3.Normalize(inputDirection));
+            _dragCB?.Invoke(Vector3.Normalize(inputDirection));
         }
     }
 
@@ -53,10 +54,15 @@ public class JoystickMachine : MonoBehaviour, IDragHandler, IPointerUpHandler, I
         inputDirection = Vector2.zero;
         joystick.anchoredPosition = inputDirection;
         isTouching = false;
+        _pointUpCB?.Invoke();
     }
 
     public void AddDragEvent(Action<Vector2> inCallback) =>
-        _dragCallback = inCallback;
+        _dragCB = inCallback;
+
+    public void AddPointUpEvent(Action inCallback) =>
+        _pointUpCB = inCallback;
+
 
     
     public void OnKeyEvent()

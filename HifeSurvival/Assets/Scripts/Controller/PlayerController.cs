@@ -75,10 +75,10 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
     }
 
 
-    public void MoveMeManual(Vector2 inDir)
-    {
-        Self?.OnMove(inDir);
-    }
+    // public void MoveMeManual(Vector2 inDir)
+    // {
+    //     Self?.OnMove(inDir);
+    // }
 
     // 플레이어 컨트롤러
     public void LoadPlayer(WorldMap inWorldMap)

@@ -7,15 +7,15 @@ public class MoveMachine : MonoBehaviour
 {
     public enum EMoveStatus
     {
-        AUTO,  // ÀÚµ¿
+        AUTO,  // ï¿½Úµï¿½
 
-        MANUAL, // ¼öµ¿
+        MANUAL, // ï¿½ï¿½ï¿½ï¿½
     
         NONE,
     }
 
 
-    private const float    MOVE_SPEED = 10.0f;
+    private const float    MOVE_SPEED = 3.0f;
     private const float    MOVE_REACHING_OFFSET = 0.2f;
 
     private Queue<Vector3>  _moveQueue;

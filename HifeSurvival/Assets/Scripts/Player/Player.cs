@@ -21,7 +21,7 @@ public class Player : MonoBehaviour
     //  [SerializeField] private SpineCharacter _character;
     [SerializeField] private MoveMachine _moveMachine;
     [SerializeField] private TriggerMachine _triggerMachine;
-    
+
     [SerializeField] private HeroAnimator _anim;
 
 
@@ -66,7 +66,13 @@ public class Player : MonoBehaviour
 
     public void OnMove(in Vector3 inDir)
     {
+        _anim.OnWalk(inDir);
         _moveMachine.MoveManual(inDir);
+    }
+
+    public void OnIdle()
+    {
+        _anim.OnIdle();
     }
 
     // Player 클래스 내부

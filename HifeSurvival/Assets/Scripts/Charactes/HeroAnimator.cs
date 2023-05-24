@@ -47,9 +47,18 @@ public class HeroAnimator : MonoBehaviour
         _anim.Play(AnimKey.KEY_ATTACK);
     }
 
-    public void OnWalk(float inDir)
+    public void OnWalk(in Vector2 inDir)
     {
-        _anim.SetFloat(ParamKey.KEY_DIR, inDir);
+        _anim.SetBool(ParamKey.KEY_IS_WALK, true);
+        _anim.SetFloat(ParamKey.KEY_DIR, inDir.y);
+
+        SetDir(inDir.x);
+    }
+
+    public void SetDir(float inDir)
+    {
+        var scaleX = inDir > 0 ? -1 : 1;
+         transform.localScale = new Vector3(scaleX, 1,1);
     }
 
     public void OnDead()
@@ -59,6 +68,7 @@ public class HeroAnimator : MonoBehaviour
 
     public void OnIdle()
     {
+        _anim.SetBool(ParamKey.KEY_IS_WALK, false);
         _anim.Play(AnimKey.KEY_IDLE);
     }
 }

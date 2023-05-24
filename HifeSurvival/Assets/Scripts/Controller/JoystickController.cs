@@ -16,7 +16,7 @@ public class JoystickController : ControllerBase
     //------------------
     // unity events
     //------------------
-    
+
     private void Reset()
     {
         if(_joystickMachine == null)
@@ -58,6 +58,7 @@ public class JoystickController : ControllerBase
     {
         _playerController = ControllerManager.Instance.GetController<PlayerController>();
 
-        _joystickMachine.AddDragEvent((dir) => {_playerController.MoveMeManual(dir); });
+        _joystickMachine.AddDragEvent((dir) => _playerController.Self.OnMove(dir));
+        _joystickMachine.AddPointUpEvent(() => _playerController.Self.OnIdle());
     }
 }

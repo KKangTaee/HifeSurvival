@@ -11,9 +11,9 @@ public class WorldMap : MonoBehaviour
 {
 
     [SerializeField] private Tilemap    _background;
-    [SerializeField] private Tilemap    _walls;
-
-    [SerializeField] private Transform _objectRoot;
+    [SerializeField] private Tilemap    _wall;
+    [SerializeField] private Tilemap    _collider;
+    [SerializeField] private Transform  _objectRoot;
 
 
     private Dictionary<Vector3Int, WorldTile> _bgTileDic;
@@ -33,20 +33,20 @@ public class WorldMap : MonoBehaviour
 
     private void Initialize()
     {
-        // Å¸ÀÏ¸Ê
+        // íƒ€ì¼ë§µ ì„¸íŒ…
         SetupToTilemap();
 
         // Astar
         SetupToAStar();
 
-        // ¿ùµå¿ÀºêÁ§Æ®
+        // ì›”ë“œ ì˜¤ë¸Œì íŠ¸ ìƒã…“
         SetupToWorldObject();
     }
 
 
     public void SetupToTilemap()
     {
-        _wallMat = _walls.GetComponent<TilemapRenderer>()?.sharedMaterial;
+        _wallMat = _wall.GetComponent<TilemapRenderer>()?.sharedMaterial;
         _bgTileDic = GetAllTilePositionsAndTileBases();
     }
 
@@ -122,9 +122,9 @@ public class WorldMap : MonoBehaviour
 
     public void UpdateWallMasking(Vector3 hitPoint, Vector3 inWorldPos)
     {
-        // Ãæµ¹ÇÑ ÁöÁ¡À» Å¸ÀÏ ÁÂÇ¥°è·Î º¯È¯ÇÕ´Ï´Ù.
-        Vector3Int wallCoord   = _walls.WorldToCell(hitPoint);
-        Vector3Int targetCoord = _walls.WorldToCell(transform.position);
+        // ï¿½æµ¹ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Õ´Ï´ï¿½.
+        Vector3Int wallCoord   = _wall.WorldToCell(hitPoint);
+        Vector3Int targetCoord = _wall.WorldToCell(transform.position);
 
         if ((targetCoord.x > wallCoord.x || targetCoord.y > wallCoord.y) ||
              targetCoord == wallCoord)
@@ -204,14 +204,14 @@ public class WorldMap : MonoBehaviour
     }
 
 
-    #region ±âÅ¸
+    #region ï¿½ï¿½Å¸
 #if UNITY_EDITOR
 
     public void LogTotalBounds()
     {
         BoundsInt bounds = _background.cellBounds;
 
-        // ¹Ù¿îµåÀÇ ³Êºñ¿Í ³ôÀÌ¸¦ »ç¿ëÇÏ¿© Å¸ÀÏ °³¼ö ±¸ÇÏ±â
+        // ï¿½Ù¿ï¿½ï¿½ï¿½ï¿½ ï¿½Êºï¿½ï¿½ ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï±ï¿½
         int width = bounds.size.x;
         int height = bounds.size.y;
         int tileCount = width * height;
@@ -246,7 +246,7 @@ public class WorldMap : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        DrawCoord();
+        // DrawCoord();
     }
 
 

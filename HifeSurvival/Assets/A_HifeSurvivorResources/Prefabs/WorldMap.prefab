@@ -7208,7 +7208,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _background: {fileID: 3516520539982029835}
-  _walls: {fileID: 1176463429200792169}
+  _wall: {fileID: 0}
+  _collider: {fileID: 0}
   _objectRoot: {fileID: 7710224704219379415}
 --- !u!1 &7710224705377827416
 GameObject:
@@ -7291,7 +7292,7 @@ SpriteRenderer:
   m_Size: {x: 200, y: 150}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 2
   m_SpriteSortPoint: 0
 --- !u!1001 &3472847433401715769

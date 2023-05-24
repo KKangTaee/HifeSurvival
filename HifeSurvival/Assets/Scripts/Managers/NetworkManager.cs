@@ -63,9 +63,9 @@ public class NetworkManager : MonoBehaviour, IJobQueue
         IPAddress ipAddr = ipHost.AddressList.First(ip => ip.AddressFamily == AddressFamily.InterNetwork);
         IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
 
-        Debug.Log($"접속IP : {endPoint}");
-        endPoint = new IPEndPoint(IPAddress.Parse("192.168.0.3"), 7777);
-        //endPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 7777);
+        Debug.LogWarning($"접속IP : {endPoint}");
+        // endPoint = new IPEndPoint(IPAddress.Parse("192.168.0.3"), 7777);
+        endPoint = new IPEndPoint(IPAddress.Parse("61.83.232.18"), 7777);
 
         _session = new ServerSession();
         Connector connector = new Connector();

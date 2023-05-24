@@ -112,5 +112,7 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
             inst.Init(isSelf, spawnObj.GetSpawnWorldPos(pivotIdx));
             _playerDict.Add(entity.playerId, inst);
         }
+
+        _cameraController.FollowingTarget(Self.transform);
     }
 }

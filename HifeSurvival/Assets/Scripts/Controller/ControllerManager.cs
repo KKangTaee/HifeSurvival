@@ -4,7 +4,6 @@ using UnityEngine;
 using System;
 using UniRx.Async;
 
-
 public class ControllerManager
 {
     private static ControllerManager _instance;
@@ -23,10 +22,9 @@ public class ControllerManager
     }
 
 
-    public const string RESOURCES_PATH = "Controllers";
+    public const string RESOURCES_PATH = "Prefabs/Controllers";
 
     private Dictionary<Type, ControllerBase> _controllerDic = new Dictionary<Type, ControllerBase>();
-
 
     public async UniTask InitAsync()
     {
@@ -46,14 +44,16 @@ public class ControllerManager
 
         foreach (var name in controllerName)
         {
-            ResourceRequest request = Resources.LoadAsync<ControllerBase>($"{RESOURCES_PATH}/{name}");
+            string path = $"{RESOURCES_PATH}/{name}";
+
+            ResourceRequest request = Resources.LoadAsync<ControllerBase>(path);
             await request;
 
             var prefab = request.asset as ControllerBase;
 
             if (prefab == null)
             {
-                Debug.LogError($"{name} object couldn't be found!");
+                Debug.LogError($"{name} object couldn't be found! path : {path}");
                 return;
             }
 

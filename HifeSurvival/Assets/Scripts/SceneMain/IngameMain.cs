@@ -21,7 +21,7 @@ public class IngameMain : MonoBehaviour
         await ControllerManager.Instance.InitAsync();
 
         // 플레이어 로드
-        ControllerManager.Instance.GetController<PlayerController>().LoadPlayer(_worldMap);
+        ControllerManager.Instance.GetController<PlayerController>()?.LoadPlayer(_worldMap);
 
         // 몬스터 로드
     }

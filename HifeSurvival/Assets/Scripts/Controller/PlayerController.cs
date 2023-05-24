@@ -79,7 +79,7 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
     {
         Self.MoveMenual(inDir);
     }
-
+    
 
     public void LoadPlayer(WorldMap inWorldMap)
     {

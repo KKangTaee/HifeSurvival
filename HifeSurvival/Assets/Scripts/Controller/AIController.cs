@@ -11,7 +11,6 @@ public class AIController : ControllerBase
 
     private WorldMap _worldMap;
 
-   
     private void Start()
     {
         _worldMap = GameObject.Find(nameof(WorldMap))?.GetComponent<WorldMap>();
@@ -19,7 +18,6 @@ public class AIController : ControllerBase
         if (_worldMap == null)
             return;
     }
-
 
     public void OnCommand(IPacket inPacket)
     {

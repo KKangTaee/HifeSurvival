@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a05926d8a4a9e64468dfc5816e9e3fc5, type: 3}
   m_Name: WorldTile_Water_01
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 21300000, guid: 041f8867dfaeb6b4e80d6accfd1f9b78, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f9847c6b567e545e7bad00b5e874f4f9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1

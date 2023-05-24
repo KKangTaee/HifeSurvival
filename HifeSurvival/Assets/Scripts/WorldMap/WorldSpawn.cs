@@ -48,26 +48,8 @@ public class WorldSpawn : WorldObjectBase
         return _pivotArr[inIdx].position;
     }
 
-
-#if UNITY_EDITOR
-
-    int _prevPivotCount = 0;
-
-    private void OnValidate()
+    public int GetPivotCount()
     {
-        if (_prevPivotCount != _pivotArr?.Length)
-        {
-            for (int i = 0; i < _pivotArr.Length; i++)
-            {
-                if (_pivotArr[i] == null)
-                {
-                    GameObject newPivot = new GameObject($"pivot_{i}");
-                    newPivot.transform.parent = transform;
-                    _pivotArr[i] = newPivot.transform;
-                }
-            }
-        }
+        return _pivotArr?.Length ?? 0;
     }
-
-#endif
 }

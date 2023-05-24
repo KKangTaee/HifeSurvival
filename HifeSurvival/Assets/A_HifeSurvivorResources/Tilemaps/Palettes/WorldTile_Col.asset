@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a05926d8a4a9e64468dfc5816e9e3fc5, type: 3}
   m_Name: WorldTile_Col
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 21300000, guid: e6b27d2f9b35a492cb31ecc67f6b44fd, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c454cd40415d94bf482137b05a1ec211, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1

@@ -7,26 +7,11 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
 {
     [SerializeField] private Player _playerPrefab;
 
-    private Dictionary<string, Player> _playerDic = new Dictionary<string, Player>();
+    private Dictionary<int, Player> _playerDict = new Dictionary<int, Player>();
 
     private CameraController _cameraController;
 
     public Player Self { get; private set; }
-    
-
-
-    //------------------
-    // unity events
-    //------------------
-
-    private void Awake()
-    {
-        Self = Instantiate(_playerPrefab);
-        Self.Initialzie(true, new Vector3(0, -17.5f, 0));
-
-        _playerDic.Add("me", Self);
-    }
-
 
     public void Start()
     {
@@ -42,7 +27,7 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
     //----------------
 
 
-    public void OnTouchUpdate(TouchController.ETouchCommand inCommand, Vector2 [] inTouchPos, Collider2D inCollider2D = null)
+    public void OnTouchUpdate(TouchController.ETouchCommand inCommand, Vector2[] inTouchPos, Collider2D inCollider2D = null)
     {
         switch (inCommand)
         {
@@ -50,14 +35,14 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
 
                 var worldMap = inCollider2D.GetComponent<WorldMap>();
 
-                if(worldMap != null)
+                if (worldMap != null)
                 {
                     var touchPos = inTouchPos.FirstOrDefault();
                     var endPos = _cameraController.MainCamera.ScreenToWorldPoint(touchPos);
 
                     MoveMeAuto(worldMap, endPos);
                 }
-           
+
                 break;
 
             case TouchController.ETouchCommand.PLAYER_TOUCH:
@@ -72,13 +57,13 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
     //-----------------
     // functions
     //-----------------
-    
+
 
     public void MoveMeAuto(WorldMap inWorldMap, Vector2 inEndPos)
-    {        
+    {
         var moveList = inWorldMap.GetMoveList(Self.transform.position, inEndPos);
 
-        if(moveList == null)
+        if (moveList == null)
         {
             Debug.LogWarning($"[{nameof(MoveMeAuto)}] EndTile is not going!");
             return;
@@ -96,5 +81,36 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
     }
 
 
-    
+    public void LoadPlayer(WorldMap inWorldMap)
+    {
+        var entitys = GameMode.Instance.PlayerEntitysDic.Values;
+
+        var randList = Enumerable.Range(0, entitys.Count).ToList();
+
+        var spawnObj = inWorldMap.GetWorldObject<WorldSpawn>().FirstOrDefault(x=>x.SpawnType == WorldSpawn.ESpawnType.PLAYER);
+
+        if(spawnObj == null && spawnObj?.GetPivotCount() <= 0)
+        {
+            Debug.LogError($"[{nameof(LoadPlayer)}] spawnObj is null or empty!");
+            return;
+        }
+
+        foreach (var entity in entitys)
+        {
+            int randIdx = Random.Range(0, randList.Count);
+            int pivotIdx = randList[randIdx];
+
+            randList.RemoveAt(randIdx);
+
+            var inst = Instantiate(_playerPrefab, transform);
+
+            bool isSelf = ServerData.Instance.UserData.user_id == entity.userId;
+
+            if(isSelf == true)
+               Self = inst;
+
+            inst.Initialzie(isSelf, spawnObj.GetSpawnWorldPos(pivotIdx));
+            _playerDict.Add(entity.playerId, inst);
+        }
+    }
 }

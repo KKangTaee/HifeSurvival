@@ -9,7 +9,6 @@ using System.Reflection;
 
 public class WorldMap : MonoBehaviour
 {
-
     [SerializeField] private Tilemap    _background;
     [SerializeField] private Tilemap    _wall;
     [SerializeField] private Tilemap    _collider;
@@ -24,14 +23,7 @@ public class WorldMap : MonoBehaviour
     Dictionary<Type, List<WorldObjectBase>> _worldObjDic;
 
 
-    private void Awake()
-    {
-        Initialize();
-
-        ControllerManager.Instance.Init();
-    }
-
-    private void Initialize()
+    public void Init()
     {
         // 타일맵 세팅
         SetupToTilemap();
@@ -39,7 +31,7 @@ public class WorldMap : MonoBehaviour
         // Astar
         SetupToAStar();
 
-        // 월드 오브젝트 생ㅓ
+        // 월드 오브젝트 설정
         SetupToWorldObject();
     }
 

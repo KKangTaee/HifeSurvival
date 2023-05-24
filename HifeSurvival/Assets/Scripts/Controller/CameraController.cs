@@ -117,7 +117,6 @@ public class CameraController : ControllerBase, TouchController.ITouchUpdate
                 
                 _prevPos = INVALIED_VECTOR_VALUE;
 
-                // �巡�� �Ŀ��� ���� ��쿡�� �����̵� ó��
                 if (_dragPower > 0)
                     _eStatus = ECamearaStatus.SLIDING;
 

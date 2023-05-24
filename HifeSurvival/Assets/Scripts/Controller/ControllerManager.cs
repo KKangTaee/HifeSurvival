@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UniRx.Async;
+
 
 public class ControllerManager
 {
@@ -26,9 +28,9 @@ public class ControllerManager
     private Dictionary<Type, ControllerBase> _controllerDic = new Dictionary<Type, ControllerBase>();
 
 
-    public void Init()
+    public async UniTask InitAsync()
     {
-        var controllerName = new string []
+        var controllerName = new string[]
         {
             nameof(TouchController),
 
@@ -44,19 +46,22 @@ public class ControllerManager
 
         foreach (var name in controllerName)
         {
-            var prefab = Resources.Load<ControllerBase>($"{RESOURCES_PATH}/{name}");
+            ResourceRequest request = Resources.LoadAsync<ControllerBase>($"{RESOURCES_PATH}/{name}");
+            await request;
+
+            var prefab = request.asset as ControllerBase;
 
             if (prefab == null)
             {
-                Debug.LogError($"{name} object couldnt find!");
+                Debug.LogError($"{name} object couldn't be found!");
                 return;
             }
 
-            prefab = UnityEngine.Object.Instantiate(prefab);
-            prefab.name = name;
+            var inst = UnityEngine.Object.Instantiate(prefab);
+            inst.name = name;
 
-            UnityEngine.Object.DontDestroyOnLoad(prefab);
-            _controllerDic.Add(prefab.GetType(), prefab);
+            UnityEngine.Object.DontDestroyOnLoad(inst);
+            _controllerDic.Add(inst.GetType(), inst);
         }
     }
 

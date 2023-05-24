@@ -22,7 +22,7 @@ public class JoystickMachine : MonoBehaviour, IDragHandler, IPointerUpHandler, I
 
     private void Update()
     {
-        OnKeyEvent();
+        // OnKeyEvent();
 
         if (isTouching)
         {

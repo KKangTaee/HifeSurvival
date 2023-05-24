@@ -39,7 +39,7 @@ public class HeroRTCapture : MonoBehaviour
             _capture = Instantiate(prefab);
             DontDestroyOnLoad(_capture);
 
-            _capture.transform.position = new Vector3(1,1,1);
+            _capture.transform.position = new Vector3(9999,9999,9999);
         }
 
         return _capture;

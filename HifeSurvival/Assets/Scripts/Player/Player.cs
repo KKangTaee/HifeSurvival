@@ -18,15 +18,17 @@ public class Player : MonoBehaviour
         USE_SKILL,
     }
 
-   //  [SerializeField] private SpineCharacter _character;
-    [SerializeField] private MoveMachine    _moveMachine;
+    //  [SerializeField] private SpineCharacter _character;
+    [SerializeField] private MoveMachine _moveMachine;
     [SerializeField] private TriggerMachine _triggerMachine;
+    
+    [SerializeField] private HeroAnimator _anim;
+
 
     private WorldMap _worldMap;
 
     public EStatus Status { get; private set; }
-    public bool IsSelf    { get; private set; }
-
+    public bool IsSelf { get; private set; }
 
 
     //-----------------
@@ -35,12 +37,12 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
-        _moveMachine    = GetComponent<MoveMachine>();
+        _moveMachine = GetComponent<MoveMachine>();
     }
 
     private void Start()
     {
-        // _character.PlayAnimation(SpineCharacter.EAnimKey.IDLE);
+        _anim.PlayAnimation(HeroAnimator.AnimKey.KEY_IDLE);
     }
 
 
@@ -48,28 +50,26 @@ public class Player : MonoBehaviour
     // functions
     //-----------------
 
-    public void MoveAuto(List<Vector3> inMoveList)
+    public void Init(bool isSelf, in Vector3 inPos)
     {
-        // _character.PlayAnimation(SpineCharacter.EAnimKey.RUN);
+        if (isSelf == true)
+            SetTrigger();
 
-        // _moveMachine.MoveAuto(inMoveList,
-        //                       changeDirCallback: dir =>
-        //                       {
-        //                           _character.SetDir(dir);
-        //                       },
-        //                       doneCallback: isDone =>
-        //                       {
-        //                           _character.PlayAnimation(SpineCharacter.EAnimKey.IDLE);
-        //                       });
+        IsSelf = isSelf;
+
+        SetWorldPos(inPos);
+    }
+    public void SetWorldPos(in Vector3 inPos)
+    {
+        transform.position = inPos;
     }
 
-
-    public void MoveMenual(in Vector3 inDir)
+    public void OnMove(in Vector3 inDir)
     {
         _moveMachine.MoveManual(inDir);
     }
 
-
+    // Player 클래스 내부
     public void SetTrigger()
     {
         _triggerMachine.AddTriggerStay((sender, col) =>
@@ -96,21 +96,5 @@ public class Player : MonoBehaviour
                 _worldMap?.DoneWallMasking();
             }
         });
-    }
-
-    public void SetWorldPos(in Vector3 inPos)
-    {
-        transform.position = inPos;
-    }
-
-
-    public void Initialzie(bool isMe, in Vector3 inPos)
-    {
-        if(isMe == true)
-           SetTrigger();
-
-        IsSelf = isMe;
-
-        SetWorldPos(inPos);
     }
 }

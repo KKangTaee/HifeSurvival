@@ -40,7 +40,7 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
                     var touchPos = inTouchPos.FirstOrDefault();
                     var endPos = _cameraController.MainCamera.ScreenToWorldPoint(touchPos);
 
-                    MoveMeAuto(worldMap, endPos);
+                    // MoveMeAuto(worldMap, endPos);
                 }
 
                 break;
@@ -69,7 +69,7 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
             return;
         }
 
-        Self.MoveAuto(moveList);
+        // Self.MoveAuto(moveList);
 
         _cameraController.FollowingTarget(Self.transform);
     }
@@ -77,10 +77,10 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
 
     public void MoveMeManual(Vector2 inDir)
     {
-        Self.MoveMenual(inDir);
+        Self?.OnMove(inDir);
     }
-    
 
+    // 플레이어 컨트롤러
     public void LoadPlayer(WorldMap inWorldMap)
     {
         var entitys = GameMode.Instance.PlayerEntitysDic.Values;
@@ -109,7 +109,7 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
             if(isSelf == true)
                Self = inst;
 
-            inst.Initialzie(isSelf, spawnObj.GetSpawnWorldPos(pivotIdx));
+            inst.Init(isSelf, spawnObj.GetSpawnWorldPos(pivotIdx));
             _playerDict.Add(entity.playerId, inst);
         }
     }

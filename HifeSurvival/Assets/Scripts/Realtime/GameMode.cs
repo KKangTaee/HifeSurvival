@@ -9,8 +9,12 @@ public class GameMode
     private static GameMode _instance = new GameMode();
     public static GameMode Instance { get => _instance; }
     public Dictionary<int, PlayerEntity> PlayerEntitysDic { get; private set; } = new Dictionary<int, PlayerEntity>();
+    
     private SimpleTaskCompletionSource<S_JoinToGame> _joinCompleted = new SimpleTaskCompletionSource<S_JoinToGame>();
 
+    /// <summary>
+    /// 입장 관련
+    /// </summary>
     private Action<PlayerEntity> _onRecvJoinCB;
     private Action<PlayerEntity> _onRecvSelectCB;
     private Action<PlayerEntity> _onRecvReadyCB;
@@ -18,6 +22,10 @@ public class GameMode
     private Action<int> _onRecvCountdownCB;
     private Action      _onRecvStartGameCB;
 
+
+    public event Action<PlayerEntity>  OnRecvMoveCB;
+    public event Action<PlayerEntity>  OnRecvStopMoveCB;
+    public event Action<CS_Attack>   OnRecvAttackCB;
 
     public PlayerEntity EntitySelf { get; private set; }
     public int RoomId { get; private set; }
@@ -42,7 +50,7 @@ public class GameMode
                          Action<PlayerEntity> inRecvReady,
                          Action<int> inRecvLeave,
                          Action<int> inRecvCountdown,
-                         Action  inRecvGameStart)
+                         Action inRecvGameStart)
     {
         _onRecvJoinCB = inRecvJoin;
         _onRecvLeaveCB = inRecvLeave;
@@ -50,6 +58,11 @@ public class GameMode
         _onRecvReadyCB = inRecvReady;
         _onRecvCountdownCB = inRecvCountdown;
         _onRecvStartGameCB = inRecvGameStart;
+    }
+
+    public bool IsSelf(int inPlayerId)
+    {
+        return EntitySelf.playerId == inPlayerId;
     }
 
 
@@ -140,7 +153,7 @@ public class GameMode
         {
             entity.heroId = inPacket.heroId;
 
-            if (EntitySelf.playerId != inPacket.playerId)
+            if (IsSelf(inPacket.playerId) == false)
                 _onRecvSelectCB?.Invoke(entity);
         }
     }
@@ -151,12 +164,10 @@ public class GameMode
         {
             entity.isReady = true;
 
-            if (EntitySelf.playerId != inPacket.playerId)
+            if (IsSelf(inPacket.playerId) == true)
                 _onRecvReadyCB?.Invoke(entity);
         }
     }
-
-
 
     public void OnSendSelectHero(int inPlayerId, int inHeroId)
     {
@@ -173,7 +184,7 @@ public class GameMode
     {
         C_JoinToGame joinToGame = new C_JoinToGame();
 
-        joinToGame.userId = ServerData.Instance.UserData.user_id;
+        joinToGame.userId   = ServerData.Instance.UserData.user_id;
         joinToGame.userName = ServerData.Instance.UserData.nickname;
 
         NetworkManager.Instance.Send(joinToGame);
@@ -196,14 +207,90 @@ public class GameMode
     {
         _onRecvStartGameCB?.Invoke();
     }
+
+
+    public void OnRecvMove(CS_Move inPacket)
+    {
+        if(inPacket.isPlayer ==  true)
+        {
+            if (PlayerEntitysDic.TryGetValue(inPacket.targetId, out var player) == true)
+            {
+                player.dir = inPacket.dir;
+                player.pos = inPacket.pos;
+                player.speed = inPacket.speed;
+
+                if (IsSelf(inPacket.targetId) == false)
+                    OnRecvMoveCB?.Invoke(player);
+            }
+        }
+        else
+        {
+
+        }
+    }
+
+    public void OnRecvStopMove(CS_StopMove inPacket)
+    {
+        if (inPacket.isPlayer == true)
+        {
+            if (PlayerEntitysDic.TryGetValue(inPacket.targetId, out var player) == true)
+            {      
+                player.pos = inPacket.pos;
+       
+               if(IsSelf(inPacket.targetId) == false)
+                  OnRecvStopMoveCB?.Invoke(player);
+            }
+        }
+        else
+        {
+
+        }
+    }
+
+    public void OnSendMove(in Vector3 inPos, in Vector3 inDir)
+    {
+        CS_Move move = new CS_Move()
+        {
+            dir = inDir.ConvertVec3(),
+            pos = inPos.ConvertVec3(),
+            isPlayer = true,
+            speed = EntitySelf.speed,
+            targetId = EntitySelf.playerId,
+        };
+
+        NetworkManager.Instance.Send(move);
+    }
+
+
+    public void OnSendStopMove(in Vector3 inPos)
+    {
+        CS_StopMove stopMove = new CS_StopMove()
+        {
+            pos = inPos.ConvertVec3(),
+            isPlayer = true,
+            targetId = EntitySelf.playerId,
+        };
+        
+
+        NetworkManager.Instance.Send(stopMove);
+    }
 }
 
 
-public class PlayerEntity
+public abstract class Entity
+{
+
+}
+
+public class PlayerEntity : Entity
 {
     public string userId;
     public string userName;
     public int playerId;
     public int heroId;
     public bool isReady;
+
+    public Vec3 pos;
+    public Vec3 dir;
+    public float speed;
 }

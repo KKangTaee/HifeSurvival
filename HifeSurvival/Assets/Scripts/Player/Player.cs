@@ -18,17 +18,19 @@ public class Player : MonoBehaviour
         USE_SKILL,
     }
 
-    //  [SerializeField] private SpineCharacter _character;
+    [SerializeField] private HeroAnimator _anim;
+
     [SerializeField] private MoveMachine _moveMachine;
     [SerializeField] private TriggerMachine _triggerMachine;
 
-    [SerializeField] private HeroAnimator _anim;
-
-
     private WorldMap _worldMap;
 
+    private IState<Player> _state;
+    private Dictionary<EStatus, IState<Player>> _stateMachine;
+
+
     public EStatus Status { get; private set; }
-    public bool IsSelf { get; private set; }
+    public bool IsSelf    { get; private set; }
 
 
     //-----------------
@@ -38,6 +40,11 @@ public class Player : MonoBehaviour
     private void Awake()
     {
         _moveMachine = GetComponent<MoveMachine>();
+        _stateMachine = new Dictionary<EStatus, IState<Player>>()
+        {
+            {EStatus.IDLE, new IdleState()},
+            {EStatus.MOVE, new MoveState()}
+        };
     }
 
     private void Start()
@@ -57,25 +64,21 @@ public class Player : MonoBehaviour
 
         IsSelf = isSelf;
 
-        SetWorldPos(inPos);
+        SetPos(inPos);
     }
-    public void SetWorldPos(in Vector3 inPos)
+
+
+    public void SetPos(in Vector3 inPos)
     {
         transform.position = inPos;
     }
 
-    public void OnMove(in Vector3 inDir)
+    public Vector3 GetPos()
     {
-        _anim.OnWalk(inDir);
-        _moveMachine.MoveManual(inDir);
+        return transform.position;
     }
 
-    public void OnIdle()
-    {
-        _anim.OnIdle();
-    }
 
-    // Player 클래스 내부
     public void SetTrigger()
     {
         _triggerMachine.AddTriggerStay((sender, col) =>
@@ -103,4 +106,127 @@ public class Player : MonoBehaviour
             }
         });
     }
+
+    public Vector3 GetDir()
+    {
+        return _moveMachine.CurrDir;
+    }
+
+
+    public void OnMove(in Vector3 inDir, float inSpeed)
+    {
+        _anim.OnWalk(inDir);
+        _moveMachine.Move(inDir, inSpeed);
+    }
+
+    public void OnIdle(in Vector3 inPos, bool isNeedLerp = false)
+    {
+        _anim.OnIdle();
+        _moveMachine.StopMove(inPos, isNeedLerp);
+    }
+
+    public void ChangeState<P>(EStatus inStatus, in P inParam = default) where P : struct
+    {
+        // 같은 상태가 다시 돌아왔다는 것은, 파라미터만 넘겨주는 상황일 수 있다.
+        _state?.Exit();
+
+        Status = inStatus;
+
+        _state = _stateMachine[Status];
+
+        _state?.Enter(this, inParam);
+    }
+
+
+    public void UpdateState<P>(in P inParam = default) where P : struct
+    {
+        _state.Update(this, inParam);
+    }
+}
+
+
+public interface IState<T>
+{
+    void Enter<P>(T inSelf, in P inParam) where P : struct;
+
+    void Update<P>(T inSelf, in P inParam) where P : struct;
+    
+    void Exit();
+}
+
+public class IdleState : IState<Player>
+{
+    public void Enter<P>(Player inSelf, in P inParam) where P : struct
+    {
+        if (inParam is IdleParam idle)
+        {
+            inSelf.OnIdle(idle.pos, idle.isSelf == false);
+        }
+    }
+
+    public void Update<P>(Player inSelf, in P inParam) where P : struct
+    {
+
+    }
+
+    public void Exit()
+    {
+
+    }
+}
+
+public class MoveState : IState<Player>
+{
+    public void Enter<P>(Player inSelf, in P inParam) where P : struct
+    {
+        if (inParam is MoveParam move)
+            inSelf.OnMove(move.dir, move.speed);
+    }
+
+    public void Update<P>(Player inSelf, in P inParam) where P : struct
+    {
+        if (inParam is MoveParam move)
+            inSelf.OnMove(move.dir, move.speed);
+    }
+
+    public void Exit()
+    {
+
+    }
+}
+
+public class FollowTargetState : IState<Player>
+{
+    public void Enter<P>(Player inSelf, in P inParam) where P : struct
+    {
+        
+    }
+
+    public void Exit()
+    {
+        
+    }
+
+    public void Update<P>(Player inSelf, in P inParam) where P : struct
+    {
+        
+    }
+}
+
+public struct MoveParam
+{
+    public float speed;
+    public Vector3 pos;
+    public Vector3 dir;
+}
+
+public struct IdleParam
+{
+    public Vector3 pos;
+    public bool isSelf;
+}
+
+public struct AttackParam
+{
+    public float damageValue;
 }

@@ -11,21 +11,29 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
 
     private CameraController _cameraController;
 
+    private GameMode _gameMode;
+
     public Player Self { get; private set; }
+
+
+    //-----------------
+    // untiy events
+    //-----------------
 
     public void Start()
     {
         _cameraController = ControllerManager.Instance.GetController<CameraController>();
 
-        if (_cameraController == null)
-            return;
+        _gameMode = GameMode.Instance;
+
+        _gameMode.OnRecvMoveCB += OnRecvMove;
+        _gameMode.OnRecvStopMoveCB += OnRecvStopMove;
     }
 
 
     //----------------
     // overrides
     //----------------
-
 
     public void OnTouchUpdate(TouchController.ETouchCommand inCommand, Vector2[] inTouchPos, Collider2D inCollider2D = null)
     {
@@ -58,29 +66,10 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
     // functions
     //-----------------
 
-
-    public void MoveMeAuto(WorldMap inWorldMap, Vector2 inEndPos)
-    {
-        var moveList = inWorldMap.GetMoveList(Self.transform.position, inEndPos);
-
-        if (moveList == null)
-        {
-            Debug.LogWarning($"[{nameof(MoveMeAuto)}] EndTile is not going!");
-            return;
-        }
-
-        // Self.MoveAuto(moveList);
-
-        _cameraController.FollowingTarget(Self.transform);
-    }
-
-
-    // public void MoveMeManual(Vector2 inDir)
-    // {
-    //     Self?.OnMove(inDir);
-    // }
-
-    // 플레이어 컨트롤러
+    /// <summary>
+    /// 플레이어 오브젝트 로드
+    /// </summary>
+    /// <param name="inWorldMap"></param>
     public void LoadPlayer(WorldMap inWorldMap)
     {
         var entitys = GameMode.Instance.PlayerEntitysDic.Values;
@@ -114,5 +103,91 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
         }
 
         _cameraController.FollowingTarget(Self.transform);
+    }
+
+
+    /// <summary>
+    /// 플레이어 오브젝트 가져오기
+    /// </summary>
+    /// <param name="inPlayerId"></param>
+    /// <returns></returns>
+    public Player GetPlayer(int inPlayerId)
+    {
+        if(_playerDict.TryGetValue(inPlayerId, out var player) == true && player != null)
+            return player;
+
+        Debug.LogError("player is null or empty");
+        return player;
+    }
+
+
+    public void SetMoveState(Player inTarget, in Vector3 inPos, in Vector3 inDir, float speed)
+    {
+        var moveParam = new MoveParam()
+        {
+            pos = inPos,
+            dir = inDir,
+            speed = speed,
+        };
+
+        // 계속 이동중에 신호를 받은거라면 사실 상태를 변경할 필요 없음.
+        if (inTarget.Status == Player.EStatus.MOVE)
+            inTarget.UpdateState(moveParam);
+
+        else
+            inTarget.ChangeState(Player.EStatus.MOVE, moveParam);
+    }
+
+
+    public void OnMoveSelf(in Vector3 inDir)
+    {
+        float angle = Vector3.Angle(Self.GetDir(), inDir);
+
+        // 조이스틱의 방향전환이 이루어졌다면..?
+        if(angle > 5f)
+        {
+            // 서버에 전송한다.
+            _gameMode.OnSendMove(Self.GetPos(), inDir);
+        }
+
+        SetMoveState(Self, 
+             Self.GetPos(), 
+             inDir, 
+             GameMode.Instance.EntitySelf.speed);
+    }
+
+
+    public void OnStopMoveSelf()
+    {
+        _gameMode.OnSendStopMove(Self.GetPos());
+    }
+
+
+
+
+    //----------------
+    // server
+    //----------------
+
+    public void OnRecvMove(PlayerEntity inEntity)
+    {
+        var player = GetPlayer(inEntity.playerId);
+
+        SetMoveState(player, 
+             inEntity.pos.ConvertUnityVector3(), 
+             inEntity.dir.ConvertUnityVector3(), 
+             inEntity.speed);
+    }
+
+
+    public void OnRecvStopMove(PlayerEntity inEntity)
+    {
+        var player = GetPlayer(inEntity.playerId);
+
+        player.ChangeState(Player.EStatus.IDLE, new IdleParam()
+        {
+            isSelf = player == Self,
+            pos = inEntity.pos.ConvertUnityVector3()
+        });
     }
 }

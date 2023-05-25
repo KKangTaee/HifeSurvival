@@ -10,8 +10,7 @@ public class JoystickController : ControllerBase
     [SerializeField] JoystickMachine _joystickMachine;
     [SerializeField] Canvas          _canvas;
 
-    private PlayerController        _playerController;
-
+    private PlayerController         _playerController;
 
     //------------------
     // unity events
@@ -58,7 +57,8 @@ public class JoystickController : ControllerBase
     {
         _playerController = ControllerManager.Instance.GetController<PlayerController>();
 
-        _joystickMachine.AddDragEvent((dir) => _playerController.Self.OnMove(dir));
-        _joystickMachine.AddPointUpEvent(() => _playerController.Self.OnIdle());
+        _joystickMachine.AddDragEvent((dir) => _playerController.OnMoveSelf(dir));
+
+        _joystickMachine.AddPointUpEvent(() => _playerController.OnStopMoveSelf());
     }
 }

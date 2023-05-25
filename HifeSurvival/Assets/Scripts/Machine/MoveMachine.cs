@@ -5,28 +5,18 @@ using System;
 
 public class MoveMachine : MonoBehaviour
 {
-    public enum EMoveStatus
-    {
-        AUTO,  // �ڵ�
-
-        MANUAL, // ����
-    
-        NONE,
-    }
-
-
-    private const float    MOVE_SPEED = 3.0f;
     private const float    MOVE_REACHING_OFFSET = 0.2f;
 
-    private Queue<Vector3>  _moveQueue;
+    private Vector3         _currPos;
     private Vector3         _nextPos;
     private Vector3         _inputDirection;
 
     private Action<bool>    _doneCallback;
     private Action<Vector2> _changeDirCallback;
-    private EMoveStatus     _eStatus = EMoveStatus.NONE;
-    private Vector3         _currDir;
+    private float           _currSpeed;
+    private bool            _isLerpPos;
 
+    public Vector3          CurrDir { get; private set; }
 
     //-----------------
     // unity events
@@ -34,7 +24,7 @@ public class MoveMachine : MonoBehaviour
 
     private void FixedUpdate()
     {
-        UpdateMoveManual();
+        UpdateMove();
     }
 
 
@@ -42,97 +32,70 @@ public class MoveMachine : MonoBehaviour
     // functions
     //-----------------
 
-
     private bool IsReaching(Vector3 inPos)
     {
         return Mathf.Abs(transform.position.x - inPos.x) < MOVE_REACHING_OFFSET &&
                Mathf.Abs(transform.position.y - inPos.y) < MOVE_REACHING_OFFSET;
     }
 
-
     private Vector3 GetDir(Vector3 inPos)
     {
         return Vector3.Normalize(inPos - transform.position);
     }
 
-
-    public void MoveAuto(List<Vector3> inMoveList, Action<Vector2> changeDirCallback = null, Action<bool> doneCallback = null)
+    public void Move(in Vector3 inDir, float inSpeed)
     {
-        MoveStop();
+        if (_isLerpPos == true)
+            StopCoroutine(nameof(Co_MoveLerp));
 
-        _moveQueue = new Queue<Vector3>(inMoveList);
-
-        _doneCallback = doneCallback;
-        _changeDirCallback = changeDirCallback;
-
-        StartCoroutine(nameof(Co_Move));
+        _inputDirection = inDir;
+        _currSpeed = inSpeed;
     }
 
-
-    public void MoveStop()
+    public void StopMove(in Vector2 inPos, bool inNeedLerp)
     {
-        _moveQueue    = null;
-        _doneCallback = null;
+        _inputDirection = Vector2.zero;
+        _nextPos = inPos;
 
-        StopCoroutine(nameof(Co_Move));
+        if (inNeedLerp == true)
+            StartCoroutine(nameof(Co_MoveLerp));
     }
 
-
-    public void MoveManual(in Vector3 inPos)
-    {
-        if (_eStatus == EMoveStatus.AUTO)
-            MoveStop();
-
-        _inputDirection = inPos;
-        _eStatus = EMoveStatus.MANUAL;
-    }
-
-    
-    private void UpdateMoveManual()
+    private void UpdateMove()
     {
         if (_inputDirection != Vector3.zero)
         {
             OnChangeDir(_inputDirection);
 
-            transform.position += (_inputDirection * MOVE_SPEED * Time.fixedDeltaTime);   
+            transform.position += (_inputDirection * _currSpeed * Time.fixedDeltaTime);   
             _inputDirection = Vector3.zero;
         }
     }
 
 
-    //-----------------
-    // coroutines
-    //-----------------
-
-    private IEnumerator Co_Move()
-    {
-        while (_moveQueue?.Count > 0)
-        {
-            _nextPos = _moveQueue.Dequeue();
-
-            while (!IsReaching(_nextPos))
-            {
-                OnChangeDir(GetDir(_nextPos));
-               
-                transform.position += _currDir * MOVE_SPEED * Time.deltaTime;
-                
-                yield return null;
-            }
-
-            if (_moveQueue.Count == 0)
-            {
-                _doneCallback?.Invoke(true);
-                _doneCallback = null;
-            }
-        }
-    }
-
     private void OnChangeDir(Vector3 inDir)
     {
-        if(_currDir != inDir)
+        if(CurrDir != inDir)
         {
             _changeDirCallback?.Invoke(inDir);
-            _currDir = inDir;
+            CurrDir = inDir;
+        }
+    }
+    
+    //----------------
+    // coroutines
+    //----------------
+
+    IEnumerator Co_MoveLerp()
+    {
+        _isLerpPos = true;
+
+        var dir = GetDir(_nextPos);
+
+        while(IsReaching(_nextPos) == false)
+        {
+            transform.position += dir * _currSpeed * Time.deltaTime;
+            yield return null;
         }
     }
 }

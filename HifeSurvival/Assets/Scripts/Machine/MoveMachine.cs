@@ -49,7 +49,10 @@ public class MoveMachine : MonoBehaviour
     public void Move(in Vector3 inDir, float inSpeed)
     {
         if (_isLerpPos == true)
+        {
+            _isLerpPos = false;
             StopCoroutine(nameof(Co_MoveLerp));
+        }
 
         _inputDirection = inDir;
         _currSpeed = inSpeed;
@@ -76,9 +79,7 @@ public class MoveMachine : MonoBehaviour
         if (_inputDirection != Vector3.zero)
         {
             OnChangeDir(_inputDirection);
-
             transform.position += (_inputDirection * _currSpeed * Time.fixedDeltaTime);   
-            _inputDirection = Vector3.zero;
         }
     }
 

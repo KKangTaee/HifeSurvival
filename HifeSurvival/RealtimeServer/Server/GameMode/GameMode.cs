@@ -112,6 +112,7 @@ namespace Server
                 heroType = 1,
                 userName = inPacket.userName,
                 broadcaster = _broadcaster,
+                stat = new Stat(100,100,100,150,4)
             };
 
             _playersDict.Add(inSessionId, playerInfo);

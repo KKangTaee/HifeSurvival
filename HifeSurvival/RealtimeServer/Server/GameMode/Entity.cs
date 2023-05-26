@@ -26,8 +26,6 @@ namespace Server
 
         public Vec3 pos;
         public Vec3 dir;
-        public float speed;
-
         public Stat stat;
 
 
@@ -166,13 +164,15 @@ namespace Server
         public int exp;
         public int str;
         public int attackRange;
+        public float speed;
 
-        public Stat(int inMaxHP, int inMaxEXP, int inMaxSTR, int inAttackRange)
+        public Stat(int inMaxHP, int inMaxEXP, int inMaxSTR, int inAttackRange, float inSpeed)
         {
             hp = maxHP = inMaxHP;
             exp = maxEXP = inMaxEXP;
             str = maxSTR = inMaxSTR;
             attackRange = inAttackRange;
+            speed = inSpeed;
         }
 
         public int GetAttackValue()

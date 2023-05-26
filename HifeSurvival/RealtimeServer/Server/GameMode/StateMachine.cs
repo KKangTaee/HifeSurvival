@@ -143,8 +143,8 @@ namespace Server
                         var dir = inOther.pos.SubtractVec3(inSelf.pos).NormalizeVec3();
                         inSelf.dir = dir;
 
-                        var addSpeed = inSelf.dir.MulitflyVec3(inSelf.speed * UPDATE_TIME * 0.001f);
-                        inSelf.pos.AddVec3(addSpeed);
+                        var addSpeed = inSelf.dir.MulitflyVec3(inSelf.stat.speed * UPDATE_TIME * 0.001f);
+                        inSelf.pos = inSelf.pos.AddVec3(addSpeed);
 
                         CS_Move move = new CS_Move()
                         {
@@ -152,7 +152,7 @@ namespace Server
                             dir = inSelf.dir,
                             targetId = inSelf.monsterId,
                             isPlayer = false,
-                            speed = inSelf.speed,
+                            speed = inSelf.stat.speed,
                         };
 
                         inSelf.broadcaster.Broadcast(move);
@@ -248,7 +248,7 @@ namespace Server
                 {
                     _self.dir = move.dir;
                     _self.pos = move.pos;
-                    _self.speed = move.speed;
+                    _self.stat.speed = move.speed;
 
                     _isRunning = true;
 
@@ -268,7 +268,7 @@ namespace Server
                 {
                     _self.dir = move.dir;
                     _self.pos = move.pos;
-                    _self.speed = move.speed;
+                    _self.stat.speed = move.speed;
                 }
             }
 
@@ -276,7 +276,7 @@ namespace Server
             {
                 if (this != null && _isRunning == true && inSelf != null)
                 {
-                    var addSpeed = inSelf.dir.MulitflyVec3(inSelf.speed * UPDATE_TIME * 0.0001f);
+                    var addSpeed = inSelf.dir.MulitflyVec3(inSelf.stat.speed * UPDATE_TIME * 0.0001f);
                     inSelf.pos.AddVec3(addSpeed);
 
                     CS_Move packet = new CS_Move()
@@ -285,7 +285,7 @@ namespace Server
                         pos = inSelf.pos,
                         targetId = inSelf.playerId,
                         isPlayer = true,
-                        speed = inSelf.speed,
+                        speed = inSelf.stat.speed,
                     };
 
                     inSelf.broadcaster.Broadcast(packet);

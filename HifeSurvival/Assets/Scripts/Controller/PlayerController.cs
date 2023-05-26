@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System;
 
 public class PlayerController : ControllerBase, TouchController.ITouchUpdate
 {
@@ -76,29 +77,27 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
 
         var randList = Enumerable.Range(0, entitys.Count).ToList();
 
-        var spawnObj = inWorldMap.GetWorldObject<WorldSpawn>().FirstOrDefault(x=>x.SpawnType == WorldSpawn.ESpawnType.PLAYER);
+        var spawnObj = inWorldMap.GetWorldObject<WorldSpawn>().FirstOrDefault(x => x.SpawnType == WorldSpawn.ESpawnType.PLAYER);
 
-        if(spawnObj == null && spawnObj?.GetPivotCount() <= 0)
+        if (spawnObj == null && spawnObj?.GetPivotCount() <= 0)
         {
             Debug.LogError($"[{nameof(LoadPlayer)}] spawnObj is null or empty!");
             return;
         }
 
+        int idx = 0;
+
         foreach (var entity in entitys)
         {
-            int randIdx = Random.Range(0, randList.Count);
-            int pivotIdx = randList[randIdx];
-
-            randList.RemoveAt(randIdx);
-
             var inst = Instantiate(_playerPrefab, transform);
 
             bool isSelf = ServerData.Instance.UserData.user_id == entity.userId;
 
-            if(isSelf == true)
-               Self = inst;
+            if (isSelf == true)
+                Self = inst;
 
-            inst.Init(isSelf, spawnObj.GetSpawnWorldPos(pivotIdx));
+            inst.Init(isSelf, entity.playerId, spawnObj.GetSpawnWorldPos(idx++));
+
             _playerDict.Add(entity.playerId, inst);
         }
 
@@ -113,11 +112,85 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
     /// <returns></returns>
     public Player GetPlayer(int inPlayerId)
     {
-        if(_playerDict.TryGetValue(inPlayerId, out var player) == true && player != null)
+        if (_playerDict.TryGetValue(inPlayerId, out var player) == true && player != null)
             return player;
 
         Debug.LogError("player is null or empty");
         return player;
+    }
+
+
+    public void OnMoveSelf(in Vector3 inDir)
+    {
+        float angle = Vector3.Angle(Self.GetDir(), inDir);
+
+        // 조이스틱의 방향전환이 이루어졌다면..?
+        if (angle > 5f)
+        {
+            // 서버에 전송한다.
+            _gameMode.OnSendMove(Self.GetPos(), inDir);
+        }
+
+        SetMoveState(Self, Self.GetPos(), inDir, 4);
+    }
+
+
+    public void OnStopMoveSelf()
+    {
+        _gameMode.OnSendStopMove(Self.GetPos());
+
+        SetIdleState(Self, Self.GetPos());
+
+        // 타겟이 있는지 감지
+        DetectTargetSelf();
+    }
+
+
+    public void DetectTargetSelf()
+    {
+        var target = Self.GetNearestTarget();
+
+        if (target == null)
+            return;
+
+        if (Self.CanAttack() == true)
+        {
+            OnAttackSelf(target, 100);
+        }
+        else
+        {
+            OnFollowTargetSelf(target);
+        }
+    }
+
+
+    public void OnFollowTargetSelf(EntityObject inTarget)
+    {
+        var followTargetParam = new FollowTargetParam()
+        {
+            target = inTarget,
+
+            followDoneCallback = () =>
+            {
+                OnAttackSelf(inTarget, 100);
+            }
+        };
+
+        Self.ChangeState(EntityObject.EStatus.FOLLOW_TARGET, followTargetParam);
+    }
+
+
+    public void OnAttackSelf(EntityObject inTarget, int inDamageVal)
+    {
+        _gameMode.OnSendAttack(true, inTarget.targetId, Self.targetId, 100);
+
+        var attackParam = new AttackParam()
+        {
+            attackValue = inDamageVal,
+            target = inTarget,
+        };
+
+        Self.ChangeState(EntityObject.EStatus.ATTACK, attackParam);
     }
 
 
@@ -130,39 +203,20 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
             speed = speed,
         };
 
-        // 계속 이동중에 신호를 받은거라면 사실 상태를 변경할 필요 없음.
-        if (inTarget.Status == Player.EStatus.MOVE)
-            inTarget.UpdateState(moveParam);
-
-        else
-            inTarget.ChangeState(Player.EStatus.MOVE, moveParam);
+        inTarget.ChangeState(Player.EStatus.MOVE, moveParam);
     }
 
 
-    public void OnMoveSelf(in Vector3 inDir)
+    public void SetIdleState(Player inTarget, in Vector3 inPos)
     {
-        float angle = Vector3.Angle(Self.GetDir(), inDir);
-
-        // 조이스틱의 방향전환이 이루어졌다면..?
-        if(angle > 5f)
+        var idlePos = new IdleParam()
         {
-            // 서버에 전송한다.
-            _gameMode.OnSendMove(Self.GetPos(), inDir);
-        }
+            isSelf = inTarget == Self,
+            pos = inPos
+        };
 
-        SetMoveState(Self, 
-             Self.GetPos(), 
-             inDir, 
-             GameMode.Instance.EntitySelf.speed);
+        inTarget.ChangeState(Player.EStatus.IDLE, idlePos);
     }
-
-
-    public void OnStopMoveSelf()
-    {
-        _gameMode.OnSendStopMove(Self.GetPos());
-    }
-
-
 
 
     //----------------
@@ -173,9 +227,9 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
     {
         var player = GetPlayer(inEntity.playerId);
 
-        SetMoveState(player, 
-             inEntity.pos.ConvertUnityVector3(), 
-             inEntity.dir.ConvertUnityVector3(), 
+        SetMoveState(player,
+             inEntity.pos.ConvertUnityVector3(),
+             inEntity.dir.ConvertUnityVector3(),
              inEntity.speed);
     }
 
@@ -184,10 +238,15 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
     {
         var player = GetPlayer(inEntity.playerId);
 
-        player.ChangeState(Player.EStatus.IDLE, new IdleParam()
-        {
-            isSelf = player == Self,
-            pos = inEntity.pos.ConvertUnityVector3()
-        });
+        SetIdleState(player,
+            inEntity.pos.ConvertUnityVector3());
+    }
+
+
+    public void OnRecvAttack(PlayerEntity inEntity)
+    {
+        var player = GetPlayer(inEntity.playerId);
+
+        OnAttackSelf(player, 100);
     }
 }

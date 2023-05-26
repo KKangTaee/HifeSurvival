@@ -45,7 +45,7 @@ class PacketHandler
     public static void CS_StopMoveHandler(PacketSession session, IPacket packet)
     {
         CS_StopMove stopMove = packet as CS_StopMove;
-        Push(session, room => room?.Mode.OnStopMove(stopMove));
+        Push(session, room => room?.Mode.OnRecvStopMove(stopMove));
     }
 
     public static void CS_ReadyToGameHandler(PacketSession session, IPacket packet)

@@ -48,16 +48,16 @@ public class SimpleLoading : MonoBehaviour
     public static void Show(string inDesc = null, Sprite inIcon = null)
     {
         Debug.Log("Expose 호출");
-        if(_obj == null)
+        if (_obj == null)
         {
             var prefab = Resources.Load<SimpleLoading>($"Prefabs/Commons/{nameof(SimpleLoading)}");
-            
-            if(prefab == null)
+
+            if (prefab == null)
             {
                 Debug.LogError($"[{nameof(Open)}] prefab is not load");
                 return;
             }
-            
+
             _obj = Instantiate(prefab);
             DontDestroyOnLoad(_obj);
         }

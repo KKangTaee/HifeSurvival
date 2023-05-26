@@ -28,3 +28,13 @@ C:\Users\user\Documents\카카오톡 받은 파일\RealtimeServer\RealtimeServer
 C:\Users\user\Documents\카카오톡 받은 파일\RealtimeServer\RealtimeServer\ServerCore\obj\Debug\netcoreapp3.1\ServerCore.csproj.CoreCompileInputs.cache
 C:\Users\user\Documents\카카오톡 받은 파일\RealtimeServer\RealtimeServer\ServerCore\obj\Debug\netcoreapp3.1\ServerCore.dll
 C:\Users\user\Documents\카카오톡 받은 파일\RealtimeServer\RealtimeServer\ServerCore\obj\Debug\netcoreapp3.1\ServerCore.pdb
+C:\Projects\Sample\RealtimeServer\ServerCore\bin\Debug\netcoreapp3.1\ServerCore.deps.json
+C:\Projects\Sample\RealtimeServer\ServerCore\bin\Debug\netcoreapp3.1\ServerCore.dll
+C:\Projects\Sample\RealtimeServer\ServerCore\bin\Debug\netcoreapp3.1\ServerCore.pdb
+C:\Projects\Sample\RealtimeServer\ServerCore\obj\Debug\netcoreapp3.1\ServerCore.csproj.AssemblyReference.cache
+C:\Projects\Sample\RealtimeServer\ServerCore\obj\Debug\netcoreapp3.1\ServerCore.GeneratedMSBuildEditorConfig.editorconfig
+C:\Projects\Sample\RealtimeServer\ServerCore\obj\Debug\netcoreapp3.1\ServerCore.AssemblyInfoInputs.cache
+C:\Projects\Sample\RealtimeServer\ServerCore\obj\Debug\netcoreapp3.1\ServerCore.AssemblyInfo.cs
+C:\Projects\Sample\RealtimeServer\ServerCore\obj\Debug\netcoreapp3.1\ServerCore.csproj.CoreCompileInputs.cache
+C:\Projects\Sample\RealtimeServer\ServerCore\obj\Debug\netcoreapp3.1\ServerCore.dll
+C:\Projects\Sample\RealtimeServer\ServerCore\obj\Debug\netcoreapp3.1\ServerCore.pdb

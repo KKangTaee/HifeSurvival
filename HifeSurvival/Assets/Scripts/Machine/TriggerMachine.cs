@@ -5,12 +5,12 @@ using UnityEngine;
 
 
 
-[RequireComponent(typeof(BoxCollider2D))]
+[RequireComponent(typeof(CircleCollider2D))]
 public class TriggerMachine : MonoBehaviour
 {
-    private event EventHandler<Collider2D> _enterEvents;
-    private event EventHandler<Collider2D> _stayEvents;
-    private event EventHandler<Collider2D> _exitEvents;
+    private event Action<Collider2D> _enterEvents;
+    private event Action<Collider2D> _stayEvents;
+    private event Action<Collider2D> _exitEvents;
 
     private BoxCollider2D _collider;
 
@@ -26,17 +26,17 @@ public class TriggerMachine : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        _enterEvents?.Invoke(this, collision);
+        _enterEvents?.Invoke(collision);
     }
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        _stayEvents?.Invoke(this, collision);
+        _stayEvents?.Invoke(collision);
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        _exitEvents?.Invoke(this, collision);
+        _exitEvents?.Invoke(collision);
     }
 
 
@@ -45,13 +45,13 @@ public class TriggerMachine : MonoBehaviour
     //------------------
 
 
-    public void AddTriggerEnter(EventHandler<Collider2D> inCallback) =>
+    public void AddTriggerEnter(Action<Collider2D> inCallback) =>
         _enterEvents = inCallback;
 
-    public void AddTriggerStay(EventHandler<Collider2D> inCallback) =>
+    public void AddTriggerStay(Action<Collider2D> inCallback) =>
         _stayEvents = inCallback;
 
-    public void AddTriggerExit(EventHandler<Collider2D> inCallback) =>
+    public void AddTriggerExit(Action<Collider2D> inCallback) =>
         _exitEvents = inCallback;
 
     public void SetBoxSize(Vector2 inSize) =>

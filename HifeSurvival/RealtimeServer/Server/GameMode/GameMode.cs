@@ -204,9 +204,9 @@ namespace Server
                 if (_playersDict.TryGetValue(inPacket.toId, out var toTarget) == true &&
                     _playersDict.TryGetValue(inPacket.fromId, out var fromTarget) == true)
                 {
-                    var attackParam = new AttackParam<PlayerEntity>()
+                    var attackParam = new AttackParam()
                     {
-                        damageValue = inPacket.damageValue,
+                        attackValue = inPacket.damageValue,
                         target = toTarget,
                     };
 
@@ -220,9 +220,9 @@ namespace Server
                 if (_monstersDict.TryGetValue(inPacket.toId, out var toTarget) == true &&
                    _playersDict.TryGetValue(inPacket.fromId, out var fromTarget) == true)
                 {
-                    var attackParam = new AttackParam<MonsterEntity>()
+                    var attackParam = new AttackParam()
                     {
-                        damageValue = inPacket.damageValue,
+                        attackValue = inPacket.damageValue,
                         target = toTarget,
                     };
 
@@ -239,8 +239,8 @@ namespace Server
             {
                 var moveParam = new MoveParam()
                 {
-                    pos = inPacket.pos,
-                    dir = inPacket.dir,
+                    pos   = inPacket.pos,
+                    dir   = inPacket.dir,
                     speed = inPacket.speed,
                 };
 
@@ -252,7 +252,7 @@ namespace Server
         }
 
 
-        public void OnStopMove(CS_StopMove inPacket)
+        public void OnRecvStopMove(CS_StopMove inPacket)
         {
             if (_playersDict.TryGetValue(inPacket.targetId, out var player) == true)
             {

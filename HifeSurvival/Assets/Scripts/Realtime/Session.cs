@@ -112,9 +112,12 @@ namespace ServerCore
 
 		public void Disconnect()
 		{
+			UnityEngine.Debug.Log($"disconnect : {_disconnected}");
+
 			if (Interlocked.Exchange(ref _disconnected, 1) == 1)
 				return;
 
+			UnityEngine.Debug.Log($"여긲지 호출?");
 			OnDisconnected(_socket.RemoteEndPoint);
 			_socket.Shutdown(SocketShutdown.Both);
 			_socket.Close();

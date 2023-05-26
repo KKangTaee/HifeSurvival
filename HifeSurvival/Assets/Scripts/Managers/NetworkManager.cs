@@ -116,10 +116,11 @@ public class NetworkManager : MonoBehaviour, IJobQueue
     {
         Push(() =>
         {
+
+
             // NOTE@ytaeho.kang Retry 내부의 UnityEngine 을 사용하기 위해 Push로 래핑처리함.
-            if (GameMode.Instance.Status != GameMode.EStatus.NOT_JOIN)
+            if(GameMode.Instance.Status == GameMode.EStatus.GAME_RUNIING)
             {
-                // 게임에 참가중인 상태에서 이게 호출이 되었다면, 도중에 끊겼다는 뜻임.
                 RetryConnect(isSuccess =>
                 {
                     if (isSuccess == false)

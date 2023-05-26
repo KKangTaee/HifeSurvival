@@ -35,6 +35,8 @@ public class GameMode
         JOIN,
 
         NOT_JOIN,
+
+        GAME_RUNIING,
     }
 
     public EStatus Status { get; private set; } = EStatus.NOT_JOIN;
@@ -164,7 +166,7 @@ public class GameMode
         {
             entity.isReady = true;
 
-            if (IsSelf(inPacket.playerId) == true)
+            if (IsSelf(inPacket.playerId) == false)
                 _onRecvReadyCB?.Invoke(entity);
         }
     }
@@ -271,8 +273,20 @@ public class GameMode
             targetId = EntitySelf.playerId,
         };
         
-
         NetworkManager.Instance.Send(stopMove);
+    }
+
+    public void OnSendAttack(bool toIdIsPlayer, int toId, int fromId, int damageValue)
+    {
+        CS_Attack attack = new CS_Attack()
+        {
+            toIdIsPlayer = toIdIsPlayer,
+            toId = toId,
+            fromId = fromId,
+            damageValue = damageValue,
+        };
+
+        NetworkManager.Instance.Send(attack);
     }
 }
 

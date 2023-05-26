@@ -57,11 +57,13 @@ class PacketHandler
 
     internal static void CS_MoveHandler(PacketSession session, IPacket packet)
     {
-        
+        CS_Move move = packet as CS_Move;
+        GameMode.Instance.OnRecvMove(move);
     }
 
     internal static void CS_StopMoveHandler(PacketSession session, IPacket packet)
     {
-        
+         CS_StopMove stopMove = packet as CS_StopMove;
+         GameMode.Instance.OnRecvStopMove(stopMove);
     }
 }

@@ -69,7 +69,6 @@ public class AStar
 
     private Func<Vector3Int, bool> canGoFunc = null;
 
-
     public AStar(Func<Vector3Int, bool> inCanGoFunc)
     {
         canGoFunc = inCanGoFunc;

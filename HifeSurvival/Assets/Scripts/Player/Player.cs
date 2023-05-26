@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-
+using System;
 
 [RequireComponent(typeof(MoveMachine))]
-public class Player : MonoBehaviour
+public abstract class EntityObject : MonoBehaviour
 {
     public enum EStatus
     {
@@ -15,22 +15,51 @@ public class Player : MonoBehaviour
 
         ATTACK,
 
+        FOLLOW_TARGET,
+
         USE_SKILL,
     }
 
+    [SerializeField] protected MoveMachine _moveMachine;
+
+    public int targetId { get; protected set; }
+
+    public void SetPos(in Vector3 inPos)
+    {
+        transform.position = inPos;
+    }
+
+    public Vector3 GetPos()
+    {
+        return transform.position;
+    }
+
+    public Vector3 GetDir()
+    {
+        return _moveMachine.CurrDir;
+    }
+}
+
+
+
+public class Player : EntityObject
+{
+
     [SerializeField] private HeroAnimator _anim;
 
-    [SerializeField] private MoveMachine _moveMachine;
-    [SerializeField] private TriggerMachine _triggerMachine;
+    [SerializeField] private TriggerMachine _wallTrigger;
+    [SerializeField] private TriggerMachine _targetTrigger;
 
     private WorldMap _worldMap;
 
-    private IState<Player> _state;
-    private Dictionary<EStatus, IState<Player>> _stateMachine;
+    private HashSet<EntityObject> _targetSet;
 
+    private IState _state;
+
+    private Dictionary<EStatus, IState> _stateMachine;
 
     public EStatus Status { get; private set; }
-    public bool IsSelf    { get; private set; }
+    public bool IsSelf { get; private set; }
 
 
     //-----------------
@@ -40,11 +69,15 @@ public class Player : MonoBehaviour
     private void Awake()
     {
         _moveMachine = GetComponent<MoveMachine>();
-        _stateMachine = new Dictionary<EStatus, IState<Player>>()
+
+        _stateMachine = new Dictionary<EStatus, IState>()
         {
             {EStatus.IDLE, new IdleState()},
-            {EStatus.MOVE, new MoveState()}
+            {EStatus.MOVE, new MoveState()},
+            {EStatus.FOLLOW_TARGET, new FollowTargetState()}
         };
+
+        _targetSet = new HashSet<EntityObject>();
     }
 
     private void Start()
@@ -57,31 +90,21 @@ public class Player : MonoBehaviour
     // functions
     //-----------------
 
-    public void Init(bool isSelf, in Vector3 inPos)
+    public void Init(bool isSelf, int inPlayerId,  in Vector3 inPos)
     {
         if (isSelf == true)
             SetTrigger();
 
-        IsSelf = isSelf;
+        IsSelf    = isSelf;
+        targetId = inPlayerId;
 
         SetPos(inPos);
     }
 
 
-    public void SetPos(in Vector3 inPos)
-    {
-        transform.position = inPos;
-    }
-
-    public Vector3 GetPos()
-    {
-        return transform.position;
-    }
-
-
     public void SetTrigger()
     {
-        _triggerMachine.AddTriggerStay((sender, col) =>
+        _wallTrigger.AddTriggerStay((col) =>
         {
             if (col.CompareTag(TagName.WORLDMAP_WALL) == true)
             {
@@ -95,7 +118,7 @@ public class Player : MonoBehaviour
             }
         });
 
-        _triggerMachine.AddTriggerExit((sender, col) =>
+        _wallTrigger.AddTriggerExit((col) =>
         {
             if (col.CompareTag(TagName.WORLDMAP_WALL) == true)
             {
@@ -105,11 +128,17 @@ public class Player : MonoBehaviour
                 _worldMap?.DoneWallMasking();
             }
         });
-    }
 
-    public Vector3 GetDir()
-    {
-        return _moveMachine.CurrDir;
+
+        _targetTrigger.AddTriggerEnter((col) =>
+        {
+
+        });
+
+        _targetTrigger.AddTriggerExit((col) =>
+        {
+
+        });
     }
 
 
@@ -119,52 +148,94 @@ public class Player : MonoBehaviour
         _moveMachine.Move(inDir, inSpeed);
     }
 
+
     public void OnIdle(in Vector3 inPos, bool isNeedLerp = false)
     {
         _anim.OnIdle();
         _moveMachine.StopMove(inPos, isNeedLerp);
     }
 
+
+    public void OnFollowTarget(EntityObject inTarget, Action doneCallback)
+    {
+        _anim.OnWalk(inTarget.GetDir());
+        _moveMachine.MoveFollowTarget(inTarget, null, doneCallback);
+    }
+
+    public void OnAttack()
+    {
+
+    }
+
+    public bool CanAttack()
+    {
+        return false;
+    }
+
+    public EntityObject GetNearestTarget()
+    {
+        float minDistance = float.MaxValue;
+        EntityObject result = null;
+
+        foreach (var target in _targetSet)
+        {
+            if (target == null)
+                continue;
+
+            float distance = Vector2.Distance(transform.position, target.transform.position);
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                result = target;
+            }
+        }
+
+        return result;
+    }
+
+
     public void ChangeState<P>(EStatus inStatus, in P inParam = default) where P : struct
     {
         // 같은 상태가 다시 돌아왔다는 것은, 파라미터만 넘겨주는 상황일 수 있다.
-        _state?.Exit();
+        if (Status == inStatus)
+        {
+            _state.Update(this, inParam);
+        }
+        else
+        {
+            _state?.Exit();
 
-        Status = inStatus;
+            Status = inStatus;
 
-        _state = _stateMachine[Status];
+            _state = _stateMachine[Status];
 
-        _state?.Enter(this, inParam);
-    }
-
-
-    public void UpdateState<P>(in P inParam = default) where P : struct
-    {
-        _state.Update(this, inParam);
+            _state?.Enter(this, inParam);
+        }
     }
 }
 
 
-public interface IState<T>
+public interface IState
 {
-    void Enter<P>(T inSelf, in P inParam) where P : struct;
+    void Enter<P>(EntityObject inSelf, in P inParam) where P : struct;
 
-    void Update<P>(T inSelf, in P inParam) where P : struct;
-    
+    void Update<P>(EntityObject inSelf, in P inParam) where P : struct;
+
     void Exit();
 }
 
-public class IdleState : IState<Player>
+public class IdleState : IState
 {
-    public void Enter<P>(Player inSelf, in P inParam) where P : struct
+    public void Enter<P>(EntityObject inSelf, in P inParam) where P : struct
     {
-        if (inParam is IdleParam idle)
+        if (inParam is IdleParam idle &&
+            inSelf is Player player)
         {
-            inSelf.OnIdle(idle.pos, idle.isSelf == false);
+            player.OnIdle(idle.pos, idle.isSelf == false);
         }
     }
 
-    public void Update<P>(Player inSelf, in P inParam) where P : struct
+    public void Update<P>(EntityObject inSelf, in P inParam) where P : struct
     {
 
     }
@@ -175,18 +246,24 @@ public class IdleState : IState<Player>
     }
 }
 
-public class MoveState : IState<Player>
+public class MoveState : IState
 {
-    public void Enter<P>(Player inSelf, in P inParam) where P : struct
+    public void Enter<P>(EntityObject inSelf, in P inParam) where P : struct
     {
-        if (inParam is MoveParam move)
-            inSelf.OnMove(move.dir, move.speed);
+        if (inParam is MoveParam move &&
+            inSelf is Player player)
+        {
+            player.OnMove(move.dir, move.speed);
+        }
     }
 
-    public void Update<P>(Player inSelf, in P inParam) where P : struct
+    public void Update<P>(EntityObject inSelf, in P inParam) where P : struct
     {
-        if (inParam is MoveParam move)
-            inSelf.OnMove(move.dir, move.speed);
+        if (inParam is MoveParam move &&
+            inSelf is Player player)
+        {
+            player.OnMove(move.dir, move.speed);
+        }
     }
 
     public void Exit()
@@ -195,21 +272,25 @@ public class MoveState : IState<Player>
     }
 }
 
-public class FollowTargetState : IState<Player>
+public class FollowTargetState : IState
 {
-    public void Enter<P>(Player inSelf, in P inParam) where P : struct
+    public void Enter<P>(EntityObject inSelf, in P inParam) where P : struct
     {
-        
+        if(inParam is FollowTargetParam followTarget &&
+           inSelf is Player player)
+        {
+            player.OnFollowTarget(followTarget.target, followTarget.followDoneCallback);
+        }
     }
 
     public void Exit()
     {
-        
+
     }
 
-    public void Update<P>(Player inSelf, in P inParam) where P : struct
+    public void Update<P>(EntityObject inSelf, in P inParam) where P : struct
     {
-        
+
     }
 }
 
@@ -228,5 +309,12 @@ public struct IdleParam
 
 public struct AttackParam
 {
-    public float damageValue;
+    public int attackValue;
+    public EntityObject target;
+}
+
+public struct FollowTargetParam
+{
+    public EntityObject target;
+    public Action followDoneCallback;
 }

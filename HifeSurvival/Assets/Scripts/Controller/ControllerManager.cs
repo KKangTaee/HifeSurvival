@@ -38,7 +38,7 @@ public class ControllerManager
 
             nameof(JoystickController),
 
-            nameof(AIController)
+            // nameof(AIController)
         };
 
 

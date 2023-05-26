@@ -11,10 +11,13 @@ public class MoveMachine : MonoBehaviour
     private Vector3         _nextPos;
     private Vector3         _inputDirection;
 
-    private Action<bool>    _doneCallback;
+    private Action          _doneCallback;
     private Action<Vector2> _changeDirCallback;
     private float           _currSpeed;
     private bool            _isLerpPos;
+
+    private AStar           _astar;
+    private EntityObject    _followTarget;
 
     public Vector3          CurrDir { get; private set; }
 
@@ -61,6 +64,13 @@ public class MoveMachine : MonoBehaviour
             StartCoroutine(nameof(Co_MoveLerp));
     }
 
+    public void MoveFollowTarget(EntityObject inTarget, Action<Vector3> onChangeDirCB, Action doneCallbackk)
+    {
+        _followTarget = inTarget;
+        StartCoroutine(nameof(Co_MoveFollowTarget));
+    }
+
+
     private void UpdateMove()
     {
         if (_inputDirection != Vector3.zero)
@@ -97,5 +107,12 @@ public class MoveMachine : MonoBehaviour
             transform.position += dir * _currSpeed * Time.deltaTime;
             yield return null;
         }
+
+        _doneCallback?.Invoke();
+    }
+
+    IEnumerator Co_MoveFollowTarget()
+    {
+        yield return null;
     }
 }

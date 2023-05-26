@@ -232,12 +232,10 @@ namespace Server
 
         public class MoveState : IState
         {
-
             public PlayerEntity _self = null;
             private bool _isRunning = false;
 
-            private const int UPDATE_TIME = 500;
-
+            private const int UPDATE_TIME = 200;
 
             public void Enter<U>(Entity inSelf, in U inParam = default) where U : struct, IStateParam
             {
@@ -277,7 +275,7 @@ namespace Server
                 if (this != null && _isRunning == true && inSelf != null)
                 {
                     var addSpeed = inSelf.dir.MulitflyVec3(inSelf.stat.speed * UPDATE_TIME * 0.0001f);
-                    inSelf.pos.AddVec3(addSpeed);
+                    inSelf.pos = inSelf.pos.AddVec3(addSpeed);
 
                     CS_Move packet = new CS_Move()
                     {
@@ -289,7 +287,7 @@ namespace Server
                     };
 
                     inSelf.broadcaster.Broadcast(packet);
-
+                    
                     // 0.25초 마다 한번씩 호출
                     JobTimer.Instance.Push(() => { UpdateMove(inSelf); }, UPDATE_TIME);
                 }

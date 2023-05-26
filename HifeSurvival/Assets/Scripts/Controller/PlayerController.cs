@@ -230,7 +230,7 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
         SetMoveState(player,
              inEntity.pos.ConvertUnityVector3(),
              inEntity.dir.ConvertUnityVector3(),
-             inEntity.speed);
+             inEntity.stat.speed);
     }
 
 

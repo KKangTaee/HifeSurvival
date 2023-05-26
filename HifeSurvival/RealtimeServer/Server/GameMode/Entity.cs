@@ -154,7 +154,7 @@ namespace Server
     }
 
 
-    public struct Stat
+    public class Stat
     {
         public readonly int maxHP;
         public readonly int maxEXP;

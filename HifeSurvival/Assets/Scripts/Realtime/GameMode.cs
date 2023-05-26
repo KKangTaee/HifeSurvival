@@ -12,6 +12,7 @@ public class GameMode
     
     private SimpleTaskCompletionSource<S_JoinToGame> _joinCompleted = new SimpleTaskCompletionSource<S_JoinToGame>();
 
+
     /// <summary>
     /// 입장 관련
     /// </summary>
@@ -219,7 +220,7 @@ public class GameMode
             {
                 player.dir = inPacket.dir;
                 player.pos = inPacket.pos;
-                player.speed = inPacket.speed;
+                player.stat.speed = inPacket.speed;
 
                 if (IsSelf(inPacket.targetId) == false)
                     OnRecvMoveCB?.Invoke(player);
@@ -249,6 +250,7 @@ public class GameMode
         }
     }
 
+
     public void OnSendMove(in Vector3 inPos, in Vector3 inDir)
     {
         CS_Move move = new CS_Move()
@@ -256,7 +258,7 @@ public class GameMode
             dir = inDir.ConvertVec3(),
             pos = inPos.ConvertVec3(),
             isPlayer = true,
-            speed = EntitySelf.speed,
+            speed = EntitySelf.stat.speed,
             targetId = EntitySelf.playerId,
         };
 
@@ -276,6 +278,7 @@ public class GameMode
         NetworkManager.Instance.Send(stopMove);
     }
 
+
     public void OnSendAttack(bool toIdIsPlayer, int toId, int fromId, int damageValue)
     {
         CS_Attack attack = new CS_Attack()
@@ -291,20 +294,3 @@ public class GameMode
 }
 
 
-public abstract class Entity
-{
-
-}
-
-public class PlayerEntity : Entity
-{
-    public string userId;
-    public string userName;
-    public int playerId;
-    public int heroId;
-    public bool isReady;
-
-    public Vec3 pos;
-    public Vec3 dir;
-    public float speed;
-}

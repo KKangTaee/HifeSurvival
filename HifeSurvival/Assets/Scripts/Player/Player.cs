@@ -44,8 +44,8 @@ public abstract class EntityObject : MonoBehaviour
 
 public class Player : EntityObject
 {
-
     [SerializeField] private HeroAnimator _anim;
+    [SerializeField] private PlayerUI     _playerUI;
 
     [SerializeField] private TriggerMachine _wallTrigger;
     [SerializeField] private TriggerMachine _targetTrigger;
@@ -141,7 +141,6 @@ public class Player : EntityObject
         });
     }
 
-
     public void OnMove(in Vector3 inDir, float inSpeed)
     {
         _anim.OnWalk(inDir);
@@ -160,7 +159,6 @@ public class Player : EntityObject
         _moveMachine.MoveStop(inPos);
     }
 
-
     public void OnFollowTarget(EntityObject inTarget, Action doneCallback)
     {
         _anim.OnWalk(inTarget.GetDir());
@@ -170,6 +168,11 @@ public class Player : EntityObject
     public void OnAttack()
     {
 
+    }
+
+    public void OnDamaged(int inDamageValue)
+    {
+        _playerUI.DecreaseHP(inDamageValue);
     }
 
     public bool CanAttack()

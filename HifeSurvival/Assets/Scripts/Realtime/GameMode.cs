@@ -240,6 +240,7 @@ public class GameMode
             if (PlayerEntitysDic.TryGetValue(inPacket.targetId, out var player) == true)
             {      
                 player.pos = inPacket.pos;
+                player.dir = inPacket.dir;
        
                if(IsSelf(inPacket.targetId) == false)
                   OnRecvStopMoveCB?.Invoke(player);
@@ -267,11 +268,12 @@ public class GameMode
     }
 
 
-    public void OnSendStopMove(in Vector3 inPos)
+    public void OnSendStopMove(in Vector3 inPos, in Vector3 inDir)
     {
         CS_StopMove stopMove = new CS_StopMove()
         {
             pos = inPos.ConvertVec3(),
+            dir = inDir.ConvertVec3(),
             isPlayer = true,
             targetId = EntitySelf.playerId,
         };

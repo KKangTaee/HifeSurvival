@@ -66,8 +66,11 @@ public class HeroAnimator : MonoBehaviour
 
     }
  
-    public void OnIdle()
+    public void OnIdle(in Vector2 inDir = default)
     {
+        if(inDir != default)
+            _anim.SetFloat(ParamKey.KEY_DIR, inDir.y);
+
         _anim.SetBool(ParamKey.KEY_IS_WALK, false);
         _anim.Play(AnimKey.KEY_IDLE);
     }

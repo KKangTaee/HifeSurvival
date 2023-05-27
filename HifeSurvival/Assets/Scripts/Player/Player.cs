@@ -154,7 +154,7 @@ public class Player : EntityObject
         _moveMachine.MoveLerp(inEndPos, inSpeed, doneCallback);
     }
 
-    public void OnIdle(in Vector3 inPos)
+    public void OnIdle(in Vector3 inPos, in Vector3 inDir = default)
     {
         _anim.OnIdle();
         _moveMachine.MoveStop(inPos);
@@ -240,7 +240,7 @@ public class IdleState : IState
             {
                 player.OnMoveLerp(idle.pos, idle.speed, ()=>
                 {
-                    player.OnIdle(idle.pos);
+                    player.OnIdle(idle.pos, idle.dir);
                 });
             }
             else
@@ -330,6 +330,7 @@ public struct IdleParam
 {
     public float speed;
     public Vector3 pos;
+    public Vector3 dir;
     public bool isSelf;
 }
 

@@ -333,7 +333,8 @@ namespace Server
 
     public struct IdleParam : IStateParam
     {
-
+        public Vec3 pos;
+        public Vec3 dir;
     }
 
 

@@ -125,7 +125,7 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
         float angle = Vector3.Angle(Self.GetDir(), inDir);
 
         // 조이스틱의 방향전환이 이루어졌다면..?
-        if (angle > 5f)
+        if (angle > 2f)
         {
             // 서버에 전송한다.
             _gameMode.OnSendMove(Self.GetPos(), inDir);
@@ -140,10 +140,11 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
 
     public void OnStopMoveSelf()
     {
-        _gameMode.OnSendStopMove(Self.GetPos());
+        _gameMode.OnSendStopMove(Self.GetPos(), Self.GetDir());
 
         SetIdleState(Self, 
                      Self.GetPos(),
+                     Self.GetDir(),
                      GameMode.Instance.EntitySelf.stat.speed);
 
         // 타겟이 있는지 감지
@@ -212,12 +213,13 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
     }
 
 
-    public void SetIdleState(Player inTarget, in Vector3 inPos, float inSpeed)
+    public void SetIdleState(Player inTarget, in Vector3 inPos, in Vector3 inDir, float inSpeed)
     {
         var idlePos = new IdleParam()
         {
             isSelf = inTarget == Self,
             pos = inPos,
+            dir = inDir,
             speed = inSpeed,
         };
 
@@ -246,6 +248,7 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
 
         SetIdleState(player,
             inEntity.pos.ConvertUnityVector3(),
+            inEntity.dir.ConvertUnityVector3(),
             inEntity.stat.speed);
     }
 

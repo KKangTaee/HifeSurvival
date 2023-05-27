@@ -653,6 +653,7 @@ public class CS_StopMove : IPacket
 	public int targetId;
 	public bool isPlayer;
 	public Vec3 pos;
+	public Vec3 dir;
 
 	public ushort Protocol { get { return (ushort)PacketID.CS_StopMove; } }
 
@@ -668,6 +669,7 @@ public class CS_StopMove : IPacket
 		this.isPlayer = BitConverter.ToBoolean(s.Slice(count, s.Length - count));
 		count += sizeof(bool);
 		pos.Read(s, ref count);
+		dir.Read(s, ref count);
 	}
 
 	public ArraySegment<byte> Write()
@@ -686,6 +688,7 @@ public class CS_StopMove : IPacket
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.isPlayer);
 		count += sizeof(bool);
 		success &= pos.Write(s,ref count);
+		success &= dir.Write(s,ref count);
 		success &= BitConverter.TryWriteBytes(s, count);
 		if (success == false)
 			return null;

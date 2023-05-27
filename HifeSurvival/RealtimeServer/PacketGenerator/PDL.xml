@@ -74,6 +74,7 @@
 		<int name ="targetId"/>
 		<bool name ="isPlayer"/>
 		<struct_Vec3 name ="pos"/>
+		<struct_Vec3 name ="dir"/>
 	</packet>
 
 	<struct name="Vec3">

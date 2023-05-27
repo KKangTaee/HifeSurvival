@@ -14,7 +14,7 @@ public class MoveMachine : MonoBehaviour
     private Action _doneCallback;
     private Action<Vector2> _changeDirCallback;
     private float _currSpeed;
-    private bool _isLerpPos;
+    private bool _isRunningLerp;
 
     private AStar _astar;
     private EntityObject _followTarget;
@@ -48,11 +48,7 @@ public class MoveMachine : MonoBehaviour
 
     public void Move(in Vector3 inDir, float inSpeed)
     {
-        if (_isLerpPos == true)
-        {
-            _isLerpPos = false;
-            StopCoroutine(nameof(Co_MoveLerp));
-        }
+        StopMoveLerp();
 
         _inputDirection = inDir;
         _currSpeed = inSpeed;
@@ -68,19 +64,14 @@ public class MoveMachine : MonoBehaviour
         
         _doneCallback = doneCallback;
 
-        _isLerpPos = true;
-        StartCoroutine(nameof(Co_MoveLerp));
+        StartMoveLerp();
     }
 
     public void MoveStop(in Vector2 inPos)
     {
         _inputDirection = Vector2.zero;
 
-        if (_isLerpPos == true)
-        {
-            _isLerpPos = false;
-            StopCoroutine(nameof(Co_MoveLerp));
-        }
+       StopMoveLerp();
     }
 
 
@@ -110,21 +101,44 @@ public class MoveMachine : MonoBehaviour
         }
     }
 
+
+
+    public void StartMoveLerp()
+    {
+        if(_isRunningLerp == false)
+        {
+            _isRunningLerp = true;
+            StartCoroutine(nameof(Co_MoveLerp));
+        }
+    }
+
+    public void StopMoveLerp()
+    {
+        if(_isRunningLerp == true)
+        {
+            StopCoroutine(nameof(Co_MoveLerp));
+            _isRunningLerp = false;
+        }
+    }
+
+
+
     //----------------
     // coroutines
     //----------------
 
     IEnumerator Co_MoveLerp()
     {
-        var dir = GetDir(_endPos);
-
         while (IsReaching(_endPos) == false)
         {
+            var dir = GetDir(_endPos);
+
             transform.position += dir * _currSpeed * Time.deltaTime;
             yield return null;
         }
 
         _doneCallback?.Invoke();
+        _isRunningLerp = false;
     }
 
     IEnumerator Co_MoveFollowTarget()

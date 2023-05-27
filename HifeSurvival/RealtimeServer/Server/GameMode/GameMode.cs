@@ -238,6 +238,10 @@ namespace Server
         {
             if (_playersDict.TryGetValue(inPacket.targetId, out var player) == true)
             {
+                player.pos = inPacket.pos;
+                player.dir = inPacket.dir;
+                player.stat.speed = inPacket.speed;
+
                 var moveParam = new MoveParam()
                 {
                     pos   = inPacket.pos,
@@ -257,9 +261,13 @@ namespace Server
         {
             if (_playersDict.TryGetValue(inPacket.targetId, out var player) == true)
             {
+                player.pos = inPacket.pos;
+                player.dir = inPacket.dir;
+
                 var idleParam = new IdleParam()
                 {
-
+                    pos = inPacket.pos,
+                    dir = inPacket.dir,
                 };
 
                 player.OnIdle(idleParam);

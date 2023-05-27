@@ -148,11 +148,16 @@ public class Player : EntityObject
         _moveMachine.Move(inDir, inSpeed);
     }
 
+    public void OnMoveLerp(in Vector3 inEndPos, Action doneCallback)
+    {
+        _anim.OnWalk(_moveMachine.GetDir(inEndPos));
+        _moveMachine.MoveLerp(inEndPos, doneCallback);
+    }
 
-    public void OnIdle(in Vector3 inPos, bool isNeedLerp = false)
+    public void OnIdle(in Vector3 inPos)
     {
         _anim.OnIdle();
-        _moveMachine.StopMove(inPos, isNeedLerp);
+        _moveMachine.MoveStop(inPos);
     }
 
 
@@ -231,7 +236,17 @@ public class IdleState : IState
         if (inParam is IdleParam idle &&
             inSelf is Player player)
         {
-            player.OnIdle(idle.pos, idle.isSelf == false);
+            if(idle.isSelf == true)
+            {
+                player.OnMoveLerp(idle.pos, ()=>
+                {
+                    player.OnIdle(idle.pos);
+                });
+            }
+            else
+            {
+                player.OnIdle(idle.pos);
+            }
         }
     }
 

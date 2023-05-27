@@ -8,6 +8,7 @@ TagManager:
   - WorldMap_Wall
   - Player_Self
   - Player_Other
+  - Detect_Self
   layers:
   - Default
   - TransparentFX
@@ -30,9 +31,9 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
-  - 
+  - Player_Other
+  - Player_Self
+  - Detect_Self
   - 
   - 
   - 

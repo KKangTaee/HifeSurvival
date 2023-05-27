@@ -91,12 +91,13 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
         {
             var inst = Instantiate(_playerPrefab, transform);
 
-            bool isSelf = ServerData.Instance.UserData.user_id == entity.userId;
+            inst.Init(entity.playerId, spawnObj.GetSpawnWorldPos(idx++));
 
-            if (isSelf == true)
+            if (ServerData.Instance.UserData.user_id == entity.userId)
+            {
                 Self = inst;
-
-            inst.Init(isSelf, entity.playerId, spawnObj.GetSpawnWorldPos(idx++));
+                inst.SetSelf(entity.stat.detectRange, entity.stat.attackRange);
+            }
 
             _playerDict.Add(entity.playerId, inst);
         }
@@ -131,9 +132,9 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
             _gameMode.OnSendMove(Self.GetPos(), inDir);
         }
 
-        SetMoveState(Self, 
-                     Self.GetPos(), 
-                     inDir, 
+        SetMoveState(Self,
+                     Self.GetPos(),
+                     inDir,
                      4);
     }
 
@@ -142,7 +143,7 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
     {
         _gameMode.OnSendStopMove(Self.GetPos(), Self.GetDir());
 
-        SetIdleState(Self, 
+        SetIdleState(Self,
                      Self.GetPos(),
                      Self.GetDir(),
                      GameMode.Instance.EntitySelf.stat.speed);
@@ -159,7 +160,7 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
         if (target == null)
             return;
 
-        if (Self.CanAttack() == true)
+        if (Self.CanAttack(target.GetPos()) == true)
         {
             OnAttackSelf(target, 100);
         }

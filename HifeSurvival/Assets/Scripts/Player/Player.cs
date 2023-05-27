@@ -46,7 +46,6 @@ public class Player : EntityObject
 {
     [SerializeField] private HeroAnimator _anim;
     [SerializeField] private PlayerUI _playerUI;
-
     [SerializeField] private TriggerMachine _playerTrigger;
     [SerializeField] private TriggerMachine _detectTrigger;
 
@@ -60,6 +59,7 @@ public class Player : EntityObject
 
     public EStatus Status { get; private set; }
     public bool IsSelf { get; private set; }
+    public int _attackRange = 0;
 
 
     //-----------------
@@ -90,27 +90,40 @@ public class Player : EntityObject
     // functions
     //-----------------
 
-    public void Init(bool isSelf, int inPlayerId, in Vector3 inPos)
+    public void Init(int inPlayerId, in Vector3 inPos)
     {
-        IsSelf   = isSelf;
         targetId = inPlayerId;
 
         SetPos(inPos);
 
-        if (isSelf == true)
-        {
-            SetTrigger();
-            
-        }
-        else
-        {
+        _detectTrigger.enabled = false;
+        _playerTrigger.enabled = false;
 
-        }
+        _playerTrigger.tag = TagName.PLAYER_OTHER;
+        _playerTrigger.gameObject.layer = LayerMask.NameToLayer(LayerName.PLAYER_OTHER);
+    }
+
+
+    public void SetSelf(int inDetectRange, int inAttackRange)
+    {
+        IsSelf = true;
+
+        SetTrigger();
+
+        _attackRange = inAttackRange;
+
+        _playerTrigger.tag = TagName.PLAEYR_SELF;
+        _detectTrigger.tag = TagName.DETECT_SELF;
+        _playerTrigger.gameObject.layer = LayerMask.NameToLayer(LayerName.PLAYER_SELF);
+        _detectTrigger.gameObject.layer = LayerMask.NameToLayer(LayerName.DETECT_SELF);
     }
 
 
     public void SetTrigger()
     {
+        _detectTrigger.enabled = true;
+        _playerTrigger.enabled = true;
+
         _playerTrigger.AddTriggerStay((col) =>
         {
             if (col.CompareTag(TagName.WORLDMAP_WALL) == true)
@@ -193,12 +206,12 @@ public class Player : EntityObject
         _playerUI.DecreaseHP(inDamageValue);
     }
 
-    public bool CanAttack()
-    {
-        // attackRange에 들어왔는지 확인.
 
-        return false;
+    public bool CanAttack(in Vector3 inPos)
+    {
+        return Vector3.Distance(inPos, transform.position) < _attackRange;
     }
+
 
     public EntityObject GetNearestTarget()
     {

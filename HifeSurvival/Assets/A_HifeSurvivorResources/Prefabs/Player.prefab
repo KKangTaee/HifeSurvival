@@ -92,6 +92,7 @@ MonoBehaviour:
   _playerUI: {fileID: 8356966248823496888}
   _playerTrigger: {fileID: 3155305942312866096}
   _detectTrigger: {fileID: 5294620091670477592}
+  _attackRange: 0
 --- !u!114 &1110175204437660781
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -138,7 +139,7 @@ GameObject:
   - component: {fileID: 6015080634492026747}
   - component: {fileID: 5294620091670477592}
   - component: {fileID: 8480912743719356952}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: DetactTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -283,9 +284,9 @@ GameObject:
   - component: {fileID: 1638080482539814357}
   - component: {fileID: 3155305942312866096}
   - component: {fileID: 7425359980702845791}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: PlayerTrigger
-  m_TagString: Untagged
+  m_TagString: Player_Other
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

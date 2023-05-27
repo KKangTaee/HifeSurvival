@@ -12,7 +12,7 @@ public class TriggerMachine : MonoBehaviour
     private event Action<Collider2D> _stayEvents;
     private event Action<Collider2D> _exitEvents;
 
-    private BoxCollider2D _collider;
+    private CircleCollider2D _collider;
 
     //----------------
     // unity events
@@ -20,7 +20,7 @@ public class TriggerMachine : MonoBehaviour
 
     private void Awake()
     {
-        _collider = GetComponent<BoxCollider2D>();
+        _collider = GetComponent<CircleCollider2D>();
     }
 
 
@@ -54,7 +54,7 @@ public class TriggerMachine : MonoBehaviour
     public void AddTriggerExit(Action<Collider2D> inCallback) =>
         _exitEvents = inCallback;
 
-    public void SetBoxSize(Vector2 inSize) =>
-        _collider.size = inSize;
+    public void SetBoxSize(float inRadius) =>
+        _collider.radius = inRadius;
 
 }

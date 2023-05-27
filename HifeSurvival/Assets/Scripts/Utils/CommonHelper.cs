@@ -10,4 +10,13 @@ public class TagName
     public const string PLAYER_OTHER      = "Player_Other";
 
     public const string PLAEYR_SELF       = "Player_Self";
+
+    public const string DETECT_SELF       = "Detect_Self";
+}
+
+public class LayerName
+{
+    public const string PLAYER_OTHER    = "Player_Other";
+    public const string PLAYER_SELF     = "Player_Self";
+    public const string DETECT_SELF     = "Detect_Self";
 }

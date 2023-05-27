@@ -114,7 +114,7 @@ public class GameMode
             userName = joinPlayer.userName,
             playerId = joinPlayer.playerId,
             heroId = joinPlayer.heroId,
-            stat = new Stat(100,100,100,100,4),
+            stat = new Stat(100,100,100, 2, 1, 4),
         };
 
         // 내 자신일 경우 따 갖고 있는다.

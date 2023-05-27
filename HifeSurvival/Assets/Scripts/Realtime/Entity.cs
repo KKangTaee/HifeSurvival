@@ -23,17 +23,18 @@ public class PlayerEntity : Entity
 
 public class Stat
 {
-    public readonly int maxHP;
-    public readonly int maxEXP;
-    public readonly int maxSTR;
+    public int maxHP;
+    public int maxEXP;
+    public int maxSTR;
 
     public int hp;
     public int exp;
     public int str;
     public int attackRange;
+    public int detectRange;
     public float speed;
 
-    public Stat(int inMaxHP, int inMaxEXP, int inMaxSTR, int inAttackRange, float inSpeed)
+    public Stat(int inMaxHP, int inMaxEXP, int inMaxSTR, int inDetectRange,  int inAttackRange, float inSpeed)
     {
         hp = maxHP = inMaxHP;
         exp = maxEXP = inMaxEXP;

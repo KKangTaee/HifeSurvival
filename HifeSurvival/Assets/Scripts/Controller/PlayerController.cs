@@ -131,7 +131,10 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
             _gameMode.OnSendMove(Self.GetPos(), inDir);
         }
 
-        SetMoveState(Self, Self.GetPos(), inDir, 4);
+        SetMoveState(Self, 
+                     Self.GetPos(), 
+                     inDir, 
+                     4);
     }
 
 
@@ -139,7 +142,9 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
     {
         _gameMode.OnSendStopMove(Self.GetPos());
 
-        SetIdleState(Self, Self.GetPos());
+        SetIdleState(Self, 
+                     Self.GetPos(),
+                     GameMode.Instance.EntitySelf.stat.speed);
 
         // 타겟이 있는지 감지
         DetectTargetSelf();
@@ -207,12 +212,13 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
     }
 
 
-    public void SetIdleState(Player inTarget, in Vector3 inPos)
+    public void SetIdleState(Player inTarget, in Vector3 inPos, float inSpeed)
     {
         var idlePos = new IdleParam()
         {
             isSelf = inTarget == Self,
-            pos = inPos
+            pos = inPos,
+            speed = inSpeed,
         };
 
         inTarget.ChangeState(Player.EStatus.IDLE, idlePos);
@@ -239,7 +245,8 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
         var player = GetPlayer(inEntity.playerId);
 
         SetIdleState(player,
-            inEntity.pos.ConvertUnityVector3());
+            inEntity.pos.ConvertUnityVector3(),
+            inEntity.stat.speed);
     }
 
 

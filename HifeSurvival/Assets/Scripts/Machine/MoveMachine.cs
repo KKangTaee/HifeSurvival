@@ -58,11 +58,14 @@ public class MoveMachine : MonoBehaviour
         _currSpeed = inSpeed;
     }
 
-    public void MoveLerp(in Vector2 inPos, Action doneCallback)
+
+    public void MoveLerp(in Vector2 inPos, float inSpeed, Action doneCallback)
     {
         _inputDirection = Vector2.zero;
 
         _endPos = inPos;
+        _currSpeed = inSpeed;
+        
         _doneCallback = doneCallback;
 
         _isLerpPos = true;

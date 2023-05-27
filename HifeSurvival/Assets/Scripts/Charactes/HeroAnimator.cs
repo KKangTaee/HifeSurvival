@@ -65,7 +65,7 @@ public class HeroAnimator : MonoBehaviour
     {
 
     }
-
+ 
     public void OnIdle()
     {
         _anim.SetBool(ParamKey.KEY_IS_WALK, false);

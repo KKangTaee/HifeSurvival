@@ -148,10 +148,10 @@ public class Player : EntityObject
         _moveMachine.Move(inDir, inSpeed);
     }
 
-    public void OnMoveLerp(in Vector3 inEndPos, Action doneCallback)
+    public void OnMoveLerp(in Vector3 inEndPos, float inSpeed, Action doneCallback)
     {
         _anim.OnWalk(_moveMachine.GetDir(inEndPos));
-        _moveMachine.MoveLerp(inEndPos, doneCallback);
+        _moveMachine.MoveLerp(inEndPos, inSpeed, doneCallback);
     }
 
     public void OnIdle(in Vector3 inPos)
@@ -236,9 +236,9 @@ public class IdleState : IState
         if (inParam is IdleParam idle &&
             inSelf is Player player)
         {
-            if(idle.isSelf == true)
+            if(idle.isSelf == false)
             {
-                player.OnMoveLerp(idle.pos, ()=>
+                player.OnMoveLerp(idle.pos, idle.speed, ()=>
                 {
                     player.OnIdle(idle.pos);
                 });
@@ -265,10 +265,20 @@ public class MoveState : IState
 {
     public void Enter<P>(EntityObject inSelf, in P inParam) where P : struct
     {
-        if (inParam is MoveParam move &&
-            inSelf is Player player)
+        if (inParam is MoveParam move && inSelf is Player player)
         {
-            player.OnMove(move.dir, move.speed);
+            if(player.IsSelf == false)
+            {
+                player.OnMoveLerp(move.pos, move.speed,()=>
+                {
+                    player.OnMove(move.dir, move.speed);
+                });
+            }
+            else
+            {
+                player.OnMove(move.dir, move.speed);
+            }
+
         }
     }
 
@@ -281,7 +291,7 @@ public class MoveState : IState
         }
     }
 
-    public void Exit()
+public void Exit()
     {
 
     }
@@ -318,6 +328,7 @@ public struct MoveParam
 
 public struct IdleParam
 {
+    public float speed;
     public Vector3 pos;
     public bool isSelf;
 }

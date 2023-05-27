@@ -321,7 +321,7 @@ public class TouchController : ControllerBase
                     {
                         _eCommand = ETouchCommand.WORLD_MAP_TOUCH;
                     }
-                    else if(col?.CompareTag(TagName.PLAYER) == true)
+                    else if(col?.CompareTag(TagName.PLAYER_OTHER) == true)
                     {
                         _eCommand = ETouchCommand.PLAYER_TOUCH;
                     }

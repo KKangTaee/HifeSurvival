@@ -45,10 +45,10 @@ public abstract class EntityObject : MonoBehaviour
 public class Player : EntityObject
 {
     [SerializeField] private HeroAnimator _anim;
-    [SerializeField] private PlayerUI     _playerUI;
+    [SerializeField] private PlayerUI _playerUI;
 
-    [SerializeField] private TriggerMachine _wallTrigger;
-    [SerializeField] private TriggerMachine _targetTrigger;
+    [SerializeField] private TriggerMachine _playerTrigger;
+    [SerializeField] private TriggerMachine _detectTrigger;
 
     private WorldMap _worldMap;
 
@@ -90,21 +90,28 @@ public class Player : EntityObject
     // functions
     //-----------------
 
-    public void Init(bool isSelf, int inPlayerId,  in Vector3 inPos)
+    public void Init(bool isSelf, int inPlayerId, in Vector3 inPos)
     {
-        if (isSelf == true)
-            SetTrigger();
-
-        IsSelf    = isSelf;
+        IsSelf   = isSelf;
         targetId = inPlayerId;
 
         SetPos(inPos);
+
+        if (isSelf == true)
+        {
+            SetTrigger();
+            
+        }
+        else
+        {
+
+        }
     }
 
 
     public void SetTrigger()
     {
-        _wallTrigger.AddTriggerStay((col) =>
+        _playerTrigger.AddTriggerStay((col) =>
         {
             if (col.CompareTag(TagName.WORLDMAP_WALL) == true)
             {
@@ -118,7 +125,7 @@ public class Player : EntityObject
             }
         });
 
-        _wallTrigger.AddTriggerExit((col) =>
+        _playerTrigger.AddTriggerExit((col) =>
         {
             if (col.CompareTag(TagName.WORLDMAP_WALL) == true)
             {
@@ -129,15 +136,26 @@ public class Player : EntityObject
             }
         });
 
-
-        _targetTrigger.AddTriggerEnter((col) =>
+        _detectTrigger.AddTriggerEnter((col) =>
         {
+            if (col.CompareTag(TagName.PLAYER_OTHER) == true)
+            {
+                var player = col.GetComponent<Player>();
 
+                if (_targetSet.Contains(player) == false)
+                    _targetSet.Add(player);
+            }
         });
 
-        _targetTrigger.AddTriggerExit((col) =>
+        _detectTrigger.AddTriggerExit((col) =>
         {
+            if (col.CompareTag(TagName.PLAYER_OTHER) == true)
+            {
+                var player = col.GetComponent<Player>();
 
+                if (_targetSet.Contains(player) == true)
+                    _targetSet.Remove(player);
+            }
         });
     }
 
@@ -177,6 +195,8 @@ public class Player : EntityObject
 
     public bool CanAttack()
     {
+        // attackRange에 들어왔는지 확인.
+
         return false;
     }
 
@@ -239,9 +259,9 @@ public class IdleState : IState
         if (inParam is IdleParam idle &&
             inSelf is Player player)
         {
-            if(idle.isSelf == false)
+            if (idle.isSelf == false)
             {
-                player.OnMoveLerp(idle.pos, idle.speed, ()=>
+                player.OnMoveLerp(idle.pos, idle.speed, () =>
                 {
                     player.OnIdle(idle.pos, idle.dir);
                 });
@@ -270,9 +290,9 @@ public class MoveState : IState
     {
         if (inParam is MoveParam move && inSelf is Player player)
         {
-            if(player.IsSelf == false)
+            if (player.IsSelf == false)
             {
-                player.OnMoveLerp(move.pos, move.speed,()=>
+                player.OnMoveLerp(move.pos, move.speed, () =>
                 {
                     player.OnMove(move.dir, move.speed);
                 });
@@ -294,7 +314,7 @@ public class MoveState : IState
         }
     }
 
-public void Exit()
+    public void Exit()
     {
 
     }
@@ -304,7 +324,7 @@ public class FollowTargetState : IState
 {
     public void Enter<P>(EntityObject inSelf, in P inParam) where P : struct
     {
-        if(inParam is FollowTargetParam followTarget &&
+        if (inParam is FollowTargetParam followTarget &&
            inSelf is Player player)
         {
             player.OnFollowTarget(followTarget.target, followTarget.followDoneCallback);

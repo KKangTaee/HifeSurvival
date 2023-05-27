@@ -3,7 +3,11 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - WorldMap_Collider
+  - WorldMap_Wall
+  - Player_Self
+  - Player_Other
   layers:
   - Default
   - TransparentFX

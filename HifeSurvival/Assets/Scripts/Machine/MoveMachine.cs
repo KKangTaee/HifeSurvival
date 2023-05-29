@@ -144,7 +144,4 @@ public class MoveMachine : MonoBehaviour
         _doneCallback?.Invoke();
         _isRunningLerp = false;
     }
-
-
-    
 }

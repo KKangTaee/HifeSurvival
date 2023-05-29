@@ -44,6 +44,7 @@ public class HeroAnimator : MonoBehaviour
     public void OnAttack()
     {
         _anim.Play(AnimKey.KEY_ATTACK);
+        _anim.SetBool(ParamKey.KEY_IS_WALK, false);
     }
 
     public void OnWalk(in Vector2 inDir)

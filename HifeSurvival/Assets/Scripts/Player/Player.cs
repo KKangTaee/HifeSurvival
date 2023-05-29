@@ -50,14 +50,14 @@ public class Player : EntityObject
     [SerializeField] private PlayerUI _playerUI;
     [SerializeField] private TriggerMachine _playerTrigger;
     [SerializeField] private TriggerMachine _detectTrigger;
-    [SerializeField] private GameObject     _detectRange;
+    [SerializeField] private GameObject _detectRange;
 
     private WorldMap _worldMap;
 
     private HashSet<EntityObject> _targetSet;
 
     private float _attackRange = 0;
-    
+
     private IState _state;
 
     private Dictionary<EStatus, IState> _stateMachine;
@@ -106,7 +106,7 @@ public class Player : EntityObject
 
         _playerTrigger.tag = TagName.PLAYER_OTHER;
         _playerTrigger.gameObject.layer = LayerMask.NameToLayer(LayerName.PLAYER_OTHER);
-    
+
         _detectRange?.SetActive(false);
 
         _playerUI.Init(500);
@@ -125,8 +125,8 @@ public class Player : EntityObject
         _detectTrigger.tag = TagName.DETECT_SELF;
         _playerTrigger.gameObject.layer = LayerMask.NameToLayer(LayerName.PLAYER_SELF);
         _detectTrigger.gameObject.layer = LayerMask.NameToLayer(LayerName.DETECT_SELF);
-    
-         _detectRange?.SetActive(true);
+
+        _detectRange?.SetActive(true);
     }
 
 
@@ -193,7 +193,7 @@ public class Player : EntityObject
     {
         _moveMachine.MoveLerp(
             inSpeed,
-            move => 
+            move =>
             {
                 var dir = move.GetDir(inEndPos);
                 _anim.OnWalk(dir);
@@ -210,7 +210,7 @@ public class Player : EntityObject
     }
 
     public void OnFollowTarget(EntityObject inTarget, Action doneCallback)
-    {       
+    {
         _moveMachine.MoveLerp(
             4,
             move =>
@@ -226,14 +226,13 @@ public class Player : EntityObject
     }
 
     public void OnAttack()
-    {   
+    {
         _anim.OnAttack();
         _moveMachine.MoveStop(GetPos());
     }
 
     public void OnDamaged(int inDamageValue)
     {
-        
         _playerUI.DecreaseHP(inDamageValue);
     }
 
@@ -385,19 +384,13 @@ public class FollowTargetState : IState
     }
 }
 
+
 public class AttackState : IState
 {
     public void Enter<P>(EntityObject inSelf, in P inParam) where P : struct
     {
-        if(inParam is AttackParam attack && inSelf is Player self)
-        {
-            self.OnAttack();
-
-            if(attack.target is Player player)
-            {
-                player.OnDamaged(attack.attackValue);
-            }
-        }
+        if (inParam is AttackParam attack && inSelf is Player self)
+            OnAttack(self, attack);
     }
 
     public void Exit()
@@ -407,7 +400,18 @@ public class AttackState : IState
 
     public void Update<P>(EntityObject inSelf, in P inParam) where P : struct
     {
+        if (inParam is AttackParam attack && inSelf is Player self)
+            OnAttack(self, attack);
+    }
 
+    private void OnAttack(Player inPlayer, AttackParam inParam)
+    {
+        inPlayer.OnAttack();
+
+        if (inParam.target is Player player)
+        {
+            player.OnDamaged(inParam.attackValue);
+        }
     }
 }
 

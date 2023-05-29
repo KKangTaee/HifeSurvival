@@ -167,7 +167,7 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
 
         if (Self.CanAttack(target.GetPos()) == true)
         {
-            OnAttackSelf(target, 100);
+            OnAttackSelf(target, 10);
         }
         else
         {
@@ -189,7 +189,7 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
             },
             followDoneCallback = () =>
             {
-                OnAttackSelf(inTarget, 100);
+                OnAttackSelf(inTarget, 10);
             }
         };
 
@@ -205,27 +205,23 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
         {
             attackValue = inDamageVal,
             target = inTarget,
-            attackDoneCallback = (isKill) =>
-            {
-                _attackDelay = Observable.Timer(TimeSpan.FromSeconds(1))
-                                         .Subscribe(_=>
-                {
-                    // 상대방을 죽였다면..? 다른 타겟을 찾아라.
-                    if(isKill == true)
-                    {
-                        DetectTargetSelf();
-                    }
-                    
-                    // 아니라면..? 계속 공격
-                    else
-                    {
-                        OnAttackSelf(inTarget, 100);
-                    }
-                });
-            }
         };
 
         Self.ChangeState(EntityObject.EStatus.ATTACK, attackParam);
+
+        _attackDelay = Observable.Timer(TimeSpan.FromSeconds(1))
+                                        .Subscribe(_ =>
+        {
+            // 상대방을 죽였다면..? 다른 타겟을 찾아라.
+            if(Self.CanAttack(inTarget.GetPos()) == true)
+            {
+                OnAttackSelf(inTarget, 10);
+            }
+            else
+            {
+                OnFollowTargetSelf(inTarget);
+            }
+        });
     }
 
 

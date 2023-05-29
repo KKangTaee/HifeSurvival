@@ -211,7 +211,7 @@ namespace Server
                     // hp가 다 달았다면..?
                     if (toTarget.stat.hp <= 0)
                     {
-                        CS_Dead dead = new CS_Dead()
+                        S_Dead dead = new S_Dead()
                         {
                             targetId = inPacket.toId,
                             respawnTime = 15,

@@ -77,7 +77,7 @@
 		<struct_Vec3 name ="dir"/>
 	</packet>
 
-	<packet name ="CS_Dead">
+	<packet name ="S_Dead">
 		<int name ="targetId"/>
 		<int name ="respawnTime"/>
 	</packet>

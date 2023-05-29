@@ -18,7 +18,7 @@ public enum PacketID
 	CS_Attack = 10,
 	CS_Move = 11,
 	CS_StopMove = 12,
-	CS_Dead = 13,
+	S_Dead = 13,
 	
 }
 
@@ -697,12 +697,12 @@ public class CS_StopMove : IPacket
 	}
 }
 
-public class CS_Dead : IPacket
+public class S_Dead : IPacket
 {
 	public int targetId;
 	public int respawnTime;
 
-	public ushort Protocol { get { return (ushort)PacketID.CS_Dead; } }
+	public ushort Protocol { get { return (ushort)PacketID.S_Dead; } }
 
 	public void Read(ArraySegment<byte> segment)
 	{
@@ -726,7 +726,7 @@ public class CS_Dead : IPacket
 		Span<byte> s = new Span<byte>(segment.Array, segment.Offset, segment.Count);
 
 		count += sizeof(ushort);
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.CS_Dead);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.S_Dead);
 		count += sizeof(ushort);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.targetId);
 		count += sizeof(int);

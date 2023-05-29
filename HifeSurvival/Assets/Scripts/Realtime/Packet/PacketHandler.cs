@@ -52,18 +52,25 @@ class PacketHandler
 
     public static void CS_AttackHandler(PacketSession session, IPacket packet)
     {
-        
+        CS_Attack attack = packet as CS_Attack;
+        GameMode.Instance.OnRecvAttack(attack);
     }
 
-    internal static void CS_MoveHandler(PacketSession session, IPacket packet)
+    public static void CS_MoveHandler(PacketSession session, IPacket packet)
     {
         CS_Move move = packet as CS_Move;
         GameMode.Instance.OnRecvMove(move);
     }
 
-    internal static void CS_StopMoveHandler(PacketSession session, IPacket packet)
+    public static void CS_StopMoveHandler(PacketSession session, IPacket packet)
     {
          CS_StopMove stopMove = packet as CS_StopMove;
          GameMode.Instance.OnRecvStopMove(stopMove);
+    }
+
+    public static void S_DeadHandler(PacketSession session, IPacket packet)
+    {
+        S_Dead dead = packet as S_Dead;
+        GameMode.Instance.OnRecvDead(dead);
     }
 }

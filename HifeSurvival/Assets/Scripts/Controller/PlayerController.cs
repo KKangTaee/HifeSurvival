@@ -30,8 +30,9 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
 
         _gameMode = GameMode.Instance;
 
-        _gameMode.OnRecvMoveCB += OnRecvMove;
-        _gameMode.OnRecvStopMoveCB += OnRecvStopMove;
+        _gameMode.OnRecvMoveCB      += OnRecvMove;
+        _gameMode.OnRecvStopMoveCB  += OnRecvStopMove;
+        _gameMode.OnRecvDeadCB      += OnRecvDead;
     }
 
 
@@ -187,6 +188,7 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
                 // 추격시 서버에 전송한다.
                 _gameMode.OnSendMove(Self.GetPos(), dir);
             },
+            
             followDoneCallback = () =>
             {
                 OnAttackSelf(inTarget, 10);
@@ -212,11 +214,19 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
         _attackDelay = Observable.Timer(TimeSpan.FromSeconds(1))
                                         .Subscribe(_ =>
         {
-            // 상대방을 죽였다면..? 다른 타겟을 찾아라.
-            if(Self.CanAttack(inTarget.GetPos()) == true)
+            
+            // 이미 상대가 죽었다면
+            if(inTarget.Status == EntityObject.EStatus.DEAD)
+            {
+                // 다시 상대방을 감지하고 찾아라.
+                DetectTargetSelf();
+            }
+            // 공격이 가능하다면 다시 공격.
+            else if(Self.CanAttack(inTarget.GetPos()) == true)
             {
                 OnAttackSelf(inTarget, 10);
             }
+            // 아니라면, 다시 추격해라.
             else
             {
                 OnFollowTargetSelf(inTarget);
@@ -246,7 +256,7 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
 
     public void SetIdleState(Player inTarget, in Vector3 inPos, in Vector3 inDir, float inSpeed)
     {
-        var idlePos = new IdleParam()
+        var idleParam = new IdleParam()
         {
             isSelf = inTarget == Self,
             pos = inPos,
@@ -254,7 +264,17 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
             speed = inSpeed,
         };
 
-        inTarget.ChangeState(Player.EStatus.IDLE, idlePos);
+        inTarget.ChangeState(Player.EStatus.IDLE, idleParam);
+    }
+
+    public void SetDeadState(Player inTarget)
+    {
+        var deadParam = new DeadParam()
+        {
+
+        };
+
+        inTarget.ChangeState(Player.EStatus.DEAD, deadParam);
     }
 
 
@@ -288,6 +308,12 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
     {
         var player = GetPlayer(inEntity.playerId);
 
-        OnAttackSelf(player, 10);
+    }
+
+    public void OnRecvDead(PlayerEntity inEntity)
+    {
+        var player = GetPlayer(inEntity.playerId);
+
+        SetDeadState(player);
     }
 }

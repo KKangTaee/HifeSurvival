@@ -9,7 +9,7 @@ public class GameMode
     private static GameMode _instance = new GameMode();
     public static GameMode Instance { get => _instance; }
     public Dictionary<int, PlayerEntity> PlayerEntitysDic { get; private set; } = new Dictionary<int, PlayerEntity>();
-    
+
     private SimpleTaskCompletionSource<S_JoinToGame> _joinCompleted = new SimpleTaskCompletionSource<S_JoinToGame>();
 
 
@@ -21,12 +21,14 @@ public class GameMode
     private Action<PlayerEntity> _onRecvReadyCB;
     private Action<int> _onRecvLeaveCB;
     private Action<int> _onRecvCountdownCB;
-    private Action      _onRecvStartGameCB;
+    private Action _onRecvStartGameCB;
 
 
-    public event Action<PlayerEntity>  OnRecvMoveCB;
-    public event Action<PlayerEntity>  OnRecvStopMoveCB;
-    public event Action<CS_Attack>   OnRecvAttackCB;
+    public event Action<PlayerEntity> OnRecvMoveCB;
+    public event Action<PlayerEntity> OnRecvStopMoveCB;
+    public event Action<CS_Attack> OnRecvAttackCB;
+    public event Action<PlayerEntity> OnRecvDeadCB;
+
 
     public PlayerEntity EntitySelf { get; private set; }
     public int RoomId { get; private set; }
@@ -114,7 +116,7 @@ public class GameMode
             userName = joinPlayer.userName,
             playerId = joinPlayer.playerId,
             heroId = joinPlayer.heroId,
-            stat = new Stat(100,100,100, 2, 1.5f, 4),
+            stat = new Stat(100, 100, 100, 2, 1.5f, 4),
         };
 
         // 내 자신일 경우 따 갖고 있는다.
@@ -188,7 +190,7 @@ public class GameMode
     {
         C_JoinToGame joinToGame = new C_JoinToGame();
 
-        joinToGame.userId   = ServerData.Instance.UserData.user_id;
+        joinToGame.userId = ServerData.Instance.UserData.user_id;
         joinToGame.userName = ServerData.Instance.UserData.nickname;
 
         NetworkManager.Instance.Send(joinToGame);
@@ -215,7 +217,7 @@ public class GameMode
 
     public void OnRecvMove(CS_Move inPacket)
     {
-        if(inPacket.isPlayer ==  true)
+        if (inPacket.isPlayer == true)
         {
             if (PlayerEntitysDic.TryGetValue(inPacket.targetId, out var player) == true)
             {
@@ -238,17 +240,44 @@ public class GameMode
         if (inPacket.isPlayer == true)
         {
             if (PlayerEntitysDic.TryGetValue(inPacket.targetId, out var player) == true)
-            {      
+            {
                 player.pos = inPacket.pos;
                 player.dir = inPacket.dir;
-       
-               if(IsSelf(inPacket.targetId) == false)
-                  OnRecvStopMoveCB?.Invoke(player);
+
+                if (IsSelf(inPacket.targetId) == false)
+                    OnRecvStopMoveCB?.Invoke(player);
             }
         }
         else
         {
 
+        }
+    }
+
+    public void OnRecvAttack(CS_Attack inPacket)
+    {
+        if (inPacket.toIdIsPlayer == true)
+        {
+            if (PlayerEntitysDic.TryGetValue(inPacket.toId, out var player) == true)
+            {
+
+            }
+        }
+        else
+        {
+
+        }
+    }
+
+
+    public void OnRecvDead(S_Dead inPacket)
+    {
+        if (PlayerEntitysDic.TryGetValue(inPacket.targetId, out var player) == true)
+        {
+            player.isAlive = false;
+
+            if (IsSelf(inPacket.targetId) == false)
+                OnRecvDeadCB?.Invoke(player);
         }
     }
 
@@ -277,7 +306,7 @@ public class GameMode
             isPlayer = true,
             targetId = EntitySelf.playerId,
         };
-        
+
         NetworkManager.Instance.Send(stopMove);
     }
 

@@ -14,7 +14,9 @@ public class PlayerEntity : Entity
     public string userName;
     public int playerId;
     public int heroId;
+
     public bool isReady;
+    public bool isAlive;
 
     public Vec3 pos;
     public Vec3 dir;

@@ -62,9 +62,9 @@ public class HeroAnimator : MonoBehaviour
     }
 
     public void OnDead()
-    {
-
-    }
+    {   
+        _anim.Play(AnimKey.KEY_DEAD);
+    }  
  
     public void OnIdle(in Vector2 inDir = default)
     {

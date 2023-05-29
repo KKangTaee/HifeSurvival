@@ -18,11 +18,14 @@ public abstract class EntityObject : MonoBehaviour
         FOLLOW_TARGET,
 
         USE_SKILL,
+
+        DEAD,
     }
 
     [SerializeField] protected MoveMachine _moveMachine;
 
-    public int targetId { get; protected set; }
+    public int targetId     { get; protected set; }
+    public EStatus Status   { get; protected set; }
 
     public void SetPos(in Vector3 inPos)
     {
@@ -62,7 +65,7 @@ public class Player : EntityObject
 
     private Dictionary<EStatus, IState> _stateMachine;
 
-    public EStatus Status { get; private set; }
+    
     public bool IsSelf { get; private set; }
 
 
@@ -78,8 +81,9 @@ public class Player : EntityObject
         {
             {EStatus.IDLE, new IdleState()},
             {EStatus.MOVE, new MoveState()},
+            {EStatus.DEAD, new DeadState()},
+            {EStatus.ATTACK, new AttackState()},
             {EStatus.FOLLOW_TARGET, new FollowTargetState()},
-            {EStatus.ATTACK, new AttackState()}
         };
 
         _targetSet = new HashSet<EntityObject>();
@@ -234,6 +238,12 @@ public class Player : EntityObject
     public void OnDamaged(int inDamageValue)
     {
         _playerUI.DecreaseHP(inDamageValue);
+    }
+
+    public void OnDead()
+    {
+        OnDamaged(100000);
+        _anim.OnDead();
     }
 
     public bool CanAttack(in Vector3 inPos)
@@ -415,6 +425,26 @@ public class AttackState : IState
     }
 }
 
+public class DeadState : IState
+{
+    public void Enter<P>(EntityObject inSelf, in P inParam) where P : struct
+    {
+        if(inSelf is Player self && inParam is DeadParam dead)
+        {
+            // TODO@taeho.kang 나중에 처리.
+
+        }
+    }
+
+    public void Exit()
+    {
+    }
+
+    public void Update<P>(EntityObject inSelf, in P inParam) where P : struct
+    {
+    }
+}
+
 public struct MoveParam
 {
     public float speed;
@@ -443,4 +473,9 @@ public struct FollowTargetParam
     public EntityObject target;
     public Action<Vector3> followDirCallback;
     public Action followDoneCallback;
+}
+
+public struct DeadParam
+{
+
 }

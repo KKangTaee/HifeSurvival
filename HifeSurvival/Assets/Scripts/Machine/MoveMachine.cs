@@ -24,6 +24,7 @@ public class MoveMachine : MonoBehaviour
 
     public Vector3 CurrDir { get; private set; }
 
+    
     //-----------------
     // unity events
     //-----------------
@@ -44,10 +45,12 @@ public class MoveMachine : MonoBehaviour
                Mathf.Abs(transform.position.y - inPos.y) < MOVE_REACHING_OFFSET;
     }
 
+
     public Vector3 GetDir(Vector3 inPos)
     {
         return Vector3.Normalize(inPos - transform.position);
     }
+
 
     public void Move(in Vector3 inDir, float inSpeed)
     {
@@ -56,6 +59,7 @@ public class MoveMachine : MonoBehaviour
         _inputDirection = inDir;
         _currSpeed = inSpeed;
     }
+
 
     public void MoveLerp(float inSpeed, Func<MoveMachine, Vector3> inDirFunc, Func<MoveMachine, bool> inExitLoop, Action doneCallback)
     {
@@ -69,18 +73,12 @@ public class MoveMachine : MonoBehaviour
         StartMoveLerp();
     }
 
+
     public void MoveStop(in Vector2 inPos)
     {
         _inputDirection = Vector2.zero;
 
        StopMoveLerp();
-    }
-
-
-    public void MoveFollowTarget(EntityObject inTarget, Action<Vector3> onChangeDirCB, Action doneCallbackk)
-    {
-        _followTarget = inTarget;
-        StartCoroutine(nameof(Co_MoveFollowTarget));
     }
 
 
@@ -113,6 +111,7 @@ public class MoveMachine : MonoBehaviour
         }
     }
 
+
     public void StopMoveLerp()
     {
         if(_isRunningLerp == true)
@@ -125,7 +124,6 @@ public class MoveMachine : MonoBehaviour
             _doneCallback = null;
         }
     }
-
 
 
     //----------------
@@ -147,8 +145,6 @@ public class MoveMachine : MonoBehaviour
         _isRunningLerp = false;
     }
 
-    IEnumerator Co_MoveFollowTarget()
-    {
-        yield return null;
-    }
+
+    
 }

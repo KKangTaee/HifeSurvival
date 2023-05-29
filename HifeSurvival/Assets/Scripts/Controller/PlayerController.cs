@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using System;
+using UniRx;
 
 public class PlayerController : ControllerBase, TouchController.ITouchUpdate
 {
@@ -13,6 +14,8 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
     private CameraController _cameraController;
 
     private GameMode _gameMode;
+
+    private IDisposable _attackDelay;
 
     public Player Self { get; private set; }
 
@@ -123,6 +126,8 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
 
     public void OnMoveSelf(in Vector3 inDir)
     {
+        OnStopAttackSelf();
+
         float angle = Vector3.Angle(Self.GetDir(), inDir);
 
         // 조이스틱의 방향전환이 이루어졌다면..?
@@ -194,15 +199,39 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
 
     public void OnAttackSelf(EntityObject inTarget, int inDamageVal)
     {
-        _gameMode.OnSendAttack(true, inTarget.targetId, Self.targetId, 100);
+        _gameMode.OnSendAttack(true, inTarget.targetId, Self.targetId, 10);
 
         var attackParam = new AttackParam()
         {
             attackValue = inDamageVal,
             target = inTarget,
+            attackDoneCallback = (isKill) =>
+            {
+                _attackDelay = Observable.Timer(TimeSpan.FromSeconds(1))
+                                         .Subscribe(_=>
+                {
+                    // 상대방을 죽였다면..? 다른 타겟을 찾아라.
+                    if(isKill == true)
+                    {
+                        DetectTargetSelf();
+                    }
+                    
+                    // 아니라면..? 계속 공격
+                    else
+                    {
+                        OnAttackSelf(inTarget, 100);
+                    }
+                });
+            }
         };
 
         Self.ChangeState(EntityObject.EStatus.ATTACK, attackParam);
+    }
+
+
+    public void OnStopAttackSelf()
+    {
+        _attackDelay?.Dispose();
     }
 
 
@@ -263,6 +292,6 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
     {
         var player = GetPlayer(inEntity.playerId);
 
-        OnAttackSelf(player, 100);
+        OnAttackSelf(player, 10);
     }
 }

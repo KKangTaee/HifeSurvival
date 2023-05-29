@@ -5,7 +5,6 @@ using UnityEngine;
 public class HeroAnimator : MonoBehaviour
 {
     [SerializeField] Animator _anim;
-
     [SerializeField] RuntimeAnimatorController[] _heroAnimSetArr;
 
     private void Awake()

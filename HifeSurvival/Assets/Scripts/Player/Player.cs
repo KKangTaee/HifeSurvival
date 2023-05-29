@@ -108,6 +108,8 @@ public class Player : EntityObject
         _playerTrigger.gameObject.layer = LayerMask.NameToLayer(LayerName.PLAYER_OTHER);
     
         _detectRange?.SetActive(false);
+
+        _playerUI.Init(500);
     }
 
 
@@ -231,9 +233,9 @@ public class Player : EntityObject
 
     public void OnDamaged(int inDamageValue)
     {
+        
         _playerUI.DecreaseHP(inDamageValue);
     }
-
 
     public bool CanAttack(in Vector3 inPos)
     {
@@ -395,7 +397,6 @@ public class AttackState : IState
             {
                 player.OnDamaged(attack.attackValue);
             }
-
         }
     }
 
@@ -429,6 +430,8 @@ public struct AttackParam
 {
     public int attackValue;
     public EntityObject target;
+
+    public Action<bool> attackDoneCallback;
 }
 
 public struct FollowTargetParam

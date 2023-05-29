@@ -314,6 +314,23 @@ namespace Server
         }
     }
 
+    public class DeadState : IState
+    {
+        public void Enter<U>(Entity inSelf, in U inParam = default) where U : struct, IStateParam
+        {
+
+        }
+
+        public void Exit<U>(Entity inSelf, in U inParam = default) where U : struct, IStateParam
+        {
+
+        }
+
+        public void Update<U>(in U inParam = default) where U : struct, IStateParam
+        {
+
+        }
+    }
 
     public interface IStateParam { }
 
@@ -345,4 +362,8 @@ namespace Server
         public float speed;
     }
 
+    public struct DeadParam : IStateParam
+    {
+        
+    }
 }

@@ -15,7 +15,7 @@ namespace Server
 
             ATTACK,
 
-            DAMAGED,
+            DEAD,
 
             BACK_TO_SPAWN,
 
@@ -31,14 +31,14 @@ namespace Server
 
         public IBroadcaster broadcaster;
 
-        protected EStatus   _status;
-        protected IState    _state;
+        protected EStatus _status;
+        protected IState _state;
 
         protected Dictionary<EStatus, IState> _stateMachine;
 
         private void ChangeState<P>(EStatus inStatue, P inParam) where P : struct, IStateParam
         {
-            if(_status == inStatue)
+            if (_status == inStatue)
             {
                 _state?.Update(inParam);
             }
@@ -50,7 +50,7 @@ namespace Server
                 _state?.Enter(this, inParam);
             }
         }
-      
+
 
         public bool CanAttack()
         {
@@ -76,6 +76,11 @@ namespace Server
         public virtual void OnMove(in MoveParam inParam)
         {
             ChangeState(EStatus.MOVE, inParam);
+        }
+
+        public virtual void OnDead(in DeadParam inParam)
+        {
+            ChangeState(EStatus.DEAD, inParam);
         }
 
     }
@@ -129,9 +134,10 @@ namespace Server
             _stateMachine = new Dictionary<EStatus, IState>()
             {
                 {EStatus.IDLE, new IdleState()},
-                {EStatus.ATTACK,  new IdleState()},
+                {EStatus.ATTACK,  new AttackState()},
                 {EStatus.MOVE, new MoveState() },
-                {EStatus.USE_SKILL, new UseSkillState()}
+                {EStatus.USE_SKILL, new UseSkillState()},
+                {EStatus.DEAD, new DeadState()}
             };
         }
 

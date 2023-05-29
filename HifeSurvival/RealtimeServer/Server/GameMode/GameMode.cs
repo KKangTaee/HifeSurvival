@@ -112,7 +112,7 @@ namespace Server
                 heroType = 1,
                 userName = inPacket.userName,
                 broadcaster = _broadcaster,
-                stat = new Stat(100,100,100,100,4)
+                stat = new Stat(100, 100, 100, 100, 4)
             };
 
             _playersDict.Add(inSessionId, playerInfo);
@@ -205,14 +205,37 @@ namespace Server
                 if (_playersDict.TryGetValue(inPacket.toId, out var toTarget) == true &&
                     _playersDict.TryGetValue(inPacket.fromId, out var fromTarget) == true)
                 {
-                    var attackParam = new AttackParam()
-                    {
-                        attackValue = inPacket.damageValue,
-                        target = toTarget,
-                    };
 
-                    fromTarget.OnAttack(attackParam);
-                    _broadcaster.Broadcast(inPacket);
+                    toTarget.stat.hp -= inPacket.damageValue;
+
+                    // hp가 다 달았다면..?
+                    if (toTarget.stat.hp <= 0)
+                    {
+                        CS_Dead dead = new CS_Dead()
+                        {
+                            targetId = inPacket.toId,
+                            respawnTime = 15,
+                        };
+
+                        var deadParam = new DeadParam()
+                        {
+
+                        };
+
+                        fromTarget.OnDead(deadParam);
+                        _broadcaster.Broadcast(dead);
+                    }
+                    else
+                    {
+                        var attackParam = new AttackParam()
+                        {
+                            attackValue = inPacket.damageValue,
+                            target = toTarget,
+                        };
+
+                        fromTarget.OnAttack(attackParam);
+                        _broadcaster.Broadcast(inPacket);
+                    }
                 }
             }
             // 몬스터를 공격했을 때
@@ -244,8 +267,8 @@ namespace Server
 
                 var moveParam = new MoveParam()
                 {
-                    pos   = inPacket.pos,
-                    dir   = inPacket.dir,
+                    pos = inPacket.pos,
+                    dir = inPacket.dir,
                     speed = inPacket.speed,
                 };
 

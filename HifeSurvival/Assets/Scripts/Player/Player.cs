@@ -38,6 +38,8 @@ public abstract class EntityObject : MonoBehaviour
     {
         return _moveMachine.CurrDir;
     }
+
+
 }
 
 
@@ -48,12 +50,14 @@ public class Player : EntityObject
     [SerializeField] private PlayerUI _playerUI;
     [SerializeField] private TriggerMachine _playerTrigger;
     [SerializeField] private TriggerMachine _detectTrigger;
+    [SerializeField] private GameObject     _detectRange;
 
     private WorldMap _worldMap;
 
     private HashSet<EntityObject> _targetSet;
 
-    public int _attackRange = 0;
+    private float _attackRange = 0;
+    
     private IState _state;
 
     private Dictionary<EStatus, IState> _stateMachine;
@@ -74,7 +78,8 @@ public class Player : EntityObject
         {
             {EStatus.IDLE, new IdleState()},
             {EStatus.MOVE, new MoveState()},
-            {EStatus.FOLLOW_TARGET, new FollowTargetState()}
+            {EStatus.FOLLOW_TARGET, new FollowTargetState()},
+            {EStatus.ATTACK, new AttackState()}
         };
 
         _targetSet = new HashSet<EntityObject>();
@@ -101,10 +106,12 @@ public class Player : EntityObject
 
         _playerTrigger.tag = TagName.PLAYER_OTHER;
         _playerTrigger.gameObject.layer = LayerMask.NameToLayer(LayerName.PLAYER_OTHER);
+    
+        _detectRange?.SetActive(false);
     }
 
 
-    public void SetSelf(int inDetectRange, int inAttackRange)
+    public void SetSelf(int inDetectRange, float inAttackRange)
     {
         IsSelf = true;
 
@@ -116,6 +123,8 @@ public class Player : EntityObject
         _detectTrigger.tag = TagName.DETECT_SELF;
         _playerTrigger.gameObject.layer = LayerMask.NameToLayer(LayerName.PLAYER_SELF);
         _detectTrigger.gameObject.layer = LayerMask.NameToLayer(LayerName.DETECT_SELF);
+    
+         _detectRange?.SetActive(true);
     }
 
 
@@ -153,7 +162,7 @@ public class Player : EntityObject
         {
             if (col.CompareTag(TagName.PLAYER_OTHER) == true)
             {
-                var player = col.GetComponent<Player>();
+                var player = col.GetComponentInParent<Player>();
 
                 if (_targetSet.Contains(player) == false)
                     _targetSet.Add(player);
@@ -164,7 +173,7 @@ public class Player : EntityObject
         {
             if (col.CompareTag(TagName.PLAYER_OTHER) == true)
             {
-                var player = col.GetComponent<Player>();
+                var player = col.GetComponentInParent<Player>();
 
                 if (_targetSet.Contains(player) == true)
                     _targetSet.Remove(player);
@@ -204,19 +213,20 @@ public class Player : EntityObject
             4,
             move =>
             {
-                var dir = move.GetDir(inTarget.transform.position);
+                var dir = move.GetDir(inTarget.GetPos());
                 _anim.OnWalk(dir);
 
                 return dir;
             },
-            move => CanAttack(inTarget.transform.position),
+            move => CanAttack(inTarget.GetPos()),
             doneCallback
         );
     }
 
     public void OnAttack()
-    {
-
+    {   
+        _anim.OnAttack();
+        _moveMachine.MoveStop(GetPos());
     }
 
     public void OnDamaged(int inDamageValue)
@@ -373,6 +383,33 @@ public class FollowTargetState : IState
     }
 }
 
+public class AttackState : IState
+{
+    public void Enter<P>(EntityObject inSelf, in P inParam) where P : struct
+    {
+        if(inParam is AttackParam attack && inSelf is Player self)
+        {
+            self.OnAttack();
+
+            if(attack.target is Player player)
+            {
+                player.OnDamaged(attack.attackValue);
+            }
+
+        }
+    }
+
+    public void Exit()
+    {
+
+    }
+
+    public void Update<P>(EntityObject inSelf, in P inParam) where P : struct
+    {
+
+    }
+}
+
 public struct MoveParam
 {
     public float speed;
@@ -397,5 +434,6 @@ public struct AttackParam
 public struct FollowTargetParam
 {
     public EntityObject target;
+    public Action<Vector3> followDirCallback;
     public Action followDoneCallback;
 }

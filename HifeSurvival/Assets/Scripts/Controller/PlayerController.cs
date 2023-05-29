@@ -177,6 +177,11 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
         {
             target = inTarget,
 
+            followDirCallback = (dir) =>
+            {
+                // 추격시 서버에 전송한다.
+                _gameMode.OnSendMove(Self.GetPos(), dir);
+            },
             followDoneCallback = () =>
             {
                 OnAttackSelf(inTarget, 100);

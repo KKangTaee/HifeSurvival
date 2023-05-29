@@ -163,10 +163,10 @@ namespace Server
         public int hp;
         public int exp;
         public int str;
-        public int attackRange;
+        public float attackRange;
         public float speed;
 
-        public Stat(int inMaxHP, int inMaxEXP, int inMaxSTR, int inAttackRange, float inSpeed)
+        public Stat(int inMaxHP, int inMaxEXP, int inMaxSTR, float inAttackRange, float inSpeed)
         {
             hp = maxHP = inMaxHP;
             exp = maxEXP = inMaxEXP;

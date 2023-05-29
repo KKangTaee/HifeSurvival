@@ -53,13 +53,13 @@ public class Player : EntityObject
 
     private HashSet<EntityObject> _targetSet;
 
+    public int _attackRange = 0;
     private IState _state;
 
     private Dictionary<EStatus, IState> _stateMachine;
 
     public EStatus Status { get; private set; }
     public bool IsSelf { get; private set; }
-    public int _attackRange = 0;
 
 
     //-----------------
@@ -178,10 +178,18 @@ public class Player : EntityObject
         _moveMachine.Move(inDir, inSpeed);
     }
 
-    public void OnMoveLerp(in Vector3 inEndPos, float inSpeed, Action doneCallback)
+    public void OnMoveLerp(Vector3 inEndPos, float inSpeed, Action doneCallback)
     {
-        _anim.OnWalk(_moveMachine.GetDir(inEndPos));
-        _moveMachine.MoveLerp(inEndPos, inSpeed, doneCallback);
+        _moveMachine.MoveLerp(
+            inSpeed,
+            move => 
+            {
+                var dir = move.GetDir(inEndPos);
+                _anim.OnWalk(dir);
+                return dir;
+            },
+            move => move.IsReaching(inEndPos),
+            doneCallback);
     }
 
     public void OnIdle(in Vector3 inPos, in Vector3 inDir = default)
@@ -191,9 +199,19 @@ public class Player : EntityObject
     }
 
     public void OnFollowTarget(EntityObject inTarget, Action doneCallback)
-    {
-        _anim.OnWalk(inTarget.GetDir());
-        _moveMachine.MoveFollowTarget(inTarget, null, doneCallback);
+    {       
+        _moveMachine.MoveLerp(
+            4,
+            move =>
+            {
+                var dir = move.GetDir(inTarget.transform.position);
+                _anim.OnWalk(dir);
+
+                return dir;
+            },
+            move => CanAttack(inTarget.transform.position),
+            doneCallback
+        );
     }
 
     public void OnAttack()

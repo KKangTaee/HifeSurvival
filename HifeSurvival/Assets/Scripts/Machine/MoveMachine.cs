@@ -11,6 +11,9 @@ public class MoveMachine : MonoBehaviour
     private Vector3 _endPos;
     private Vector3 _inputDirection;
 
+    private Func<MoveMachine, Vector3 >   _dirFunc;
+    private Func<MoveMachine, bool>      _exitLoopFunc;
+
     private Action _doneCallback;
     private Action<Vector2> _changeDirCallback;
     private float _currSpeed;
@@ -35,7 +38,7 @@ public class MoveMachine : MonoBehaviour
     // functions
     //-----------------
 
-    private bool IsReaching(Vector3 inPos)
+    public bool IsReaching(Vector3 inPos)
     {
         return Mathf.Abs(transform.position.x - inPos.x) < MOVE_REACHING_OFFSET &&
                Mathf.Abs(transform.position.y - inPos.y) < MOVE_REACHING_OFFSET;
@@ -54,14 +57,13 @@ public class MoveMachine : MonoBehaviour
         _currSpeed = inSpeed;
     }
 
-
-    public void MoveLerp(in Vector2 inPos, float inSpeed, Action doneCallback)
+    public void MoveLerp(float inSpeed, Func<MoveMachine, Vector3> inDirFunc, Func<MoveMachine, bool> inExitLoop, Action doneCallback)
     {
         _inputDirection = Vector2.zero;
-
-        _endPos = inPos;
         _currSpeed = inSpeed;
-        
+
+        _dirFunc = inDirFunc;
+        _exitLoopFunc = inExitLoop;
         _doneCallback = doneCallback;
 
         StartMoveLerp();
@@ -102,7 +104,6 @@ public class MoveMachine : MonoBehaviour
     }
 
 
-
     public void StartMoveLerp()
     {
         if(_isRunningLerp == false)
@@ -118,6 +119,10 @@ public class MoveMachine : MonoBehaviour
         {
             StopCoroutine(nameof(Co_MoveLerp));
             _isRunningLerp = false;
+
+            _changeDirCallback = null;
+            _dirFunc = null;
+            _doneCallback = null;
         }
     }
 
@@ -129,11 +134,12 @@ public class MoveMachine : MonoBehaviour
 
     IEnumerator Co_MoveLerp()
     {
-        while (IsReaching(_endPos) == false)
+        while (_exitLoopFunc?.Invoke(this) == false)
         {
-            var dir = GetDir(_endPos);
+            var dir = _dirFunc?.Invoke(this) ?? Vector3.zero;
 
             transform.position += dir * _currSpeed * Time.deltaTime;
+            
             yield return null;
         }
 

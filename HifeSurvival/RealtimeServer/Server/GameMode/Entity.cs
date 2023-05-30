@@ -26,9 +26,8 @@ namespace Server
 
         public Vec3 pos;
         public Vec3 dir;
-        public Stat stat;
-
-
+        public EntityStat stat;
+        
         public IBroadcaster broadcaster;
 
         protected EStatus _status;
@@ -160,30 +159,48 @@ namespace Server
     }
 
 
-    public class Stat
+    public class EntityStat
     {
-        public readonly int maxHP;
-        public readonly int maxEXP;
-        public readonly int maxSTR;
+        public int str { get; private set; }
+        public int def { get; private set; }
+        public int hp { get; private set; }
 
-        public int hp;
-        public int exp;
-        public int str;
-        public float attackRange;
-        public float speed;
+        public float detectRange { get; private set; }
+        public float attackRange { get; private set; }
+        public float moveSpeed { get; private set; }
+        public float attackSpeed { get; private set; }
 
-        public Stat(int inMaxHP, int inMaxEXP, int inMaxSTR, float inAttackRange, float inSpeed)
+
+        public EntityStat(StaticData.Heros heros)
         {
-            hp = maxHP = inMaxHP;
-            exp = maxEXP = inMaxEXP;
-            str = maxSTR = inMaxSTR;
-            attackRange = inAttackRange;
-            speed = inSpeed;
+            str = heros.str;
+            def = heros.def;
+            hp = heros.hp;
+            detectRange = heros.detectRange;
+            attackRange = heros.attackRange;
+            moveSpeed = heros.moveSpeed;
+            attackSpeed = heros.attackSpeed;
         }
+
 
         public int GetAttackValue()
         {
-            return new Random().Next(str - 15, str + 15);
+            return (int)new Random().Next(str - 15, (int)(str + str * 0.2f));
         }
+
+
+        public int GetDamagedValue(int inAttackValue) =>
+           (int)(inAttackValue - def * 0.1f);
+
+
+        public void AddStr(int inStr) =>
+            str += inStr;
+
+        public void AddDef(int inDef) =>
+            def += inDef;
+
+        public void AddHp(int inHp) =>
+            hp += inHp;
+
     }
 }

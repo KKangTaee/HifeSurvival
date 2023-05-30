@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "rRkoiCIiSg7ktNNDekKl4h50ROruWCX55PZABEPQfkA00qR3+RT2XcFzIlhCD7J44jbmE7fEfVspR0+JXNaVLg==",
+  "dgSpecHash": "lXAxYHNVf3yjGcL2W2Brv/eQv00dR/SsNTF9pJOv0evaecBN1rOt138MHf64On7EUBHx/R2/L2QuV+k1NZiinw==",
   "success": true,
-  "projectFilePath": "C:\\Projects\\Sample\\RealtimeServer\\PacketGenerator\\PacketGenerator.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "/Users/taehokang/Documents/GitHub/HifeSurvival/HifeSurvival/RealtimeServer/PacketGenerator/PacketGenerator.csproj",
+  "expectedPackageFiles": [
+    "/Users/taehokang/.nuget/packages/microsoft.netcore.app.host.osx-x64/3.1.32/microsoft.netcore.app.host.osx-x64.3.1.32.nupkg.sha512"
+  ],
   "logs": []
 }

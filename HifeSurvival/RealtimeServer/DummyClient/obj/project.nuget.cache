@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "SUOaU8q4mVEcKdLQPeGWbsCpanyl8lWqTUGCYUmC3z/reUzB35xcZuZgksgPWSF6qoe5XD4xFdo1+UFXgulz/Q==",
+  "dgSpecHash": "0K+XQKA9LAM2Axf6Y9WxAm+Bfgdpr0d7F1kGFDUOgFkOBmpZ0tpUaQzcJ8kUhb3Rr9XyV6+MmvlbYHFY5SgBIw==",
   "success": true,
-  "projectFilePath": "C:\\Projects\\Sample\\RealtimeServer\\DummyClient\\DummyClient.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "/Users/taehokang/Documents/GitHub/HifeSurvival/HifeSurvival/RealtimeServer/DummyClient/DummyClient.csproj",
+  "expectedPackageFiles": [
+    "/Users/taehokang/.nuget/packages/microsoft.netcore.app.host.osx-x64/3.1.32/microsoft.netcore.app.host.osx-x64.3.1.32.nupkg.sha512"
+  ],
   "logs": []
 }

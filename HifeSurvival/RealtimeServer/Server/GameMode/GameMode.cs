@@ -112,7 +112,7 @@ namespace Server
                 heroType = 1,
                 userName = inPacket.userName,
                 broadcaster = _broadcaster,
-                stat = new Stat(100, 100, 100, 100, 4)
+                stat = new EntityStat(StaticData.Instance.HeroDic["1"])
             };
 
             _playersDict.Add(inSessionId, playerInfo);
@@ -205,9 +205,6 @@ namespace Server
                 if (_playersDict.TryGetValue(inPacket.toId, out var toTarget) == true &&
                     _playersDict.TryGetValue(inPacket.fromId, out var fromTarget) == true)
                 {
-
-                    toTarget.stat.hp -= inPacket.damageValue;
-
                     // hp가 다 달았다면..?
                     if (toTarget.stat.hp <= 0)
                     {
@@ -242,7 +239,7 @@ namespace Server
             else
             {
                 if (_monstersDict.TryGetValue(inPacket.toId, out var toTarget) == true &&
-                   _playersDict.TryGetValue(inPacket.fromId, out var fromTarget) == true)
+                    _playersDict.TryGetValue(inPacket.fromId, out var fromTarget) == true)
                 {
                     var attackParam = new AttackParam()
                     {
@@ -263,13 +260,11 @@ namespace Server
             {
                 player.pos = inPacket.pos;
                 player.dir = inPacket.dir;
-                player.stat.speed = inPacket.speed;
 
                 var moveParam = new MoveParam()
                 {
                     pos = inPacket.pos,
                     dir = inPacket.dir,
-                    speed = inPacket.speed,
                 };
 
                 // TODO@taeho.kang 이동상태 처리

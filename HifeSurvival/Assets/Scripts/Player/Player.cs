@@ -130,6 +130,8 @@ public class Player : EntityObject
 
         _detectRange?.SetActive(false);
 
+        Stat = inStat;
+
         _playerUI.Init(Stat.hp);
     }
 

@@ -76,11 +76,15 @@ namespace Server
                     if (inSelf.CanAttack() == true)
                     {
                         // 0.25초 마다 한번씩 호출
-                        inOther.stat.hp -= inSelf.GetAttackValue();
+
+                        var attackVal = inSelf.stat.GetAttackValue();
+                        var damagedVal = inOther.stat.GetDamagedValue(attackVal);
+
+                        inOther.stat.AddHp(-damagedVal);
 
                         CS_Attack attackPacket = new CS_Attack()
                         {
-                            damageValue = inSelf.GetAttackValue(),
+                            damageValue = damagedVal,
                             fromId = inSelf.monsterId,
                             toIdIsPlayer = false,
                             toId = inOther.playerId
@@ -88,7 +92,7 @@ namespace Server
 
                         inSelf.broadcaster.Broadcast(attackPacket);
 
-                        JobTimer.Instance.Push(() => { UpdateAttack(inSelf, inOther); }, 1000);
+                        JobTimer.Instance.Push(() => { UpdateAttack(inSelf, inOther); }, (int)(inOther.stat.attackSpeed * 1000));
                     }
 
                     // 공격을 못한다면 다시추격
@@ -143,7 +147,7 @@ namespace Server
                         var dir = inOther.pos.SubtractVec3(inSelf.pos).NormalizeVec3();
                         inSelf.dir = dir;
 
-                        var addSpeed = inSelf.dir.MulitflyVec3(inSelf.stat.speed * UPDATE_TIME * 0.001f);
+                        var addSpeed = inSelf.dir.MulitflyVec3(inSelf.stat.moveSpeed * UPDATE_TIME * 0.001f);
                         inSelf.pos = inSelf.pos.AddVec3(addSpeed);
 
                         CS_Move move = new CS_Move()
@@ -152,7 +156,7 @@ namespace Server
                             dir = inSelf.dir,
                             targetId = inSelf.monsterId,
                             isPlayer = false,
-                            speed = inSelf.stat.speed,
+                            speed = inSelf.stat.moveSpeed,
                         };
 
                         inSelf.broadcaster.Broadcast(move);
@@ -199,16 +203,12 @@ namespace Server
             {
                 if (inParam is AttackParam attack)
                 {
-                    // 플레이어 -> 플레이어 공격
-                    if(attack.target is PlayerEntity player)
-                    {
-                        player.stat.hp -= attack.attackValue;
-                    }
-                    // 플레이어 -> 몬스터 공격
-                    else if(attack.target is MonsterEntity monster)
-                    {
-                        monster.stat.hp -= attack.attackValue;
+                    // 채력깍음
+                    inSelf.stat.AddHp(-attack.attackValue);
 
+                    // 플레이어 -> 몬스터 공격
+                    if(attack.target is MonsterEntity monster)
+                    {
                         // 몬스터는 공격을 당했음으로, 플레이어를 공격한다.
                         monster.OnAttack(new AttackParam()
                         {
@@ -246,7 +246,6 @@ namespace Server
                 {
                     _self.dir = move.dir;
                     _self.pos = move.pos;
-                    _self.stat.speed = move.speed;
 
                     _isRunning = true;
 
@@ -266,7 +265,6 @@ namespace Server
                 {
                     _self.dir = move.dir;
                     _self.pos = move.pos;
-                    _self.stat.speed = move.speed;
                 }
             }
 
@@ -274,7 +272,7 @@ namespace Server
             {
                 if (this != null && _isRunning == true && inSelf != null)
                 {
-                    var addSpeed = inSelf.dir.MulitflyVec3(inSelf.stat.speed * UPDATE_TIME * 0.0001f);
+                    var addSpeed = inSelf.dir.MulitflyVec3(inSelf.stat.moveSpeed * UPDATE_TIME * 0.0001f);
                     inSelf.pos = inSelf.pos.AddVec3(addSpeed);
 
                     CS_Move packet = new CS_Move()
@@ -283,7 +281,7 @@ namespace Server
                         pos = inSelf.pos,
                         targetId = inSelf.playerId,
                         isPlayer = true,
-                        speed = inSelf.stat.speed,
+                        speed = inSelf.stat.moveSpeed,
                     };
 
                     inSelf.broadcaster.Broadcast(packet);

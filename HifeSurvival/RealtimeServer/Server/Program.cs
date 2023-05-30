@@ -14,17 +14,22 @@ namespace Server
 	{
 		static Listener _listener = new Listener();
 		
-		static void Main(string[] args)
+		public static async Task Main(string[] args)
 		{
 			// DNS (Domain Name System)
 			// string host = Dns.GetHostName();
 			// IPHostEntry ipHost = Dns.GetHostEntry(host);
 			// IPAddress ipAddr = ipHost.AddressList.First(ip => ip.AddressFamily == AddressFamily.InterNetwork);
+			
+			await StaticData.Instance.Init();
+
+			System.Console.WriteLine("스태틱데이터 로드");
+
 			IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 7777);
 			// endPoint = new IPEndPoint(IPAddress.Parse("192.168.0.3"), 7777);
 
 			_listener.Init(endPoint, () => { return SessionManager.Instance.Generate(); });
-			
+
 			Console.WriteLine("Listening...");
 
 			while (true)

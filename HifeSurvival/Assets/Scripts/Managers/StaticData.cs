@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UniRx.Async;
 using SimpleJSON;
 using System;
 using System.Threading.Tasks;
@@ -40,7 +39,7 @@ public class StaticData
     public Dictionary<string, Heros>    HeroDic { get; private set; }
     public Dictionary<string, Systems>  SystemsDic { get; private set; }
 
-    public async UniTask Init()
+    public async Task Init()
     {
         // 구글 스프레드 시트의 모든 이름 가져오기
         var waiter = new AsyncWaiting();
@@ -184,6 +183,7 @@ public class StaticData
                     {
                         value = rawData[i][fieldIndex];
                     }
+                    
                     // 다른 필드 유형이 필요한 경우 여기에 추가
 
                     if (value != null)
@@ -229,7 +229,6 @@ public class StaticData
     {
         public int id;
         public string name;
-        public string desc;
         public int str;
         public int def;
         public int hp;
@@ -237,6 +236,7 @@ public class StaticData
         public float moveSpeed;
         public float detectRange;
         public float attackRange;
+        public string desc;
     }
 
 

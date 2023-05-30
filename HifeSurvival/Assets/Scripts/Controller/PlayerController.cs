@@ -113,7 +113,7 @@ public class PlayerController : ControllerBase
         SetMoveState(Self,
                      Self.GetPos(),
                      inDir,
-                     4);
+                     Self.Stat.moveSpeed);
     }
 
 

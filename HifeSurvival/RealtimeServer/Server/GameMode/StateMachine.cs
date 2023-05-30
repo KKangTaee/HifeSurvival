@@ -203,9 +203,6 @@ namespace Server
             {
                 if (inParam is AttackParam attack)
                 {
-                    // 채력깍음
-                    inSelf.stat.AddHp(-attack.attackValue);
-
                     // 플레이어 -> 몬스터 공격
                     if(attack.target is MonsterEntity monster)
                     {

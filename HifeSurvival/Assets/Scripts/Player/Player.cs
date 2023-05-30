@@ -286,6 +286,9 @@ public class Player : EntityObject
             if (target == null)
                 continue;
 
+            if(target.Status == EntityObject.EStatus.DEAD)
+                continue;
+                
             float distance = Vector2.Distance(transform.position, target.transform.position);
             if (distance < minDistance)
             {

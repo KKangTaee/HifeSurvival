@@ -234,8 +234,8 @@ public class StaticData
         public int hp;
         public float attackSpeed;
         public float moveSpeed;
-        public float detectRange;
         public float attackRange;
+        public float detectRange;
         public string desc;
     }
 

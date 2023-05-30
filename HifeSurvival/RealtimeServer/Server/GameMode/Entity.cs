@@ -112,7 +112,7 @@ namespace Server
         }
 
 
-        public bool CanAttack()
+        public bool CanAttack(Vec3 inPos)
         {
             return false;
         }

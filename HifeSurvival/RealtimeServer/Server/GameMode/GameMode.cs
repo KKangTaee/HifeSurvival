@@ -205,6 +205,9 @@ namespace Server
                 if (_playersDict.TryGetValue(inPacket.toId, out var toTarget) == true &&
                     _playersDict.TryGetValue(inPacket.fromId, out var fromTarget) == true)
                 {
+                    // 여기서 깍는다.
+                    toTarget.stat.AddHp(-inPacket.damageValue);
+
                     // hp가 다 달았다면..?
                     if (toTarget.stat.hp <= 0)
                     {

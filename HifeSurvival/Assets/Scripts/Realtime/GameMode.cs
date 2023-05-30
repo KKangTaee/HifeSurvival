@@ -264,6 +264,7 @@ public class GameMode
             if (PlayerEntitysDic.TryGetValue(inPacket.toId, out var player) == true)
             {
                 player.stat.AddHp(-inPacket.damageValue);
+                OnRecvAttackCB?.Invoke(inPacket);
 
             }
         }

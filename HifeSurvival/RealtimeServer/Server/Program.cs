@@ -14,7 +14,7 @@ namespace Server
 	{
 		static Listener _listener = new Listener();
 		
-		public static async Task Main(string[] args)
+		static async Task Main(string[] args)
 		{
 			// DNS (Domain Name System)
 			// string host = Dns.GetHostName();
@@ -22,8 +22,6 @@ namespace Server
 			// IPAddress ipAddr = ipHost.AddressList.First(ip => ip.AddressFamily == AddressFamily.InterNetwork);
 			
 			await StaticData.Instance.Init();
-
-			System.Console.WriteLine("스태틱데이터 로드");
 
 			IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 7777);
 			// endPoint = new IPEndPoint(IPAddress.Parse("192.168.0.3"), 7777);

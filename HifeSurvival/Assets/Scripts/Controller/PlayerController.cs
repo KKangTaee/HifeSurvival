@@ -11,7 +11,8 @@ public class PlayerController : ControllerBase
 
     private Dictionary<int, Player> _playerDict = new Dictionary<int, Player>();
 
-    private CameraController _cameraController;
+    private CameraController    _cameraController;
+    private JoystickController  _joystickController;
 
     private GameMode _gameMode;
 
@@ -26,7 +27,8 @@ public class PlayerController : ControllerBase
 
     public void Start()
     {
-        _cameraController = ControllerManager.Instance.GetController<CameraController>();
+        _cameraController   = ControllerManager.Instance.GetController<CameraController>();
+        _joystickController = ControllerManager.Instance.GetController<JoystickController>();
 
         _gameMode = GameMode.Instance;
 
@@ -297,6 +299,9 @@ public class PlayerController : ControllerBase
     {
         var player = GetPlayer(inEntity.toId);
 
+        if(player == Self)
+           _joystickController.HideJoystick();
+
         SetDeadState(player);
     }
 
@@ -309,4 +314,5 @@ public class PlayerController : ControllerBase
         SetAttackState(toPlayer, fromPlayer, inPacket.damageValue);
     }
 
+    
 }

@@ -61,4 +61,14 @@ public class JoystickController : ControllerBase
 
         _joystickMachine.AddPointUpEvent(() => _playerController.OnStopMoveSelf());
     }
+
+    public void ShowJoystick()
+    {
+        _joystickMachine.gameObject.SetActive(true);
+    }
+
+    public void HideJoystick()
+    {
+        _joystickMachine.gameObject.SetActive(false);
+    }
 }

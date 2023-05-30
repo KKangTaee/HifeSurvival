@@ -27,7 +27,11 @@ public class IngameUI : MonoBehaviour
         foreach (var entity in playerEntitys)
         {
             if (iter.MoveNext())
-                (iter.Current as KDView)?.SetInfo(entity.playerId, 0, 0);
+            {
+                KDView view = iter.Current as KDView;
+                view?.gameObject.SetActive(true);
+                view?.SetInfo(entity.playerId, 0, 0);
+            }
         }
     }
 
@@ -48,7 +52,7 @@ public class IngameUI : MonoBehaviour
 
         float _animationDuration = 0.5f;
 
-        // µî¼öÀÇ º¯È­°¡ ÀÖ´Ù¸é..? 
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È­ï¿½ï¿½ ï¿½Ö´Ù¸ï¿½..? 
         _kdViewArr = _kdViewArr.OrderByDescending(x => x.KillCount).ToArray();
 
         // Apply animation
@@ -78,10 +82,10 @@ public class IngameUI : MonoBehaviour
             }
         }
 
-        // ³»°¡ Á×Àº°Å¶ó¸é..?
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Å¶ï¿½ï¿½..?
         if(inPacket.toId == GameMode.Instance.EntitySelf.playerId)
         {
-            // ½ºÅ©¸°À» Èæ¹éÃ³¸®ÇÑ´Ù.
+            // ï¿½ï¿½Å©ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ã³ï¿½ï¿½ï¿½Ñ´ï¿½.
         }
     }
 }

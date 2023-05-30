@@ -232,7 +232,7 @@ namespace Server
             public PlayerEntity _self = null;
             private bool _isRunning = false;
 
-            private const int UPDATE_TIME = 200;
+            private const int UPDATE_TIME = 125;
 
             public void Enter<U>(Entity inSelf, in U inParam = default) where U : struct, IStateParam
             {

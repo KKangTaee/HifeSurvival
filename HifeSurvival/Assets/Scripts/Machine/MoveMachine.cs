@@ -5,7 +5,7 @@ using System;
 
 public class MoveMachine : MonoBehaviour
 {
-    private const float MOVE_REACHING_OFFSET = 0.2f;
+    private const float MOVE_REACHING_OFFSET = 1.2f;
 
     private Vector3 _currPos;
     private Vector3 _endPos;

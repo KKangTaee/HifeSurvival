@@ -29350,6 +29350,14 @@ PrefabInstance:
       propertyPath: m_ColliderPaths.Array.data[0].m_ColliderPaths.Array.data[82].Array.data[14].Y
       value: -95156344
       objectReference: {fileID: 0}
+    - target: {fileID: 3516520539982029834, guid: 430b0b92c42347a4db4c95daa98f3f8d, type: 3}
+      propertyPath: m_ChunkCullingBounds.x
+      value: 1.8125
+      objectReference: {fileID: 0}
+    - target: {fileID: 3516520539982029834, guid: 430b0b92c42347a4db4c95daa98f3f8d, type: 3}
+      propertyPath: m_ChunkCullingBounds.y
+      value: 3.6
+      objectReference: {fileID: 0}
     - target: {fileID: 3516520540772589809, guid: 430b0b92c42347a4db4c95daa98f3f8d, type: 3}
       propertyPath: m_CellSize.x
       value: 4
@@ -29365,6 +29373,14 @@ PrefabInstance:
     - target: {fileID: 4005470170150920351, guid: 430b0b92c42347a4db4c95daa98f3f8d, type: 3}
       propertyPath: m_LocalPosition.y
       value: 8.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7611993457363266320, guid: 430b0b92c42347a4db4c95daa98f3f8d, type: 3}
+      propertyPath: m_ChunkCullingBounds.x
+      value: 1.8125
+      objectReference: {fileID: 0}
+    - target: {fileID: 7611993457363266320, guid: 430b0b92c42347a4db4c95daa98f3f8d, type: 3}
+      propertyPath: m_ChunkCullingBounds.y
+      value: 3.5743752
       objectReference: {fileID: 0}
     - target: {fileID: 7710224704415212824, guid: 430b0b92c42347a4db4c95daa98f3f8d, type: 3}
       propertyPath: m_RootOrder

@@ -269,7 +269,7 @@ namespace Server
             {
                 if (this != null && _isRunning == true && inSelf != null)
                 {
-                    var addSpeed = inSelf.dir.MulitflyVec3(inSelf.stat.moveSpeed * UPDATE_TIME * 0.0001f);
+                    var addSpeed = inSelf.dir.MulitflyVec3(inSelf.stat.moveSpeed * UPDATE_TIME * 0.001f);
                     inSelf.pos = inSelf.pos.AddVec3(addSpeed);
 
                     CS_Move packet = new CS_Move()

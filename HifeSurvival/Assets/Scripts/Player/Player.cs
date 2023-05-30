@@ -27,9 +27,9 @@ public abstract class EntityObject : MonoBehaviour
     private IState _state;
     protected Dictionary<EStatus, IState> _stateMachine;
 
-    public int targetId     { get; protected set; }
-    public EStatus Status   { get; protected set; }
-    public EntityStat Stat  { get; protected set; }
+    public int targetId { get; protected set; }
+    public EStatus Status { get; protected set; }
+    public EntityStat Stat { get; protected set; }
 
 
     public void SetPos(in Vector3 inPos)
@@ -71,16 +71,16 @@ public abstract class EntityObject : MonoBehaviour
 
 public class Player : EntityObject
 {
-    [SerializeField] private HeroAnimator   _anim;
-    [SerializeField] private PlayerUI       _playerUI;
+    [SerializeField] private HeroAnimator _anim;
+    [SerializeField] private PlayerUI _playerUI;
     [SerializeField] private TriggerMachine _playerTrigger;
     [SerializeField] private TriggerMachine _detectTrigger;
 
-    [SerializeField] private GameObject     _detectRange;
+    [SerializeField] private GameObject _detectRange;
 
     private WorldMap _worldMap;
 
-    private HashSet<EntityObject>       _targetSet;
+    private HashSet<EntityObject> _targetSet;
 
     public bool IsSelf { get; private set; }
 
@@ -214,7 +214,7 @@ public class Player : EntityObject
     public void OnMoveLerp(Vector3 inEndPos, float inSpeed, Action doneCallback)
     {
         _moveMachine.MoveLerp(
-            inSpeed,
+            inSpeed * 1.5f,
             move =>
             {
                 var dir = move.GetDir(inEndPos);
@@ -230,6 +230,8 @@ public class Player : EntityObject
     {
         _anim.OnIdle();
         _moveMachine.MoveStop(inPos);
+
+        RemovePoint();
     }
 
 
@@ -286,9 +288,9 @@ public class Player : EntityObject
             if (target == null)
                 continue;
 
-            if(target.Status == EntityObject.EStatus.DEAD)
+            if (target.Status == EntityObject.EStatus.DEAD)
                 continue;
-                
+
             float distance = Vector2.Distance(transform.position, target.transform.position);
             if (distance < minDistance)
             {
@@ -299,6 +301,35 @@ public class Player : EntityObject
 
         return result;
     }
+
+
+
+
+    [SerializeField] private GameObject _pointPrefab;
+    private List<GameObject> _pointList = new List<GameObject>();
+
+
+    public void SetPoint(Vector3 inPos, Vector3 inDir)
+    {
+        var inst = Instantiate(_pointPrefab);
+        inst.transform.position = inPos;
+
+        Vector2 direction = new Vector2(inDir.x, inDir.y); // 각도를 계산하려는 벡터
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+        inst.transform.localRotation = Quaternion.Euler(0, 0, angle);
+
+        _pointList.Add(inst);
+    }
+
+    public void RemovePoint()
+    {
+        foreach (var point in _pointList)
+            Destroy(point);
+
+        _pointList.Clear();
+    }
+
 }
 
 
@@ -352,6 +383,8 @@ public class MoveState : IState
         {
             if (self.IsSelf == false)
             {
+                self.SetPoint(move.pos, move.dir);
+
                 self.OnMoveLerp(move.pos, move.speed, () =>
                 {
                     self.OnMove(move.dir, move.speed);
@@ -368,9 +401,21 @@ public class MoveState : IState
     public void Update<P>(EntityObject inSelf, in P inParam) where P : struct
     {
         if (inParam is MoveParam move &&
-            inSelf is Player player)
+            inSelf is Player self)
         {
-            player.OnMove(move.dir, move.speed);
+            if (self.IsSelf == false)
+            {
+                self.SetPoint(move.pos, move.dir);
+
+                self.OnMoveLerp(move.pos, move.speed, () =>
+                {
+                    self.OnMove(move.dir, move.speed);
+                });
+            }
+            else
+            {
+                self.OnMove(move.dir, move.speed);
+            }
         }
     }
 
@@ -437,7 +482,7 @@ public class DeadState : IState
 {
     public void Enter<P>(EntityObject inSelf, in P inParam) where P : struct
     {
-        if(inSelf is Player self && inParam is DeadParam dead)
+        if (inSelf is Player self && inParam is DeadParam dead)
         {
             // TODO@taeho.kang 나중에 처리.
             self.OnDead();

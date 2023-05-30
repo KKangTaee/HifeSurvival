@@ -21,7 +21,7 @@ public class CameraController : ControllerBase, TouchController.ITouchUpdate
     [SerializeField] private float _cameraSpeed;
 
     public const float FOLLWING_TARGET_SPEED  = 40.0f;
-    public const float FOLLWING_TARGET_OFFSET = 0.3f;
+    public const float FOLLWING_TARGET_OFFSET = 1f;
 
 
     public readonly Vector3 INVALIED_VECTOR_VALUE = new Vector3(-9999, -9999, -9999);

@@ -5,7 +5,7 @@ using System.Linq;
 using System;
 using UniRx;
 
-public class PlayerController : ControllerBase, TouchController.ITouchUpdate
+public class PlayerController : ControllerBase
 {
     [SerializeField] private Player _playerPrefab;
 
@@ -33,38 +33,9 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
         _gameMode.OnRecvMoveCB      += OnRecvMove;
         _gameMode.OnRecvStopMoveCB  += OnRecvStopMove;
         _gameMode.OnRecvDeadCB      += OnRecvDead;
+        _gameMode.OnRecvAttackCB    += OnRecvAttack;
     }
 
-
-    //----------------
-    // overrides
-    //----------------
-
-    public void OnTouchUpdate(TouchController.ETouchCommand inCommand, Vector2[] inTouchPos, Collider2D inCollider2D = null)
-    {
-        switch (inCommand)
-        {
-            case TouchController.ETouchCommand.WORLD_MAP_TOUCH:
-
-                var worldMap = inCollider2D.GetComponent<WorldMap>();
-
-                if (worldMap != null)
-                {
-                    var touchPos = inTouchPos.FirstOrDefault();
-                    var endPos = _cameraController.MainCamera.ScreenToWorldPoint(touchPos);
-
-                    // MoveMeAuto(worldMap, endPos);
-                }
-
-                break;
-
-            case TouchController.ETouchCommand.PLAYER_TOUCH:
-
-                var player = inCollider2D.GetComponent<Player>();
-
-                break;
-        }
-    }
 
 
     //-----------------
@@ -95,12 +66,12 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
         {
             var inst = Instantiate(_playerPrefab, transform);
 
-            inst.Init(entity.playerId, spawnObj.GetSpawnWorldPos(idx++));
+            inst.Init(entity.playerId, entity.stat, spawnObj.GetSpawnWorldPos(idx++));
 
             if (ServerData.Instance.UserData.user_id == entity.userId)
             {
                 Self = inst;
-                inst.SetSelf(entity.stat.detectRange, entity.stat.attackRange);
+                inst.SetSelf();
             }
 
             _playerDict.Add(entity.playerId, inst);
@@ -108,6 +79,7 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
 
         _cameraController.FollowingTarget(Self.transform);
     }
+
 
 
     /// <summary>
@@ -152,7 +124,7 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
         SetIdleState(Self,
                      Self.GetPos(),
                      Self.GetDir(),
-                     GameMode.Instance.EntitySelf.stat.speed);
+                     GameMode.Instance.EntitySelf.stat.moveSpeed);
 
         // 타겟이 있는지 감지
         DetectTargetSelf();
@@ -168,7 +140,7 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
 
         if (Self.CanAttack(target.GetPos()) == true)
         {
-            OnAttackSelf(target, 10);
+            OnAttackSelf(target);
         }
         else
         {
@@ -191,7 +163,7 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
             
             followDoneCallback = () =>
             {
-                OnAttackSelf(inTarget, 10);
+                OnAttackSelf(inTarget);
             }
         };
 
@@ -199,32 +171,36 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
     }
 
 
-    public void OnAttackSelf(EntityObject inTarget, int inDamageVal)
+    public void OnAttackSelf(EntityObject inTarget)
     {
-        _gameMode.OnSendAttack(true, inTarget.targetId, Self.targetId, 10);
+        // 상대방의 방어력도 고려한다.
+        var selfAttactValue = Self.Stat.GetAttackValue();
+        var damagedVal = inTarget.Stat.GetDamagedValue(selfAttactValue);
+
+        _gameMode.OnSendAttack(true, inTarget.targetId, Self.targetId, damagedVal);
 
         var attackParam = new AttackParam()
         {
-            attackValue = inDamageVal,
+            attackValue = damagedVal,
             target = inTarget,
         };
 
         Self.ChangeState(EntityObject.EStatus.ATTACK, attackParam);
 
-        _attackDelay = Observable.Timer(TimeSpan.FromSeconds(1))
+        _attackDelay = Observable.Timer(TimeSpan.FromSeconds(Self.Stat.attackSpeed))
                                         .Subscribe(_ =>
         {
             
             // 이미 상대가 죽었다면
             if(inTarget.Status == EntityObject.EStatus.DEAD)
             {
-                // 다시 상대방을 감지하고 찾아라.
+                // 다른 상대방을 감지하고 찾아라.
                 DetectTargetSelf();
             }
             // 공격이 가능하다면 다시 공격.
             else if(Self.CanAttack(inTarget.GetPos()) == true)
             {
-                OnAttackSelf(inTarget, 10);
+                OnAttackSelf(inTarget);
             }
             // 아니라면, 다시 추격해라.
             else
@@ -250,7 +226,7 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
             speed = speed,
         };
 
-        inTarget.ChangeState(Player.EStatus.MOVE, moveParam);
+        inTarget.ChangeState(EntityObject.EStatus.MOVE, moveParam);
     }
 
 
@@ -264,8 +240,9 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
             speed = inSpeed,
         };
 
-        inTarget.ChangeState(Player.EStatus.IDLE, idleParam);
+        inTarget.ChangeState(EntityObject.EStatus.IDLE, idleParam);
     }
+
 
     public void SetDeadState(Player inTarget)
     {
@@ -274,7 +251,19 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
 
         };
 
-        inTarget.ChangeState(Player.EStatus.DEAD, deadParam);
+        inTarget.ChangeState(EntityObject.EStatus.DEAD, deadParam);
+    }
+
+
+    public void SetAttackState(Player inToId, Player inFromId, int inDamageVal)
+    {
+        var attackParam = new AttackParam()
+        {
+            attackValue = inDamageVal,
+            target = inToId,
+        };
+
+        inFromId.ChangeState(EntityObject.EStatus.ATTACK, attackParam);
     }
 
 
@@ -287,9 +276,9 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
         var player = GetPlayer(inEntity.playerId);
 
         SetMoveState(player,
-             inEntity.pos.ConvertUnityVector3(),
-             inEntity.dir.ConvertUnityVector3(),
-             inEntity.stat.speed);
+                     inEntity.pos.ConvertUnityVector3(),
+                     inEntity.dir.ConvertUnityVector3(),
+                     inEntity.stat.moveSpeed);
     }
 
 
@@ -298,22 +287,26 @@ public class PlayerController : ControllerBase, TouchController.ITouchUpdate
         var player = GetPlayer(inEntity.playerId);
 
         SetIdleState(player,
-            inEntity.pos.ConvertUnityVector3(),
-            inEntity.dir.ConvertUnityVector3(),
-            inEntity.stat.speed);
+                     inEntity.pos.ConvertUnityVector3(),
+                     inEntity.dir.ConvertUnityVector3(),
+                     inEntity.stat.moveSpeed);
     }
 
 
-    public void OnRecvAttack(PlayerEntity inEntity)
+    public void OnRecvDead(S_Dead inEntity)
     {
-        var player = GetPlayer(inEntity.playerId);
-
-    }
-
-    public void OnRecvDead(PlayerEntity inEntity)
-    {
-        var player = GetPlayer(inEntity.playerId);
+        var player = GetPlayer(inEntity.toId);
 
         SetDeadState(player);
     }
+
+
+    public void OnRecvAttack(CS_Attack inPacket)
+    {
+        var toPlayer   = GetPlayer(inPacket.toId);
+        var fromPlayer = GetPlayer(inPacket.fromId);
+
+        SetAttackState(toPlayer, fromPlayer, inPacket.damageValue);
+    }
+
 }

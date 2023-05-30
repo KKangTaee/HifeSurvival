@@ -24,8 +24,13 @@ public abstract class EntityObject : MonoBehaviour
 
     [SerializeField] protected MoveMachine _moveMachine;
 
+    private IState _state;
+    protected Dictionary<EStatus, IState> _stateMachine;
+
     public int targetId     { get; protected set; }
     public EStatus Status   { get; protected set; }
+    public EntityStat Stat  { get; protected set; }
+
 
     public void SetPos(in Vector3 inPos)
     {
@@ -42,30 +47,41 @@ public abstract class EntityObject : MonoBehaviour
         return _moveMachine.CurrDir;
     }
 
+    public void ChangeState<P>(EStatus inStatus, in P inParam = default) where P : struct
+    {
+        // 같은 상태가 다시 돌아왔다는 것은, 파라미터만 넘겨주는 상황일 수 있다.
+        if (Status == inStatus)
+        {
+            _state.Update(this, inParam);
+        }
+        else
+        {
+            _state?.Exit();
 
+            Status = inStatus;
+
+            _state = _stateMachine[Status];
+
+            _state?.Enter(this, inParam);
+        }
+    }
 }
 
 
 
 public class Player : EntityObject
 {
-    [SerializeField] private HeroAnimator _anim;
-    [SerializeField] private PlayerUI _playerUI;
+    [SerializeField] private HeroAnimator   _anim;
+    [SerializeField] private PlayerUI       _playerUI;
     [SerializeField] private TriggerMachine _playerTrigger;
     [SerializeField] private TriggerMachine _detectTrigger;
-    [SerializeField] private GameObject _detectRange;
+
+    [SerializeField] private GameObject     _detectRange;
 
     private WorldMap _worldMap;
 
-    private HashSet<EntityObject> _targetSet;
+    private HashSet<EntityObject>       _targetSet;
 
-    private float _attackRange = 0;
-
-    private IState _state;
-
-    private Dictionary<EStatus, IState> _stateMachine;
-
-    
     public bool IsSelf { get; private set; }
 
 
@@ -89,6 +105,7 @@ public class Player : EntityObject
         _targetSet = new HashSet<EntityObject>();
     }
 
+
     private void Start()
     {
         _anim.PlayAnimation(HeroAnimator.AnimKey.KEY_IDLE);
@@ -99,7 +116,7 @@ public class Player : EntityObject
     // functions
     //-----------------
 
-    public void Init(int inPlayerId, in Vector3 inPos)
+    public void Init(int inPlayerId, EntityStat inStat, in Vector3 inPos)
     {
         targetId = inPlayerId;
 
@@ -113,20 +130,19 @@ public class Player : EntityObject
 
         _detectRange?.SetActive(false);
 
-        _playerUI.Init(500);
+        _playerUI.Init(Stat.hp);
     }
 
 
-    public void SetSelf(int inDetectRange, float inAttackRange)
+    public void SetSelf()
     {
         IsSelf = true;
 
         SetTrigger();
 
-        _attackRange = inAttackRange;
-
         _playerTrigger.tag = TagName.PLAEYR_SELF;
         _detectTrigger.tag = TagName.DETECT_SELF;
+
         _playerTrigger.gameObject.layer = LayerMask.NameToLayer(LayerName.PLAYER_SELF);
         _detectTrigger.gameObject.layer = LayerMask.NameToLayer(LayerName.DETECT_SELF);
 
@@ -207,11 +223,13 @@ public class Player : EntityObject
             doneCallback);
     }
 
+
     public void OnIdle(in Vector3 inPos, in Vector3 inDir = default)
     {
         _anim.OnIdle();
         _moveMachine.MoveStop(inPos);
     }
+
 
     public void OnFollowTarget(EntityObject inTarget, Action doneCallback)
     {
@@ -229,26 +247,30 @@ public class Player : EntityObject
         );
     }
 
+
     public void OnAttack()
     {
         _anim.OnAttack();
         _moveMachine.MoveStop(GetPos());
     }
 
+
     public void OnDamaged(int inDamageValue)
     {
         _playerUI.DecreaseHP(inDamageValue);
     }
 
+
     public void OnDead()
     {
-        OnDamaged(100000);
+        OnDamaged(Stat.hp);
         _anim.OnDead();
     }
 
+
     public bool CanAttack(in Vector3 inPos)
     {
-        return Vector3.Distance(inPos, transform.position) < _attackRange;
+        return Vector3.Distance(inPos, transform.position) < Stat.attackRange;
     }
 
 
@@ -272,26 +294,6 @@ public class Player : EntityObject
 
         return result;
     }
-
-
-    public void ChangeState<P>(EStatus inStatus, in P inParam = default) where P : struct
-    {
-        // 같은 상태가 다시 돌아왔다는 것은, 파라미터만 넘겨주는 상황일 수 있다.
-        if (Status == inStatus)
-        {
-            _state.Update(this, inParam);
-        }
-        else
-        {
-            _state?.Exit();
-
-            Status = inStatus;
-
-            _state = _stateMachine[Status];
-
-            _state?.Enter(this, inParam);
-        }
-    }
 }
 
 
@@ -304,12 +306,13 @@ public interface IState
     void Exit();
 }
 
+
 public class IdleState : IState
 {
     public void Enter<P>(EntityObject inSelf, in P inParam) where P : struct
     {
         if (inParam is IdleParam idle &&
-            inSelf is Player player)
+           inSelf is Player player)
         {
             if (idle.isSelf == false)
             {
@@ -340,18 +343,18 @@ public class MoveState : IState
 {
     public void Enter<P>(EntityObject inSelf, in P inParam) where P : struct
     {
-        if (inParam is MoveParam move && inSelf is Player player)
+        if (inParam is MoveParam move && inSelf is Player self)
         {
-            if (player.IsSelf == false)
+            if (self.IsSelf == false)
             {
-                player.OnMoveLerp(move.pos, move.speed, () =>
+                self.OnMoveLerp(move.pos, move.speed, () =>
                 {
-                    player.OnMove(move.dir, move.speed);
+                    self.OnMove(move.dir, move.speed);
                 });
             }
             else
             {
-                player.OnMove(move.dir, move.speed);
+                self.OnMove(move.dir, move.speed);
             }
 
         }
@@ -377,9 +380,9 @@ public class FollowTargetState : IState
     public void Enter<P>(EntityObject inSelf, in P inParam) where P : struct
     {
         if (inParam is FollowTargetParam followTarget &&
-           inSelf is Player player)
+            inSelf is Player self)
         {
-            player.OnFollowTarget(followTarget.target, followTarget.followDoneCallback);
+            self.OnFollowTarget(followTarget.target, followTarget.followDoneCallback);
         }
     }
 
@@ -432,16 +435,18 @@ public class DeadState : IState
         if(inSelf is Player self && inParam is DeadParam dead)
         {
             // TODO@taeho.kang 나중에 처리.
-
+            self.OnDead();
         }
     }
 
     public void Exit()
     {
+
     }
 
     public void Update<P>(EntityObject inSelf, in P inParam) where P : struct
     {
+
     }
 }
 

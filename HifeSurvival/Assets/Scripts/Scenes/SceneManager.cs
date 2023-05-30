@@ -189,7 +189,4 @@ public class SceneManager
 
         _sceneLoading.gameObject.SetActive(false);
     }
-
-
-    
 }

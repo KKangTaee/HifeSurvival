@@ -63,7 +63,7 @@ public class TitleMain : MonoBehaviour
 
     private async void GoToLobby()
     {
-        await Task.Delay(3000);
+        await Task.Delay(1000);
 
         await SceneManager.Instance.ChangeScene(SceneManager.SCENE_NAME_LOBBY);
     }
@@ -90,7 +90,6 @@ public class TitleMain : MonoBehaviour
         // 1. 서버 스태틱 데이터 로드(테스트)
         await StaticData.Instance.Init();
         
-
         return true;
     }
 

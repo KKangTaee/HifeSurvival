@@ -17,6 +17,8 @@ public class TagName
 public class LayerName
 {
     public const string PLAYER_OTHER    = "Player_Other";
+
     public const string PLAYER_SELF     = "Player_Self";
+    
     public const string DETECT_SELF     = "Detect_Self";
 }

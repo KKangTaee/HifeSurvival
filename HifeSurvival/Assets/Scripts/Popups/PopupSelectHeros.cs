@@ -115,6 +115,7 @@ public class PopupSelectHeros : PopupBase
         OnClickSelectButton(hero);
     }
 
+
     public void SetHeroInfo(StaticData.Heros inData)
     {
         TMP_name.text = inData.name;
@@ -125,9 +126,9 @@ public class PopupSelectHeros : PopupBase
 
         TMP_def.text = inData.def.ToString();
 
-        TMP_dex.text = inData.dex.ToString();
-
         TMP_hp.text = inData.hp.ToString();
+
+        // TMP_dex.text = inData.dex.ToString();
     }
 
 

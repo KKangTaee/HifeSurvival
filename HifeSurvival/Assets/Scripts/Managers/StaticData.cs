@@ -37,8 +37,8 @@ public class StaticData
     // Static Datas
     //------------------
 
-    public Dictionary<string, Heros> HeroDic { get; private set; }
-    public Dictionary<string, Systems> SystemsDic { get; private set; }
+    public Dictionary<string, Heros>    HeroDic { get; private set; }
+    public Dictionary<string, Systems>  SystemsDic { get; private set; }
 
     public async UniTask Init()
     {
@@ -100,26 +100,6 @@ public class StaticData
 
 
         await waiter.Wait();
-    }
-
-
-    [System.Serializable]
-    public class Heros
-    {
-        public int id;
-        public string name;
-        public int str;
-        public int def;
-        public int dex;
-        public int hp;
-        public string desc;
-    }
-
-    [System.Serializable]
-    public class Systems
-    {
-        public string key;
-        public string value;
     }
 
 
@@ -222,11 +202,6 @@ public class StaticData
             return resultDictionary;
         }
 
-        // private static List<List<string>> JsonToRawData(string jsonString)
-        // {
-        //     SheetData sheetJson = JsonUtility.FromJson<SheetData>(jsonString);
-        //     return sheetJson.values;
-        // }
 
         private static List<List<string>> JsonToRawData(string jsonString)
         {
@@ -246,5 +221,29 @@ public class StaticData
 
             return values;
         }
+    }
+
+
+    [System.Serializable]
+    public class Heros
+    {
+        public int id;
+        public string name;
+        public string desc;
+        public int str;
+        public int def;
+        public int hp;
+        public float attackSpeed;
+        public float moveSpeed;
+        public float detectRange;
+        public float attackRange;
+    }
+
+
+    [System.Serializable]
+    public class Systems
+    {
+        public string key;
+        public string value;
     }
 }

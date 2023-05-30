@@ -154,7 +154,7 @@ namespace Server
         {
             S_StartGame gameStart = new S_StartGame();
 
-            gameStart.playerList = SetupPlayer();
+            gameStart.playerList  = SetupPlayer();
             gameStart.monsterList = SetupMonster();
 
             _broadcaster.Broadcast(gameStart);
@@ -213,7 +213,7 @@ namespace Server
                     {
                         S_Dead dead = new S_Dead()
                         {
-                            targetId = inPacket.toId,
+                            toId = inPacket.toId,
                             respawnTime = 15,
                         };
 

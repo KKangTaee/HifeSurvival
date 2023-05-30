@@ -78,7 +78,9 @@
 	</packet>
 
 	<packet name ="S_Dead">
-		<int name ="targetId"/>
+		<int name ="toId"/>
+		<int name ="fromId"/>
+		<bool name ="toIdIsPlayer"/>
 		<int name ="respawnTime"/>
 	</packet>
 

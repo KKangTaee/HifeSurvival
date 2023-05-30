@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UniRx.Async;
 
+
 public class IngameMain : MonoBehaviour
 {
-    [SerializeField] WorldMap _worldMap;
+    [SerializeField] WorldMap   _worldMap;
+
+    [SerializeField] IngameUI   _ingameUI;
 
     private void Awake()
     {
@@ -16,6 +19,8 @@ public class IngameMain : MonoBehaviour
     {
         // 월드맵
         _worldMap.Init();
+
+        _ingameUI.Init();
 
         // 컨트롤러
         await ControllerManager.Instance.InitAsync();

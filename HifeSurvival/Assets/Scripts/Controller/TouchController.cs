@@ -288,12 +288,12 @@ public class TouchController : ControllerBase
 
     public void UpdateTouch(TouchResult inResult)
     {
-
         Collider2D col = null;
 
         switch (inResult.state)
         {
             case ETouchState.DOWN:
+
                 break;
 
             case ETouchState.TOUCHING:
@@ -303,7 +303,6 @@ public class TouchController : ControllerBase
                     _eCommand = inResult.touchCount == 1 ? ETouchCommand.CAMERA_MOVE
                                                          : ETouchCommand.CAMERA_ZOOM;
                 }
-
 
                 break;
 
@@ -350,15 +349,6 @@ public class TouchController : ControllerBase
             case ETouchCommand.CAMERA_MOVE:
             case ETouchCommand.CAMERA_MOVE_DONE:
                 _cameraController.OnTouchUpdate(_eCommand, inResult.posArr);
-                break;
-
-            case ETouchCommand.WORLD_MAP_TOUCH:
-            case ETouchCommand.PLAYER_TOUCH:
-
-                if (col == null)
-                    return;
-
-                _playerController.OnTouchUpdate(_eCommand, inResult.posArr, col);
                 break;
         }
     }

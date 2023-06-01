@@ -74,8 +74,9 @@ class PacketHandler
         GameMode.Instance.OnRecvDead(dead);
     }
 
-    internal static void S_RespawnHandler(PacketSession arg1, IPacket arg2)
+    internal static void S_RespawnHandler(PacketSession session, IPacket packet)
     {
-        throw new NotImplementedException();
+        S_Respawn respawn = packet as S_Respawn;
+        GameMode.Instance.OnRecvRespawn(respawn);
     }
 }

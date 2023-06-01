@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class StateMachine<T> where T : EntityObject
 {
@@ -32,4 +33,44 @@ public class StateMachine<T> where T : EntityObject
             _state?.Enter(inSelf, inParam);
         }
     }
+}
+
+
+public struct MoveParam
+{
+    public float speed;
+    public Vector3 pos;
+    public Vector3 dir;
+}
+
+
+public struct IdleParam
+{
+    public float speed;
+    public Vector3 pos;
+    public Vector3 dir;
+    public bool isSelf;
+}
+
+
+public struct AttackParam
+{
+    public int attackValue;
+    public EntityObject target;
+
+    public Action<bool> attackDoneCallback;
+}
+
+
+public struct FollowTargetParam
+{
+    public EntityObject target;
+    public Action<Vector3> followDirCallback;
+    public Action followDoneCallback;
+}
+
+
+public struct DeadParam
+{
+    
 }

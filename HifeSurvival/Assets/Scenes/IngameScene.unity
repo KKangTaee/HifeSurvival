@@ -147,6 +147,10 @@ PrefabInstance:
       value: -6.79
       objectReference: {fileID: 0}
     - target: {fileID: 3099317941794717642, guid: 430b0b92c42347a4db4c95daa98f3f8d, type: 3}
+      propertyPath: m_ColliderPaths.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3099317941794717642, guid: 430b0b92c42347a4db4c95daa98f3f8d, type: 3}
       propertyPath: m_CompositePaths.m_Paths.Array.data[0].Array.size
       value: 54
       objectReference: {fileID: 0}
@@ -5641,6 +5645,10 @@ PrefabInstance:
     - target: {fileID: 3099317941794717642, guid: 430b0b92c42347a4db4c95daa98f3f8d, type: 3}
       propertyPath: m_ColliderPaths.Array.data[0].m_ColliderPaths.Array.data[3].Array.data[120].Y
       value: -69881352
+      objectReference: {fileID: 0}
+    - target: {fileID: 3286366472600435045, guid: 430b0b92c42347a4db4c95daa98f3f8d, type: 3}
+      propertyPath: m_ColliderPaths.Array.size
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3286366472600435045, guid: 430b0b92c42347a4db4c95daa98f3f8d, type: 3}
       propertyPath: m_CompositePaths.m_Paths.Array.size
@@ -29430,6 +29438,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: WorldMap
       objectReference: {fileID: 0}
+    - target: {fileID: 7710224704415212826, guid: 430b0b92c42347a4db4c95daa98f3f8d, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 9116529485560753171, guid: 430b0b92c42347a4db4c95daa98f3f8d, type: 3}
       propertyPath: m_LocalPosition.x
       value: -13.22
@@ -29770,9 +29782,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1602945739585766089, guid: dde1399c2a84140aab39d4df593c1c4c, type: 3}
+      propertyPath: m_RenderMode
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1602945739585766092, guid: dde1399c2a84140aab39d4df593c1c4c, type: 3}
       propertyPath: m_Name
       value: IngameUI
+      objectReference: {fileID: 0}
+    - target: {fileID: 1602945739585766092, guid: dde1399c2a84140aab39d4df593c1c4c, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dde1399c2a84140aab39d4df593c1c4c, type: 3}

@@ -25,12 +25,12 @@ public class GameMode
     private Action<int> _onRecvCountdownCB;
     private Action _onRecvStartGameCB;
 
-    public event Action<PlayerEntity> OnRecvMoveCB;
-    public event Action<PlayerEntity> OnRecvStopMoveCB;
+    public event Action<PlayerEntity>   OnRecvMoveCB;
+    public event Action<PlayerEntity>   OnRecvStopMoveCB;
 
-    public event Action<S_Dead> OnRecvDeadCB;
-    public event Action<CS_Attack> OnRecvAttackCB;
-
+    public event Action<S_Dead>         OnRecvDeadCB;
+    public event Action<CS_Attack>      OnRecvAttackCB;
+    public event Action<PlayerEntity>   OnRecvRespawnCB;
 
     public PlayerEntity EntitySelf { get; private set; }
     public int RoomId { get; private set; }
@@ -84,13 +84,21 @@ public class GameMode
         if (PlayerEntitysDic.ContainsKey(joinPlayer.playerId) == true)
             return;
 
+
+        if (StaticData.Instance.HeroDic.TryGetValue(joinPlayer.heroId.ToString(), out var heros) == false)
+        {
+            Debug.LogError("heros static data is null or empty!");
+            return;
+        }
+
+
         PlayerEntity entity = new PlayerEntity()
         {
-            userId = joinPlayer.userId,
+            userId   = joinPlayer.userId,
             userName = joinPlayer.userName,
             targetId = joinPlayer.playerId,
-            heroId = joinPlayer.heroId,
-            stat = new EntityStat(StaticData.Instance.HeroDic[joinPlayer.heroId.ToString()]),
+            heroId   = joinPlayer.heroId,
+            stat = new EntityStat(heros),
         };
 
         // 내 자신일 경우 캐싱처리한다
@@ -124,7 +132,7 @@ public class GameMode
 
         OnSendJoinToGame();
 
-        var waitResult = await _joinCompleted.Wait(10000);
+        var waitResult = await _joinCompleted.Wait(7000);
 
         if (waitResult.isSuccess == false)
             return false;
@@ -179,8 +187,6 @@ public class GameMode
 
     public void OnSendAttack(bool toIdIsPlayer, int toId, int fromId, int damageValue)
     {
-
-        Debug.Log($"Send Value : {damageValue}");
         CS_Attack attack = new CS_Attack()
         {
             toIdIsPlayer = toIdIsPlayer,
@@ -348,7 +354,6 @@ public class GameMode
         {
             if (PlayerEntitysDic.TryGetValue(inPacket.toId, out var player) == true)
             {
-                Debug.Log($"Recv Value : {inPacket.damageValue}");
                 player.stat.AddHp(-inPacket.damageValue);
 
                 if(IsSelf(inPacket.fromId) == false)
@@ -384,7 +389,9 @@ public class GameMode
             if (player == null)
                 return;
 
-            // TODO@taeho.kang 리스폰처리
+            player.pos = inPacket.pos;
+
+            OnRecvRespawnCB?.Invoke(player);       
         }
         else
         {

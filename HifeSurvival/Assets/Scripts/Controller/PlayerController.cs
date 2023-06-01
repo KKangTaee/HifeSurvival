@@ -38,6 +38,7 @@ public class PlayerController : ControllerBase
         _gameMode.OnRecvStopMoveCB  += OnRecvStopMove;
         _gameMode.OnRecvDeadCB      += OnRecvDead;
         _gameMode.OnRecvAttackCB    += OnRecvAttack;
+        _gameMode.OnRecvRespawnCB   += OnRecvRespawn;
     }
 
 
@@ -311,5 +312,15 @@ public class PlayerController : ControllerBase
         SetAttackState(toPlayer, fromPlayer, inPacket.damageValue);
     }
 
+    public void OnRecvRespawn(PlayerEntity inEntity)
+    {
+        var player = GetPlayer(inEntity.targetId);
+        
+        player.Init(inEntity.targetId, 
+                    inEntity.stat, 
+                    inEntity.pos.ConvertUnityVector3());
 
+        if(inEntity.userId == ServerData.Instance.UserData.user_id)
+            player.SetSelf();
+    }
 }

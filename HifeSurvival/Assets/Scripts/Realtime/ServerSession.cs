@@ -31,6 +31,6 @@ public class ServerSession : PacketSession
 
 	public override void OnSend(int numOfBytes)
 	{
-		Debug.Log($"바이트 호출 완료 Transferred bytes: {numOfBytes}");
+		// Debug.Log($"바이트 호출 완료 Transferred bytes: {numOfBytes}");
 	}
 }

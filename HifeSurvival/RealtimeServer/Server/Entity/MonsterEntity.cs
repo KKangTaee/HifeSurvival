@@ -190,7 +190,10 @@ namespace Server
                     else
                     {
                         // 이동방향을 구한다.
-                        inSelf.OnMoveAndBroadcast(inOther.pos, UPDATE_TIME * 0.001f);
+
+                        var newDir = inOther.pos.SubtractVec3(inSelf.pos).NormalizeVec3();
+                      
+                        inSelf.OnMoveAndBroadcast(newDir, UPDATE_TIME * 0.001f);
                         JobTimer.Instance.Push(() => { UpdateFollow(inSelf, inOther); }, UPDATE_TIME);
                     }
                 }

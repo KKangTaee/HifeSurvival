@@ -69,12 +69,9 @@ namespace Server
         }
 
 
-        public void OnMoveAndBroadcast(in Vec3 inEndPos, float deltaTime)
+        public void OnMoveAndBroadcast(in Vec3 inDir, float deltaTime)
         {
-            var newDir = inEndPos.SubtractVec3(pos).NormalizeVec3();
-            var addSpeed = newDir.MulitflyVec3(stat.moveSpeed * deltaTime);
-
-            dir = newDir;
+            var addSpeed = inDir.MulitflyVec3(stat.moveSpeed * deltaTime);            
             pos = pos.AddVec3(addSpeed);
 
             CS_Move move = new CS_Move()

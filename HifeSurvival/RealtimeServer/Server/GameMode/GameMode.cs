@@ -311,6 +311,7 @@ namespace Server
                 {
                     toId = inPacket.toId,
                     respawnTime = 15,
+                    toIdIsPlayer = toEntity.IsPlayer
                 };
 
                 var deadParam = new DeadParam()
@@ -320,6 +321,7 @@ namespace Server
                     {
                         OnSendRespawn(inPacket.toId);
                     },
+                    
                 };
                 
                 toEntity.OnDead(deadParam);

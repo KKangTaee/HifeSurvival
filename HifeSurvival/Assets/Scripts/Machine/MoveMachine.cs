@@ -168,13 +168,13 @@ public class MoveMachine : MonoBehaviour
         if (Reset(out lerpValue, out updateRatio, out distance, out currPos, out endPos) == false)
             yield break;
 
-        while(lerpValue < 1)
+
+        while(lerpValue / distance <= 1)
         {
-            // 강제 트리거를 호출했다면..? 그냥 나온다.
             if (_forceStopFunc?.Invoke() ?? false)
                 break;
 
-            // 마지막 위치가 변경됬다면..? 목적지가 동적으로 이동
+          
             if(endPos != _endPosFunc?.Invoke())
             {
                 if (Reset(out lerpValue, out updateRatio, out distance, out currPos, out endPos) == false)
@@ -186,13 +186,12 @@ public class MoveMachine : MonoBehaviour
 
             transform.position = Vector3.Lerp(currPos, endPos,  ratio);
 
-            // 지정된 타이밍에 호출
             if (updateRatio < ratio)
             {
                 _updateCallback?.Invoke(GetDir(endPos));
                 updateRatio += _updateRatio;
             }
-
+            
             yield return null;
         }
 
@@ -209,7 +208,7 @@ public class MoveMachine : MonoBehaviour
 
             inDistance = Vector3.Distance(inCurrPos, inEndPos);
 
-            return inCurrPos == inEndPos || inDistance < 0.1f;
+            return inCurrPos != inEndPos || inDistance < 0.1f;
         }
         #endregion
     }

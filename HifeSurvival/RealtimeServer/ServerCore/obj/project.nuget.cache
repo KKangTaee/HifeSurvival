@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Hfpg8QNASjXTDSwnrX7dJDEaCYb4nLIvn1iV3T5LQHXIET2y9sMCeYeigr6ngjWOU1LY0Wcu8EEn71kvc57bzw==",
+  "dgSpecHash": "C3x2WM5hWxSrKyvLwAs2MftVpDt58V+LK8E6QmR2KuKCYNew7xxtsuVK4ESFwyOWh/lD+1g1dKHPfB8kb2PmFQ==",
   "success": true,
-  "projectFilePath": "C:\\Projects\\Sample\\RealtimeServer\\ServerCore\\ServerCore.csproj",
+  "projectFilePath": "/Users/taehokang/Documents/GitHub/HifeSurvival/HifeSurvival/RealtimeServer/ServerCore/ServerCore.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

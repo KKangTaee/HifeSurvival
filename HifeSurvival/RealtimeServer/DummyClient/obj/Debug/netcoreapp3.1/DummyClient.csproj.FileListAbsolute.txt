@@ -32,37 +32,37 @@
 /Users/taehokang/Documents/GitHub/HifeSurvival/HifeSurvival/RealtimeServer/DummyClient/obj/Debug/netcoreapp3.1/DummyClient.dll
 /Users/taehokang/Documents/GitHub/HifeSurvival/HifeSurvival/RealtimeServer/DummyClient/obj/Debug/netcoreapp3.1/DummyClient.pdb
 /Users/taehokang/Documents/GitHub/HifeSurvival/HifeSurvival/RealtimeServer/DummyClient/obj/Debug/netcoreapp3.1/DummyClient.genruntimeconfig.cache
-C:\Users\user\Documents\카카오톡 받은 파일\RealtimeServer\RealtimeServer\DummyClient\bin\Debug\netcoreapp3.1\DummyClient.exe
-C:\Users\user\Documents\카카오톡 받은 파일\RealtimeServer\RealtimeServer\DummyClient\bin\Debug\netcoreapp3.1\DummyClient.deps.json
-C:\Users\user\Documents\카카오톡 받은 파일\RealtimeServer\RealtimeServer\DummyClient\bin\Debug\netcoreapp3.1\DummyClient.runtimeconfig.json
-C:\Users\user\Documents\카카오톡 받은 파일\RealtimeServer\RealtimeServer\DummyClient\bin\Debug\netcoreapp3.1\DummyClient.runtimeconfig.dev.json
-C:\Users\user\Documents\카카오톡 받은 파일\RealtimeServer\RealtimeServer\DummyClient\bin\Debug\netcoreapp3.1\DummyClient.dll
-C:\Users\user\Documents\카카오톡 받은 파일\RealtimeServer\RealtimeServer\DummyClient\bin\Debug\netcoreapp3.1\DummyClient.pdb
-C:\Users\user\Documents\카카오톡 받은 파일\RealtimeServer\RealtimeServer\DummyClient\bin\Debug\netcoreapp3.1\ServerCore.dll
-C:\Users\user\Documents\카카오톡 받은 파일\RealtimeServer\RealtimeServer\DummyClient\bin\Debug\netcoreapp3.1\ServerCore.pdb
-C:\Users\user\Documents\카카오톡 받은 파일\RealtimeServer\RealtimeServer\DummyClient\obj\Debug\netcoreapp3.1\DummyClient.csproj.AssemblyReference.cache
-C:\Users\user\Documents\카카오톡 받은 파일\RealtimeServer\RealtimeServer\DummyClient\obj\Debug\netcoreapp3.1\DummyClient.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\user\Documents\카카오톡 받은 파일\RealtimeServer\RealtimeServer\DummyClient\obj\Debug\netcoreapp3.1\DummyClient.AssemblyInfoInputs.cache
-C:\Users\user\Documents\카카오톡 받은 파일\RealtimeServer\RealtimeServer\DummyClient\obj\Debug\netcoreapp3.1\DummyClient.AssemblyInfo.cs
-C:\Users\user\Documents\카카오톡 받은 파일\RealtimeServer\RealtimeServer\DummyClient\obj\Debug\netcoreapp3.1\DummyClient.csproj.CoreCompileInputs.cache
-C:\Users\user\Documents\카카오톡 받은 파일\RealtimeServer\RealtimeServer\DummyClient\obj\Debug\netcoreapp3.1\DummyClient.csproj.CopyComplete
-C:\Users\user\Documents\카카오톡 받은 파일\RealtimeServer\RealtimeServer\DummyClient\obj\Debug\netcoreapp3.1\DummyClient.dll
-C:\Users\user\Documents\카카오톡 받은 파일\RealtimeServer\RealtimeServer\DummyClient\obj\Debug\netcoreapp3.1\DummyClient.pdb
-C:\Users\user\Documents\카카오톡 받은 파일\RealtimeServer\RealtimeServer\DummyClient\obj\Debug\netcoreapp3.1\DummyClient.genruntimeconfig.cache
-C:\Projects\Sample\RealtimeServer\DummyClient\bin\Debug\netcoreapp3.1\DummyClient.exe
-C:\Projects\Sample\RealtimeServer\DummyClient\bin\Debug\netcoreapp3.1\DummyClient.deps.json
-C:\Projects\Sample\RealtimeServer\DummyClient\bin\Debug\netcoreapp3.1\DummyClient.runtimeconfig.json
-C:\Projects\Sample\RealtimeServer\DummyClient\bin\Debug\netcoreapp3.1\DummyClient.runtimeconfig.dev.json
-C:\Projects\Sample\RealtimeServer\DummyClient\bin\Debug\netcoreapp3.1\DummyClient.dll
-C:\Projects\Sample\RealtimeServer\DummyClient\bin\Debug\netcoreapp3.1\DummyClient.pdb
-C:\Projects\Sample\RealtimeServer\DummyClient\bin\Debug\netcoreapp3.1\ServerCore.dll
-C:\Projects\Sample\RealtimeServer\DummyClient\bin\Debug\netcoreapp3.1\ServerCore.pdb
-C:\Projects\Sample\RealtimeServer\DummyClient\obj\Debug\netcoreapp3.1\DummyClient.csproj.AssemblyReference.cache
-C:\Projects\Sample\RealtimeServer\DummyClient\obj\Debug\netcoreapp3.1\DummyClient.GeneratedMSBuildEditorConfig.editorconfig
-C:\Projects\Sample\RealtimeServer\DummyClient\obj\Debug\netcoreapp3.1\DummyClient.AssemblyInfoInputs.cache
-C:\Projects\Sample\RealtimeServer\DummyClient\obj\Debug\netcoreapp3.1\DummyClient.AssemblyInfo.cs
-C:\Projects\Sample\RealtimeServer\DummyClient\obj\Debug\netcoreapp3.1\DummyClient.csproj.CoreCompileInputs.cache
-C:\Projects\Sample\RealtimeServer\DummyClient\obj\Debug\netcoreapp3.1\DummyClient.csproj.CopyComplete
-C:\Projects\Sample\RealtimeServer\DummyClient\obj\Debug\netcoreapp3.1\DummyClient.dll
-C:\Projects\Sample\RealtimeServer\DummyClient\obj\Debug\netcoreapp3.1\DummyClient.pdb
-C:\Projects\Sample\RealtimeServer\DummyClient\obj\Debug\netcoreapp3.1\DummyClient.genruntimeconfig.cache
+C:/Users/user/Documents/카카오톡 받은 파일/RealtimeServer/RealtimeServer/DummyClient/bin/Debug/netcoreapp3.1/DummyClient.exe
+C:/Users/user/Documents/카카오톡 받은 파일/RealtimeServer/RealtimeServer/DummyClient/bin/Debug/netcoreapp3.1/DummyClient.deps.json
+C:/Users/user/Documents/카카오톡 받은 파일/RealtimeServer/RealtimeServer/DummyClient/bin/Debug/netcoreapp3.1/DummyClient.runtimeconfig.json
+C:/Users/user/Documents/카카오톡 받은 파일/RealtimeServer/RealtimeServer/DummyClient/bin/Debug/netcoreapp3.1/DummyClient.runtimeconfig.dev.json
+C:/Users/user/Documents/카카오톡 받은 파일/RealtimeServer/RealtimeServer/DummyClient/bin/Debug/netcoreapp3.1/DummyClient.dll
+C:/Users/user/Documents/카카오톡 받은 파일/RealtimeServer/RealtimeServer/DummyClient/bin/Debug/netcoreapp3.1/DummyClient.pdb
+C:/Users/user/Documents/카카오톡 받은 파일/RealtimeServer/RealtimeServer/DummyClient/bin/Debug/netcoreapp3.1/ServerCore.dll
+C:/Users/user/Documents/카카오톡 받은 파일/RealtimeServer/RealtimeServer/DummyClient/bin/Debug/netcoreapp3.1/ServerCore.pdb
+C:/Users/user/Documents/카카오톡 받은 파일/RealtimeServer/RealtimeServer/DummyClient/obj/Debug/netcoreapp3.1/DummyClient.csproj.AssemblyReference.cache
+C:/Users/user/Documents/카카오톡 받은 파일/RealtimeServer/RealtimeServer/DummyClient/obj/Debug/netcoreapp3.1/DummyClient.GeneratedMSBuildEditorConfig.editorconfig
+C:/Users/user/Documents/카카오톡 받은 파일/RealtimeServer/RealtimeServer/DummyClient/obj/Debug/netcoreapp3.1/DummyClient.AssemblyInfoInputs.cache
+C:/Users/user/Documents/카카오톡 받은 파일/RealtimeServer/RealtimeServer/DummyClient/obj/Debug/netcoreapp3.1/DummyClient.AssemblyInfo.cs
+C:/Users/user/Documents/카카오톡 받은 파일/RealtimeServer/RealtimeServer/DummyClient/obj/Debug/netcoreapp3.1/DummyClient.csproj.CoreCompileInputs.cache
+C:/Users/user/Documents/카카오톡 받은 파일/RealtimeServer/RealtimeServer/DummyClient/obj/Debug/netcoreapp3.1/DummyClient.csproj.CopyComplete
+C:/Users/user/Documents/카카오톡 받은 파일/RealtimeServer/RealtimeServer/DummyClient/obj/Debug/netcoreapp3.1/DummyClient.dll
+C:/Users/user/Documents/카카오톡 받은 파일/RealtimeServer/RealtimeServer/DummyClient/obj/Debug/netcoreapp3.1/DummyClient.pdb
+C:/Users/user/Documents/카카오톡 받은 파일/RealtimeServer/RealtimeServer/DummyClient/obj/Debug/netcoreapp3.1/DummyClient.genruntimeconfig.cache
+C:/Projects/Sample/RealtimeServer/DummyClient/bin/Debug/netcoreapp3.1/DummyClient.exe
+C:/Projects/Sample/RealtimeServer/DummyClient/bin/Debug/netcoreapp3.1/DummyClient.deps.json
+C:/Projects/Sample/RealtimeServer/DummyClient/bin/Debug/netcoreapp3.1/DummyClient.runtimeconfig.json
+C:/Projects/Sample/RealtimeServer/DummyClient/bin/Debug/netcoreapp3.1/DummyClient.runtimeconfig.dev.json
+C:/Projects/Sample/RealtimeServer/DummyClient/bin/Debug/netcoreapp3.1/DummyClient.dll
+C:/Projects/Sample/RealtimeServer/DummyClient/bin/Debug/netcoreapp3.1/DummyClient.pdb
+C:/Projects/Sample/RealtimeServer/DummyClient/bin/Debug/netcoreapp3.1/ServerCore.dll
+C:/Projects/Sample/RealtimeServer/DummyClient/bin/Debug/netcoreapp3.1/ServerCore.pdb
+C:/Projects/Sample/RealtimeServer/DummyClient/obj/Debug/netcoreapp3.1/DummyClient.csproj.AssemblyReference.cache
+C:/Projects/Sample/RealtimeServer/DummyClient/obj/Debug/netcoreapp3.1/DummyClient.GeneratedMSBuildEditorConfig.editorconfig
+C:/Projects/Sample/RealtimeServer/DummyClient/obj/Debug/netcoreapp3.1/DummyClient.AssemblyInfoInputs.cache
+C:/Projects/Sample/RealtimeServer/DummyClient/obj/Debug/netcoreapp3.1/DummyClient.AssemblyInfo.cs
+C:/Projects/Sample/RealtimeServer/DummyClient/obj/Debug/netcoreapp3.1/DummyClient.csproj.CoreCompileInputs.cache
+C:/Projects/Sample/RealtimeServer/DummyClient/obj/Debug/netcoreapp3.1/DummyClient.csproj.CopyComplete
+C:/Projects/Sample/RealtimeServer/DummyClient/obj/Debug/netcoreapp3.1/DummyClient.dll
+C:/Projects/Sample/RealtimeServer/DummyClient/obj/Debug/netcoreapp3.1/DummyClient.pdb
+C:/Projects/Sample/RealtimeServer/DummyClient/obj/Debug/netcoreapp3.1/DummyClient.genruntimeconfig.cache

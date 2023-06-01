@@ -73,17 +73,14 @@ namespace Server
         {
             public void Enter<P>(PlayerEntity inSelf, in P inParam = default) where P : struct, IStateParam
             {
-                throw new NotImplementedException();
             }
 
             public void Exit<P>(PlayerEntity inSelf, in P inParam = default) where P : struct, IStateParam
             {
-                throw new NotImplementedException();
             }
 
             public void Update<P>(PlayerEntity inSelf, in P inParam = default) where P : struct, IStateParam
             {
-                throw new NotImplementedException();
             }
         }
 
@@ -137,12 +134,12 @@ namespace Server
 
             public void Update<P>(PlayerEntity inSelf, in P inParam = default) where P : struct, IStateParam
             {
-                _isRunning = false;
+                
             }
 
             public void Exit<P>(PlayerEntity inSelf, in P inParam = default) where P : struct, IStateParam
             {
-
+                _isRunning = false;
             }
 
             public void UpdateMove(PlayerEntity inSelf)
@@ -150,7 +147,6 @@ namespace Server
                 if (this != null && _isRunning == true && inSelf != null)
                 {
                     inSelf.OnMoveAndBroadcast(inSelf.dir, UPDATE_TIME * 0.001f);
-
                     JobTimer.Instance.Push(() => { UpdateMove(inSelf); }, UPDATE_TIME);
                 }
             }
@@ -187,12 +183,10 @@ namespace Server
 
             public void Exit<P>(PlayerEntity inSelf, in P inParam = default) where P : struct, IStateParam
             {
-                throw new NotImplementedException();
             }
 
             public void Update<P>(PlayerEntity inSelf, in P inParam = default) where P : struct, IStateParam
             {
-                throw new NotImplementedException();
             }
         }
     }

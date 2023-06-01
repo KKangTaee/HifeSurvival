@@ -108,7 +108,7 @@ public class Player : EntityObject
             if (inParam is IdleParam idleParam )
             {
                 if (inSelf.IsSelf == false)
-                    inSelf.OnMoveLerp(idleParam.pos, () => inSelf.OnIdle(idleParam.pos));
+                    inSelf.OnMoveLerp(idleParam.pos, idleParam.dir, () => inSelf.OnIdle(idleParam.pos));
 
                 else
                     inSelf.OnIdle(idleParam.pos);
@@ -151,7 +151,7 @@ public class Player : EntityObject
         public void Move(MoveParam inMoveParam, Player inPlayer)
         {
             if (inPlayer.IsSelf == false)
-                inPlayer.OnMoveLerp(inMoveParam.pos, () => inPlayer.OnMove(inMoveParam.dir));
+                inPlayer.OnMoveLerp(inMoveParam.pos, inMoveParam.dir, () => inPlayer.OnMove(inMoveParam.dir));
 
             else
                 inPlayer.OnMove(inMoveParam.dir);
@@ -300,10 +300,14 @@ public class Player : EntityObject
     }
 
 
-    public void OnMoveLerp(Vector3 inEndPos, Action doneCallback)
+    public void OnMoveLerp(Vector3 inEndPos, Vector3 inDir, Action doneCallback)
     {
+        SetPoint(inEndPos, Vector3.zero);
+
+        _anim.OnWalk(inDir);
+        
         MoveLerpEntity(() => inEndPos, 
-                       dir => _anim.OnWalk(dir), 
+                       dir => {  }, 
                        null, 
                        doneCallback);
     }

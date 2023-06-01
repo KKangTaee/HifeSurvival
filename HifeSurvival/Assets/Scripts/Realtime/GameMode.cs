@@ -179,6 +179,8 @@ public class GameMode
 
     public void OnSendAttack(bool toIdIsPlayer, int toId, int fromId, int damageValue)
     {
+
+        Debug.Log($"Send Value : {damageValue}");
         CS_Attack attack = new CS_Attack()
         {
             toIdIsPlayer = toIdIsPlayer,
@@ -346,6 +348,7 @@ public class GameMode
         {
             if (PlayerEntitysDic.TryGetValue(inPacket.toId, out var player) == true)
             {
+                Debug.Log($"Recv Value : {inPacket.damageValue}");
                 player.stat.AddHp(-inPacket.damageValue);
 
                 OnRecvAttackCB?.Invoke(inPacket);

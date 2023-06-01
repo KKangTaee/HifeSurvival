@@ -45,7 +45,7 @@ public abstract class EntityObject : MonoBehaviour
 
 
     //----------------
-    // ÀÌµ¿°ü·Ã
+    // ï¿½Ìµï¿½ï¿½ï¿½ï¿½ï¿½
     //----------------
 
     public void SetPos(in Vector3 inPos)
@@ -70,7 +70,7 @@ public abstract class EntityObject : MonoBehaviour
 
     public void MoveLerpEntity(Func<Vector3> inEndFunc, Action<Vector3> inDirCallback, Func<bool> inForceStopFunc, Action inDoneCallback)
     {
-        _moveMachine.MoveLerpV2(inSpeed: Stat.moveSpeed * 1.2f,
+        _moveMachine.MoveLerpV2(inSpeed: Stat.moveSpeed,
                                 inEndPosFunc: inEndFunc,
                                 inUpdateRatio: 0.25f,
                                 updateCallback: inDirCallback,

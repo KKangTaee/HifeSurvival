@@ -220,7 +220,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _joystickMachine: {fileID: 7071164923117599937}
-  _canvas: {fileID: 0}
+  _canvas: {fileID: 5481190898457135670}
 --- !u!114 &6248277473249327587
 MonoBehaviour:
   m_ObjectHideFlags: 0

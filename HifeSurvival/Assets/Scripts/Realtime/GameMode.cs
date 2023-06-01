@@ -351,7 +351,8 @@ public class GameMode
                 Debug.Log($"Recv Value : {inPacket.damageValue}");
                 player.stat.AddHp(-inPacket.damageValue);
 
-                OnRecvAttackCB?.Invoke(inPacket);
+                if(IsSelf(inPacket.fromId) == false)
+                   OnRecvAttackCB?.Invoke(inPacket);
             }
         }
         else

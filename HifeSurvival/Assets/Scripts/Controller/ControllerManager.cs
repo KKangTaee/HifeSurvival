@@ -24,7 +24,7 @@ public class ControllerManager
 
     public const string RESOURCES_PATH = "Prefabs/Controllers";
 
-    private Dictionary<Type, ControllerBase> _controllerDic = new Dictionary<Type, ControllerBase>();
+    private Dictionary<Type, ControllerBase> _controllerDict = new Dictionary<Type, ControllerBase>();
 
     public async UniTask InitAsync()
     {
@@ -37,8 +37,6 @@ public class ControllerManager
             nameof(PlayerController),
 
             nameof(JoystickController),
-
-            // nameof(AIController)
         };
 
 
@@ -61,24 +59,30 @@ public class ControllerManager
             inst.name = name;
 
             UnityEngine.Object.DontDestroyOnLoad(inst);
-            _controllerDic.Add(inst.GetType(), inst);
+
+            _controllerDict.Add(inst.GetType(), inst);
         }
+
+
+        // 초기화
+        foreach(var controller in _controllerDict.Values)
+            controller.Init();
     }
 
 
     public void Release()
     {
-        foreach (var pair in _controllerDic)
+        foreach (var pair in _controllerDict)
             UnityEngine.Object.Destroy(pair.Value);
 
-        _controllerDic.Clear();
+        _controllerDict.Clear();
         _instance = null;
     }
 
 
     public T GetController<T>() where T : ControllerBase
     {
-        if (_controllerDic.TryGetValue(typeof(T), out var value) == true)
+        if (_controllerDict.TryGetValue(typeof(T), out var value) == true)
         {
             return value is T controller ? controller : null;
         }

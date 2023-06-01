@@ -3,4 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public abstract class ControllerBase : MonoBehaviour {}
+public abstract class ControllerBase : MonoBehaviour 
+{
+    public abstract void Init();
+
+}

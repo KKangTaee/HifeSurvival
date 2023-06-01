@@ -18,7 +18,7 @@ public class LobbyMain : MonoBehaviour
 
     public async UniTask InitalizeAsync()
     {
-        TopHUD.Instance.Show();
+        // TopHUD.Instance.Show();
 
         // 개인 프로필 업데이트
         await _lobbyUI.SetProfile();

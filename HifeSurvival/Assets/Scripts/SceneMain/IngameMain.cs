@@ -17,13 +17,13 @@ public class IngameMain : MonoBehaviour
 
     public async UniTask Init()
     {
+        // 컨트롤러
+        await ControllerManager.Instance.InitAsync();
+
         // 월드맵
         _worldMap.Init();
 
         _ingameUI.Init();
-
-        // 컨트롤러
-        await ControllerManager.Instance.InitAsync();
 
         // 플레이어 로드
         ControllerManager.Instance.GetController<PlayerController>()?.LoadPlayer(_worldMap);

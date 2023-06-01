@@ -23,5 +23,10 @@ public class AIController : ControllerBase
     {
 
     }
+
+    public override void Init()
+    {
+        
+    }
 }
 

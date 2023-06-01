@@ -46,25 +46,28 @@ public class CameraController : ControllerBase, TouchController.ITouchUpdate
     public Camera   MainCamera { get => _main; }
 
 
-
-
     //-----------------
     // unity events
     //-----------------
 
-    private void Awake()
+
+    private void Update()
+    {
+        UpdateCamera();
+    }
+
+
+    //----------------
+    // override
+    //----------------
+    
+    public override void Init()
     {
         _main = Camera.main;
         _main.clearStencilAfterLightingPass = true;
 
         _prevPos = INVALIED_VECTOR_VALUE;
         _moveDir = INVALIED_VECTOR_VALUE;
-    }
-
-
-    private void Update()
-    {
-        UpdateCamera();
     }
 
 
@@ -176,4 +179,6 @@ public class CameraController : ControllerBase, TouchController.ITouchUpdate
         _followingTarget  = inTarget;
         _follwingStartPos = inTarget.position;
     }
+
+
 }

@@ -303,6 +303,9 @@ namespace Server
             if (toEntity == null)
                 return;
 
+
+
+            System.Console.WriteLine($"받은 데미지 : {inPacket.damageValue},hp : {toEntity.stat.hp})"); 
             toEntity.stat.AddHp(-inPacket.damageValue);
 
             if (toEntity.stat.hp <= 0)

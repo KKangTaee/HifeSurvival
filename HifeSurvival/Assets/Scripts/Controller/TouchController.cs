@@ -97,15 +97,6 @@ public class TouchController : ControllerBase
     // unity events
     //------------------
 
-
-    private void Start()
-    {
-        _cameraController = ControllerManager.Instance.GetController<CameraController>();
-
-        _playerController = ControllerManager.Instance.GetController<PlayerController>();
-    }
-
-
     private void Update()
     {
         TouchResult result = default;
@@ -114,6 +105,18 @@ public class TouchController : ControllerBase
         {
             UpdateTouch(result);
         }
+    }
+
+
+    //------------------
+    // override
+    //------------------
+
+    public override void Init()
+    {
+        _cameraController = ControllerManager.Instance.GetController<CameraController>();
+
+        _playerController = ControllerManager.Instance.GetController<PlayerController>();
     }
 
 
@@ -361,4 +364,6 @@ public class TouchController : ControllerBase
 
         return hitInfo.collider;
     }
+
+
 }

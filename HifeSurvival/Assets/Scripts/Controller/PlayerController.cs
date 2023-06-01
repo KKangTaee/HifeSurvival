@@ -21,13 +21,15 @@ public class PlayerController : ControllerBase
     public Player Self { get; private set; }
 
 
-    //-----------------
-    // untiy events
-    //-----------------
 
-    public void Start()
+    //-----------------
+    // override
+    //-----------------
+    
+    public override void Init()
     {
         _cameraController   = ControllerManager.Instance.GetController<CameraController>();
+        
         _joystickController = ControllerManager.Instance.GetController<JoystickController>();
 
         _gameMode = GameMode.Instance;
@@ -308,4 +310,6 @@ public class PlayerController : ControllerBase
 
         SetAttackState(toPlayer, fromPlayer, inPacket.damageValue);
     }
+
+
 }

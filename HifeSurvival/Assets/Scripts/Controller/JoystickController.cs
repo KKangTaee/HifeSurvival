@@ -46,21 +46,28 @@ public class JoystickController : ControllerBase
     }
 
 
-    private void Awake()
-    {
-        _canvas = GetComponent<Canvas>();
-        _canvas.worldCamera = Camera.main;
-    }
 
+    //------------------
+    // override
+    //------------------
 
-    private void Start()
+    public override void Init()
     {
-        _playerController = ControllerManager.Instance.GetController<PlayerController>();
+        _canvas.worldCamera = ControllerManager.Instance.GetController<CameraController>().MainCamera;
+
+        _playerController   = ControllerManager.Instance.GetController<PlayerController>();
 
         _joystickMachine.AddDragEvent((dir) => _playerController.OnMoveSelf(dir));
 
         _joystickMachine.AddPointUpEvent(() => _playerController.OnStopMoveSelf());
+
     }
+
+
+
+    //------------------
+    // functions
+    //------------------
 
     public void ShowJoystick()
     {
@@ -71,4 +78,6 @@ public class JoystickController : ControllerBase
     {
         _joystickMachine.gameObject.SetActive(false);
     }
+
+
 }

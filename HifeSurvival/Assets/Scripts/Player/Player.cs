@@ -73,9 +73,7 @@ public class Player : EntityObject
             inPlayer.OnAttack();
 
             if (inParam.target is Player player)
-            {
                 player.OnDamaged(inParam.attackValue);
-            }
         }
     }
 

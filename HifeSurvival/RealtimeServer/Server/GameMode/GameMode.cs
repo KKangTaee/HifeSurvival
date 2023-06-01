@@ -23,15 +23,16 @@ namespace Server
         }
 
 
-        Dictionary<int, PlayerEntity> _playersDict = new Dictionary<int, PlayerEntity>();
+        Dictionary<int, PlayerEntity>  _playersDict  = new Dictionary<int, PlayerEntity>();
         Dictionary<int, MonsterEntity> _monstersDict = new Dictionary<int, MonsterEntity>();
 
-        private const int PLAYER_MAX_COUNT = 4;
-        private const int CONUTDOWN_SEC = 10;
+        private const int PLAYER_MAX_COUNT  = 4;
+        private const int CONUTDOWN_SEC     = 10;
 
         private int _roomId;
 
         IBroadcaster _broadcaster = null;
+        
         public EStatus Status { get; private set; } = EStatus.NONE;
 
         public GameMode(GameRoom inRoom)
@@ -47,9 +48,9 @@ namespace Server
             {
                 var info = new MonsterEntity()
                 {
-                    monsterId = i,
+                    targetId = i,
                     groupId = i / 3,
-                    monsterType = i % 3,
+                    monsterId = i % 3,
                     subId = i % 3,
                 };
 
@@ -62,8 +63,8 @@ namespace Server
             {
                 var data = new S_StartGame.Monster()
                 {
-                    monsterId = info.monsterId,
-                    monsterType = info.monsterType,
+                    monsterId = info.targetId,
+                    monsterType = info.monsterId,
                     groupId = info.groupId,
                     subId = info.subId,
                 };
@@ -82,8 +83,8 @@ namespace Server
             {
                 var data = new S_StartGame.Player()
                 {
-                    playerId = info.playerId,
-                    heroId = info.heroType,
+                    playerId = info.targetId,
+                    heroId = info.heroId,
                 };
 
                 playerList.Add(data);
@@ -92,24 +93,114 @@ namespace Server
             return playerList;
         }
 
+        public PlayerEntity GetPlayerEntity(int inId)
+        {
+            if (_playersDict.TryGetValue(inId, out var player) && player != null)
+            {
+                return player;
+            }
+
+            Console.WriteLine("PlayerEntity is null or Empty");
+            return null;
+        }
+
+        public MonsterEntity GetMonsterEntity(int inId)
+        {
+            if (_monstersDict.TryGetValue(inId, out var monster) && monster != null)
+            {
+                return monster;
+            }
+
+            Console.WriteLine("MonsterEntity is null or Empty");
+            return null;
+        }
+
 
         public bool CanStartGame()
         {
             return _playersDict.Values.All(x => x.isReady);
         }
 
+
         public bool CanJoinRoom()
         {
             return Status == EStatus.READY && _playersDict.Count < PLAYER_MAX_COUNT;
         }
+
+
+        //---------------
+        // Send
+        //---------------
+
+        public void OnSendLeave(int inSessionId)
+        {
+            var playerInfo = _playersDict.Values.FirstOrDefault(x => x.targetId == inSessionId);
+
+            if (playerInfo == null)
+                return;
+
+            _playersDict.Remove(playerInfo.targetId);
+
+            S_LeaveToGame packet = new S_LeaveToGame()
+            {
+                userId = playerInfo.userId,
+                playerId = playerInfo.targetId,
+            };
+
+            _broadcaster.Broadcast(packet);
+        }
+
+
+        public void OnSendStartGame()
+        {
+            S_StartGame gameStart = new S_StartGame();
+
+            gameStart.playerList = SetupPlayer();
+            gameStart.monsterList = SetupMonster();
+
+            _broadcaster.Broadcast(gameStart);
+
+            Status = EStatus.GAME_START;
+        }
+
+
+        public void OnSendCountDown()
+        {
+            S_Countdown countdown = new S_Countdown()
+            {
+                countdownSec = CONUTDOWN_SEC
+            };
+
+            _broadcaster.Broadcast(countdown);
+
+            Status = EStatus.COUNTDOWN;
+
+            // N초 후 자동으로 호출
+            JobTimer.Instance.Push(OnSendStartGame, CONUTDOWN_SEC * 1000);
+        }
+
+
+        public void OnSendRespawn(int inPlayerId)
+        {
+            S_Respawn respawn = new S_Respawn()
+            {
+                targetId = inPlayerId,
+                isPlayer = true,
+            };
+        }
+
+
+        //---------------
+        // Receive
+        //---------------
 
         public void OnRecvJoin(C_JoinToGame inPacket, int inSessionId)
         {
             var playerInfo = new PlayerEntity()
             {
                 userId = inPacket.userId,
-                playerId = inSessionId,
-                heroType = 1,
+                targetId = inSessionId,
+                heroId = 1,
                 userName = inPacket.userName,
                 broadcaster = _broadcaster,
                 stat = new EntityStat(StaticData.Instance.HeroDic["1"])
@@ -119,7 +210,7 @@ namespace Server
 
             System.Console.WriteLine($"[{nameof(OnRecvJoin)}] 접속! userId {playerInfo.userId}, roomId : {_roomId}");
 
-            // 브로드캐스팅
+
             S_JoinToGame packet = new S_JoinToGame();
             packet.joinPlayerList = new List<S_JoinToGame.JoinPlayer>();
 
@@ -132,170 +223,121 @@ namespace Server
         }
 
 
-        public void OnLeave(int inSessionId)
-        {
-            var playerInfo = _playersDict.Values.FirstOrDefault(x => x.playerId == inSessionId);
-
-            if (playerInfo == null)
-                return;
-
-            _playersDict.Remove(playerInfo.playerId);
-
-            S_LeaveToGame packet = new S_LeaveToGame()
-            {
-                userId = playerInfo.userId,
-                playerId = playerInfo.playerId,
-            };
-
-            _broadcaster.Broadcast(packet);
-        }
-
-        public void OnStartGame()
-        {
-            S_StartGame gameStart = new S_StartGame();
-
-            gameStart.playerList  = SetupPlayer();
-            gameStart.monsterList = SetupMonster();
-
-            _broadcaster.Broadcast(gameStart);
-
-            Status = EStatus.GAME_START;
-        }
-
         public void OnRecvReady(CS_ReadyToGame inPacket)
         {
-            if (_playersDict.TryGetValue(inPacket.playerId, out var player) == true)
-            {
-                player.isReady = true;
-                _broadcaster.Broadcast(inPacket);
+            var player = GetPlayerEntity(inPacket.playerId);
 
-                // 모두 레디라면..? 게임시작
-                if (CanStartGame() == true)
-                {
-                    OnCountdown();
-                }
-            }
+            if (player == null)
+                return;
+
+            player.isReady = true;
+            _broadcaster.Broadcast(inPacket);
+
+            // 모두 레디라면..? 게임시작
+            if (CanStartGame() == true)
+                OnSendCountDown();
         }
 
-        public void OnCountdown()
-        {
-            S_Countdown countdown = new S_Countdown()
-            {
-                countdownSec = CONUTDOWN_SEC
-            };
-
-            _broadcaster.Broadcast(countdown);
-
-            Status = EStatus.COUNTDOWN;
-
-            // N초 후 자동으로 호출
-            JobTimer.Instance.Push(OnStartGame, CONUTDOWN_SEC * 1000);
-        }
 
         public void OnRecvSelect(CS_SelectHero inPacket)
         {
+            var player = GetPlayerEntity(inPacket.playerId);
+
+            if (player == null)
+                return;
+
+            player.heroId = inPacket.heroId;
+
             _broadcaster.Broadcast(inPacket);
-        }
-
-        public void OnRecvAttack(CS_Attack inPacket)
-        {
-            // 플레이어를 공격했을 때
-            if (inPacket.toIdIsPlayer == true)
-            {
-                if (_playersDict.TryGetValue(inPacket.toId, out var toTarget) == true &&
-                    _playersDict.TryGetValue(inPacket.fromId, out var fromTarget) == true)
-                {
-                    // 여기서 깍는다.
-                    toTarget.stat.AddHp(-inPacket.damageValue);
-
-                    // hp가 다 달았다면..?
-                    if (toTarget.stat.hp <= 0)
-                    {
-                        S_Dead dead = new S_Dead()
-                        {
-                            toId = inPacket.toId,
-                            respawnTime = 15,
-                        };
-
-                        var deadParam = new DeadParam()
-                        {
-
-                        };
-
-                        fromTarget.OnDead(deadParam);
-                        _broadcaster.Broadcast(dead);
-                    }
-                    else
-                    {
-                        var attackParam = new AttackParam()
-                        {
-                            attackValue = inPacket.damageValue,
-                            target = toTarget,
-                        };
-
-                        fromTarget.OnAttack(attackParam);
-                        _broadcaster.Broadcast(inPacket);
-                    }
-                }
-            }
-            // 몬스터를 공격했을 때
-            else
-            {
-                if (_monstersDict.TryGetValue(inPacket.toId, out var toTarget) == true &&
-                    _playersDict.TryGetValue(inPacket.fromId, out var fromTarget) == true)
-                {
-                    var attackParam = new AttackParam()
-                    {
-                        attackValue = inPacket.damageValue,
-                        target = toTarget,
-                    };
-
-                    fromTarget.OnAttack(attackParam);
-                    _broadcaster.Broadcast(inPacket);
-                }
-            }
         }
 
 
         public void OnRecvMove(CS_Move inPacket)
         {
-            if (_playersDict.TryGetValue(inPacket.targetId, out var player) == true)
-            {
-                player.pos = inPacket.pos;
-                player.dir = inPacket.dir;
+            var player = GetPlayerEntity(inPacket.targetId);
 
-                var moveParam = new MoveParam()
-                {
-                    pos = inPacket.pos,
-                    dir = inPacket.dir,
-                };
+            if (player == null)
+                return;
 
-                // TODO@taeho.kang 이동상태 처리
-                player.OnMove(moveParam);
+            player.pos = inPacket.pos;
+            player.dir = inPacket.dir;
 
-                _broadcaster.Broadcast(inPacket);
-            }
+            player.OnMove();
+
+            // _broadcaster.Broadcast(inPacket);
         }
 
 
         public void OnRecvStopMove(CS_StopMove inPacket)
         {
-            if (_playersDict.TryGetValue(inPacket.targetId, out var player) == true)
-            {
-                player.pos = inPacket.pos;
-                player.dir = inPacket.dir;
+            var player = GetPlayerEntity(inPacket.targetId);
 
-                var idleParam = new IdleParam()
+            if (player == null)
+                return;
+
+            player.pos = inPacket.pos;
+            player.dir = inPacket.dir;
+
+            player.OnIdle();
+
+            _broadcaster.Broadcast(inPacket);
+        }
+
+
+        public void OnRecvAttack(CS_Attack inPacket)
+        {
+            var fromPlayer = GetPlayerEntity(inPacket.fromId);
+
+            if (fromPlayer == null)
+                return;
+
+            Entity toEntity = null;
+
+            if (inPacket.toIdIsPlayer == true)
+                toEntity = GetPlayerEntity(inPacket.toId);          
+            
+            else
+                toEntity = GetMonsterEntity(inPacket.toId);
+
+
+            if (toEntity == null)
+                return;
+
+            toEntity.stat.AddHp(-inPacket.damageValue);
+
+            if (toEntity.stat.hp <= 0)
+            {
+                S_Dead dead = new S_Dead()
                 {
-                    pos = inPacket.pos,
-                    dir = inPacket.dir,
+                    toId = inPacket.toId,
+                    respawnTime = 15,
                 };
 
-                player.OnIdle(idleParam);
+                var deadParam = new DeadParam()
+                {
+                    respawnTime = 15,
+                    respawnCallback = ()=>
+                    {
+                        OnSendRespawn(inPacket.toId);
+                    },
+                };
+                
+                toEntity.OnDead(deadParam);
+                fromPlayer.OnIdle();
 
+                _broadcaster.Broadcast(dead);
+            }
+            else
+            {
+                var attackParam = new AttackParam()
+                {
+                    attackValue = inPacket.damageValue,
+                    target = toEntity,
+                };
+
+                fromPlayer.OnAttack(attackParam);
                 _broadcaster.Broadcast(inPacket);
             }
         }
     }
 }
-

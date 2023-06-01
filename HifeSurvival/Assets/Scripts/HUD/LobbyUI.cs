@@ -73,7 +73,7 @@ public class LobbyUI : MonoBehaviour
                 foreach(var entity in currPlayerEntitys.Values)
                     popup.AddPlayerView(entity);
 
-                popup.SetPlayerIdSelf(GameMode.Instance.EntitySelf.playerId);
+                popup.SetPlayerIdSelf(GameMode.Instance.EntitySelf.targetId);
 
                 GameMode.Instance.AddEvent(
                     inRecvJoin  : entity =>  popup.OnRecvJoin(entity),

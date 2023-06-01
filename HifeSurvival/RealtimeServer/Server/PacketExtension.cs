@@ -54,5 +54,14 @@ namespace Server
                 throw new InvalidOperationException("Cannot normalize a zero vector.");
             }
         }
+
+        public static float DistanceTo(this Vec3 inSelf, in Vec3 inOther)
+        {
+            float dx = inOther.x - inSelf.x;
+            float dy = inOther.y - inSelf.y;
+            float dz = inOther.z - inSelf.z;
+
+            return (float)Math.Sqrt(dx * dx + dy * dy + dz * dz);
+        }
     }
 }

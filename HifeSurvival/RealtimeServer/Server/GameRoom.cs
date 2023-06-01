@@ -31,10 +31,11 @@ namespace Server
         JobQueue _jobQueue = new JobQueue();
 
         List<ClientSession>      _sessions = new List<ClientSession>();
+
         List<ArraySegment<byte>> _pendingList = new List<ArraySegment<byte>>();
 
         private GameMode _gameMode;
-        private bool _isRunningFlush;
+        private bool     _isRunningFlush;
 
         public int RoomId { get; private set; }
 
@@ -84,7 +85,7 @@ namespace Server
         public void Leave(ClientSession session)
         {
             _sessions.Remove(session);
-            _gameMode.OnLeave(session.SessionId);
+            _gameMode.OnSendLeave(session.SessionId);
 
             session.Room = null;
 

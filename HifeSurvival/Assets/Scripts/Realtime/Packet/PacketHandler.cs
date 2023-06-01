@@ -73,4 +73,9 @@ class PacketHandler
         S_Dead dead = packet as S_Dead;
         GameMode.Instance.OnRecvDead(dead);
     }
+
+    internal static void S_RespawnHandler(PacketSession arg1, IPacket arg2)
+    {
+        throw new NotImplementedException();
+    }
 }

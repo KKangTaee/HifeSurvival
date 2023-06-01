@@ -30,7 +30,7 @@ public class IngameUI : MonoBehaviour
             {
                 KDView view = iter.Current as KDView;
                 view?.gameObject.SetActive(true);
-                view?.SetInfo(entity.playerId, 0, 0);
+                view?.SetInfo(entity.targetId, 0, 0);
             }
         }
     }
@@ -83,7 +83,7 @@ public class IngameUI : MonoBehaviour
         }
 
         // ���� �����Ŷ��..?
-        if(inPacket.toId == GameMode.Instance.EntitySelf.playerId)
+        if(inPacket.toId == GameMode.Instance.EntitySelf.targetId)
         {
             // ��ũ���� ���ó���Ѵ�.
         }

@@ -42,6 +42,8 @@ class PacketManager
 		_handler.Add((ushort)PacketID.CS_StopMove, PacketHandler.CS_StopMoveHandler);
 		_makeFunc.Add((ushort)PacketID.S_Dead, MakePacket<S_Dead>);
 		_handler.Add((ushort)PacketID.S_Dead, PacketHandler.S_DeadHandler);
+		_makeFunc.Add((ushort)PacketID.S_Respawn, MakePacket<S_Respawn>);
+		_handler.Add((ushort)PacketID.S_Respawn, PacketHandler.S_RespawnHandler);
 
 	}
 

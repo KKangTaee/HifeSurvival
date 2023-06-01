@@ -5,23 +5,30 @@ using System;
 
 public abstract class Entity
 {
-
-}
-
-public class PlayerEntity : Entity
-{
-    public string userId;
-    public string userName;
-    public int    playerId;
-    public int    heroId;
-
-    public bool isReady;
-    public bool isAlive;
+    public int targetId;
 
     public EntityStat stat;
 
     public Vec3 pos;
     public Vec3 dir;
+}
+
+
+public class PlayerEntity : Entity
+{
+    public string userId;
+    public string userName;
+    
+    public int    heroId;
+
+    public bool   isReady;
+}
+
+
+public class MonsterEntity : Entity
+{
+    public int monsterId;
+    public int subId;
 }
 
 

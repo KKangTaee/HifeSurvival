@@ -19,6 +19,7 @@ public enum PacketID
 	CS_Move = 11,
 	CS_StopMove = 12,
 	S_Dead = 13,
+	S_Respawn = 14,
 	
 }
 
@@ -742,6 +743,51 @@ public class S_Dead : IPacket
 		count += sizeof(bool);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.respawnTime);
 		count += sizeof(int);
+		success &= BitConverter.TryWriteBytes(s, count);
+		if (success == false)
+			return null;
+		return SendBufferHelper.Close(count);
+	}
+}
+
+public class S_Respawn : IPacket
+{
+	public int targetId;
+	public bool isPlayer;
+	public Vec3 pos;
+
+	public ushort Protocol { get { return (ushort)PacketID.S_Respawn; } }
+
+	public void Read(ArraySegment<byte> segment)
+	{
+		ushort count = 0;
+
+		ReadOnlySpan<byte> s = new ReadOnlySpan<byte>(segment.Array, segment.Offset, segment.Count);
+		count += sizeof(ushort);
+		count += sizeof(ushort);
+		this.targetId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+		count += sizeof(int);
+		this.isPlayer = BitConverter.ToBoolean(s.Slice(count, s.Length - count));
+		count += sizeof(bool);
+		pos.Read(s, ref count);
+	}
+
+	public ArraySegment<byte> Write()
+	{
+		ArraySegment<byte> segment = SendBufferHelper.Open(4096);
+		ushort count = 0;
+		bool success = true;
+
+		Span<byte> s = new Span<byte>(segment.Array, segment.Offset, segment.Count);
+
+		count += sizeof(ushort);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.S_Respawn);
+		count += sizeof(ushort);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.targetId);
+		count += sizeof(int);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.isPlayer);
+		count += sizeof(bool);
+		success &= pos.Write(s,ref count);
 		success &= BitConverter.TryWriteBytes(s, count);
 		if (success == false)
 			return null;

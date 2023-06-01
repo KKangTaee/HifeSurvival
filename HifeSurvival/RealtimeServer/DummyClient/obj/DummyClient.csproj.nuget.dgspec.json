@@ -1,33 +1,35 @@
 {
   "format": 1,
   "restore": {
-    "/Users/taehokang/Documents/GitHub/HifeSurvival/HifeSurvival/RealtimeServer/DummyClient/DummyClient.csproj": {}
+    "C:\\Projects\\Sample\\RealtimeServer\\DummyClient\\DummyClient.csproj": {}
   },
   "projects": {
-    "/Users/taehokang/Documents/GitHub/HifeSurvival/HifeSurvival/RealtimeServer/DummyClient/DummyClient.csproj": {
+    "C:\\Projects\\Sample\\RealtimeServer\\DummyClient\\DummyClient.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/taehokang/Documents/GitHub/HifeSurvival/HifeSurvival/RealtimeServer/DummyClient/DummyClient.csproj",
+        "projectUniqueName": "C:\\Projects\\Sample\\RealtimeServer\\DummyClient\\DummyClient.csproj",
         "projectName": "DummyClient",
-        "projectPath": "/Users/taehokang/Documents/GitHub/HifeSurvival/HifeSurvival/RealtimeServer/DummyClient/DummyClient.csproj",
-        "packagesPath": "/Users/taehokang/.nuget/packages/",
-        "outputPath": "/Users/taehokang/Documents/GitHub/HifeSurvival/HifeSurvival/RealtimeServer/DummyClient/obj/",
+        "projectPath": "C:\\Projects\\Sample\\RealtimeServer\\DummyClient\\DummyClient.csproj",
+        "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
+        "outputPath": "C:\\Projects\\Sample\\RealtimeServer\\DummyClient\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/taehokang/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.1"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "netcoreapp3.1": {
             "targetAlias": "netcoreapp3.1",
             "projectReferences": {
-              "/Users/taehokang/Documents/GitHub/HifeSurvival/HifeSurvival/RealtimeServer/ServerCore/ServerCore.csproj": {
-                "projectPath": "/Users/taehokang/Documents/GitHub/HifeSurvival/HifeSurvival/RealtimeServer/ServerCore/ServerCore.csproj"
+              "C:\\Projects\\Sample\\RealtimeServer\\ServerCore\\ServerCore.csproj": {
+                "projectPath": "C:\\Projects\\Sample\\RealtimeServer\\ServerCore\\ServerCore.csproj"
               }
             }
           }
@@ -47,42 +49,37 @@
             "net47",
             "net471",
             "net472",
-            "net48",
-            "net481"
+            "net48"
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.NETCore.App.Host.osx-x64",
-              "version": "[3.1.32, 3.1.32]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.203/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.413\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "/Users/taehokang/Documents/GitHub/HifeSurvival/HifeSurvival/RealtimeServer/ServerCore/ServerCore.csproj": {
+    "C:\\Projects\\Sample\\RealtimeServer\\ServerCore\\ServerCore.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/taehokang/Documents/GitHub/HifeSurvival/HifeSurvival/RealtimeServer/ServerCore/ServerCore.csproj",
+        "projectUniqueName": "C:\\Projects\\Sample\\RealtimeServer\\ServerCore\\ServerCore.csproj",
         "projectName": "ServerCore",
-        "projectPath": "/Users/taehokang/Documents/GitHub/HifeSurvival/HifeSurvival/RealtimeServer/ServerCore/ServerCore.csproj",
-        "packagesPath": "/Users/taehokang/.nuget/packages/",
-        "outputPath": "/Users/taehokang/Documents/GitHub/HifeSurvival/HifeSurvival/RealtimeServer/ServerCore/obj/",
+        "projectPath": "C:\\Projects\\Sample\\RealtimeServer\\ServerCore\\ServerCore.csproj",
+        "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
+        "outputPath": "C:\\Projects\\Sample\\RealtimeServer\\ServerCore\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/taehokang/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.1"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -106,8 +103,7 @@
             "net47",
             "net471",
             "net472",
-            "net48",
-            "net481"
+            "net48"
           ],
           "assetTargetFallback": true,
           "warn": true,
@@ -116,7 +112,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.203/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.413\\RuntimeIdentifierGraph.json"
         }
       }
     }

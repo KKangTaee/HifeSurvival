@@ -23,13 +23,13 @@ public class GameMode
 
     private Action<int> _onRecvLeaveCB;
     private Action<int> _onRecvCountdownCB;
-    private Action      _onRecvStartGameCB;
+    private Action _onRecvStartGameCB;
 
     public event Action<PlayerEntity> OnRecvMoveCB;
     public event Action<PlayerEntity> OnRecvStopMoveCB;
 
-    public event Action<S_Dead>     OnRecvDeadCB;
-    public event Action<CS_Attack>  OnRecvAttackCB;
+    public event Action<S_Dead> OnRecvDeadCB;
+    public event Action<CS_Attack> OnRecvAttackCB;
 
 
     public PlayerEntity EntitySelf { get; private set; }
@@ -69,8 +69,49 @@ public class GameMode
 
     public bool IsSelf(int inPlayerId)
     {
-        return EntitySelf.playerId == inPlayerId;
+        return EntitySelf.targetId == inPlayerId;
     }
+
+    public void Leave()
+    {
+        Status = EStatus.NOT_JOIN;
+        PlayerEntitysDic.Clear();
+    }
+
+    public void AddPlayerEntity(S_JoinToGame.JoinPlayer joinPlayer)
+    {
+        // 이미 참가중인 유저에 대해서는 패스처리한다.
+        if (PlayerEntitysDic.ContainsKey(joinPlayer.playerId) == true)
+            return;
+
+        PlayerEntity entity = new PlayerEntity()
+        {
+            userId = joinPlayer.userId,
+            userName = joinPlayer.userName,
+            targetId = joinPlayer.playerId,
+            heroId = joinPlayer.heroId,
+            stat = new EntityStat(StaticData.Instance.HeroDic[joinPlayer.heroId.ToString()]),
+        };
+
+        // 내 자신일 경우 캐싱처리한다
+        if (joinPlayer.userId == ServerData.Instance.UserData.user_id)
+            EntitySelf = entity;
+
+        PlayerEntitysDic.Add(joinPlayer.playerId, entity);
+    }
+
+
+    public PlayerEntity GetPlayerEntity(int inPlayerId)
+    {
+        if (PlayerEntitysDic.TryGetValue(inPlayerId, out var player) && player != null)
+        {
+            return player;
+        }
+
+        Debug.LogError($"[{nameof(GetPlayerEntity)}] playerEntity is null or empty!");
+        return null;
+    }
+
 
 
     //---------------
@@ -100,82 +141,53 @@ public class GameMode
         return true;
     }
 
-    public void Leave()
-    {
-        Status = EStatus.NOT_JOIN;
-        PlayerEntitysDic.Clear();
-    }
 
-    public void AddPlayerEntity(S_JoinToGame.JoinPlayer joinPlayer)
-    {
-        // 이미 참가중인 유저에 대해서는 패스처리한다.
-        if (PlayerEntitysDic.ContainsKey(joinPlayer.playerId) == true)
-            return;
 
-        PlayerEntity entity = new PlayerEntity()
+
+    //-----------------
+    // Send
+    //-----------------
+
+    public void OnSendMove(in Vector3 inPos, in Vector3 inDir)
+    {
+        CS_Move move = new CS_Move()
         {
-            userId = joinPlayer.userId,
-            userName = joinPlayer.userName,
-            playerId = joinPlayer.playerId,
-            heroId = joinPlayer.heroId,
-            stat = new EntityStat(StaticData.Instance.HeroDic[joinPlayer.heroId.ToString()]),
+            dir = inDir.ConvertVec3(),
+            pos = inPos.ConvertVec3(),
+            isPlayer = true,
+            speed = EntitySelf.stat.moveSpeed,
+            targetId = EntitySelf.targetId,
         };
 
-        // 내 자신일 경우 캐싱처리한다
-        if (joinPlayer.userId == ServerData.Instance.UserData.user_id)
-            EntitySelf = entity;
-
-        PlayerEntitysDic.Add(joinPlayer.playerId, entity);
+        NetworkManager.Instance.Send(move);
     }
 
-    public void OnRecvJoin(S_JoinToGame inPacket)
+
+    public void OnSendStopMove(in Vector3 inPos, in Vector3 inDir)
     {
-        if (Status == EStatus.JOIN)
+        CS_StopMove stopMove = new CS_StopMove()
         {
-            // 이미 내가 참가 중이라면, 내려온 데이터에서 처리해야할 것들만 처리해주면 된다.
-            foreach (var joinPlayer in inPacket.joinPlayerList)
-            {
-                if (PlayerEntitysDic.ContainsKey(joinPlayer.playerId) == false)
-                {
-                    AddPlayerEntity(joinPlayer);
-                    _onRecvJoinCB?.Invoke(PlayerEntitysDic[joinPlayer.playerId]);
-                    break;
-                }
-            }
-        }
-        else
-        {
-            _joinCompleted.Signal(inPacket);
-        }
+            pos = inPos.ConvertVec3(),
+            dir = inDir.ConvertVec3(),
+            isPlayer = true,
+            targetId = EntitySelf.targetId,
+        };
+
+        NetworkManager.Instance.Send(stopMove);
     }
 
-    public void OnRecvLeave(S_LeaveToGame inPacket)
-    {
-        RemovePlayerEntity(inPacket.playerId);
-        _onRecvLeaveCB?.Invoke(inPacket.playerId);
-    }
 
-    public void OnRecvSelectHero(CS_SelectHero inPacket)
+    public void OnSendAttack(bool toIdIsPlayer, int toId, int fromId, int damageValue)
     {
-        if (PlayerEntitysDic.TryGetValue(inPacket.playerId, out var entity) == true)
+        CS_Attack attack = new CS_Attack()
         {
-            entity.heroId = inPacket.heroId;
-            entity.stat = new EntityStat(StaticData.Instance.HeroDic[entity.heroId.ToString()]);
+            toIdIsPlayer = toIdIsPlayer,
+            toId = toId,
+            fromId = fromId,
+            damageValue = damageValue,
+        };
 
-            if (IsSelf(inPacket.playerId) == false)
-                _onRecvSelectCB?.Invoke(entity);
-        }
-    }
-
-    public void OnRecvReadyToGame(CS_ReadyToGame inPacket)
-    {
-        if (PlayerEntitysDic.TryGetValue(inPacket.playerId, out var entity) == true)
-        {
-            entity.isReady = true;
-
-            if (IsSelf(inPacket.playerId) == false)
-                _onRecvReadyCB?.Invoke(entity);
-        }
+        NetworkManager.Instance.Send(attack);
     }
 
     public void OnSendSelectHero(int inPlayerId, int inHeroId)
@@ -202,15 +214,84 @@ public class GameMode
     public void OnSendReadyToGame()
     {
         CS_ReadyToGame readyToGame = new CS_ReadyToGame();
-        readyToGame.playerId = EntitySelf.playerId;
+        readyToGame.playerId = EntitySelf.targetId;
 
         NetworkManager.Instance.Send(readyToGame);
     }
+
+
+
+
+    //-----------------
+    // Receive
+    //-----------------
+
+
+    public void OnRecvJoin(S_JoinToGame inPacket)
+    {
+        if (Status == EStatus.JOIN)
+        {
+            // 이미 내가 참가 중이라면, 내려온 데이터에서 처리해야할 것들만 처리해주면 된다.
+            foreach (var joinPlayer in inPacket.joinPlayerList)
+            {
+                if (PlayerEntitysDic.ContainsKey(joinPlayer.playerId) == false)
+                {
+                    AddPlayerEntity(joinPlayer);
+                    _onRecvJoinCB?.Invoke(PlayerEntitysDic[joinPlayer.playerId]);
+                    break;
+                }
+            }
+        }
+        else
+        {
+            _joinCompleted.Signal(inPacket);
+        }
+    }
+
+
+    public void OnRecvLeave(S_LeaveToGame inPacket)
+    {
+        RemovePlayerEntity(inPacket.playerId);
+
+        _onRecvLeaveCB?.Invoke(inPacket.playerId);
+    }
+
+
+    public void OnRecvSelectHero(CS_SelectHero inPacket)
+    {
+        var player = GetPlayerEntity(inPacket.playerId);
+
+        if (player == null)
+            return;
+
+        player.heroId = inPacket.heroId;
+        player.stat = new EntityStat(StaticData.Instance.HeroDic[player.heroId.ToString()]);
+
+
+        if (IsSelf(inPacket.playerId) == false)
+            _onRecvSelectCB?.Invoke(player);
+    }
+
+
+    public void OnRecvReadyToGame(CS_ReadyToGame inPacket)
+    {
+        var player = GetPlayerEntity(inPacket.playerId);
+
+        if (player == null)
+            return;
+
+        player.isReady = true;
+
+        if (IsSelf(inPacket.playerId) == false)
+            _onRecvReadyCB?.Invoke(player);
+    }
+
 
     public void OnRecvCountdown(S_Countdown inPacket)
     {
         _onRecvCountdownCB?.Invoke(inPacket.countdownSec);
     }
+
 
     public void OnRecvStartGame(S_StartGame inPacket)
     {
@@ -238,6 +319,7 @@ public class GameMode
         }
     }
 
+
     public void OnRecvStopMove(CS_StopMove inPacket)
     {
         if (inPacket.isPlayer == true)
@@ -257,6 +339,7 @@ public class GameMode
         }
     }
 
+
     public void OnRecvAttack(CS_Attack inPacket)
     {
         if (inPacket.toIdIsPlayer == true)
@@ -264,8 +347,8 @@ public class GameMode
             if (PlayerEntitysDic.TryGetValue(inPacket.toId, out var player) == true)
             {
                 player.stat.AddHp(-inPacket.damageValue);
-                OnRecvAttackCB?.Invoke(inPacket);
 
+                OnRecvAttackCB?.Invoke(inPacket);
             }
         }
         else
@@ -277,57 +360,31 @@ public class GameMode
 
     public void OnRecvDead(S_Dead inPacket)
     {
-        if (PlayerEntitysDic.TryGetValue(inPacket.toId, out var player) == true)
+        if(inPacket.toIdIsPlayer == true)
         {
-            player.isAlive = false;
+            OnRecvDeadCB?.Invoke(inPacket);
+        }
+        else
+        {
 
-            if (IsSelf(inPacket.toId) == false)
-                OnRecvDeadCB?.Invoke(inPacket);
         }
     }
 
 
-    public void OnSendMove(in Vector3 inPos, in Vector3 inDir)
+    public void OnRecvRespawn(S_Respawn inPacket)
     {
-        CS_Move move = new CS_Move()
+        if(inPacket.isPlayer == true)
         {
-            dir = inDir.ConvertVec3(),
-            pos = inPos.ConvertVec3(),
-            isPlayer = true,
-            speed = EntitySelf.stat.moveSpeed,
-            targetId = EntitySelf.playerId,
-        };
+            var player = GetPlayerEntity(inPacket.targetId);
 
-        NetworkManager.Instance.Send(move);
-    }
+            if (player == null)
+                return;
 
-
-    public void OnSendStopMove(in Vector3 inPos, in Vector3 inDir)
-    {
-        CS_StopMove stopMove = new CS_StopMove()
+            // TODO@taeho.kang 리스폰처리
+        }
+        else
         {
-            pos = inPos.ConvertVec3(),
-            dir = inDir.ConvertVec3(),
-            isPlayer = true,
-            targetId = EntitySelf.playerId,
-        };
 
-        NetworkManager.Instance.Send(stopMove);
+        }
     }
-
-
-    public void OnSendAttack(bool toIdIsPlayer, int toId, int fromId, int damageValue)
-    {
-        CS_Attack attack = new CS_Attack()
-        {
-            toIdIsPlayer = toIdIsPlayer,
-            toId = toId,
-            fromId = fromId,
-            damageValue = damageValue,
-        };
-
-        NetworkManager.Instance.Send(attack);
-    }
-
-
 }

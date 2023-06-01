@@ -8,24 +8,26 @@
     ".NETCoreApp,Version=v3.1": []
   },
   "packageFolders": {
-    "/Users/taehokang/.nuget/packages/": {}
+    "C:\\Users\\user\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/taehokang/Documents/GitHub/HifeSurvival/HifeSurvival/RealtimeServer/PacketGenerator/PacketGenerator.csproj",
+      "projectUniqueName": "C:\\Projects\\Sample\\RealtimeServer\\PacketGenerator\\PacketGenerator.csproj",
       "projectName": "PacketGenerator",
-      "projectPath": "/Users/taehokang/Documents/GitHub/HifeSurvival/HifeSurvival/RealtimeServer/PacketGenerator/PacketGenerator.csproj",
-      "packagesPath": "/Users/taehokang/.nuget/packages/",
-      "outputPath": "/Users/taehokang/Documents/GitHub/HifeSurvival/HifeSurvival/RealtimeServer/PacketGenerator/obj/",
+      "projectPath": "C:\\Projects\\Sample\\RealtimeServer\\PacketGenerator\\PacketGenerator.csproj",
+      "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
+      "outputPath": "C:\\Projects\\Sample\\RealtimeServer\\PacketGenerator\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/Users/taehokang/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp3.1"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -49,23 +51,16 @@
           "net47",
           "net471",
           "net472",
-          "net48",
-          "net481"
+          "net48"
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "downloadDependencies": [
-          {
-            "name": "Microsoft.NETCore.App.Host.osx-x64",
-            "version": "[3.1.32, 3.1.32]"
-          }
-        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.203/RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.413\\RuntimeIdentifierGraph.json"
       }
     }
   }

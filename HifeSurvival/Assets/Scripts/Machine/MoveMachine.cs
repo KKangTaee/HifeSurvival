@@ -8,19 +8,21 @@ public class MoveMachine : MonoBehaviour
     private const float MOVE_REACHING_OFFSET = 1.2f;
 
     private Vector3 _currPos;
-    private Vector3 _endPos;
     private Vector3 _inputDirection;
 
-    private Func<MoveMachine, Vector3 >   _dirFunc;
+    private Func<MoveMachine, Vector3>   _dirFunc;
     private Func<MoveMachine, bool>      _exitLoopFunc;
+    private Func<Vector3>                _endPosFunc;
+    private Func<bool>                  _forceStopFunc;
 
-    private Action _doneCallback;
-    private Action<Vector2> _changeDirCallback;
-    private float _currSpeed;
-    private bool _isRunningLerp;
+    private Action<Vector3>   _updateCallback;
+    private Action          _doneCallback;
+
+    private float   _currSpeed;
+    private float   _updateRatio;
+    private bool    _isRunningLerp;
 
     private AStar _astar;
-    private EntityObject _followTarget;
 
     public Vector3 CurrDir { get; private set; }
 
@@ -74,6 +76,22 @@ public class MoveMachine : MonoBehaviour
     }
 
 
+    public void MoveLerpV2(float inSpeed, Func<Vector3> inEndPosFunc,  float inUpdateRatio, Action<Vector3> updateCallback, Func<bool> forceStopFunc,  Action doneCallback)
+    {
+        StopCoroutine(nameof(Co_MoveLerpV2));
+
+        _inputDirection     = Vector2.zero;
+        _currSpeed          = inSpeed;
+        _doneCallback       = doneCallback;
+        _endPosFunc         = inEndPosFunc;
+        _updateCallback     = updateCallback;
+        _updateRatio        = inUpdateRatio;
+        _forceStopFunc      = forceStopFunc;
+
+        StartCoroutine(nameof(Co_MoveLerpV2));
+    }
+
+
     public void MoveStop(in Vector2 inPos)
     {
         _inputDirection = Vector2.zero;
@@ -86,18 +104,8 @@ public class MoveMachine : MonoBehaviour
     {
         if (_inputDirection != Vector3.zero)
         {
-            OnChangeDir(_inputDirection);
-            transform.position += (_inputDirection * _currSpeed * Time.fixedDeltaTime);
-        }
-    }
-
-
-    private void OnChangeDir(Vector3 inDir)
-    {
-        if (CurrDir != inDir)
-        {
-            _changeDirCallback?.Invoke(inDir);
-            CurrDir = inDir;
+            CurrDir = _inputDirection;
+            transform.position += (CurrDir * _currSpeed * Time.fixedDeltaTime);
         }
     }
 
@@ -117,12 +125,14 @@ public class MoveMachine : MonoBehaviour
         if(_isRunningLerp == true)
         {
             StopCoroutine(nameof(Co_MoveLerp));
+
             _isRunningLerp = false;
 
-            _changeDirCallback = null;
             _dirFunc = null;
             _doneCallback = null;
         }
+
+        StopCoroutine(nameof(Co_MoveLerpV2));
     }
 
 
@@ -134,14 +144,73 @@ public class MoveMachine : MonoBehaviour
     {
         while (_exitLoopFunc?.Invoke(this) == false)
         {
-            var dir = _dirFunc?.Invoke(this) ?? Vector3.zero;
+            CurrDir = _dirFunc?.Invoke(this) ?? Vector3.zero;
 
-            transform.position += dir * _currSpeed * Time.deltaTime;
+            transform.position += CurrDir * _currSpeed * Time.deltaTime;
             
             yield return null;
         }
 
         _doneCallback?.Invoke();
         _isRunningLerp = false;
+    }
+
+
+    IEnumerator Co_MoveLerpV2()
+    {
+        float lerpValue     = default;
+        float updateRatio   = default;
+        float distance      = default;
+
+        Vector3 currPos     = default;
+        Vector3 endPos      = default;
+
+        if (Reset(out lerpValue, out updateRatio, out distance, out currPos, out endPos) == false)
+            yield break;
+
+        while(lerpValue < 1)
+        {
+            // 강제 트리거를 호출했다면..? 그냥 나온다.
+            if (_forceStopFunc?.Invoke() ?? false)
+                break;
+
+            // 마지막 위치가 변경됬다면..? 목적지가 동적으로 이동
+            if(endPos != _endPosFunc?.Invoke())
+            {
+                if (Reset(out lerpValue, out updateRatio, out distance, out currPos, out endPos) == false)
+                    yield break;
+            }
+
+            lerpValue += (_currSpeed * Time.deltaTime);
+            float ratio = lerpValue / distance;
+
+            transform.position = Vector3.Lerp(currPos, endPos,  ratio);
+
+            // 지정된 타이밍에 호출
+            if (updateRatio < ratio)
+            {
+                _updateCallback?.Invoke(GetDir(endPos));
+                updateRatio += _updateRatio;
+            }
+
+            yield return null;
+        }
+
+        _doneCallback?.Invoke();
+
+        #region Local Func
+        bool Reset(out float inLerpVal, out float inUpdateRatio, out float inDistance, out Vector3 inCurrPos, out Vector3 inEndPos)
+        {
+            inLerpVal = 0;
+            inUpdateRatio = _updateRatio;
+
+            inCurrPos = transform.position;
+            inEndPos = _endPosFunc?.Invoke() ?? inCurrPos;
+
+            inDistance = Vector3.Distance(inCurrPos, inEndPos);
+
+            return inCurrPos == inEndPos || inDistance < 0.1f;
+        }
+        #endregion
     }
 }

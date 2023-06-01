@@ -68,7 +68,7 @@ public class PlayerController : ControllerBase
         {
             var inst = Instantiate(_playerPrefab, transform);
 
-            inst.Init(entity.playerId, entity.stat, spawnObj.GetSpawnWorldPos(idx++));
+            inst.Init(entity.targetId, entity.stat, spawnObj.GetSpawnWorldPos(idx++));
 
             if (ServerData.Instance.UserData.user_id == entity.userId)
             {
@@ -76,7 +76,7 @@ public class PlayerController : ControllerBase
                 inst.SetSelf();
             }
 
-            _playerDict.Add(entity.playerId, inst);
+            _playerDict.Add(entity.targetId, inst);
         }
 
         _cameraController.FollowingTarget(Self.transform);
@@ -126,7 +126,7 @@ public class PlayerController : ControllerBase
         SetIdleState(Self,
                      Self.GetPos(),
                      Self.GetDir(),
-                     GameMode.Instance.EntitySelf.stat.moveSpeed);
+                     Self.Stat.moveSpeed);
 
         // 타겟이 있는지 감지
         DetectTargetSelf();
@@ -179,15 +179,9 @@ public class PlayerController : ControllerBase
         var selfAttactValue = Self.Stat.GetAttackValue();
         var damagedVal = inTarget.Stat.GetDamagedValue(selfAttactValue);
 
-        _gameMode.OnSendAttack(true, inTarget.targetId, Self.targetId, damagedVal);
+        SetAttackState(inTarget, Self, damagedVal);
 
-        var attackParam = new AttackParam()
-        {
-            attackValue = damagedVal,
-            target = inTarget,
-        };
-
-        Self.ChangeState(EntityObject.EStatus.ATTACK, attackParam);
+        _gameMode.OnSendAttack(true, inTarget.TargetId, Self.TargetId, damagedVal);
 
         _attackDelay = Observable.Timer(TimeSpan.FromSeconds(Self.Stat.attackSpeed))
                                         .Subscribe(_ =>
@@ -257,7 +251,7 @@ public class PlayerController : ControllerBase
     }
 
 
-    public void SetAttackState(Player inToId, Player inFromId, int inDamageVal)
+    public void SetAttackState(EntityObject inToId, EntityObject inFromId, int inDamageVal)
     {
         var attackParam = new AttackParam()
         {
@@ -269,13 +263,14 @@ public class PlayerController : ControllerBase
     }
 
 
+
     //----------------
     // server
     //----------------
 
     public void OnRecvMove(PlayerEntity inEntity)
     {
-        var player = GetPlayer(inEntity.playerId);
+        var player = GetPlayer(inEntity.targetId);
 
         SetMoveState(player,
                      inEntity.pos.ConvertUnityVector3(),
@@ -286,7 +281,7 @@ public class PlayerController : ControllerBase
 
     public void OnRecvStopMove(PlayerEntity inEntity)
     {
-        var player = GetPlayer(inEntity.playerId);
+        var player = GetPlayer(inEntity.targetId);
 
         SetIdleState(player,
                      inEntity.pos.ConvertUnityVector3(),
@@ -313,6 +308,4 @@ public class PlayerController : ControllerBase
 
         SetAttackState(toPlayer, fromPlayer, inPacket.damageValue);
     }
-
-    
 }

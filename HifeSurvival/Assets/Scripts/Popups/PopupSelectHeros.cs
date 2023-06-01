@@ -242,12 +242,12 @@ public class PopupSelectHeros : PopupBase
 
     public void OnRecvSelectHero(PlayerEntity inEntity)
     {
-        ChangeHeroView(inEntity.playerId, inEntity.heroId);
+        ChangeHeroView(inEntity.targetId, inEntity.heroId);
     }
 
     public void OnRecvReadyToGame(PlayerEntity inEntity)
     {
-        ReadyPlayerView(inEntity.playerId);
+        ReadyPlayerView(inEntity.targetId);
     }
 
     public void OnRecvCountdown(int inSec)
@@ -287,7 +287,7 @@ public class PopupSelectHeros : PopupBase
         if (StaticData.Instance.HeroDic.TryGetValue(inEntity.heroId.ToString(), out var data) == false)
             return;
 
-        view.SetInfo(inEntity.playerId, GetHeroSprite(inEntity.heroId), inEntity.userName, data.name);
+        view.SetInfo(inEntity.targetId, GetHeroSprite(inEntity.heroId), inEntity.userName, data.name);
     }
 
     public void ClearPlayerView()

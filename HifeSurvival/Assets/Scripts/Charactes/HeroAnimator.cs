@@ -25,7 +25,7 @@ public class HeroAnimator : MonoBehaviour
     {
         public const string KEY_IS_WALK     = "isWalk";
         public const string KEY_DIR         = "dir";
-        public const string KEY_IS_DAMANGED = "isDamaged";
+        public const string KEY_IS_DAMAGED = "isDamaged";
     }
 
     public void SetAnimatorController(int inIndex)
@@ -80,6 +80,6 @@ public class HeroAnimator : MonoBehaviour
 
     public void OnDamaged()
     {
-        _anim.SetTrigger(ParamKey.KEY_IS_DAMANGED);
+        _anim.SetTrigger(ParamKey.KEY_IS_DAMAGED);
     }
 }

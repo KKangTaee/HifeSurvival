@@ -37,6 +37,8 @@ public class ControllerManager
             nameof(PlayerController),
 
             nameof(JoystickController),
+
+            nameof(ObjectPoolController),
         };
 
         foreach (var name in controllerName)

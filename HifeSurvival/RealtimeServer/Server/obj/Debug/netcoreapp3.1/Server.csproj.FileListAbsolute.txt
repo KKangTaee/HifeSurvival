@@ -66,9 +66,9 @@ C:/Projects/Sample/RealtimeServer/Server/bin/Debug/netcoreapp3.1/ServerCore.dll
 C:/Projects/Sample/RealtimeServer/Server/bin/Debug/netcoreapp3.1/ServerCore.pdb
 C:/Projects/Sample/RealtimeServer/Server/obj/Debug/netcoreapp3.1/Server.csproj.CopyComplete
 C:/Projects/Sample/RealtimeServer/Server/obj/Debug/netcoreapp3.1/Server.genruntimeconfig.cache
-C:\Projects\HifeSurvival-master\HifeSurvival-master\HifeSurvival\RealtimeServer\Server\obj\Debug\netcoreapp3.1\Server.csproj.AssemblyReference.cache
-C:\Projects\HifeSurvival-master\HifeSurvival-master\HifeSurvival\RealtimeServer\Server\obj\Debug\netcoreapp3.1\Server.GeneratedMSBuildEditorConfig.editorconfig
-C:\Projects\HifeSurvival-master\HifeSurvival-master\HifeSurvival\RealtimeServer\Server\obj\Debug\netcoreapp3.1\Server.AssemblyInfoInputs.cache
-C:\Projects\HifeSurvival-master\HifeSurvival-master\HifeSurvival\RealtimeServer\Server\obj\Debug\netcoreapp3.1\Server.AssemblyInfo.cs
-C:\Projects\HifeSurvival-master\HifeSurvival-master\HifeSurvival\RealtimeServer\Server\obj\Debug\netcoreapp3.1\Server.csproj.CoreCompileInputs.cache
-C:\Projects\HifeSurvival-master\HifeSurvival-master\HifeSurvival\RealtimeServer\Server\obj\Debug\netcoreapp3.1\Server.dll
+C:/Projects/HifeSurvival-master/HifeSurvival-master/HifeSurvival/RealtimeServer/Server/obj/Debug/netcoreapp3.1/Server.csproj.AssemblyReference.cache
+C:/Projects/HifeSurvival-master/HifeSurvival-master/HifeSurvival/RealtimeServer/Server/obj/Debug/netcoreapp3.1/Server.GeneratedMSBuildEditorConfig.editorconfig
+C:/Projects/HifeSurvival-master/HifeSurvival-master/HifeSurvival/RealtimeServer/Server/obj/Debug/netcoreapp3.1/Server.AssemblyInfoInputs.cache
+C:/Projects/HifeSurvival-master/HifeSurvival-master/HifeSurvival/RealtimeServer/Server/obj/Debug/netcoreapp3.1/Server.AssemblyInfo.cs
+C:/Projects/HifeSurvival-master/HifeSurvival-master/HifeSurvival/RealtimeServer/Server/obj/Debug/netcoreapp3.1/Server.csproj.CoreCompileInputs.cache
+C:/Projects/HifeSurvival-master/HifeSurvival-master/HifeSurvival/RealtimeServer/Server/obj/Debug/netcoreapp3.1/Server.dll

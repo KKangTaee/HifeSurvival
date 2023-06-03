@@ -11,7 +11,8 @@ public class PlayerController : ControllerBase
 
     private Dictionary<int, Player> _playerDict = new Dictionary<int, Player>();
 
-    private CameraController    _cameraController;
+    private CameraController _cameraController;
+    
     private JoystickController  _joystickController;
 
     private GameMode _gameMode;

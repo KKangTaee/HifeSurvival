@@ -130,6 +130,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3099317941794717642, guid: 430b0b92c42347a4db4c95daa98f3f8d, type: 3}
+      propertyPath: m_ColliderPaths.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3516520539982029832, guid: 430b0b92c42347a4db4c95daa98f3f8d, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3516520539982029835, guid: 430b0b92c42347a4db4c95daa98f3f8d, type: 3}
       propertyPath: m_Size.x
       value: 27
@@ -137,6 +145,18 @@ PrefabInstance:
     - target: {fileID: 3516520539982029835, guid: 430b0b92c42347a4db4c95daa98f3f8d, type: 3}
       propertyPath: m_Origin.x
       value: -11
+      objectReference: {fileID: 0}
+    - target: {fileID: 4862079910491683898, guid: 430b0b92c42347a4db4c95daa98f3f8d, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7611993457363266320, guid: 430b0b92c42347a4db4c95daa98f3f8d, type: 3}
+      propertyPath: m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7611993457363266320, guid: 430b0b92c42347a4db4c95daa98f3f8d, type: 3}
+      propertyPath: m_DetectChunkCullingBounds
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7710224704415212824, guid: 430b0b92c42347a4db4c95daa98f3f8d, type: 3}
       propertyPath: m_RootOrder

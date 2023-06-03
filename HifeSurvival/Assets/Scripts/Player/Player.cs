@@ -70,18 +70,24 @@ public class Player : EntityObject
 
         private void OnAttack(Player inFrom, AttackParam inParam)
         {
-            inFrom.OnAttack();
-
             if (inParam.target is Player inTo)
             {
                 // 내 클라의 전송값과 서버의 위치값이 크게 다르다면..?
                 if (Vector3.Distance(inFrom.GetPos(), inTo.GetPos()) > 1f)
                 {
                     // 이동보간 후 처리
-                    inFrom.MoveLerpEntity(() => inParam.fromPos, null, null, () => inTo.OnDamaged(inParam.attackValue));
+                    inFrom.MoveLerpEntity(() => inParam.fromPos, 
+                                          null, 
+                                          null, 
+                                          () =>
+                                          {
+                                            inFrom.OnAttack(inParam.fromDir);
+                                            inTo.OnDamaged(inParam.attackValue);
+                                          });
                 }
                 else
                 {
+                    inFrom.OnAttack(inParam.fromDir);
                     inTo.OnDamaged(inParam.attackValue);
                 }
             }
@@ -199,7 +205,7 @@ public class Player : EntityObject
 
     private void Start()
     {
-        _anim.PlayAnimation(HeroAnimator.AnimKey.KEY_IDLE);
+        _anim.OnIdle();
     }
 
 
@@ -342,15 +348,16 @@ public class Player : EntityObject
     }
 
 
-    public void OnAttack()
+    public void OnAttack(in Vector3 inDir)
     {
-        _anim.OnAttack();
+        _anim.OnAttack(inDir);
         StopMoveEntity(GetPos());
     }
 
 
     public void OnDamaged(int inDamageValue)
     {
+        _anim.OnDamaged();
         _playerUI.DecreaseHP(inDamageValue);
     }
 

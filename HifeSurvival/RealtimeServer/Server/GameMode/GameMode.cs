@@ -307,7 +307,7 @@ namespace Server
 
             toEntity.stat.AddCurrHp(-inPacket.attackValue);
 
-            if (toEntity.stat.hp <= 0)
+            if (toEntity.stat.currHp <= 0)
             {
                 S_Dead dead = new S_Dead()
                 {

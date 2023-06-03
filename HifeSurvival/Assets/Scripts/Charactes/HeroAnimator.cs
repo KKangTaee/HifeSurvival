@@ -18,12 +18,14 @@ public class HeroAnimator : MonoBehaviour
         public const string KEY_WALK = "Walk";
         public const string KEY_DEAD = "Dead";
         public const string KEY_ATTACK = "Attack";
+        public const string KEY_DAMANGED = "Damanged";
     }
 
     public  class ParamKey
     {
-        public const string KEY_IS_WALK = "isWalk";
-        public const string KEY_DIR     = "dir";
+        public const string KEY_IS_WALK     = "isWalk";
+        public const string KEY_DIR         = "dir";
+        public const string KEY_IS_DAMANGED = "isDamanged";
     }
 
     public void SetAnimatorController(int inIndex)
@@ -41,9 +43,10 @@ public class HeroAnimator : MonoBehaviour
         _anim.Play(inKey);
     }
 
-    public void OnAttack()
+    public void OnAttack(in Vector3 inDir)
     {
         _anim.Play(AnimKey.KEY_ATTACK);
+        _anim.SetFloat(ParamKey.KEY_DIR, inDir.y);
         _anim.SetBool(ParamKey.KEY_IS_WALK, false);
     }
 
@@ -64,7 +67,7 @@ public class HeroAnimator : MonoBehaviour
     public void OnDead()
     {   
         _anim.Play(AnimKey.KEY_DEAD);
-    }  
+    }
  
     public void OnIdle(in Vector2 inDir = default)
     {
@@ -73,5 +76,10 @@ public class HeroAnimator : MonoBehaviour
 
         _anim.SetBool(ParamKey.KEY_IS_WALK, false);
         _anim.Play(AnimKey.KEY_IDLE);
+    }
+
+    public void OnDamaged()
+    {
+        _anim.SetTrigger(ParamKey.KEY_IS_DAMANGED);
     }
 }

@@ -26,38 +26,21 @@ public class IngameUI : MonoBehaviour
     [SerializeField] RectTransform  RT_respawnPanel;
     [SerializeField] TMP_Text       TMP_respawnCount;
 
-    [SerializeField] KDView[] _kdViewArr;
+    [SerializeField] KDView[]       _kdViewArr;
 
     IDisposable _respawnTimer;
 
 
-    public void Start()
-    {
-        GameMode.Instance.OnRecvDeadCB += OnRecvDead;
-    }
-
     public void Init()
     {
-        var playerEntitys = GameMode.Instance.PlayerEntitysDic.Values;
-
-        var iter = _kdViewArr.GetEnumerator();
-
-        foreach (var entity in playerEntitys)
-        {
-            if (iter.MoveNext())
-            {
-                KDView view = iter.Current as KDView;
-                view?.gameObject.SetActive(true);
-                view?.SetInfo(entity.targetId, 0, 0);
-
-                // 나 자신이라면..?
-                if(entity.userId == ServerData.Instance.UserData.user_id)
-                    SetStatUI(entity.stat, 1000);
-            }
-        }
-
         GetComponent<Canvas>().worldCamera = ControllerManager.Instance.GetController<CameraController>().MainCamera;
+
+        GameMode.Instance.OnRecvDeadCB    += OnRecvDead;
+        GameMode.Instance.OnRecvRespawnCB += OnRecvRespawn;
+
+        SetKDView();
     }
+
 
     public void SetStatUI(EntityStat inStat, int inGold)
     {
@@ -70,10 +53,32 @@ public class IngameUI : MonoBehaviour
         TMP_gold.text = inGold.ToString();
     }
 
+
+    public void SetKDView()
+    {
+        var playerEntitys = GameMode.Instance.PlayerEntitysDic.Values;
+
+        var iter = _kdViewArr.GetEnumerator();
+
+        foreach (var entity in playerEntitys)
+        {
+            if (iter.MoveNext())
+            {
+                KDView view = iter.Current as KDView;
+                view?.SetInfo(entity.targetId, 0, 0);
+
+                // 나 자신이라면..?
+                if (entity.userId == ServerData.Instance.UserData.user_id)
+                    SetStatUI(entity.stat, entity.gold);
+            }
+        }
+    }
+
+
     public void OnRecvDead(S_Dead inPacket)
     {
-        var kill = _kdViewArr.FirstOrDefault(x => x.PlayerId == inPacket.fromId);
-        var dead = _kdViewArr.FirstOrDefault(x => x.PlayerId == inPacket.toId);
+        var kill = _kdViewArr.FirstOrDefault(x => x.targetId == inPacket.fromId);
+        var dead = _kdViewArr.FirstOrDefault(x => x.targetId == inPacket.toId);
 
         if (kill == null || dead == null)
         {
@@ -84,53 +89,29 @@ public class IngameUI : MonoBehaviour
         kill.AddKill(1);
         dead.AddDead(1);
 
-        float _animationDuration = 0.5f;
-
-        _kdViewArr = _kdViewArr.OrderByDescending(x => x.KillCount).ToArray();
-
-        // Apply animation
-        for (int i = 0; i < _kdViewArr.Length; i++)
-        {
-            RectTransform rectTransform = _kdViewArr[i].GetComponent<RectTransform>();
-
-            // Calculate the new position of this KDView
-            Vector3 newPosition = new Vector3(rectTransform.localPosition.x, -i * rectTransform.rect.height, rectTransform.localPosition.z);
-
-            // If this player is the one who killed, increase the scale
-            if (_kdViewArr[i].PlayerId == inPacket.fromId)
-            {
-                _kdViewArr[i].transform.DOScale(1.2f, _animationDuration).OnComplete(() =>
-                {
-                    // After increasing the scale, move the KDView to the new position and then restore the scale
-                    rectTransform.DOLocalMove(newPosition, _animationDuration).OnComplete(() =>
-                    {
-                        _kdViewArr[i].transform.DOScale(1f, _animationDuration);
-                    });
-                });
-            }
-            else
-            {
-                // Just move the KDView to the new position
-                rectTransform.DOLocalMove(newPosition, _animationDuration);
-            }
-        }
-
         if(inPacket.toId == GameMode.Instance.EntitySelf.targetId)
-            PlayRespawnTimer(inPacket.respawnTime);
+            ShowRespawnTimer(inPacket.respawnTime);
     }
 
 
-    public void PlayRespawnTimer(int totalTime)
+    public void OnRecvRespawn(PlayerEntity inPacket)
+    {
+        HideRespawnTimer();
+    }
+
+
+    public void ShowRespawnTimer(int totalTime)
     {
         RT_respawnPanel?.gameObject.SetActive(true);
 
-        int elapsedSeconds = 0; // 지나간 시간
+        int elapsedSeconds = totalTime;
 
         _respawnTimer = Observable.Interval(TimeSpan.FromSeconds(1))
             .Subscribe(_ =>
             {
-                elapsedSeconds++;
-                Debug.Log($"Elapsed Time: {elapsedSeconds}s");
+                elapsedSeconds--;
+
+                TMP_respawnCount.text = $"부활까지 {elapsedSeconds}초 남았습니다";
 
                 // 알파값을 0.5에서 1로 바꾸는 동안 0.5초의 애니메이션을 수행합니다.
                 TMP_respawnCount.DOFade(1f, 0.5f);
@@ -139,9 +120,15 @@ public class IngameUI : MonoBehaviour
                 TMP_respawnCount.DOFade(0.5f, 0.5f).SetDelay(0.5f);
 
                 if (elapsedSeconds >= totalTime)
-                {
                     _respawnTimer?.Dispose(); // 타이머를 정지합니다.
-                }
+
             }).AddTo(this);
+    }
+
+
+    public void HideRespawnTimer()
+    {
+        _respawnTimer?.Dispose();
+        RT_respawnPanel?.gameObject.SetActive(false);
     }
 }

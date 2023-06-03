@@ -1,0 +1,76 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Tiles
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings:
+    - serializedVersion: 3
+      m_BuildTarget: Android
+      m_MaxTextureSize: 2048
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: 50
+      m_TextureCompression: 1
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 1
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 1
+      enableTightPacking: 1
+      enableAlphaDilation: 0
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 102900000, guid: 7cf6abfc6cc634ecf8749a11126f9662, type: 3}
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: c454cd40415d94bf482137b05a1ec211, type: 3}
+  - {fileID: 21300000, guid: 180f0131a98824a57a8a986773566d2d, type: 3}
+  - {fileID: 21300000, guid: 6bc6eec26312143d38cdbf291e1d8183, type: 3}
+  - {fileID: 21300000, guid: 4e87a6e3370e146c39fb8518bb64267d, type: 3}
+  - {fileID: 21300000, guid: 21357474cbac04dc8994fc0aec1efc07, type: 3}
+  - {fileID: 21300000, guid: 9e7e6496701644f77b2181908366b0e3, type: 3}
+  - {fileID: 21300000, guid: a0abf5770233b431c85fc3c6f1970cba, type: 3}
+  - {fileID: 21300000, guid: f9847c6b567e545e7bad00b5e874f4f9, type: 3}
+  - {fileID: 21300000, guid: b3ab2f0ecc7be44d89f2577803b11306, type: 3}
+  - {fileID: 21300000, guid: 0fbb94ff3d0fa448a8367c48a049ef76, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - ZISO_Tile_Collider
+  - ISO_Tile_Dirt_01_GrassPatch_02
+  - ISO_Tile_Dirt_01_GrassPatch_01
+  - ISO_Tile_Dirt_01_Grass_01
+  - ISO_Overlay_Water_02
+  - ISO_Tile_Brick_Stone_01_02
+  - ISO_Tile_Dirt_01_GrassPatch_03
+  - ISO_Overlay_Water_01
+  - ISO_Tile_Brick_Stone_01
+  - ISO_Tile_Water_01
+  m_RenderDataMap: {}
+  m_Tag: Tiles
+  m_IsVariant: 0

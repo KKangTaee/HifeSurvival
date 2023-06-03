@@ -39,7 +39,6 @@ public class ControllerManager
             nameof(JoystickController),
         };
 
-
         foreach (var name in controllerName)
         {
             string path = $"{RESOURCES_PATH}/{name}";
@@ -62,7 +61,6 @@ public class ControllerManager
 
             _controllerDict.Add(inst.GetType(), inst);
         }
-
 
         // 초기화
         foreach(var controller in _controllerDict.Values)
@@ -92,7 +90,4 @@ public class ControllerManager
             return null;
         }
     }
-
-
-
 }

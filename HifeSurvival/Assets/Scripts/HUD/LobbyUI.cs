@@ -85,7 +85,7 @@ public class LobbyUI : MonoBehaviour
                 );
 
                 popup.AddEvent(
-                    inOnSendSelectHero : (playerId, heroId) => GameMode.Instance.OnSendSelectHero(playerId,heroId),
+                    inOnSendSelectHero : (heroId) => GameMode.Instance.OnSendSelectHero(heroId),
                     inOnSendReadyToGame : ()=> GameMode.Instance.OnSendReadyToGame(),
                     inDisconnect : ()=> NetworkManager.Instance.Disconnect(GameMode.Instance.Leave)
                 );

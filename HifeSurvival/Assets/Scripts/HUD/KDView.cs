@@ -8,17 +8,19 @@ public class KDView : MonoBehaviour
     [SerializeField] TMP_Text TMP_killCount;
     [SerializeField] TMP_Text TMP_deadCount;
 
-    public int PlayerId  { get; private set; }
+    public int targetId  { get; private set; }
     public int KillCount { get; private set; }
     public int DeadCount { get; private set; }
 
-    public void SetInfo(int inPlayerId, int inKillCount, int inDeadCount)
+    public void SetInfo(int inTargetId, int inKillCount, int inDeadCount)
     {
-        PlayerId = inPlayerId;
+        targetId = inTargetId;
 
         AddKill(inKillCount);
 
         AddDead(inDeadCount);
+
+        gameObject.SetActive(true);
     }
 
     public void AddKill(int inCount)

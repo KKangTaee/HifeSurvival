@@ -33,9 +33,9 @@ public class PopupSelectHeros : PopupBase
     private Subject<int> _onClickFrame = new Subject<int>();
     private Dictionary<int, Sprite> _heroImageDic = new Dictionary<int, Sprite>();
 
-    private Action<int, int> _onSendSelectHeroCB;
-    private Action _onSendReadyCB;
-    private Action _disconnectCB;
+    private Action<int> _onSendSelectHeroCB;
+    private Action      _onSendReadyCB;
+    private Action      _disconnectCB;
 
     private int _playerIdSelf;
     private HeroRTCapture _capture;
@@ -144,7 +144,7 @@ public class PopupSelectHeros : PopupBase
         ChangeHeroView(_playerIdSelf, inData.id);
 
         // 서버전송
-        _onSendSelectHeroCB?.Invoke(_playerIdSelf, inData.id);
+        _onSendSelectHeroCB?.Invoke(inData.id);
 
         // 캐릭터 변경
         _capture.GetAnimator().SetAnimatorController(inData.id -1);
@@ -315,11 +315,11 @@ public class PopupSelectHeros : PopupBase
         return _heroImageDic.TryGetValue(inHeroId, out var sprite) ? sprite : null;
     }
 
-    public void AddEvent(Action<int, int> inOnSendSelectHero, Action inOnSendReadyToGame, Action inDisconnect)
+    public void AddEvent(Action<int> inOnSendSelectHero, Action inOnSendReadyToGame, Action inDisconnect)
     {
         _onSendSelectHeroCB = inOnSendSelectHero;
-        _onSendReadyCB = inOnSendReadyToGame;
-        _disconnectCB = inDisconnect;
+        _onSendReadyCB      = inOnSendReadyToGame;
+        _disconnectCB       = inDisconnect;
     }
 
     public void RemoveEvent()

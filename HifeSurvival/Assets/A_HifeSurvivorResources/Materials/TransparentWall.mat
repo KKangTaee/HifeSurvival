@@ -53,5 +53,5 @@ Material:
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
     - _Specular: {r: 0, g: 0, b: 0, a: 0}
-    - _StarPosition: {r: -7.545366, g: -8.88998, b: 0, a: 0}
+    - _StarPosition: {r: -9999, g: -9999, b: -9999, a: 0}
   m_BuildTextureStacks: []

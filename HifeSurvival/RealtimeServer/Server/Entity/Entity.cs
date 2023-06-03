@@ -102,14 +102,15 @@ namespace Server
             broadcaster.Broadcast(move);
         }
     }
-
    
 
     public class EntityStat
     {
-        public int str { get; private set; }
-        public int def { get; private set; }
-        public int hp { get; private set; }
+        public int str    { get; private set; }
+        public int def    { get; private set; }
+        
+        public int hp     { get; private set; }
+        public int currHp { get; private set; }
 
         public float detectRange { get; private set; }
         public float attackRange { get; private set; }
@@ -121,23 +122,19 @@ namespace Server
         {
             str = heros.str;
             def = heros.def;
-            hp  = heros.hp;
+            currHp = hp  = heros.hp;
             detectRange = heros.detectRange;
             attackRange = heros.attackRange;
-            moveSpeed = heros.moveSpeed;
+            moveSpeed   = heros.moveSpeed;
             attackSpeed = heros.attackSpeed;
         }
 
 
-        public int GetAttackValue()
-        {
-            return (int)new Random().Next(str - 15, (int)(str * 1.2f));
-        }
-
+        public int GetAttackValue() =>
+            new Random().Next(str - 15, (int)(str * 1.2f));
 
         public int GetDamagedValue(int inAttackValue) =>
            (int)(inAttackValue - def * 0.1f);
-
 
         public void AddStr(int inStr) =>
             str += inStr;
@@ -148,5 +145,7 @@ namespace Server
         public void AddHp(int inHp) =>
             hp += inHp;
 
+        public void AddCurrHp(int inHp) =>
+            currHp += inHp;
     }
 }

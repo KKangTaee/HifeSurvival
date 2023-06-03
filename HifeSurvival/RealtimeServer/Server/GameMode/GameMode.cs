@@ -63,10 +63,10 @@ namespace Server
             {
                 var data = new S_StartGame.Monster()
                 {
-                    monsterId = info.targetId,
-                    monsterType = info.monsterId,
-                    groupId = info.groupId,
-                    subId = info.subId,
+                    targetId  = info.targetId,
+                    monsterId = info.monsterId,
+                    groupId   = info.groupId,
+                    subId     = info.subId,
                 };
 
                 monsterList.Add(data);
@@ -83,8 +83,8 @@ namespace Server
             {
                 var data = new S_StartGame.Player()
                 {
-                    playerId = info.targetId,
-                    heroId = info.heroId,
+                    targetId = info.targetId,
+                    heroId   = info.heroId,
                 };
 
                 playerList.Add(data);
@@ -143,8 +143,8 @@ namespace Server
 
             S_LeaveToGame packet = new S_LeaveToGame()
             {
-                userId = playerInfo.userId,
-                playerId = playerInfo.targetId,
+                userId   = playerInfo.userId,
+                targetId = playerInfo.targetId,
             };
 
             _broadcaster.Broadcast(packet);
@@ -179,13 +179,18 @@ namespace Server
             JobTimer.Instance.Push(OnSendStartGame, CONUTDOWN_SEC * 1000);
         }
 
-
         public void OnSendRespawn(int inPlayerId)
         {
+            var player = GetPlayerEntity(inPlayerId);
+
+            if (player == null)
+                return;
+
             S_Respawn respawn = new S_Respawn()
             {
                 targetId = inPlayerId,
                 isPlayer = true,
+                // stat = 
             };
         }
 
@@ -225,7 +230,7 @@ namespace Server
 
         public void OnRecvReady(CS_ReadyToGame inPacket)
         {
-            var player = GetPlayerEntity(inPacket.playerId);
+            var player = GetPlayerEntity(inPacket.targetId);
 
             if (player == null)
                 return;
@@ -241,7 +246,7 @@ namespace Server
 
         public void OnRecvSelect(CS_SelectHero inPacket)
         {
-            var player = GetPlayerEntity(inPacket.playerId);
+            var player = GetPlayerEntity(inPacket.targetId);
 
             if (player == null)
                 return;
@@ -263,8 +268,6 @@ namespace Server
             player.dir = inPacket.dir;
 
             player.OnMove();
-
-            // _broadcaster.Broadcast(inPacket);
         }
 
 
@@ -299,22 +302,19 @@ namespace Server
             else
                 toEntity = GetMonsterEntity(inPacket.toId);
 
-
             if (toEntity == null)
                 return;
 
-
-
-            System.Console.WriteLine($"받은 데미지 : {inPacket.damageValue},hp : {toEntity.stat.hp})"); 
-            toEntity.stat.AddHp(-inPacket.damageValue);
+            toEntity.stat.AddCurrHp(-inPacket.attackValue);
 
             if (toEntity.stat.hp <= 0)
             {
                 S_Dead dead = new S_Dead()
                 {
-                    toId = inPacket.toId,
-                    respawnTime = 15,
-                    toIdIsPlayer = toEntity.IsPlayer
+                    toId          = inPacket.toId,
+                    fromId        = inPacket.fromId,
+                    respawnTime   = 15,
+                    toIdIsPlayer  = toEntity.IsPlayer
                 };
 
                 var deadParam = new DeadParam()
@@ -336,13 +336,34 @@ namespace Server
             {
                 var attackParam = new AttackParam()
                 {
-                    attackValue = inPacket.damageValue,
+                    attackValue = inPacket.attackValue,
                     target = toEntity,
                 };
 
                 fromPlayer.OnAttack(attackParam);
                 _broadcaster.Broadcast(inPacket);
             }
+        }
+
+
+        public void OnRecvUpdateStat(CS_UpdateStat inPacket)
+        {
+            var player = GetPlayerEntity(inPacket.targetId);
+
+            if (player == null)
+                return;
+
+            if (inPacket.usedGold > player.gold)
+                return;
+
+            player.gold -= inPacket.usedGold;
+
+            player.stat.AddHp(inPacket.updateStat.str);
+            player.stat.AddDef(inPacket.updateStat.def);
+            player.stat.AddHp(inPacket.updateStat.hp);
+            player.stat.AddCurrHp(inPacket.updateStat.hp);
+
+            _broadcaster.Broadcast(inPacket);
         }
     }
 }

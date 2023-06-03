@@ -5,15 +5,6 @@ using System.Text;
 
 class PacketHandler
 {
-	public static void S_ChatHandler(PacketSession session, IPacket packet)
-	{
-		S_Chat chatPacket = packet as S_Chat;
-		ServerSession serverSession = session as ServerSession;
-
-		//if (chatPacket.playerId == 1)
-			//Console.WriteLine(chatPacket.chat);
-	}
-
     public static void S_CountdownHandler(PacketSession session, IPacket packet)
     {
         S_Countdown countdown = packet as S_Countdown;
@@ -74,9 +65,15 @@ class PacketHandler
         GameMode.Instance.OnRecvDead(dead);
     }
 
-    internal static void S_RespawnHandler(PacketSession session, IPacket packet)
+    public static void S_RespawnHandler(PacketSession session, IPacket packet)
     {
         S_Respawn respawn = packet as S_Respawn;
         GameMode.Instance.OnRecvRespawn(respawn);
+    }
+
+    public static void CS_UpdateStatHandler(PacketSession session, IPacket packet)
+    {
+        CS_UpdateStat updateStat = packet as CS_UpdateStat;
+        GameMode.Instance.OnRecvUpdateStat(updateStat);
     }
 }

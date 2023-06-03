@@ -120,11 +120,11 @@ namespace Server
                         var attackVal = inSelf.stat.GetAttackValue();
                         var damagedVal = inOther.stat.GetDamagedValue(attackVal);
 
-                        inOther.stat.AddHp(-damagedVal);
+                        inOther.stat.AddCurrHp(-damagedVal);
 
                         CS_Attack attackPacket = new CS_Attack()
                         {
-                            damageValue = damagedVal,
+                            attackValue = damagedVal,
                             fromId = inSelf.targetId,
                             toIdIsPlayer = false,
                             toId = inOther.targetId

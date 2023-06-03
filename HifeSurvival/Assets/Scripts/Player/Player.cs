@@ -68,12 +68,23 @@ public class Player : EntityObject
                 OnAttack(inSelf, attack);
         }
 
-        private void OnAttack(Player inPlayer, AttackParam inParam)
+        private void OnAttack(Player inFrom, AttackParam inParam)
         {
-            inPlayer.OnAttack();
+            inFrom.OnAttack();
 
-            if (inParam.target is Player player)
-                player.OnDamaged(inParam.attackValue);
+            if (inParam.target is Player inTo)
+            {
+                // 내 클라의 전송값과 서버의 위치값이 크게 다르다면..?
+                if (Vector3.Distance(inFrom.GetPos(), inTo.GetPos()) > 1f)
+                {
+                    // 이동보간 후 처리
+                    inFrom.MoveLerpEntity(() => inParam.fromPos, null, null, () => inTo.OnDamaged(inParam.attackValue));
+                }
+                else
+                {
+                    inTo.OnDamaged(inParam.attackValue);
+                }
+            }
         }
     }
 
@@ -103,7 +114,7 @@ public class Player : EntityObject
     {
         public void Enter<P>(Player inSelf, in P inParam) where P : struct
         {
-            if (inParam is IdleParam idleParam )
+            if (inParam is IdleParam idleParam)
             {
                 if (inSelf.IsSelf == false)
                     inSelf.OnMoveLerp(idleParam.pos, idleParam.dir, () => inSelf.OnIdle(idleParam.pos));
@@ -145,7 +156,6 @@ public class Player : EntityObject
 
         }
 
-
         public void Move(MoveParam inMoveParam, Player inPlayer)
         {
             if (inPlayer.IsSelf == false)
@@ -159,7 +169,6 @@ public class Player : EntityObject
 
     private StateMachine<Player> _stateMachine;
 
-   
     public override void ChangeState<P>(EStatus inStatus, in P inParam = default) where P : struct
     {
         base.ChangeState(inStatus, inParam);
@@ -302,10 +311,10 @@ public class Player : EntityObject
         SetPoint(inEndPos, Vector3.zero);
 
         _anim.OnWalk(inDir);
-        
-        MoveLerpEntity(() => inEndPos, 
-                       dir => {  }, 
-                       null, 
+
+        MoveLerpEntity(() => inEndPos,
+                       dir => { },
+                       null,
                        doneCallback);
     }
 
@@ -346,12 +355,19 @@ public class Player : EntityObject
     }
 
 
+    public void UpdateHp()
+    {
+        _playerUI.SetMaxHP(Stat.hp);
+        _playerUI.SetHP(Stat.currHp);
+    }
+
+
     public void OnDead()
     {
-        OnDamaged(10000);
+        _playerUI.SetHP(0);
 
         _anim.OnDead();
-    
+
         _targetSet?.Clear();
     }
 
@@ -389,7 +405,6 @@ public class Player : EntityObject
 
     [SerializeField] private GameObject _pointPrefab;
     private List<GameObject> _pointList = new List<GameObject>();
-
 
     public void SetPoint(Vector3 inPos, Vector3 inDir)
     {

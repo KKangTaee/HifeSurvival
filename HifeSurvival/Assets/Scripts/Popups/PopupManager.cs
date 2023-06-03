@@ -9,7 +9,7 @@ public class PopupAttribute : System.Attribute
 {
     public string PATH_IN_NOT_RESOURCES_FOLDER;     // 리소스폴더 아닌 곳의 경로 (번들용도)
     public string PATH_IN_RESOURCES_FOLDER;         // 리소스폴더
-    public bool IN_RESOURCES_FORLDER;             // 해당 팝업이 어디 경로에 있는지 유무 체크
+    public bool IN_RESOURCES_FORLDER;               // 해당 팝업이 어디 경로에 있는지 유무 체크
 }
 
 

@@ -1,14 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <PDL>
-	<packet name="C_Chat">
-		<string name="chat"/>
-	</packet>
-
-	<packet name="S_Chat">
-		<int name="playerId"/>
-		<string name="chat"/>
-	</packet>
-
+	
 	<packet name="C_JoinToGame">
 		<string name ="userId"/>
 		<string name ="userName"/>
@@ -18,7 +10,7 @@
 		<list name = "JoinPlayer">
 			<string name = "userId"/>
 			<string name = "userName"/>
-			<int name = "playerId"/>
+			<int name = "targetId"/>
 			<int name ="heroId"/>
 		</list>
 		<int name="roomId"/>
@@ -26,16 +18,16 @@
 
 	<packet name ="S_LeaveToGame">
 		<string name = "userId"/>
-		<int name ="playerId"/>
+		<int name ="targetId"/>
 	</packet>
 
 	<packet name="CS_SelectHero">
-		<int  name="playerId"/>
+		<int  name="targetId"/>
 		<int  name="heroId"/>
 	</packet>
 
 	<packet name="CS_ReadyToGame">
-		<int name ="playerId"/>
+		<int name ="targetId"/>
 	</packet>
 
 	<packet name="S_Countdown">
@@ -44,12 +36,12 @@
 
 	<packet name="S_StartGame">
 		<list name="Player">
-			<int name="playerId"/>
+			<int name="targetId"/>
 			<int name="heroId"/>
 		</list>
 		<list name="Monster">
+			<int name ="targetId"/>
 			<int name ="monsterId"/>
-			<int name ="monsterType"/>
 			<int name ="groupId"/>
 			<int name ="subId"/>
 		</list>
@@ -59,7 +51,9 @@
 		<bool name ="toIdIsPlayer"/>
 		<int name ="toId"/>
 		<int name ="fromId"/>
-		<int name ="damageValue"/>
+		<struct_Vec3 name ="fromPos"/>
+		<struct_Vec3 name ="fromDir"/>
+		<int name ="attackValue"/>
 	</packet>
 
 	<packet name ="CS_Move">
@@ -76,24 +70,39 @@
 		<struct_Vec3 name ="pos"/>
 		<struct_Vec3 name ="dir"/>
 	</packet>
-
+	
 	<packet name ="S_Dead">
-		<int name ="toId"/>
-		<int name ="fromId"/>
+		<int name  ="toId"/>
+		<int name  ="fromId"/>
 		<bool name ="toIdIsPlayer"/>
-		<int name ="respawnTime"/>
+		<int name  ="respawnTime"/>
 	</packet>
 
 	<packet name ="S_Respawn">
 		<int name ="targetId"/>
-		<bool name ="isPlayer"/>
+		<bool name	="isPlayer"/>
 		<struct_Vec3 name ="pos"/>
+		<struct_Stat name ="stat"/>
 	</packet>
 
+	<packet name = "CS_UpdateStat">
+		<int name ="targetId"/>
+		<int name ="usedGold"/>
+		<struct_Stat name ="updateStat"/>
+	</packet>
+	
 	<struct name="Vec3">
 		<float name ="x"/>
 		<float name ="y"/>
 		<float name ="z"/>
 	</struct>
 
+	<struct name ="Stat">
+		<int name ="str"/>
+		<int name ="def"/>
+		<int name ="hp"/>
+		<float name = "moveSpeed"/>
+		<float name = "attackSpeed"/>
+	</struct>
+	
 </PDL>

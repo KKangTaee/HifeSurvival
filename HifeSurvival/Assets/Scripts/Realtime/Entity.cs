@@ -21,6 +21,8 @@ public class PlayerEntity : Entity
     
     public int    heroId;
 
+    public int    gold;
+
     public bool   isReady;
 }
 
@@ -34,9 +36,12 @@ public class MonsterEntity : Entity
 
 public class EntityStat
 {
-    public int str { get; private set; }
-    public int def { get; private set; }
-    public int hp  { get; private set; }
+    public int str    { get; private set; }
+    public int def    { get; private set; }
+    
+    public int hp     { get; private set; }
+    public int currHp { get; private set; }
+
 
     public float detectRange { get; private set; }
     public float attackRange { get; private set; }
@@ -48,21 +53,20 @@ public class EntityStat
     {
         str = heros.str;
         def = heros.def;
-        hp  = heros.hp;
+        
+        currHp = hp  = heros.hp;
+        
         detectRange = heros.detectRange;
         attackRange = heros.attackRange;
         moveSpeed   = heros.moveSpeed;
         attackSpeed = heros.attackSpeed;
     }
 
-
     public int GetAttackValue() =>
        (int)UnityEngine.Random.Range(str - 15, str + str * 0.2f);
 
-
     public int GetDamagedValue(int inAttackValue) =>
        (int)(inAttackValue - def * 0.1f);
-
 
     public void AddStr(int inStr) =>
         str += inStr;
@@ -70,6 +74,15 @@ public class EntityStat
     public void AddDef(int inDef) =>
         def += inDef;
 
-    public void AddHp(int inHp) =>
-        hp += inHp;
+    public void AddCurrHp(int inHp) =>
+        currHp += inHp;
+
+    public void UpdateStat(Stat inStat)
+    {
+        str += inStat.str;
+        def += inStat.def;
+        hp  += inStat.hp;
+
+        currHp += inStat.hp;
+    }
 }

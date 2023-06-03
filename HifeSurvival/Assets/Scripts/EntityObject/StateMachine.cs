@@ -49,24 +49,25 @@ public struct IdleParam
     public float speed;
     public Vector3 pos;
     public Vector3 dir;
-    public bool isSelf;
 }
 
 
 public struct AttackParam
 {
     public int attackValue;
+
     public EntityObject target;
 
-    public Action<bool> attackDoneCallback;
+    public Vector3 fromPos;
+    public Vector3 fromDir;
 }
 
 
 public struct FollowTargetParam
 {
-    public EntityObject target;
-    public Action<Vector3> followDirCallback;
-    public Action followDoneCallback;
+    public EntityObject     target;
+    public Action<Vector3>  followDirCallback;
+    public Action           followDoneCallback;
 }
 
 

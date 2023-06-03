@@ -9,8 +9,9 @@ namespace Server
         public string userId;
         public string userName;
 
-        
-        public int heroId;
+        public int  gold;
+
+        public int  heroId;
         public bool isReady;
 
         public override bool IsPlayer => true;
@@ -35,7 +36,7 @@ namespace Server
             {
                 userId  = this.userId,
                 userName = this.userName,
-                playerId = this.targetId,
+                targetId = this.targetId,
                 heroId = this.heroId
             };
         }

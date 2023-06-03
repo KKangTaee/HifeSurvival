@@ -6,11 +6,6 @@ using System.Text;
 
 class PacketHandler
 {
-	public static void C_ChatHandler(PacketSession session, IPacket packet)
-	{
-
-	}
-
     public static void CS_SelectHeroHandler(PacketSession session, IPacket packet)
     {
         CS_SelectHero selectHero = packet as CS_SelectHero;  
@@ -53,6 +48,14 @@ class PacketHandler
         CS_ReadyToGame readyToGame = packet as CS_ReadyToGame;
         Push(session, room => room?.Mode.OnRecvReady(readyToGame));
     }
+
+    public static void CS_UpdateStatHandler(PacketSession session, IPacket packet)
+    {
+        CS_UpdateStat updateStat = packet as CS_UpdateStat;
+        Push(session, room => room?.Mode.OnRecvUpdateStat(updateStat));
+    }
+
+
 
     public static void Push(PacketSession session, Action<GameRoom> job)
     {

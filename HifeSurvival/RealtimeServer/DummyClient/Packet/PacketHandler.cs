@@ -7,12 +7,6 @@ using System.Linq;
 
 class PacketHandler
 {
-	public static void S_ChatHandler(PacketSession session, IPacket packet)
-	{
-		S_Chat chatPacket = packet as S_Chat;
-		ServerSession serverSession = session as ServerSession;  
-	}
-
     internal static void S_StartGameHandler(PacketSession session, IPacket packet)
     {
         throw new NotImplementedException();
@@ -84,6 +78,11 @@ class PacketHandler
     }
 
     internal static void S_RespawnHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static void CS_UpdateStatHandler(PacketSession arg1, IPacket arg2)
     {
         throw new NotImplementedException();
     }

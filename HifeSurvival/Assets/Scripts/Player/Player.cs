@@ -76,22 +76,31 @@ public class Player : EntityObject
                 if (Vector3.Distance(inFrom.GetPos(), inTo.GetPos()) > 1f)
                 {
                     // 이동보간 후 처리
-                    inFrom.MoveLerpEntity(() => inParam.fromPos, 
-                                          null, 
-                                          null, 
+                    inFrom.MoveLerpEntity(() => inParam.fromPos,
+                                          null,
+                                          null,
                                           () =>
                                           {
-                                            inFrom.OnAttack(inParam.fromDir);
-                                            inTo.OnDamaged(inParam.attackValue);
+                                              Attack(inParam, inFrom, inTo);
                                           });
                 }
                 else
                 {
-                    inFrom.OnAttack(inParam.fromDir);
-                    inTo.OnDamaged(inParam.attackValue);
+                    Attack(inParam, inFrom, inTo);
                 }
             }
         }
+
+        #region  Local Func
+        void Attack(AttackParam inParam, Player inFrom, Player inTo)
+        {
+            inFrom.OnAttack(inParam.fromDir);
+            inTo.OnDamaged(inParam.attackValue);
+
+            if (inFrom.IsSelf == true)
+                ActionDisplayUI.Show(ActionDisplayUI.ESpawnType.ATTACK_SELF, inParam.attackValue, inTo.GetPos() + Vector3.up);
+        }
+        #endregion
     }
 
     public class DeadState : IState<Player>

@@ -6,7 +6,7 @@ using DG.Tweening;
 using System;
 
 
-[ObjectPool(PATH_IN_RESOURCES_FOLDER = "Prefabs/Popups/PopupSelectHeros/PopupSelectHeros",
+[ObjectPool(PATH_IN_RESOURCES_FOLDER = "Prefabs/Characters/ActionDisplayUI",
             IN_RESOURCES_FORLDER = true)]
 public class ActionDisplayUI : MonoBehaviour
 {
@@ -32,14 +32,14 @@ public class ActionDisplayUI : MonoBehaviour
         // Create the waypoints for the animation
         Vector3[] waypoints = new Vector3[]
         {
-            startPos,
-            new Vector3(startPos.x + ((endPos.x - startPos.x) / 2), startPos.y + height, startPos.z),
-            endPos
+            transform.position + startPos,
+            transform.position + new Vector3(startPos.x + ((endPos.x - startPos.x) / 2), startPos.y + height, startPos.z),
+            transform.position + endPos
         };
 
         Sequence sequence = DOTween.Sequence();
 
-        TMP_attackSelf.transform.position = Vector3.zero;
+        TMP_attackSelf.transform.localPosition = Vector3.zero;
         TMP_attackSelf.DOFade(1, 0);
 
         sequence.Append(TMP_attackSelf.transform.DOScaleX(2f, 0.1f));
@@ -70,6 +70,7 @@ public class ActionDisplayUI : MonoBehaviour
         var inst = objectPool.SpawnFromPool<ActionDisplayUI>();
 
         inst.transform.position = inPos;
+        
 
         switch(inType)
         {

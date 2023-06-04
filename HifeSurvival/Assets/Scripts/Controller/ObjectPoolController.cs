@@ -85,13 +85,13 @@ public class ObjectPoolController : ControllerBase
             }
         }
 
-        var inst = Instantiate(asset);
-
-        if(inst == null)
+        if(asset == null)
         {
             Debug.LogError($"[{nameof(T)}] is null or empty!");
             return null;
         }
+
+        var inst = Instantiate(asset);
 
         return inst; 
     }

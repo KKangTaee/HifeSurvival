@@ -29,7 +29,7 @@ RectTransform:
   m_GameObject: {fileID: 8487408282165751808}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.01, y: 0.01, z: 1}
+  m_LocalScale: {x: 0.015, y: 0.015, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8487408282717065372}
@@ -60,7 +60,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_TargetDisplay: 0
 --- !u!114 &8487408282165751810
 MonoBehaviour:
@@ -114,7 +114,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23960de2fc88e4ab3a626cc655493207, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TMP_attackSelf: {fileID: 0}
+  TMP_attackSelf: {fileID: 8487408282717065373}
   TMP_attackOther: {fileID: 0}
   startPos: {x: 0, y: 0, z: 0}
   endPos: {x: 1, y: -2, z: 0}
@@ -189,7 +189,7 @@ MonoBehaviour:
   m_text: 123
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 00d8bdf4b753444c39655237094f239a, type: 2}
-  m_sharedMaterial: {fileID: 2100000, guid: 1c37a3cd56cfd4d199ca6aa5ea11a074, type: 2}
+  m_sharedMaterial: {fileID: 566748121112479272, guid: 00d8bdf4b753444c39655237094f239a, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

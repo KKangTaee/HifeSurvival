@@ -193,11 +193,11 @@ public abstract class PopupBase : MonoBehaviour
         {
             case EAnim.OPEN_SCALE_NORMAL:
             _background.localScale = Vector2.zero;
-            anim = _background.DOScale(Vector3.one, 0.3f);
+            anim = _background.DOScale(Vector3.one, 0.25f);
             break;
 
             case EAnim.CLOSE_SCALE_NORMAL:
-            anim = _background.DOScale(Vector3.zero, 0.2f);
+            anim = _background.DOScale(Vector3.zero, 0.25f);
             break;
         }
 

@@ -294,6 +294,9 @@ namespace Server
             if (fromPlayer == null)
                 return;
 
+            fromPlayer.pos = inPacket.fromPos;
+            fromPlayer.dir = inPacket.fromDir;
+
             Entity toEntity = null;
 
             if (inPacket.toIdIsPlayer == true)

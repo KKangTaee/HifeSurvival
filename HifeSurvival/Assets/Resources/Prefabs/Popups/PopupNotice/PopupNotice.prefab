@@ -37,7 +37,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 850, y: 100}
+  m_SizeDelta: {x: 850, y: 140}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &409736590619002338
 CanvasRenderer:
@@ -387,8 +387,8 @@ MonoBehaviour:
   m_text: "\uC811\uC18D\uC744 \uD560\uC218 \uC5C6\uC2B5\uB2C8\uB2E4..\n\uB124\uD2B8\uC6CC\uD06C\uB97C
     \uD655\uC778\uD574\uC8FC\uC138\uC694..."
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 53c960c59e80c4a4f823be452150ad8a, type: 2}
-  m_sharedMaterial: {fileID: 7955627256555933419, guid: 53c960c59e80c4a4f823be452150ad8a, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 869811bfb12db4e839b69a65569c2824, type: 2}
+  m_sharedMaterial: {fileID: 3439742510199925046, guid: 869811bfb12db4e839b69a65569c2824, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -422,9 +422,9 @@ MonoBehaviour:
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
-  m_characterSpacing: 0
-  m_wordSpacing: 0
-  m_lineSpacing: 0
+  m_characterSpacing: 5
+  m_wordSpacing: 5
+  m_lineSpacing: 5
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0

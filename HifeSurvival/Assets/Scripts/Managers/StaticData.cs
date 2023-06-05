@@ -66,7 +66,6 @@ public class StaticData
         await waiter.Wait();
         waiter.Reset();
 
-
         // 배치로 모든 스프레드 시트의 데이터 가져오기.
         string ranges = string.Join("&", sheetNames.Select(sheetName => $"ranges={Uri.EscapeDataString(sheetName)}"));
         string batchGetUrl = $"{sheetsApiUrl}/{sheetId}/values:batchGet?{ranges}&key={apiKey}";

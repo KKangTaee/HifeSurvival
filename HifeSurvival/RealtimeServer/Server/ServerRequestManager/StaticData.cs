@@ -84,19 +84,19 @@ namespace Server
                     {
                         var rangeValue = node["range"].ToString();
 
-                        if (rangeValue.Contains("systems"))
+                        if (rangeValue.Equals("systems"))
                         {
                             SystemsDict = JsonToDictionaryGeneric.ParseJsonToDictionary<Systems>(node.ToString());
                         }
-                        else if (rangeValue.Contains("heros"))
+                        else if (rangeValue.Equals("heros"))
                         {
                             HerosDict = JsonToDictionaryGeneric.ParseJsonToDictionary<Heros>(node.ToString());
                         }
-                        else if (rangeValue.Contains("monsters"))
+                        else if (rangeValue.Equals("monsters"))
                         {
                             MonstersDict = JsonToDictionaryGeneric.ParseJsonToDictionary<Monsters>(node.ToString());
                         }
-                        else if (rangeValue.Contains("monsters_group"))
+                        else if (rangeValue.Equals("monsters_group"))
                         {
                             MonstersGroupDict = JsonToDictionaryGeneric.ParseJsonToDictionary<MonstersGroup>(node.ToString());
                         }

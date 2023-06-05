@@ -26,8 +26,8 @@ public class GameMode
     private Action<int> _onRecvCountdownCB;
     private Action _onRecvStartGameCB;
 
-    public event Action<PlayerEntity> OnRecvMoveCB;
-    public event Action<PlayerEntity> OnRecvStopMoveCB;
+    public event Action<Entity> OnRecvMoveCB;
+    public event Action<Entity> OnRecvStopMoveCB;
 
     public event Action<S_Dead> OnRecvDeadCB;
     public event Action<CS_Attack> OnRecvAttackCB;
@@ -335,7 +335,7 @@ public class GameMode
 
         foreach (S_StartGame.Monster m in mosterList)
         {
-            if(StaticData.Instance.MonstersDict.TryGetValue(m.monsterId.ToString(), out var monster) == false)
+            if (StaticData.Instance.MonstersDict.TryGetValue(m.monsterId.ToString(), out var monster) == false)
             {
                 Debug.LogError($"[{nameof(OnRecvStartGame)}] monster static is null or empty!");
                 continue;
@@ -343,11 +343,11 @@ public class GameMode
 
             var monsterEntity = new MonsterEntity()
             {
-                targetId  = m.targetId,
+                targetId = m.targetId,
                 monsterId = m.monsterId,
-                subId     = m.subId,
-                stat      = new EntityStat(monster),
-                pos       = m.spawnPos,
+                subId = m.subId,
+                pos = m.spawnPos,
+                stat = new EntityStat(monster),
             };
 
             MonsterEntityDict.Add(monsterEntity.targetId, monsterEntity);
@@ -371,7 +371,13 @@ public class GameMode
         }
         else
         {
+            if (MonsterEntityDict.TryGetValue(inPacket.targetId, out var monster) == true)
+            {
+                monster.dir = inPacket.dir;
+                monster.pos = inPacket.pos;
 
+                OnRecvMoveCB?.Invoke(monster);
+            }
         }
     }
 
@@ -391,39 +397,42 @@ public class GameMode
         }
         else
         {
+            if (MonsterEntityDict.TryGetValue(inPacket.targetId, out var monster) == true)
+            {
+                monster.pos = inPacket.pos;
+                monster.dir = inPacket.dir;
 
+                OnRecvStopMoveCB?.Invoke(monster);
+            }
         }
     }
 
     public void OnRecvAttack(CS_Attack inPacket)
     {
+        Entity toEntity = null;
+
         if (inPacket.toIdIsPlayer == true)
         {
             if (PlayerEntitysDict.TryGetValue(inPacket.toId, out var player) == true)
-            {
-                player.stat.AddCurrHp(-inPacket.attackValue);
-
-                if (IsSelf(inPacket.fromId) == false)
-                    OnRecvAttackCB?.Invoke(inPacket);
-            }
+                toEntity = player;
         }
         else
         {
-
+            if (MonsterEntityDict.TryGetValue(inPacket.toId, out var monster) == true)
+                toEntity = monster;
         }
+
+        // 공격
+        toEntity.stat.AddCurrHp(-inPacket.attackValue);
+
+        if (IsSelf(inPacket.fromId) == false)
+            OnRecvAttackCB?.Invoke(inPacket);
     }
 
 
     public void OnRecvDead(S_Dead inPacket)
     {
-        if (inPacket.toIdIsPlayer == true)
-        {
-            OnRecvDeadCB?.Invoke(inPacket);
-        }
-        else
-        {
-
-        }
+        OnRecvDeadCB?.Invoke(inPacket);
     }
 
 

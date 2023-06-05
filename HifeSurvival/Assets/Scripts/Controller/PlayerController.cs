@@ -262,7 +262,7 @@ public class PlayerController : ControllerBase
     // server
     //----------------
 
-    public void OnRecvMove(PlayerEntity inEntity)
+    public void OnRecvMove(Entity inEntity)
     {
         var player = GetPlayer(inEntity.targetId);
 
@@ -273,7 +273,7 @@ public class PlayerController : ControllerBase
     }
 
 
-    public void OnRecvStopMove(PlayerEntity inEntity)
+    public void OnRecvStopMove(Entity inEntity)
     {
         var player = GetPlayer(inEntity.targetId);
 

@@ -94,7 +94,7 @@ public class IngameUI : MonoBehaviour
     }
 
 
-    public void OnRecvRespawn(PlayerEntity inPacket)
+    public void OnRecvRespawn(Entity inPacket)
     {
         HideRespawnTimer();
     }

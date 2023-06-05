@@ -132,5 +132,4 @@ public class Monster : EntityObject
     {
         MoveEntity(inDir);
     }
-
 }

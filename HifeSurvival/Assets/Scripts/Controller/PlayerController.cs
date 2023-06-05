@@ -308,7 +308,7 @@ public class PlayerController : ControllerBase
     }
 
 
-    public void OnRecvRespawn(PlayerEntity inEntity)
+    public void OnRecvRespawn(Entity inEntity)
     {
         var player = GetPlayer(inEntity.targetId);
         
@@ -316,8 +316,8 @@ public class PlayerController : ControllerBase
                     inEntity.stat, 
                     inEntity.pos.ConvertUnityVector3());
 
-        if(inEntity.userId == ServerData.Instance.UserData.user_id)
-            player.SetSelf();
+        if(player.IsSelf == true)
+           player.SetSelf();
     }
 
 

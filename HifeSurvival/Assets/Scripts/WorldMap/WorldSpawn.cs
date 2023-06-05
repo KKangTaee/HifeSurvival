@@ -55,6 +55,7 @@ public class WorldSpawn : WorldObjectBase
         return _pivotArr?.Length ?? 0;
     }
 
+
     public SpawnData GetSpawnData()
     {
         return new SpawnData()

@@ -195,9 +195,7 @@ public class StaticData
                     
                     // 다른 필드 유형이 필요한 경우 여기에 추가
                     if (value != null)
-                    {
                         field.SetValue(item, value);
-                    }
 
                     fieldIndex++;
                 }

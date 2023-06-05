@@ -9,7 +9,7 @@ public class GameMode
     private static GameMode _instance = new GameMode();
     public static GameMode Instance { get => _instance; }
 
-    public Dictionary<int, PlayerEntity> PlayerEntitysDict { get; private set; } = new Dictionary<int, PlayerEntity>();
+    public Dictionary<int, PlayerEntity>  PlayerEntitysDict { get; private set; } = new Dictionary<int, PlayerEntity>();
     public Dictionary<int, MonsterEntity> MonsterEntityDict { get; private set; } = new Dictionary<int, MonsterEntity>();
 
     private SimpleTaskCompletionSource<S_JoinToGame> _joinCompleted = new SimpleTaskCompletionSource<S_JoinToGame>();
@@ -24,14 +24,18 @@ public class GameMode
 
     private Action<int> _onRecvLeaveCB;
     private Action<int> _onRecvCountdownCB;
-    private Action _onRecvStartGameCB;
+    private Action     _onRecvStartGameCB;
 
-    public event Action<Entity> OnRecvMoveCB;
-    public event Action<Entity> OnRecvStopMoveCB;
 
-    public event Action<S_Dead> OnRecvDeadCB;
-    public event Action<CS_Attack> OnRecvAttackCB;
-    public event Action<PlayerEntity> OnRecvRespawnCB;
+    //---------------
+    // 인게임 진행 관련
+    //---------------
+    public event Action<Entity>       OnRecvMoveCB;
+    public event Action<Entity>       OnRecvStopMoveCB;
+
+    public event Action<S_Dead>       OnRecvDeadCB;
+    public event Action<CS_Attack>    OnRecvAttackCB;
+    public event Action<Entity>       OnRecvRespawnCB;
     public event Action<PlayerEntity> OnRecvUpdateStatCB;
 
     public PlayerEntity EntitySelf { get; private set; }

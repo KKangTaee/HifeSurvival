@@ -121,7 +121,7 @@ public class Monster : EntityObject
         MoveLerpEntity(() => inEndPos,
                        dir =>
                        { 
-                            // 나중에 애니메이션 처리를 여기서한다.
+                        
                        },
                        null,
                        doneCallback);
@@ -130,8 +130,6 @@ public class Monster : EntityObject
 
     public void OnMove(in Vector3 inDir)
     {
-        // 애니메이션 처리를 한다
-
         MoveEntity(inDir);
     }
 

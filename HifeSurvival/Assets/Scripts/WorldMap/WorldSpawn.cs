@@ -1,9 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class WorldSpawn : WorldObjectBase
 {
+    public class SpawnData
+    {
+        public int spawnType;
+        public int groupId;
+        public List<Vector3> pivotList;
+    }
+
     public enum ESpawnType
     {
         PLAYER,
@@ -26,13 +34,6 @@ public class WorldSpawn : WorldObjectBase
 
 
     //-----------------
-    // unity events
-    //-----------------
-
-
-
-
-    //-----------------
     // functions
     //-----------------
 
@@ -48,8 +49,19 @@ public class WorldSpawn : WorldObjectBase
         return _pivotArr[inIdx].position;
     }
 
+
     public int GetPivotCount()
     {
         return _pivotArr?.Length ?? 0;
+    }
+
+    public SpawnData GetSpawnData()
+    {
+        return new SpawnData()
+        {
+            spawnType = (int)_spawnType,
+            groupId = _groupId,
+            pivotList = _pivotArr.Select(x=>x.position).ToList(),
+        };
     }
 }

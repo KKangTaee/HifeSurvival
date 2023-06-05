@@ -184,11 +184,12 @@ public class MoveMachine : MonoBehaviour
             lerpValue += (_currSpeed * Time.deltaTime);
             float ratio = lerpValue / distance;
 
+            CurrDir = GetDir(endPos);
             transform.position = Vector3.Lerp(currPos, endPos,  ratio);
 
             if (updateRatio < ratio)
             {
-                _updateCallback?.Invoke(GetDir(endPos));
+                _updateCallback?.Invoke(CurrDir);
                 updateRatio += _updateRatio;
             }
             

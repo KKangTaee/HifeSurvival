@@ -454,5 +454,3 @@ public interface IState<T> where T : EntityObject
 
     void Exit();
 }
-
-

@@ -85,7 +85,7 @@ public class PopupSelectHeros : PopupBase
 
     private void SetHeroButton()
     {
-        var staticData = StaticData.Instance.HeroDic.Values;
+        var staticData = StaticData.Instance.HeroDict.Values;
 
         if (staticData == null || _selectButtonPrefab == null)
         {
@@ -268,7 +268,7 @@ public class PopupSelectHeros : PopupBase
         if (view == null)
             return;
 
-        if (StaticData.Instance.HeroDic.TryGetValue(inHeroId.ToString(), out var data) == false)
+        if (StaticData.Instance.HeroDict.TryGetValue(inHeroId.ToString(), out var data) == false)
             return;
 
         view.SetHero(GetHeroSprite(inHeroId), data.name);
@@ -284,7 +284,7 @@ public class PopupSelectHeros : PopupBase
             return;
         }
 
-        if (StaticData.Instance.HeroDic.TryGetValue(inEntity.heroId.ToString(), out var data) == false)
+        if (StaticData.Instance.HeroDict.TryGetValue(inEntity.heroId.ToString(), out var data) == false)
             return;
 
         view.SetInfo(inEntity.targetId, GetHeroSprite(inEntity.heroId), inEntity.userName, data.name);
@@ -300,7 +300,7 @@ public class PopupSelectHeros : PopupBase
     {
         _heroImageDic?.Clear();
 
-        var staticData = StaticData.Instance.HeroDic.Values;
+        var staticData = StaticData.Instance.HeroDict.Values;
 
         foreach (var data in staticData)
         {

@@ -37,8 +37,11 @@ namespace Server
         // Static Datas
         //------------------
 
-        public Dictionary<string, Heros> HeroDic { get; private set; }
-        public Dictionary<string, Systems> SystemsDic { get; private set; }
+        public Dictionary<string, Heros> HerosDict { get; private set; }
+        public Dictionary<string, Systems> SystemsDict { get; private set; }
+
+        public Dictionary<string, Monsters> MonstersDict { get; private set; }
+        public Dictionary<string, MonstersGroup> MonstersGroupDict { get; private set; }
 
         public async Task Init()
         {
@@ -85,11 +88,19 @@ namespace Server
 
                         if (rangeValue.Contains("systems"))
                         {
-                            //SystemsDic = JsonToDictionaryGeneric.ParseJsonToDictionary<Systems>(node.ToString());
+                            SystemsDict = JsonToDictionaryGeneric.ParseJsonToDictionary<Systems>(node.ToString());
                         }
                         else if (rangeValue.Contains("heros"))
                         {
-                            HeroDic = JsonToDictionaryGeneric.ParseJsonToDictionary<Heros>(node.ToString());
+                            HerosDict = JsonToDictionaryGeneric.ParseJsonToDictionary<Heros>(node.ToString());
+                        }
+                        else if (rangeValue.Contains("monsters"))
+                        {
+                            MonstersDict = JsonToDictionaryGeneric.ParseJsonToDictionary<Monsters>(node.ToString());
+                        }
+                        else if (rangeValue.Contains("monsters_group"))
+                        {
+                            MonstersGroupDict = JsonToDictionaryGeneric.ParseJsonToDictionary<MonstersGroup>(node.ToString());
                         }
 
                     }
@@ -226,6 +237,13 @@ namespace Server
 
 
         [System.Serializable]
+        public class Systems
+        {
+            public string id;
+            public string value;
+        }
+
+        [System.Serializable]
         public class Heros
         {
             public int id;
@@ -240,12 +258,31 @@ namespace Server
             public string desc;
         }
 
-
-        [System.Serializable]
-        public class Systems
+        [Serializable]
+        public class Monsters
         {
-            public string key;
-            public string value;
+            public int id;
+            public string name;
+            public int str;
+            public int def;
+            public int hp;
+            public float attackSpeed;
+            public float moveSpeed;
+            public float attackRange;
+            public float detectRange;
+            public string goldRange;
+            public string itemDrop;
+            public string desc;
+        }
+
+        [Serializable]
+        public class MonstersGroup
+        {
+            public int id;
+            public int groupId;
+            public string monsterGroups;
+            public int respawnTime;
+            public int enabled;
         }
     }
 

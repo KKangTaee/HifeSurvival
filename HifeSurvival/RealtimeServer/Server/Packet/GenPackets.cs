@@ -345,6 +345,7 @@ public class S_StartGame : IPacket
 	{
 		public int targetId;
 		public int heroId;
+		public Vec3 spawnPos;
 	
 		public void Read(ReadOnlySpan<byte> s, ref ushort count)
 		{
@@ -352,6 +353,7 @@ public class S_StartGame : IPacket
 			count += sizeof(int);
 			this.heroId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 			count += sizeof(int);
+			spawnPos.Read(s, ref count);
 		}
 	
 		public bool Write(Span<byte> s, ref ushort count)
@@ -361,6 +363,7 @@ public class S_StartGame : IPacket
 			count += sizeof(int);
 			success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.heroId);
 			count += sizeof(int);
+			success &= spawnPos.Write(s,ref count);
 			return success;
 		}	
 	}
@@ -371,6 +374,7 @@ public class S_StartGame : IPacket
 		public int monsterId;
 		public int groupId;
 		public int subId;
+		public Vec3 spawnPos;
 	
 		public void Read(ReadOnlySpan<byte> s, ref ushort count)
 		{
@@ -382,6 +386,7 @@ public class S_StartGame : IPacket
 			count += sizeof(int);
 			this.subId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 			count += sizeof(int);
+			spawnPos.Read(s, ref count);
 		}
 	
 		public bool Write(Span<byte> s, ref ushort count)
@@ -395,6 +400,7 @@ public class S_StartGame : IPacket
 			count += sizeof(int);
 			success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.subId);
 			count += sizeof(int);
+			success &= spawnPos.Write(s,ref count);
 			return success;
 		}	
 	}

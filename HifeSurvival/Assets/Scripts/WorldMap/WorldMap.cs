@@ -9,15 +9,15 @@ using System.Reflection;
 
 public class WorldMap : MonoBehaviour
 {
-    [SerializeField] private Tilemap    _background;
-    [SerializeField] private Tilemap    _wall;
-    [SerializeField] private Tilemap    _collider;
-    [SerializeField] private Transform  _objectRoot;
+    [SerializeField] private Tilemap _background;
+    [SerializeField] private Tilemap _wall;
+    [SerializeField] private Tilemap _collider;
+    [SerializeField] private Transform _objectRoot;
 
 
     private Dictionary<Vector3Int, WorldTile> _bgTileDic;
     private Material _wallMat;
-    private AStar    _aStar;
+    private AStar _aStar;
 
 
     Dictionary<Type, List<WorldObjectBase>> _worldObjDic;
@@ -53,7 +53,7 @@ public class WorldMap : MonoBehaviour
                                               x.IsSubclassOf(typeof(WorldObjectBase)))
                                   .ToList();
 
-        foreach(var type in derivedTypes)
+        foreach (var type in derivedTypes)
         {
             _worldObjDic.Add(type, new List<WorldObjectBase>());
         }
@@ -62,24 +62,24 @@ public class WorldMap : MonoBehaviour
         stack.Push(_objectRoot);
 
 
-        while(stack.Count > 0)
+        while (stack.Count > 0)
         {
             var tr = stack.Pop();
 
-            foreach(Transform child in tr)
+            foreach (Transform child in tr)
             {
                 var worldObj = child.GetComponent<WorldObjectBase>();
 
-                if(worldObj != null)
+                if (worldObj != null)
                 {
                     var type = worldObj.GetType();
 
-                    if(_worldObjDic.ContainsKey(type) == true)
-                       _worldObjDic[type].Add(worldObj);
-                    
+                    if (_worldObjDic.ContainsKey(type) == true)
+                        _worldObjDic[type].Add(worldObj);
+
                 }
 
-                if(child.childCount > 0)
+                if (child.childCount > 0)
                     stack.Push(child);
             }
         }
@@ -101,7 +101,7 @@ public class WorldMap : MonoBehaviour
 
     public IEnumerable<T> GetWorldObject<T>() where T : WorldObjectBase
     {
-        return _worldObjDic.TryGetValue(typeof(T), out var list) ? list.Cast<T>() 
+        return _worldObjDic.TryGetValue(typeof(T), out var list) ? list.Cast<T>()
                                                                  : Enumerable.Empty<T>();
     }
 
@@ -115,7 +115,7 @@ public class WorldMap : MonoBehaviour
     public void UpdateWallMasking(Vector3 hitPoint, Vector3 inWorldPos)
     {
         // �浹�� ������ Ÿ�� ��ǥ��� ��ȯ�մϴ�.
-        Vector3Int wallCoord   = _wall.WorldToCell(hitPoint);
+        Vector3Int wallCoord = _wall.WorldToCell(hitPoint);
         Vector3Int targetCoord = _wall.WorldToCell(transform.position);
 
         if ((targetCoord.x > wallCoord.x || targetCoord.y > wallCoord.y) ||
@@ -181,6 +181,26 @@ public class WorldMap : MonoBehaviour
     }
 
 
+    public List<Vector3> GetBackgroundCanGoTileList()
+    {
+        List<Vector3> result = new List<Vector3>();
+        BoundsInt bounds = _background.cellBounds;
+
+        for (int x = bounds.xMin; x < bounds.xMax; x++)
+        {
+            for (int y = bounds.yMin; y < bounds.yMax; y++)
+            {
+                Vector3Int cellPosition = new Vector3Int(x, y, 0);
+                TileBase tile = _background.GetTile(cellPosition);
+
+                if (tile is WorldTile worldTile && worldTile.IsBlock == false)
+                    result.Add(cellPosition);
+            }
+        }
+
+        return result;
+    }
+
 
     public List<Vector3> GetMoveList(Vector3 inStartWorldPos, Vector3 inEndWorldPos)
     {
@@ -196,14 +216,12 @@ public class WorldMap : MonoBehaviour
     }
 
 
-    #region ��Ÿ
+    #region Unity Editor 관련
 #if UNITY_EDITOR
 
     public void LogTotalBounds()
     {
         BoundsInt bounds = _background.cellBounds;
-
-        // �ٿ���� �ʺ�� ���̸� ����Ͽ� Ÿ�� ���� ���ϱ�
         int width = bounds.size.x;
         int height = bounds.size.y;
         int tileCount = width * height;

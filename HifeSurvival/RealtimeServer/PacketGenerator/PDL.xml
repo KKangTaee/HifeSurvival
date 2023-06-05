@@ -38,12 +38,14 @@
 		<list name="Player">
 			<int name="targetId"/>
 			<int name="heroId"/>
+			<struct_Vec3 name="spawnPos"/>
 		</list>
 		<list name="Monster">
 			<int name ="targetId"/>
 			<int name ="monsterId"/>
 			<int name ="groupId"/>
 			<int name ="subId"/>
+			<struct_Vec3 name="spawnPos"/>
 		</list>
 	</packet>
 

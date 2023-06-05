@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Server
 {
@@ -22,23 +21,24 @@ namespace Server
             NONE,
         }
 
+        private const int PLAYER_MAX_COUNT = 4;
+        private const int CONUTDOWN_SEC = 10;
 
-        Dictionary<int, PlayerEntity>  _playersDict  = new Dictionary<int, PlayerEntity>();
-        Dictionary<int, MonsterEntity> _monstersDict = new Dictionary<int, MonsterEntity>();
+        private Dictionary<int, PlayerEntity> _playersDict = new Dictionary<int, PlayerEntity>();
+        private Dictionary<int, MonsterEntity> _monstersDict = new Dictionary<int, MonsterEntity>();
 
-        private const int PLAYER_MAX_COUNT  = 4;
-        private const int CONUTDOWN_SEC     = 10;
-
+        private IBroadcaster _broadcaster = null;
         private int _roomId;
 
-        IBroadcaster _broadcaster = null;
-        
         public EStatus Status { get; private set; } = EStatus.NONE;
+        public WorldMap MapData { get; private set; } = new WorldMap();
 
         public GameMode(GameRoom inRoom)
         {
             _broadcaster = new RoomBroadcaster(inRoom);
             _roomId = inRoom.RoomId;
+
+            MapData.Init();
         }
 
         public List<S_StartGame.Monster> SetupMonster()
@@ -63,10 +63,10 @@ namespace Server
             {
                 var data = new S_StartGame.Monster()
                 {
-                    targetId  = info.targetId,
+                    targetId = info.targetId,
                     monsterId = info.monsterId,
-                    groupId   = info.groupId,
-                    subId     = info.subId,
+                    groupId = info.groupId,
+                    subId = info.subId,
                 };
 
                 monsterList.Add(data);
@@ -79,15 +79,31 @@ namespace Server
         {
             var playerList = new List<S_StartGame.Player>();
 
+            var playerSpawn = MapData.SpawnList.FirstOrDefault(x => x.spawnType == (int)WorldMap.ESpawnType.PLAYER);
+
+            if (playerSpawn == null)
+            {
+                System.Console.WriteLine("player spawn null or empty!");
+                return null;
+            }
+
+            var pivotIter = playerSpawn.pivotList.Shuffle().GetEnumerator();
+
             foreach (var info in _playersDict.Values)
             {
-                var data = new S_StartGame.Player()
+                if (pivotIter.MoveNext() == true)
                 {
-                    targetId = info.targetId,
-                    heroId   = info.heroId,
-                };
+                    var pos = (Vec3)pivotIter.Current;
 
-                playerList.Add(data);
+                    var data = new S_StartGame.Player()
+                    {
+                        targetId = info.targetId,
+                        heroId   = info.heroId,
+                        spawnPos = pos
+                    };
+                    
+                    playerList.Add(data);
+                }
             }
 
             return playerList;
@@ -143,7 +159,7 @@ namespace Server
 
             S_LeaveToGame packet = new S_LeaveToGame()
             {
-                userId   = playerInfo.userId,
+                userId = playerInfo.userId,
                 targetId = playerInfo.targetId,
             };
 
@@ -208,7 +224,7 @@ namespace Server
                 heroId = 1,
                 userName = inPacket.userName,
                 broadcaster = _broadcaster,
-                stat = new EntityStat(StaticData.Instance.HeroDic["1"])
+                stat = new EntityStat(StaticData.Instance.HerosDict["1"])
             };
 
             _playersDict.Add(inSessionId, playerInfo);
@@ -300,8 +316,8 @@ namespace Server
             Entity toEntity = null;
 
             if (inPacket.toIdIsPlayer == true)
-                toEntity = GetPlayerEntity(inPacket.toId);          
-            
+                toEntity = GetPlayerEntity(inPacket.toId);
+
             else
                 toEntity = GetMonsterEntity(inPacket.toId);
 
@@ -314,22 +330,22 @@ namespace Server
             {
                 S_Dead dead = new S_Dead()
                 {
-                    toId          = inPacket.toId,
-                    fromId        = inPacket.fromId,
-                    respawnTime   = 15,
-                    toIdIsPlayer  = toEntity.IsPlayer
+                    toId = inPacket.toId,
+                    fromId = inPacket.fromId,
+                    respawnTime = 15,
+                    toIdIsPlayer = toEntity.IsPlayer
                 };
 
                 var deadParam = new DeadParam()
                 {
                     respawnTime = 15,
-                    respawnCallback = ()=>
+                    respawnCallback = () =>
                     {
                         OnSendRespawn(inPacket.toId);
                     },
-                    
+
                 };
-                
+
                 toEntity.OnDead(deadParam);
                 fromPlayer.OnIdle();
 

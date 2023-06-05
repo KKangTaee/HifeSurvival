@@ -42,11 +42,11 @@ namespace Server
 
             if (length > 0)
             {
-                return new Vec3 
-                { 
-                    x = inSelf.x / length, 
-                    y = inSelf.y / length, 
-                    z = inSelf.z / length 
+                return new Vec3
+                {
+                    x = inSelf.x / length,
+                    y = inSelf.y / length,
+                    z = inSelf.z / length
                 };
             }
             else
@@ -62,6 +62,22 @@ namespace Server
             float dz = inOther.z - inSelf.z;
 
             return (float)Math.Sqrt(dx * dx + dy * dy + dz * dz);
+        }
+
+
+        private static Random rand = new Random();
+
+        public static void Shuffle<T>(this IList<T> list)
+        {
+            int n = list.Count;
+            while (n > 1)
+            {
+                n--;
+                int k = rand.Next(n + 1);
+                T value = list[k];
+                list[k] = list[n];
+                list[n] = value;
+            }
         }
     }
 }

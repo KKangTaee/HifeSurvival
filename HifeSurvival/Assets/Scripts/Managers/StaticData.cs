@@ -78,25 +78,23 @@ public class StaticData
             {
                 JSONNode batchDataJson = JSONNode.Parse(jsonStr);
 
-                Debug.Log(jsonStr);
-
                 foreach (JSONNode node in batchDataJson["valueRanges"].AsArray)
                 {
                     var rangeValue = node["range"].ToString();
 
-                    if (rangeValue.Contains("systems"))
+                    if (rangeValue.Equals("systems"))
                     {
                         SystemsDict = JsonToDictionaryGeneric.ParseJsonToDictionary<Systems>(node.ToString());
                     }
-                    else if (rangeValue.Contains("heros"))
+                    else if (rangeValue.Equals("heros"))
                     {
                         HeroDict = JsonToDictionaryGeneric.ParseJsonToDictionary<Heros>(node.ToString());
                     }
-                    else if(rangeValue.Contains("monsters"))
+                    else if(rangeValue.Equals("monsters"))
                     {
                         MonstersDict = JsonToDictionaryGeneric.ParseJsonToDictionary<Monsters>(node.ToString());
                     }
-                    else if(rangeValue.Contains("monsters_group"))
+                    else if(rangeValue.Equals("monsters_group"))
                     {
                         MonstersGroupDict = JsonToDictionaryGeneric.ParseJsonToDictionary<MonstersGroup>(node.ToString());
                     }
@@ -136,6 +134,7 @@ public class StaticData
                 var itemType = item.GetType();
 
                 int fieldIndex = 0;
+
                 foreach (var field in itemType.GetFields())
                 {
                     object value = null;

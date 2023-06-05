@@ -55,7 +55,7 @@ public class PlayerController : ControllerBase
     /// <param name="inWorldMap"></param>
     public void LoadPlayer()
     {
-        var entitys = GameMode.Instance.PlayerEntitysDic.Values;
+        var entitys = GameMode.Instance.PlayerEntitysDict.Values;
 
         foreach (var entity in entitys)
         {
@@ -230,7 +230,7 @@ public class PlayerController : ControllerBase
         inTarget.ChangeState(EntityObject.EStatus.IDLE, idleParam);
     }
 
-    
+
     public void SetDeadState(Player inTarget)
     {
         var deadParam = new DeadParam()

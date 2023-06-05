@@ -56,7 +56,7 @@ public class IngameUI : MonoBehaviour
 
     public void SetKDView()
     {
-        var playerEntitys = GameMode.Instance.PlayerEntitysDic.Values;
+        var playerEntitys = GameMode.Instance.PlayerEntitysDict.Values;
 
         var iter = _kdViewArr.GetEnumerator();
 

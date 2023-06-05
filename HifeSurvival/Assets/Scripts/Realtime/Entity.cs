@@ -62,6 +62,19 @@ public class EntityStat
         attackSpeed = heros.attackSpeed;
     }
 
+    public EntityStat(StaticData.Monsters monsters)
+    {
+        str = monsters.str;
+        def = monsters.def;
+
+        currHp = hp = monsters.hp;
+
+        detectRange = monsters.detectRange;
+        attackRange = monsters.attackRange;
+        moveSpeed   = monsters.moveSpeed;
+        attackSpeed = monsters.attackSpeed;
+    }
+
     public int GetAttackValue() =>
        (int)UnityEngine.Random.Range(str - 15, str + str * 0.2f);
 

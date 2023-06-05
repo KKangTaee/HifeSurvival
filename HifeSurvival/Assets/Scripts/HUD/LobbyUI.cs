@@ -68,7 +68,7 @@ public class LobbyUI : MonoBehaviour
         PopupManager.Instance.Show<PopupSelectHeros>(
             inCreateCallback : popup =>
             {
-                var currPlayerEntitys = GameMode.Instance.PlayerEntitysDic;
+                var currPlayerEntitys = GameMode.Instance.PlayerEntitysDict;
 
                 foreach(var entity in currPlayerEntitys.Values)
                     popup.AddPlayerView(entity);

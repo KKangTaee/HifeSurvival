@@ -9,7 +9,8 @@ public class GameMode
     private static GameMode _instance = new GameMode();
     public static GameMode Instance { get => _instance; }
 
-    public Dictionary<int, PlayerEntity> PlayerEntitysDic { get; private set; } = new Dictionary<int, PlayerEntity>();
+    public Dictionary<int, PlayerEntity> PlayerEntitysDict { get; private set; } = new Dictionary<int, PlayerEntity>();
+    public Dictionary<int, MonsterEntity> MonsterEntityDict { get; private set; } = new Dictionary<int, MonsterEntity>();
 
     private SimpleTaskCompletionSource<S_JoinToGame> _joinCompleted = new SimpleTaskCompletionSource<S_JoinToGame>();
 
@@ -21,17 +22,17 @@ public class GameMode
     private Action<PlayerEntity> _onRecvSelectCB;
     private Action<PlayerEntity> _onRecvReadyCB;
 
-    private Action<int>          _onRecvLeaveCB;
-    private Action<int>          _onRecvCountdownCB;
-    private Action               _onRecvStartGameCB;
+    private Action<int> _onRecvLeaveCB;
+    private Action<int> _onRecvCountdownCB;
+    private Action _onRecvStartGameCB;
 
-    public event Action<PlayerEntity>   OnRecvMoveCB;
-    public event Action<PlayerEntity>   OnRecvStopMoveCB;
+    public event Action<PlayerEntity> OnRecvMoveCB;
+    public event Action<PlayerEntity> OnRecvStopMoveCB;
 
-    public event Action<S_Dead>         OnRecvDeadCB;
-    public event Action<CS_Attack>      OnRecvAttackCB;
-    public event Action<PlayerEntity>   OnRecvRespawnCB;
-    public event Action<PlayerEntity>   OnRecvUpdateStatCB;
+    public event Action<S_Dead> OnRecvDeadCB;
+    public event Action<CS_Attack> OnRecvAttackCB;
+    public event Action<PlayerEntity> OnRecvRespawnCB;
+    public event Action<PlayerEntity> OnRecvUpdateStatCB;
 
     public PlayerEntity EntitySelf { get; private set; }
     public int RoomId { get; private set; }
@@ -49,8 +50,8 @@ public class GameMode
 
     public void RemovePlayerEntity(int inPlayerId)
     {
-        if (PlayerEntitysDic.ContainsKey(inPlayerId) == false)
-            PlayerEntitysDic.Remove(inPlayerId);
+        if (PlayerEntitysDict.ContainsKey(inPlayerId) == false)
+            PlayerEntitysDict.Remove(inPlayerId);
     }
 
     public void AddEvent(Action<PlayerEntity> inRecvJoin,
@@ -76,13 +77,13 @@ public class GameMode
     public void Leave()
     {
         Status = EStatus.NOT_JOIN;
-        PlayerEntitysDic.Clear();
+        PlayerEntitysDict.Clear();
     }
 
     public void AddPlayerEntity(S_JoinToGame.JoinPlayer joinPlayer)
     {
         // 이미 참가중인 유저에 대해서는 패스처리한다.
-        if (PlayerEntitysDic.ContainsKey(joinPlayer.targetId) == true)
+        if (PlayerEntitysDict.ContainsKey(joinPlayer.targetId) == true)
             return;
 
 
@@ -94,10 +95,10 @@ public class GameMode
 
         PlayerEntity entity = new PlayerEntity()
         {
-            userId   = joinPlayer.userId,
+            userId = joinPlayer.userId,
             userName = joinPlayer.userName,
             targetId = joinPlayer.targetId,
-            heroId   = joinPlayer.heroId,
+            heroId = joinPlayer.heroId,
             stat = new EntityStat(heros),
         };
 
@@ -105,13 +106,13 @@ public class GameMode
         if (joinPlayer.userId == ServerData.Instance.UserData.user_id)
             EntitySelf = entity;
 
-        PlayerEntitysDic.Add(joinPlayer.targetId, entity);
+        PlayerEntitysDict.Add(joinPlayer.targetId, entity);
     }
 
 
     public PlayerEntity GetPlayerEntity(int inPlayerId)
     {
-        if (PlayerEntitysDic.TryGetValue(inPlayerId, out var player) && player != null)
+        if (PlayerEntitysDict.TryGetValue(inPlayerId, out var player) && player != null)
         {
             return player;
         }
@@ -131,7 +132,7 @@ public class GameMode
 
         OnSendJoinToGame();
 
-        var waitResult = await _joinCompleted.Wait(7000);
+        var waitResult = await _joinCompleted.Wait(10000);
 
         if (waitResult.isSuccess == false)
             return false;
@@ -258,10 +259,10 @@ public class GameMode
             // 이미 내가 참가 중이라면, 내려온 데이터에서 처리해야할 것들만 처리해주면 된다.
             foreach (var joinPlayer in inPacket.joinPlayerList)
             {
-                if (PlayerEntitysDic.ContainsKey(joinPlayer.targetId) == false)
+                if (PlayerEntitysDict.ContainsKey(joinPlayer.targetId) == false)
                 {
                     AddPlayerEntity(joinPlayer);
-                    _onRecvJoinCB?.Invoke(PlayerEntitysDic[joinPlayer.targetId]);
+                    _onRecvJoinCB?.Invoke(PlayerEntitysDict[joinPlayer.targetId]);
                     break;
                 }
             }
@@ -323,22 +324,43 @@ public class GameMode
 
         var playerList = inPacket.playerList;
 
-        foreach(S_StartGame.Player player in playerList)
+        foreach (S_StartGame.Player p in playerList)
         {
-            var playerEntity = GetPlayerEntity(player.targetId);
-            playerEntity.heroId = player.heroId;
-            playerEntity.pos    = player.spawnPos;
+            var playerEntity = GetPlayerEntity(p.targetId);
+            playerEntity.heroId = p.heroId;
+            playerEntity.pos = p.spawnPos;
+        }
+
+        var mosterList = inPacket.monsterList;
+
+        foreach (S_StartGame.Monster m in mosterList)
+        {
+            if(StaticData.Instance.MonstersDict.TryGetValue(m.monsterId.ToString(), out var monster) == false)
+            {
+                Debug.LogError($"[{nameof(OnRecvStartGame)}] monster static is null or empty!");
+                continue;
+            }
+
+            var monsterEntity = new MonsterEntity()
+            {
+                targetId  = m.targetId,
+                monsterId = m.monsterId,
+                subId     = m.subId,
+                stat      = new EntityStat(monster),
+                pos       = m.spawnPos,
+            };
+
+            MonsterEntityDict.Add(monsterEntity.targetId, monsterEntity);
         }
 
         _onRecvStartGameCB?.Invoke();
     }
 
-
     public void OnRecvMove(CS_Move inPacket)
     {
         if (inPacket.isPlayer == true)
         {
-            if (PlayerEntitysDic.TryGetValue(inPacket.targetId, out var player) == true)
+            if (PlayerEntitysDict.TryGetValue(inPacket.targetId, out var player) == true)
             {
                 player.dir = inPacket.dir;
                 player.pos = inPacket.pos;
@@ -358,7 +380,7 @@ public class GameMode
     {
         if (inPacket.isPlayer == true)
         {
-            if (PlayerEntitysDic.TryGetValue(inPacket.targetId, out var player) == true)
+            if (PlayerEntitysDict.TryGetValue(inPacket.targetId, out var player) == true)
             {
                 player.pos = inPacket.pos;
                 player.dir = inPacket.dir;
@@ -373,17 +395,16 @@ public class GameMode
         }
     }
 
-
     public void OnRecvAttack(CS_Attack inPacket)
     {
         if (inPacket.toIdIsPlayer == true)
         {
-            if (PlayerEntitysDic.TryGetValue(inPacket.toId, out var player) == true)
+            if (PlayerEntitysDict.TryGetValue(inPacket.toId, out var player) == true)
             {
                 player.stat.AddCurrHp(-inPacket.attackValue);
 
-                if(IsSelf(inPacket.fromId) == false)
-                   OnRecvAttackCB?.Invoke(inPacket);
+                if (IsSelf(inPacket.fromId) == false)
+                    OnRecvAttackCB?.Invoke(inPacket);
             }
         }
         else
@@ -395,7 +416,7 @@ public class GameMode
 
     public void OnRecvDead(S_Dead inPacket)
     {
-        if(inPacket.toIdIsPlayer == true)
+        if (inPacket.toIdIsPlayer == true)
         {
             OnRecvDeadCB?.Invoke(inPacket);
         }
@@ -408,7 +429,7 @@ public class GameMode
 
     public void OnRecvRespawn(S_Respawn inPacket)
     {
-        if(inPacket.isPlayer == true)
+        if (inPacket.isPlayer == true)
         {
             var player = GetPlayerEntity(inPacket.targetId);
 
@@ -417,7 +438,7 @@ public class GameMode
 
             player.pos = inPacket.pos;
 
-            OnRecvRespawnCB?.Invoke(player);       
+            OnRecvRespawnCB?.Invoke(player);
         }
         else
         {

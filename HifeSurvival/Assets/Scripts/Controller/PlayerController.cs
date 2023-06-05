@@ -53,27 +53,15 @@ public class PlayerController : ControllerBase
     /// 플레이어 오브젝트 로드
     /// </summary>
     /// <param name="inWorldMap"></param>
-    public void LoadPlayer(WorldMap inWorldMap)
+    public void LoadPlayer()
     {
         var entitys = GameMode.Instance.PlayerEntitysDic.Values;
-
-        var randList = Enumerable.Range(0, entitys.Count).ToList();
-
-        var spawnObj = inWorldMap.GetWorldObject<WorldSpawn>().FirstOrDefault(x => x.SpawnType == WorldSpawn.ESpawnType.PLAYER);
-
-        if (spawnObj == null && spawnObj?.GetPivotCount() <= 0)
-        {
-            Debug.LogError($"[{nameof(LoadPlayer)}] spawnObj is null or empty!");
-            return;
-        }
-
-        int idx = 0;
 
         foreach (var entity in entitys)
         {
             var inst = Instantiate(_playerPrefab, transform);
 
-            inst.Init(entity.targetId, entity.stat, spawnObj.GetSpawnWorldPos(idx++));
+            inst.Init(entity.targetId, entity.stat, entity.pos.ConvertUnityVector3());
 
             if (ServerData.Instance.UserData.user_id == entity.userId)
             {
@@ -86,7 +74,6 @@ public class PlayerController : ControllerBase
 
         _cameraController.FollowingTarget(Self.transform);
     }
-
 
 
     /// <summary>

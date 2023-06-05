@@ -320,6 +320,16 @@ public class GameMode
     public void OnRecvStartGame(S_StartGame inPacket)
     {
         Status = EStatus.GAME_RUNIING;
+
+        var playerList = inPacket.playerList;
+
+        foreach(S_StartGame.Player player in playerList)
+        {
+            var playerEntity = GetPlayerEntity(player.targetId);
+            playerEntity.heroId = player.heroId;
+            playerEntity.pos    = player.spawnPos;
+        }
+
         _onRecvStartGameCB?.Invoke();
     }
 

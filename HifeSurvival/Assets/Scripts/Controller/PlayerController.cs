@@ -98,7 +98,7 @@ public class PlayerController : ControllerBase
         float angle = Vector3.Angle(Self.GetDir(), inDir);
 
         // 조이스틱의 방향전환이 이루어졌다면..?
-        if (angle > 2f)
+        if (angle > 1f)
         {
             // 서버에 전송한다.
             _gameMode.OnSendMove(Self.GetPos(), inDir);
@@ -230,7 +230,7 @@ public class PlayerController : ControllerBase
         inTarget.ChangeState(EntityObject.EStatus.IDLE, idleParam);
     }
 
-
+    
     public void SetDeadState(Player inTarget)
     {
         var deadParam = new DeadParam()

@@ -27,9 +27,8 @@ namespace Server
         // variables
         //------------------
 
-        private string apiKey = "AIzaSyABnRmQck9SP3Gv7syjremXAjDBDOky8so";
-        private string sheetId = "104ZnnXWWorMZOAhuY0o1o1xIL2H41opJlrJLsSEk_C4";
-        private string sheetName = "heros";
+        private string apiKey       = "AIzaSyABnRmQck9SP3Gv7syjremXAjDBDOky8so";
+        private string sheetId      = "104ZnnXWWorMZOAhuY0o1o1xIL2H41opJlrJLsSEk_C4";
         private string sheetsApiUrl = "https://sheets.googleapis.com/v4/spreadsheets";
 
 
@@ -67,7 +66,6 @@ namespace Server
 
             await waiter.Wait();
             waiter.Reset();
-
 
             // 배치로 모든 스프레드 시트의 데이터 가져오기.
             string ranges = string.Join("&", sheetNames.Select(sheetName => $"ranges={Uri.EscapeDataString(sheetName)}"));

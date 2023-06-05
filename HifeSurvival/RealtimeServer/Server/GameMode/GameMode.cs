@@ -24,37 +24,56 @@ namespace Server
         private const int PLAYER_MAX_COUNT = 4;
         private const int CONUTDOWN_SEC = 10;
 
-        private Dictionary<int, PlayerEntity> _playersDict = new Dictionary<int, PlayerEntity>();
-        private Dictionary<int, MonsterEntity> _monstersDict = new Dictionary<int, MonsterEntity>();
+        private Dictionary<int, PlayerEntity>   _playersDict = new Dictionary<int, PlayerEntity>();
+        private Dictionary<int, MonsterEntity>  _monstersDict = new Dictionary<int, MonsterEntity>();
 
         private IBroadcaster _broadcaster = null;
-        private int _roomId;
+        private int _mId = 10000;
 
-        public EStatus Status { get; private set; } = EStatus.NONE;
+
+        public EStatus  Status { get; private set; } = EStatus.NONE;
         public WorldMap MapData { get; private set; } = new WorldMap();
 
         public GameMode(GameRoom inRoom)
         {
             _broadcaster = new RoomBroadcaster(inRoom);
-            _roomId = inRoom.RoomId;
-
             MapData.Init();
         }
 
         public List<S_StartGame.Monster> SetupMonster()
         {
-            // 임시로 처리함.
-            for (int i = 0; i < 9; i++)
-            {
-                var info = new MonsterEntity()
-                {
-                    targetId = i,
-                    groupId = i / 3,
-                    monsterId = i % 3,
-                    subId = i % 3,
-                };
+            var groupList = StaticData.Instance.MonstersGroupDict.Values;
 
-                _monstersDict.Add(i, info);
+            foreach (var group in groupList)
+            {
+                var monstersId = group.monsterGroups.Split(':');
+                var spawnData  = MapData.SpawnList.FirstOrDefault(x=>x.spawnType == (int)WorldMap.ESpawnType.MONSTER &&
+                                                                     x.groupId == group.groupId);
+
+                var pivotIter = spawnData.pivotList.GetEnumerator();
+                
+                int subId = 0;
+
+                foreach (var id in monstersId)
+                {
+                    if (StaticData.Instance.MonstersDict.TryGetValue(id, out var data) == true &&
+                        pivotIter.MoveNext() == true)
+                    {
+                        Vec3 pos = (Vec3)pivotIter.Current;
+
+                        MonsterEntity entity = new MonsterEntity()
+                        {
+                            targetId = _mId++,
+                            groupId  = group.groupId,
+                            monsterId = int.Parse(id),
+                            pos = pos,
+                            spawnPos = pos,
+                            subId = subId++,
+                        };
+
+                        _monstersDict.Add(entity.targetId, entity);
+                    }
+                }
             }
 
             var monsterList = new List<S_StartGame.Monster>();
@@ -98,10 +117,10 @@ namespace Server
                     var data = new S_StartGame.Player()
                     {
                         targetId = info.targetId,
-                        heroId   = info.heroId,
+                        heroId = info.heroId,
                         spawnPos = pos
                     };
-                    
+
                     playerList.Add(data);
                 }
             }
@@ -228,9 +247,6 @@ namespace Server
             };
 
             _playersDict.Add(inSessionId, playerInfo);
-
-            System.Console.WriteLine($"[{nameof(OnRecvJoin)}] 접속! userId {playerInfo.userId}, roomId : {_roomId}");
-
 
             S_JoinToGame packet = new S_JoinToGame();
             packet.joinPlayerList = new List<S_JoinToGame.JoinPlayer>();

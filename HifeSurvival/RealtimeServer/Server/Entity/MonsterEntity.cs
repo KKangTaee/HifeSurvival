@@ -190,7 +190,6 @@ namespace Server
                     else
                     {
                         // 이동방향을 구한다.
-
                         var newDir = inOther.pos.SubtractVec3(inSelf.pos).NormalizeVec3();
                       
                         inSelf.OnMoveAndBroadcast(newDir, UPDATE_TIME * 0.001f);

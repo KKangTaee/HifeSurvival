@@ -24,8 +24,5 @@ public class IngameMain : MonoBehaviour
         _worldMap.Init();
 
         _ingameUI.Init();
-
-        // 플레이어 로드
-        ControllerManager.Instance.GetController<PlayerController>()?.LoadPlayer();
     }
 }

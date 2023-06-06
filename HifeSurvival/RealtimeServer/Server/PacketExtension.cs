@@ -67,7 +67,7 @@ namespace Server
 
         private static Random rand = new Random();
 
-        public static void Shuffle<T>(this IList<T> list)
+        public static IList<T> Shuffle<T>(this IList<T> list)
         {
             int n = list.Count;
             while (n > 1)
@@ -78,6 +78,8 @@ namespace Server
                 list[k] = list[n];
                 list[n] = value;
             }
+
+            return list;
         }
     }
 }

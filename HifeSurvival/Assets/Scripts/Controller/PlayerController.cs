@@ -5,44 +5,31 @@ using System.Linq;
 using System;
 using UniRx;
 
-public class PlayerController : ControllerBase
+public sealed class PlayerController : EntityObjectController<Player>
 {
     [SerializeField] private Player _playerPrefab;
 
-    private Dictionary<int, Player> _playerDict = new Dictionary<int, Player>();
-
-    private CameraController _cameraController;
-    
-    private JoystickController  _joystickController;
-
-    private GameMode _gameMode;
+    private JoystickController _joystickController;
 
     private IDisposable _attackDelay;
 
     public Player Self { get; private set; }
 
 
-
     //-----------------
     // override
     //-----------------
-    
+
     public override void Init()
     {
-        _cameraController   = ControllerManager.Instance.GetController<CameraController>();
-        
+        base.Init();
+
         _joystickController = ControllerManager.Instance.GetController<JoystickController>();
 
-        _gameMode = GameMode.Instance;
+        _gameMode.OnRecvUpdateStatCB += OnRecvUpdateStat;
 
-        _gameMode.OnRecvMoveCB          += OnRecvMove;
-        _gameMode.OnRecvStopMoveCB      += OnRecvStopMove;
-        _gameMode.OnRecvDeadCB          += OnRecvDead;
-        _gameMode.OnRecvAttackCB        += OnRecvAttack;
-        _gameMode.OnRecvRespawnCB       += OnRecvRespawn;
-        _gameMode.OnRecvUpdateStatCB    += OnRecvUpdateStat;
+        LoadPlayer();
     }
-
 
 
     //-----------------
@@ -69,7 +56,7 @@ public class PlayerController : ControllerBase
                 inst.SetSelf();
             }
 
-            _playerDict.Add(entity.targetId, inst);
+            _entityObjectDict.Add(entity.targetId, inst);
         }
 
         _cameraController.FollowingTarget(Self.transform);
@@ -81,16 +68,6 @@ public class PlayerController : ControllerBase
     /// </summary>
     /// <param name="inPlayerId"></param>
     /// <returns></returns>
-    public Player GetPlayer(int inPlayerId)
-    {
-        if (_playerDict.TryGetValue(inPlayerId, out var player) == true && player != null)
-            return player;
-
-        Debug.LogError("player is null or empty");
-        return player;
-    }
-
-
     public void OnMoveSelf(in Vector3 inDir)
     {
         OnStopAttackSelf();
@@ -154,7 +131,7 @@ public class PlayerController : ControllerBase
                 // 추격시 서버에 전송한다.
                 _gameMode.OnSendMove(Self.GetPos(), dir);
             },
-            
+
             followDoneCallback = () =>
             {
                 OnAttackSelf(inTarget);
@@ -171,22 +148,21 @@ public class PlayerController : ControllerBase
         var selfAttactValue = Self.Stat.GetAttackValue();
         var damagedVal = inTarget.Stat.GetDamagedValue(selfAttactValue);
 
-        SetAttackState(inTarget, Self, Self.GetPos(), Self.GetDir(),  damagedVal);
+        SetAttackState(inTarget, Self, Self.GetPos(), Self.GetDir(), damagedVal);
 
-        _gameMode.OnSendAttack(Self.GetPos(), Self.GetDir(),  true, inTarget.TargetId, damagedVal);
+        _gameMode.OnSendAttack(Self.GetPos(), Self.GetDir(), true, inTarget.TargetId, damagedVal);
 
         _attackDelay = Observable.Timer(TimeSpan.FromSeconds(Self.Stat.attackSpeed))
                                         .Subscribe(_ =>
         {
-            
             // 이미 상대가 죽었다면
-            if(inTarget.Status == EntityObject.EStatus.DEAD)
+            if (inTarget.Status == EntityObject.EStatus.DEAD)
             {
                 // 다른 상대방을 감지하고 찾아라.
                 DetectTargetSelf();
             }
             // 공격이 가능하다면 다시 공격.
-            else if(Self.CanAttack(inTarget.GetPos()) == true)
+            else if (Self.CanAttack(inTarget.GetPos()) == true)
             {
                 OnAttackSelf(inTarget);
             }
@@ -205,126 +181,32 @@ public class PlayerController : ControllerBase
     }
 
 
-    public void SetMoveState(Player inTarget, in Vector3 inPos, in Vector3 inDir, float speed)
-    {
-        var moveParam = new MoveParam()
-        {
-            pos = inPos,
-            dir = inDir,
-            speed = speed,
-        };
-
-        inTarget.ChangeState(EntityObject.EStatus.MOVE, moveParam);
-    }
-
-
-    public void SetIdleState(Player inTarget, in Vector3 inPos, in Vector3 inDir, float inSpeed)
-    {
-        var idleParam = new IdleParam()
-        {
-            pos = inPos,
-            dir = inDir,
-            speed = inSpeed,
-        };
-
-        inTarget.ChangeState(EntityObject.EStatus.IDLE, idleParam);
-    }
-
-
-    public void SetDeadState(Player inTarget)
-    {
-        var deadParam = new DeadParam()
-        {
-
-        };
-
-        inTarget.ChangeState(EntityObject.EStatus.DEAD, deadParam);
-    }
-
-
-    public void SetAttackState(EntityObject inTo, EntityObject inFrom, in Vector3 inFromPos, in Vector3 inFromDir,  int inDamageVal)
-    {
-        var attackParam = new AttackParam()
-        {
-            attackValue = inDamageVal,
-            target = inTo,
-
-            fromPos = inFromPos,
-            fromDir = inFromDir,
-        };
-
-        inFrom.ChangeState(EntityObject.EStatus.ATTACK, attackParam);
-    }
-
-
 
     //----------------
     // server
     //----------------
 
-    public void OnRecvMove(Entity inEntity)
+    public override void OnRecvDead(S_Dead inEntity)
     {
-        var player = GetPlayer(inEntity.targetId);
+        base.OnRecvDead(inEntity);
 
-        SetMoveState(player,
-                     inEntity.pos.ConvertUnityVector3(),
-                     inEntity.dir.ConvertUnityVector3(),
-                     inEntity.stat.moveSpeed);
+         if(inEntity.toId == Self.TargetId)
+            _joystickController.HideJoystick();
     }
 
 
-    public void OnRecvStopMove(Entity inEntity)
+    public override void OnRecvRespawn(Entity inEntity)
     {
-        var player = GetPlayer(inEntity.targetId);
+        base.OnRecvRespawn(inEntity);
 
-        SetIdleState(player,
-                     inEntity.pos.ConvertUnityVector3(),
-                     inEntity.dir.ConvertUnityVector3(),
-                     inEntity.stat.moveSpeed);
-    }
-
-
-    public void OnRecvDead(S_Dead inEntity)
-    {
-        var player = GetPlayer(inEntity.toId);
-
-        if(player == Self)
-           _joystickController.HideJoystick();
-
-        SetDeadState(player);
-    }
-
-
-    public void OnRecvAttack(CS_Attack inPacket)
-    {
-        var toPlayer   = GetPlayer(inPacket.toId);
-        var fromPlayer = GetPlayer(inPacket.fromId);
-
-        SetAttackState(toPlayer, 
-                       fromPlayer, 
-                       inPacket.fromPos.ConvertUnityVector3(), 
-                       inPacket.fromDir.ConvertUnityVector3(), 
-                       inPacket.attackValue);
-    }
-
-
-    public void OnRecvRespawn(Entity inEntity)
-    {
-        var player = GetPlayer(inEntity.targetId);
-        
-        player.Init(inEntity.targetId, 
-                    inEntity.stat, 
-                    inEntity.pos.ConvertUnityVector3());
-
-        if(player.IsSelf == true)
-           player.SetSelf();
+        if (Self.TargetId == inEntity.targetId)
+            Self.SetSelf();
     }
 
 
     public void OnRecvUpdateStat(PlayerEntity inEntity)
     {
-        var player = GetPlayer(inEntity.targetId);
-
+        var player = GetEntityObject(inEntity.targetId);
         player.UpdateHp();
     }
 }

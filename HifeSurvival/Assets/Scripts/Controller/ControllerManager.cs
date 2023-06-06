@@ -34,11 +34,13 @@ public class ControllerManager
 
             nameof(CameraController),
 
-            nameof(PlayerController),
-
             nameof(JoystickController),
 
             nameof(ObjectPoolController),
+
+            nameof(PlayerController),
+
+            nameof(MonsterController),
         };
 
         foreach (var name in controllerName)
@@ -78,7 +80,6 @@ public class ControllerManager
         _controllerDict.Clear();
         _instance = null;
     }
-
 
     public T GetController<T>() where T : ControllerBase
     {

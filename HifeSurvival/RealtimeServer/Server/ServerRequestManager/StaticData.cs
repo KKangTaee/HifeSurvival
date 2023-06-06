@@ -82,7 +82,9 @@ namespace Server
 
                     foreach (JSONNode node in batchDataJson["valueRanges"].AsArray)
                     {
-                        var rangeValue = node["range"].ToString();
+                        string trimmed =  node["range"].ToString().Trim('\"');
+                        string [] parts = trimmed.Split('!');
+                        var rangeValue = parts[0];
 
                         if (rangeValue.Equals("systems"))
                         {

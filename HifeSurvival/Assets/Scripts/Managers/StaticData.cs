@@ -26,8 +26,8 @@ public class StaticData
     // variables
     //------------------
 
-    private string apiKey       = "AIzaSyABnRmQck9SP3Gv7syjremXAjDBDOky8so";
-    private string sheetId      = "104ZnnXWWorMZOAhuY0o1o1xIL2H41opJlrJLsSEk_C4";
+    private string apiKey = "AIzaSyABnRmQck9SP3Gv7syjremXAjDBDOky8so";
+    private string sheetId = "104ZnnXWWorMZOAhuY0o1o1xIL2H41opJlrJLsSEk_C4";
     private string sheetsApiUrl = "https://sheets.googleapis.com/v4/spreadsheets";
 
 
@@ -35,10 +35,10 @@ public class StaticData
     // Static Datas
     //------------------
 
-    public Dictionary<string, Heros>  HeroDict  { get; private set; }
-    public Dictionary<string, Systems>  SystemsDict { get; private set; }
-    public Dictionary<string, Monsters>  MonstersDict { get; private set; }
-    public Dictionary<string, MonstersGroup>  MonstersGroupDict { get; private set; }
+    public Dictionary<string, Heros> HeroDict { get; private set; }
+    public Dictionary<string, Systems> SystemsDict { get; private set; }
+    public Dictionary<string, Monsters> MonstersDict { get; private set; }
+    public Dictionary<string, MonstersGroup> MonstersGroupDict { get; private set; }
 
 
     public async Task Init()
@@ -62,7 +62,6 @@ public class StaticData
             }
         });
 
-
         await waiter.Wait();
         waiter.Reset();
 
@@ -79,7 +78,9 @@ public class StaticData
 
                 foreach (JSONNode node in batchDataJson["valueRanges"].AsArray)
                 {
-                    var rangeValue = node["range"].ToString();
+                    string trimmed = node["range"].ToString().Trim('\"');
+                    string[] parts = trimmed.Split('!');
+                    var rangeValue = parts[0];
 
                     if (rangeValue.Equals("systems"))
                     {
@@ -89,11 +90,11 @@ public class StaticData
                     {
                         HeroDict = JsonToDictionaryGeneric.ParseJsonToDictionary<Heros>(node.ToString());
                     }
-                    else if(rangeValue.Equals("monsters"))
+                    else if (rangeValue.Equals("monsters"))
                     {
                         MonstersDict = JsonToDictionaryGeneric.ParseJsonToDictionary<Monsters>(node.ToString());
                     }
-                    else if(rangeValue.Equals("monsters_group"))
+                    else if (rangeValue.Equals("monsters_group"))
                     {
                         MonstersGroupDict = JsonToDictionaryGeneric.ParseJsonToDictionary<MonstersGroup>(node.ToString());
                     }
@@ -190,7 +191,7 @@ public class StaticData
                     {
                         value = rawData[i][fieldIndex];
                     }
-                    
+
                     // 다른 필드 유형이 필요한 경우 여기에 추가
                     if (value != null)
                         field.SetValue(item, value);
@@ -261,6 +262,7 @@ public class StaticData
         public float moveSpeed;
         public float attackRange;
         public float detectRange;
+        public int grade;
         public string goldRange;
         public string itemDrop;
         public string desc;

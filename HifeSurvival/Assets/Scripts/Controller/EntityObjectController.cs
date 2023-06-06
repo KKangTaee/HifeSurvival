@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class EntityObjectController<T> : ControllerBase where T : EntityObject
 {
-    protected CameraController _cameraController;
+   
 
     protected GameMode _gameMode;
 
@@ -17,8 +17,6 @@ public abstract class EntityObjectController<T> : ControllerBase where T : Entit
 
     public override void Init()
     {
-        _cameraController = ControllerManager.Instance.GetController<CameraController>();
-
         _gameMode = GameMode.Instance;
 
         _gameMode.OnRecvMoveCB      += OnRecvMove;

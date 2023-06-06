@@ -9,8 +9,9 @@ public sealed class PlayerController : EntityObjectController<Player>
 {
     [SerializeField] private Player _playerPrefab;
 
-    private JoystickController _joystickController;
-
+    private CameraController    _cameraController;
+    private JoystickController  _joystickController;
+    
     private IDisposable _attackDelay;
 
     public Player Self { get; private set; }
@@ -24,6 +25,7 @@ public sealed class PlayerController : EntityObjectController<Player>
     {
         base.Init();
 
+        _cameraController   = ControllerManager.Instance.GetController<CameraController>();
         _joystickController = ControllerManager.Instance.GetController<JoystickController>();
 
         _gameMode.OnRecvUpdateStatCB += OnRecvUpdateStat;
@@ -179,7 +181,6 @@ public sealed class PlayerController : EntityObjectController<Player>
     {
         _attackDelay?.Dispose();
     }
-
 
 
     //----------------

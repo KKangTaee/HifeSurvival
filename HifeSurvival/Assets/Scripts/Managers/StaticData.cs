@@ -26,8 +26,8 @@ public class StaticData
     // variables
     //------------------
 
-    private string apiKey = "AIzaSyABnRmQck9SP3Gv7syjremXAjDBDOky8so";
-    private string sheetId = "104ZnnXWWorMZOAhuY0o1o1xIL2H41opJlrJLsSEk_C4";
+    private string apiKey       = "AIzaSyABnRmQck9SP3Gv7syjremXAjDBDOky8so";
+    private string sheetId      = "104ZnnXWWorMZOAhuY0o1o1xIL2H41opJlrJLsSEk_C4";
     private string sheetsApiUrl = "https://sheets.googleapis.com/v4/spreadsheets";
 
 

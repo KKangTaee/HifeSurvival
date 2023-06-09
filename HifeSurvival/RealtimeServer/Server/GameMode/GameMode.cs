@@ -54,6 +54,12 @@ namespace Server
                 var monstersId = group.monsterGroups.Split(':');
                 var spawnData  = MapData.SpawnList.FirstOrDefault(x=>x.spawnType == (int)WorldMap.ESpawnType.MONSTER &&
                                                                      x.groupId == group.groupId);
+                
+                if(spawnData == null)
+                {
+                    System.Console.WriteLine("spawnData is null or empty!");
+                    continue;
+                }
 
                 var pivotIter = spawnData.pivotList.GetEnumerator();
                 

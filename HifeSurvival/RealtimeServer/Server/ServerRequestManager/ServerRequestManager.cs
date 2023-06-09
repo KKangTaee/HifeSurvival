@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace Server
 {
+    using ServerCore;
     using System;
     using System.Collections.Generic;
     using System.Net.Http;
@@ -72,7 +73,7 @@ namespace Server
 
                     if (!response.IsSuccessStatusCode)
                     {
-                        Console.WriteLine($"Error: {response.StatusCode}");
+                        HSLogger.GetInstance().Error($"status code : {response.StatusCode}");
                         requestData.doneCallback?.Invoke(null);
                     }
                     else
@@ -83,7 +84,7 @@ namespace Server
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e.Message);
+                    HSLogger.GetInstance().Error($"Exception {e.Message}");
                 }
             }
 

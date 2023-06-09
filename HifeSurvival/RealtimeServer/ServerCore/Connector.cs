@@ -48,7 +48,7 @@ namespace ServerCore
 			}
 			else
 			{
-				Console.WriteLine($"OnConnectCompleted Fail: {args.SocketError}");
+                HSLogger.GetInstance().Error($"Socket Error : {args.SocketError}");
 			}
 		}
 	}

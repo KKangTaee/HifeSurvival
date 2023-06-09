@@ -62,9 +62,9 @@ namespace Server
 
         public void Broadcast(IPacket inPacket)
         {
-            _jobQueue.Push(() =>
+            Push(() =>
             {
-                System.Console.WriteLine($"[{nameof(Broadcast)}] PacketType : {inPacket.GetType()}");
+                HSLogger.GetInstance().Log("INF", $"PacketType : {inPacket.GetType()}", $"{nameof(Broadcast)}");
                 ArraySegment<byte> segment = inPacket.Write();
                 _pendingList.Add(segment);
             });

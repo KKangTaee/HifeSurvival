@@ -1,3 +1,4 @@
+using ServerCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,7 +41,7 @@ namespace Server
 
             if (mapData == null)
             {
-                System.Console.WriteLine("mapData is null or empty!");
+                HSLogger.GetInstance().Error("mapData is null or empty!");
                 return;
             }
 

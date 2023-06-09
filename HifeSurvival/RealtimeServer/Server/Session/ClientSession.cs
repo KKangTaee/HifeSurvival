@@ -16,7 +16,7 @@ namespace Server
 
 		public override void OnConnected(EndPoint endPoint)
 		{
-			Console.WriteLine($"OnConnected : {endPoint}");
+            HSLogger.GetInstance().Info($"OnConnected : {endPoint}");
 			GameRoomManager.Instance.EnterRoom(this);
 		}
 
@@ -28,7 +28,7 @@ namespace Server
 		public override void OnDisconnected(EndPoint endPoint)
 		{
 			GameRoomManager.Instance.LeaveRoom(this);
-			Console.WriteLine($"OnDisconnected : {endPoint}");
+            HSLogger.GetInstance().Info($"OnDisconnected : {endPoint}");
 		}
 
 		public override void OnSend(int numOfBytes)

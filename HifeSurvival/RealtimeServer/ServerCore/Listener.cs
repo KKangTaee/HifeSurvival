@@ -16,7 +16,7 @@ namespace ServerCore
 			_listenSocket = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 			_sessionFactory += sessionFactory;
 
-			System.Console.WriteLine("호출합니까?");
+            HSLogger.GetInstance().Warn("호출합니까?");
 			// 문지기 교육
 			_listenSocket.Bind(endPoint);
 
@@ -50,7 +50,9 @@ namespace ServerCore
 				session.OnConnected(args.AcceptSocket.RemoteEndPoint);
 			}
 			else
-				Console.WriteLine(args.SocketError.ToString());
+			{
+				HSLogger.GetInstance().Error(args.SocketError.ToString());
+            }
 
 			RegisterAccept(args);
 		}

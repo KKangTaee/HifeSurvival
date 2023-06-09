@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ServerCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -359,8 +360,7 @@ namespace Server
                 return monster;
             }
 
-            Console.WriteLine("MonsterEntity is null or empty!");
-
+            HSLogger.GetInstance().Error("MonsterEntity is null or empty!");
             return null;
         }
 

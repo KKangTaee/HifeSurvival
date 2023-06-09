@@ -28,7 +28,7 @@ namespace Server
 
 			_listener.Init(endPoint, () => { return SessionManager.Instance.Generate(); });
 
-			Console.WriteLine("Listening...");
+            HSLogger.GetInstance().Debug("Listening...");
 
 			while (true)
 			{

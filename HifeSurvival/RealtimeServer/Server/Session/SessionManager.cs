@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ServerCore;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -23,7 +24,7 @@ namespace Server
 				session.SessionId = sessionId;
 				_sessions.Add(sessionId, session);
 
-				Console.WriteLine($"Connected : {sessionId}");
+                HSLogger.GetInstance().Info($"Connected : {sessionId}");
 
 				return session;
 			}

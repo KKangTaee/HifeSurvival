@@ -463,7 +463,8 @@ public class S_StartGame : IPacket
 
 public class CS_Attack : IPacket
 {
-	public bool toIdIsPlayer;
+	public bool toIsPlayer;
+	public bool fromIsPlayer;
 	public int toId;
 	public int fromId;
 	public Vec3 fromPos;
@@ -479,7 +480,9 @@ public class CS_Attack : IPacket
 		ReadOnlySpan<byte> s = new ReadOnlySpan<byte>(segment.Array, segment.Offset, segment.Count);
 		count += sizeof(ushort);
 		count += sizeof(ushort);
-		this.toIdIsPlayer = BitConverter.ToBoolean(s.Slice(count, s.Length - count));
+		this.toIsPlayer = BitConverter.ToBoolean(s.Slice(count, s.Length - count));
+		count += sizeof(bool);
+		this.fromIsPlayer = BitConverter.ToBoolean(s.Slice(count, s.Length - count));
 		count += sizeof(bool);
 		this.toId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
@@ -502,7 +505,9 @@ public class CS_Attack : IPacket
 		count += sizeof(ushort);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.CS_Attack);
 		count += sizeof(ushort);
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.toIdIsPlayer);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.toIsPlayer);
+		count += sizeof(bool);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.fromIsPlayer);
 		count += sizeof(bool);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.toId);
 		count += sizeof(int);
@@ -622,9 +627,10 @@ public class CS_StopMove : IPacket
 
 public class S_Dead : IPacket
 {
+	public bool toIsPlayer;
+	public bool fromIsPlayer;
 	public int toId;
 	public int fromId;
-	public bool toIdIsPlayer;
 	public int respawnTime;
 
 	public ushort Protocol { get { return (ushort)PacketID.S_Dead; } }
@@ -636,12 +642,14 @@ public class S_Dead : IPacket
 		ReadOnlySpan<byte> s = new ReadOnlySpan<byte>(segment.Array, segment.Offset, segment.Count);
 		count += sizeof(ushort);
 		count += sizeof(ushort);
+		this.toIsPlayer = BitConverter.ToBoolean(s.Slice(count, s.Length - count));
+		count += sizeof(bool);
+		this.fromIsPlayer = BitConverter.ToBoolean(s.Slice(count, s.Length - count));
+		count += sizeof(bool);
 		this.toId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
 		this.fromId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
-		this.toIdIsPlayer = BitConverter.ToBoolean(s.Slice(count, s.Length - count));
-		count += sizeof(bool);
 		this.respawnTime = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
 	}
@@ -657,12 +665,14 @@ public class S_Dead : IPacket
 		count += sizeof(ushort);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.S_Dead);
 		count += sizeof(ushort);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.toIsPlayer);
+		count += sizeof(bool);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.fromIsPlayer);
+		count += sizeof(bool);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.toId);
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.fromId);
 		count += sizeof(int);
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.toIdIsPlayer);
-		count += sizeof(bool);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.respawnTime);
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s, count);

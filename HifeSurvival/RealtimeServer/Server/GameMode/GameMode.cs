@@ -81,6 +81,7 @@ namespace Server
                             pos = pos,
                             spawnPos = pos,
                             subId = subId++,
+                            broadcaster = _broadcaster,
                             stat = new EntityStat(data)
                         };
 
@@ -364,7 +365,7 @@ namespace Server
 
             Entity toEntity = null;
 
-            if (inPacket.toIdIsPlayer == true)
+            if (inPacket.toIsPlayer == true)
                 toEntity = GetPlayerEntity(inPacket.toId);
 
             else
@@ -379,10 +380,11 @@ namespace Server
             {
                 S_Dead dead = new S_Dead()
                 {
+                    toIsPlayer = toEntity.IsPlayer,
                     toId = inPacket.toId,
+                    fromIsPlayer = true,
                     fromId = inPacket.fromId,
                     respawnTime = 15,
-                    toIdIsPlayer = toEntity.IsPlayer
                 };
 
                 toEntity.OnDead();

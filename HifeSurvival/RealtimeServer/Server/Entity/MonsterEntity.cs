@@ -146,10 +146,11 @@ namespace Server
 
                         CS_Attack attackPacket = new CS_Attack()
                         {
-                            attackValue = damagedVal,
+                            toIsPlayer = true,
+                            toId = inOther.targetId,
+                            fromIsPlayer = false,
                             fromId = inSelf.targetId,
-                            toIdIsPlayer = false,
-                            toId = inOther.targetId
+                            attackValue = damagedVal,
                         };
 
                         inSelf.broadcaster.Broadcast(attackPacket);

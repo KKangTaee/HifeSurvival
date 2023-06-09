@@ -189,12 +189,13 @@ public class GameMode
     }
 
 
-    public void OnSendAttack(in Vector3 inPos, in Vector3 inDir, bool toIdIsPlayer, int toId, int damageValue)
+    public void OnSendAttack(in Vector3 inPos, in Vector3 inDir, bool toIsPlayer, int toId, int damageValue)
     {
         CS_Attack attack = new CS_Attack()
         {
-            toIdIsPlayer = toIdIsPlayer,
+            toIsPlayer = toIsPlayer,
             toId = toId,
+            fromIsPlayer = true,
             fromId = EntitySelf.targetId,
             fromPos = inPos.ConvertVec3(),
             fromDir = inDir.ConvertVec3(),
@@ -415,7 +416,7 @@ public class GameMode
     {
         Entity toEntity = null;
 
-        if (inPacket.toIdIsPlayer == true)
+        if (inPacket.toIsPlayer == true)
         {
             if (PlayerEntitysDict.TryGetValue(inPacket.toId, out var player) == true)
                 toEntity = player;

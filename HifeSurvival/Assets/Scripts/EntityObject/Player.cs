@@ -21,6 +21,8 @@ public class Player : EntityObject
 
     public bool IsSelf { get; private set; }
 
+    public override bool IsPlayer => true;
+
 
     //------------------
     // state machine
@@ -285,23 +287,35 @@ public class Player : EntityObject
 
         _detectTrigger.AddTriggerEnter((col) =>
         {
-            if (col.CompareTag(TagName.PLAYER_OTHER) == true)
+            if (col.CompareTag(TagName.PLAYER_OTHER) == true || col.CompareTag(TagName.MONSTER) == true)
             {
-                var player = col.GetComponentInParent<Player>();
+                var entityObj = col.GetComponentInParent<EntityObject>();
 
-                if (_targetSet.Contains(player) == false)
-                    _targetSet.Add(player);
+                if(entityObj == null)
+                {
+                    Debug.LogWarning($"[{nameof(SetTrigger)}] col object is null or empty!");
+                    return;
+                }
+
+                if (_targetSet.Contains(entityObj) == false)
+                    _targetSet.Add(entityObj);
             }
         });
 
         _detectTrigger.AddTriggerExit((col) =>
         {
-            if (col.CompareTag(TagName.PLAYER_OTHER) == true)
+            if (col.CompareTag(TagName.PLAYER_OTHER) == true || col.CompareTag(TagName.MONSTER) == true)
             {
-                var player = col.GetComponentInParent<Player>();
+                var entityObj = col.GetComponentInParent<EntityObject>();
 
-                if (_targetSet.Contains(player) == true)
-                    _targetSet.Remove(player);
+                if(entityObj == null)
+                {
+                    Debug.LogWarning($"[{nameof(SetTrigger)}] col object is null or empty!");
+                    return;
+                }
+
+                if (_targetSet.Contains(entityObj) == true)
+                    _targetSet.Remove(entityObj);
             }
         });
     }

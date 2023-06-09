@@ -12,6 +12,8 @@ public class TagName
     public const string PLAEYR_SELF       = "Player_Self";
 
     public const string DETECT_SELF       = "Detect_Self";
+
+    public const string MONSTER           = "Monster";
 }
 
 public class LayerName
@@ -21,4 +23,6 @@ public class LayerName
     public const string PLAYER_SELF     = "Player_Self";
     
     public const string DETECT_SELF     = "Detect_Self";
+
+    public const string MONSTER         = "Monster";
 }

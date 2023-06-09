@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "Z83kl/oQY5iR/D5QF11DOIbloPZ2+TeT5E9vnvIQK4iBK0gdXghydQ9k9oQuPYM+Q7guhlXjw1jPaDCzOOX//w==",
+  "dgSpecHash": "Ptxb9ZcLMOzAMHZyfbmi+6Av/XKqaBW7i/BAA4cwSTyilwYozbsPWQ3fXn6OY9PxH6dIrTBUowEBe4WFRlBD4A==",
   "success": true,
-  "projectFilePath": "C:\\Projects\\HifeSurvival-master\\HifeSurvival\\RealtimeServer\\Server\\Server.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "/Users/taehokang/Documents/GitHub/HifeSurvival/HifeSurvival/RealtimeServer/Server/Server.csproj",
+  "expectedPackageFiles": [
+    "/Users/taehokang/.nuget/packages/microsoft.netcore.app.host.osx-x64/3.1.32/microsoft.netcore.app.host.osx-x64.3.1.32.nupkg.sha512"
+  ],
   "logs": []
 }

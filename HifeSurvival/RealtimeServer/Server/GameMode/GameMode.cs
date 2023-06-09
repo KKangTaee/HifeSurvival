@@ -24,24 +24,29 @@ namespace Server
         private const int PLAYER_MAX_COUNT = 4;
         private const int CONUTDOWN_SEC = 10;
 
-        private Dictionary<int, PlayerEntity>   _playersDict = new Dictionary<int, PlayerEntity>();
-        private Dictionary<int, MonsterEntity>  _monstersDict = new Dictionary<int, MonsterEntity>();
+        private Dictionary<int, PlayerEntity>   _playersDict      = new Dictionary<int, PlayerEntity>();
+        private Dictionary<int, MonsterGroup>   _monsterGroupDict = new Dictionary<int, MonsterGroup>();
 
         private IBroadcaster _broadcaster = null;
-        private int _mId = 10000;
 
+        private int _mId = 10000;
 
         public EStatus  Status { get; private set; } = EStatus.NONE;
         public WorldMap MapData { get; private set; } = new WorldMap();
 
+
         public GameMode(GameRoom inRoom)
         {
             _broadcaster = new RoomBroadcaster(inRoom);
+            
             MapData.Init();
         }
 
+
         public List<S_StartGame.Monster> SetupMonster()
         {
+            var monsterList = new List<S_StartGame.Monster>();
+
             var groupList = StaticData.Instance.MonstersGroupDict.Values;
 
             foreach (var group in groupList)
@@ -59,7 +64,7 @@ namespace Server
                     if (StaticData.Instance.MonstersDict.TryGetValue(id, out var data) == true &&
                         pivotIter.MoveNext() == true)
                     {
-                        Vec3 pos = (Vec3)pivotIter.Current;
+                        Vec3 pos = pivotIter.Current;
 
                         MonsterEntity entity = new MonsterEntity()
                         {
@@ -69,26 +74,36 @@ namespace Server
                             pos = pos,
                             spawnPos = pos,
                             subId = subId++,
+                            stat = new EntityStat(data)
                         };
 
-                        _monstersDict.Add(entity.targetId, entity);
+                        MonsterGroup monsterGroup = null;
+
+                        if(_monsterGroupDict.TryGetValue(entity.groupId, out var mg) == true)
+                        {
+                            monsterGroup = mg;
+                        }
+                        else
+                        {
+                            monsterGroup = new MonsterGroup(entity.groupId, group.respawnTime);
+                            _monsterGroupDict.Add(entity.groupId, monsterGroup);
+                        }
+
+                        monsterGroup.Add(entity);
+                        // _monstersDict.Add(entity.targetId, entity);
+
+                        var mData = new S_StartGame.Monster()
+                        {
+                            targetId  = entity.targetId,
+                            monsterId = entity.monsterId,
+                            groupId   = entity.groupId,
+                            subId     = entity.subId,
+                        };
+
+                        monsterList.Add(mData);
+
                     }
                 }
-            }
-
-            var monsterList = new List<S_StartGame.Monster>();
-
-            foreach (var info in _monstersDict.Values)
-            {
-                var data = new S_StartGame.Monster()
-                {
-                    targetId = info.targetId,
-                    monsterId = info.monsterId,
-                    groupId = info.groupId,
-                    subId = info.subId,
-                };
-
-                monsterList.Add(data);
             }
 
             return monsterList;
@@ -112,7 +127,7 @@ namespace Server
             {
                 if (pivotIter.MoveNext() == true)
                 {
-                    var pos = (Vec3)pivotIter.Current;
+                    var pos = pivotIter.Current;
 
                     var data = new S_StartGame.Player()
                     {
@@ -139,15 +154,18 @@ namespace Server
             return null;
         }
 
+
         public MonsterEntity GetMonsterEntity(int inId)
         {
-            if (_monstersDict.TryGetValue(inId, out var monster) && monster != null)
+            var group = _monsterGroupDict.Values.FirstOrDefault(x => x.HaveEntityInGroup(inId));
+
+            if(group == null)
             {
-                return monster;
+                Console.WriteLine("MonsterEntity is null or Empty");
+                return null;
             }
 
-            Console.WriteLine("MonsterEntity is null or Empty");
-            return null;
+            return group.GetMonsterEntity(inId);
         }
 
 
@@ -155,7 +173,6 @@ namespace Server
         {
             return _playersDict.Values.All(x => x.isReady);
         }
-
 
         public bool CanJoinRoom()
         {
@@ -214,6 +231,7 @@ namespace Server
             JobTimer.Instance.Push(OnSendStartGame, CONUTDOWN_SEC * 1000);
         }
 
+
         public void OnSendRespawn(int inPlayerId)
         {
             var player = GetPlayerEntity(inPlayerId);
@@ -225,8 +243,10 @@ namespace Server
             {
                 targetId = inPlayerId,
                 isPlayer = true,
-                // stat = 
+                stat = player.stat.ConvertStat(), 
             };
+
+            _broadcaster.Broadcast(respawn);
         }
 
 
@@ -236,14 +256,19 @@ namespace Server
 
         public void OnRecvJoin(C_JoinToGame inPacket, int inSessionId)
         {
+            var data = StaticData.Instance.HerosDict.Values.FirstOrDefault();
+            
+            if (data == null)
+                return;
+
             var playerInfo = new PlayerEntity()
             {
                 userId = inPacket.userId,
                 targetId = inSessionId,
-                heroId = 1,
+                heroId = data.id,
                 userName = inPacket.userName,
                 broadcaster = _broadcaster,
-                stat = new EntityStat(StaticData.Instance.HerosDict["1"])
+                stat = new EntityStat(data)
             };
 
             _playersDict.Add(inSessionId, playerInfo);
@@ -352,17 +377,7 @@ namespace Server
                     toIdIsPlayer = toEntity.IsPlayer
                 };
 
-                var deadParam = new DeadParam()
-                {
-                    respawnTime = 15,
-                    respawnCallback = () =>
-                    {
-                        OnSendRespawn(inPacket.toId);
-                    },
-
-                };
-
-                toEntity.OnDead(deadParam);
+                toEntity.OnDead();
                 fromPlayer.OnIdle();
 
                 _broadcaster.Broadcast(dead);
@@ -371,7 +386,6 @@ namespace Server
             {
                 var attackParam = new AttackParam()
                 {
-                    attackValue = inPacket.attackValue,
                     target = toEntity,
                 };
 
@@ -393,9 +407,9 @@ namespace Server
 
             player.gold -= inPacket.usedGold;
 
-            player.stat.AddHp(inPacket.updateStat.str);
+            player.stat.AddMaxHp(inPacket.updateStat.str);
             player.stat.AddDef(inPacket.updateStat.def);
-            player.stat.AddHp(inPacket.updateStat.hp);
+            player.stat.AddMaxHp(inPacket.updateStat.hp);
             player.stat.AddCurrHp(inPacket.updateStat.hp);
 
             _broadcaster.Broadcast(inPacket);

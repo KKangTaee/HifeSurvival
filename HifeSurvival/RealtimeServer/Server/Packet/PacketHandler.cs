@@ -55,8 +55,6 @@ class PacketHandler
         Push(session, room => room?.Mode.OnRecvUpdateStat(updateStat));
     }
 
-
-
     public static void Push(PacketSession session, Action<GameRoom> job)
     {
         ClientSession client = session as ClientSession;

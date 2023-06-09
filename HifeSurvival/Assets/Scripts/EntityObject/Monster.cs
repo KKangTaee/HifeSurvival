@@ -42,7 +42,6 @@ public class Monster : EntityObject
         }
     }
 
-
     public class IdleState : IState<Monster>
     {
         public void Enter<P>(Monster inSelf, in P inParam) where P : struct
@@ -98,7 +97,6 @@ public class Monster : EntityObject
     }
 
 
-
     //---------------
     // override
     //---------------
@@ -121,7 +119,7 @@ public class Monster : EntityObject
         MoveLerpEntity(() => inEndPos,
                        dir =>
                        { 
-                        
+
                        },
                        null,
                        doneCallback);

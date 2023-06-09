@@ -64,7 +64,6 @@ namespace Server
             return (float)Math.Sqrt(dx * dx + dy * dy + dz * dz);
         }
 
-
         private static Random rand = new Random();
 
         public static IList<T> Shuffle<T>(this IList<T> list)
@@ -80,6 +79,18 @@ namespace Server
             }
 
             return list;
+        }
+
+        public static Stat ConvertStat(this EntityStat inSelf)
+        {
+            return new Stat()
+            {
+                str = inSelf.str,
+                def = inSelf.def,
+                hp  = inSelf.maxHp,
+                attackSpeed = inSelf.attackSpeed,
+                moveSpeed   = inSelf.moveSpeed,
+            };
         }
     }
 }

@@ -105,7 +105,6 @@ public class WorldMap : MonoBehaviour
                                                                  : Enumerable.Empty<T>();
     }
 
-
     public void SetPosWallMask(Vector3 inWorldPos)
     {
         _wallMat?.SetVector("_StarPosition", inWorldPos);
@@ -114,7 +113,6 @@ public class WorldMap : MonoBehaviour
 
     public void UpdateWallMasking(Vector3 hitPoint, Vector3 inWorldPos)
     {
-        // �浹�� ������ Ÿ�� ��ǥ��� ��ȯ�մϴ�.
         Vector3Int wallCoord = _wall.WorldToCell(hitPoint);
         Vector3Int targetCoord = _wall.WorldToCell(transform.position);
 

@@ -30,7 +30,7 @@ public class ControllerManager
     {
         var controllerName = new string[]
         {
-            // nameof(TouchController),
+            nameof(TouchController),
 
             nameof(CameraController),
 

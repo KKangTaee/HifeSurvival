@@ -8,10 +8,9 @@ namespace Server
     public class StateMachine<T> where T : Entity
     {
         protected Entity.EStatus _status;
-        protected IState<T> _state;
+        protected IState<T>      _state;
 
         protected Dictionary<Entity.EStatus, IState<T>> _stateMachine;
-
 
         public StateMachine(Dictionary<Entity.EStatus, IState<T>> inStateMachine)
         {
@@ -81,5 +80,10 @@ namespace Server
     {
         public int    respawnTime;
         public Action respawnCallback;
+    }
+
+    public struct BackToSpawnParam :IStateParam
+    {
+
     }
 }

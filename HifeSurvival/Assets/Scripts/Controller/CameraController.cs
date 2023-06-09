@@ -179,6 +179,4 @@ public class CameraController : ControllerBase, TouchController.ITouchUpdate
         _followingTarget  = inTarget;
         _follwingStartPos = inTarget.position;
     }
-
-
 }

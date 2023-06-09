@@ -117,6 +117,8 @@ public class TouchController : ControllerBase
         _cameraController = ControllerManager.Instance.GetController<CameraController>();
 
         _playerController = ControllerManager.Instance.GetController<PlayerController>();
+
+        SetActive(false);
     }
 
 
@@ -357,6 +359,12 @@ public class TouchController : ControllerBase
     }
 
 
+    public void SetActive(bool isTrue)
+    {
+        gameObject.SetActive(isTrue);
+    }
+
+
     public static Collider2D GetCollider2D(Vector2 inPos)
     {
         Vector2 mousePosition = Camera.main.ScreenToWorldPoint(inPos);
@@ -364,6 +372,4 @@ public class TouchController : ControllerBase
 
         return hitInfo.collider;
     }
-
-
 }

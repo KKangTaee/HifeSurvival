@@ -43,7 +43,7 @@ namespace Server
             Status = inStatue;
         }
 
-        public virtual void OnAttack(in AttackParam inParam = default)
+        public virtual void OnAttack(AttackParam inParam)
         {
             ChangeState(EStatus.ATTACK, inParam);
         }
@@ -68,6 +68,10 @@ namespace Server
             ChangeState(EStatus.DEAD, inParam);
         }
 
+        public virtual void OnBackToSpawn(in BackToSpawnParam inParam = default)
+        {
+            ChangeState(EStatus.BACK_TO_SPAWN, inParam);
+        }
 
         public void OnMoveAndBroadcast(in Vec3 inDir, float deltaTime)
         {
@@ -109,7 +113,7 @@ namespace Server
         public int str    { get; private set; }
         public int def    { get; private set; }
         
-        public int hp     { get; private set; }
+        public int maxHp  { get; private set; }
         public int currHp { get; private set; }
 
         public float detectRange { get; private set; }
@@ -122,11 +126,22 @@ namespace Server
         {
             str = heros.str;
             def = heros.def;
-            currHp = hp  = heros.hp;
+            currHp = maxHp = heros.hp;
             detectRange = heros.detectRange;
             attackRange = heros.attackRange;
             moveSpeed   = heros.moveSpeed;
             attackSpeed = heros.attackSpeed;
+        }
+
+        public EntityStat(StaticData.Monsters monsters)
+        {
+            str = monsters.str;
+            def = monsters.def;
+            currHp = maxHp = monsters.hp;
+            detectRange = monsters.detectRange;
+            attackRange = monsters.attackRange;
+            moveSpeed   = monsters.moveSpeed;
+            attackSpeed = monsters.attackSpeed;
         }
 
 
@@ -142,8 +157,8 @@ namespace Server
         public void AddDef(int inDef) =>
             def += inDef;
 
-        public void AddHp(int inHp) =>
-            hp += inHp;
+        public void AddMaxHp(int inHp) =>
+            maxHp += inHp;
 
         public void AddCurrHp(int inHp) =>
             currHp += inHp;

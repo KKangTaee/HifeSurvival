@@ -28,6 +28,7 @@ namespace Server
                     { EStatus.FOLLOW_TARGET, new FollowTargetState()},
                     { EStatus.ATTACK, new AttackState()},
                     { EStatus.BACK_TO_SPAWN, new BackToSpawnState()},
+                    { EStatus.DEAD, new DeadState()}
                 });
         }
 

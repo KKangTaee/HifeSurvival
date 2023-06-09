@@ -83,7 +83,8 @@ public class Monster : EntityObject
 
     private StateMachine<Monster> _stateMachine;
 
-  
+    public override bool IsPlayer => false;
+
     private void Awake()
     {
         _stateMachine = new StateMachine<Monster>(

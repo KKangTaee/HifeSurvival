@@ -10,7 +10,7 @@ namespace Server
         public string userName;
 
         public int  gold;
-
+        
         public int  heroId;
         public bool isReady;
 

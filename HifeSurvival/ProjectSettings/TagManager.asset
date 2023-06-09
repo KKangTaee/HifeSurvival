@@ -9,6 +9,7 @@ TagManager:
   - Player_Self
   - Player_Other
   - Detect_Self
+  - Monster
   layers:
   - Default
   - TransparentFX

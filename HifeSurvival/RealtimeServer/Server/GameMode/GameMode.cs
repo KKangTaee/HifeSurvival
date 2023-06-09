@@ -104,6 +104,7 @@ namespace Server
                             monsterId = entity.monsterId,
                             groupId   = entity.groupId,
                             subId     = entity.subId,
+                            spawnPos  = entity.spawnPos,
                         };
 
                         monsterList.Add(mData);

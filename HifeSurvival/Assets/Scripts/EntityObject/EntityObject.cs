@@ -23,10 +23,11 @@ public abstract class EntityObject : MonoBehaviour
 
     [SerializeField] private MoveMachine _moveMachine;
 
-    public int TargetId      { get; protected set; }
+    public int TargetId      { get; protected set;}
     public EStatus Status    { get; private set; }
     public EntityStat Stat   { get; protected set; }
 
+    public abstract bool IsPlayer { get;}
 
     public virtual void Init(int inTargetId, EntityStat inStat, in Vector3 inPos)
     {

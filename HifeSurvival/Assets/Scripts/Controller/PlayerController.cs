@@ -218,6 +218,7 @@ public sealed class PlayerController : EntityObjectController<Player>
         }
     }
 
+
     public void OnRecvUpdateStat(PlayerEntity inEntity)
     {
         var player = GetEntityObject(inEntity.targetId);

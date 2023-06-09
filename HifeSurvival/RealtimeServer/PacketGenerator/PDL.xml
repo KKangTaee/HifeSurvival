@@ -50,7 +50,8 @@
 	</packet>
 
 	<packet name ="CS_Attack">
-		<bool name ="toIdIsPlayer"/>
+		<bool name = "toIsPlayer"/>
+		<bool name = "fromIsPlayer"/> 
 		<int name ="toId"/>
 		<int name ="fromId"/>
 		<struct_Vec3 name ="fromPos"/>
@@ -74,9 +75,10 @@
 	</packet>
 	
 	<packet name ="S_Dead">
+		<bool name ="toIsPlayer"/>
+		<bool name ="fromIsPlayer"/>
 		<int name  ="toId"/>
 		<int name  ="fromId"/>
-		<bool name ="toIdIsPlayer"/>
 		<int name  ="respawnTime"/>
 	</packet>
 

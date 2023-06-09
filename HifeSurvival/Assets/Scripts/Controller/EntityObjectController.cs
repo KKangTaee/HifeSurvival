@@ -4,8 +4,6 @@ using UnityEngine;
 
 public abstract class EntityObjectController<T> : ControllerBase where T : EntityObject
 {
-   
-
     protected GameMode _gameMode;
 
     protected Dictionary<int, T> _entityObjectDict = new Dictionary<int, T>();
@@ -33,6 +31,9 @@ public abstract class EntityObjectController<T> : ControllerBase where T : Entit
 
     public virtual void OnRecvMove(Entity inEntity)
     {
+        if(ContainEntity(inEntity.targetId) == false)
+           return;
+
         var entityObj = GetEntityObject(inEntity.targetId);
 
         SetMoveState(entityObj,
@@ -43,6 +44,9 @@ public abstract class EntityObjectController<T> : ControllerBase where T : Entit
 
     public virtual void OnRecvStopMove(Entity inEntity)
     {
+        if(ContainEntity(inEntity.targetId) == false)
+           return;
+
         var entityObj = GetEntityObject(inEntity.targetId);
 
         SetIdleState(entityObj,
@@ -53,6 +57,9 @@ public abstract class EntityObjectController<T> : ControllerBase where T : Entit
 
     public virtual void OnRecvDead(S_Dead inEntity)
     {
+        if(ContainEntity(inEntity.toId) == false)
+           return;
+
         var entityObj = GetEntityObject(inEntity.toId);
 
         SetDeadState(entityObj);
@@ -60,8 +67,12 @@ public abstract class EntityObjectController<T> : ControllerBase where T : Entit
 
     public virtual void OnRecvAttack(CS_Attack inPacket)
     {
-        var toEntity    = GetEntityObject(inPacket.toId);
-        var fromEntity  = GetEntityObject(inPacket.fromId);
+        if(ContainEntity(inPacket.fromId) == false)
+           return;
+
+        EntityObject fromEntity  = GetEntityObject(inPacket.fromId);
+        EntityObject toEntity    = inPacket.toIsPlayer == true ? ControllerManager.Instance.GetController<PlayerController>().GetEntityObject(inPacket.toId)
+                                                               : ControllerManager.Instance.GetController<MonsterController>().GetEntityObject(inPacket.toId);
 
         SetAttackState(toEntity,
                        fromEntity,
@@ -72,12 +83,14 @@ public abstract class EntityObjectController<T> : ControllerBase where T : Entit
 
     public virtual void OnRecvRespawn(Entity inEntity)
     {
+        if(ContainEntity(inEntity.targetId) == false)
+           return;
+           
         var entityObj = GetEntityObject(inEntity.targetId);
 
         entityObj.Init(inEntity.targetId,
                        inEntity.stat,
                        inEntity.pos.ConvertUnityVector3());
-
     }
 
 
@@ -90,8 +103,14 @@ public abstract class EntityObjectController<T> : ControllerBase where T : Entit
         if (_entityObjectDict.TryGetValue(inTargetId, out var entityObj) == true && entityObj != null)
             return entityObj;
 
-        Debug.LogError("player is null or empty");
-        return entityObj;
+        Debug.LogError($"[{nameof(GetEntityObject)}] entityObject null or empty!");
+
+        return null;
+    }
+
+    public bool ContainEntity(int inTargetId)
+    {
+        return _entityObjectDict.ContainsKey(inTargetId);
     }
 
 

@@ -235,6 +235,8 @@ public class Player : EntityObject
 
         _detectRange?.SetActive(false);
         _playerUI.Init(Stat.maxHP);
+        
+        _anim.OnIdle();
     }
 
 

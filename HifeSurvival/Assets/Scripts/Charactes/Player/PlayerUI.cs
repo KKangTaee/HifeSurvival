@@ -67,6 +67,9 @@ public class PlayerUI : MonoBehaviour
     public void UpdateHpBar()
     {
         // 바로 감소시키는 hpBar
-        IMG_hpBar.fillAmount = (float)_currHP / _maxHP;
+        IMG_hpBar.fillAmount    = (float)_currHP / _maxHP;
+        IMG_hpInner.fillAmount  = (float)_currHP / _maxHP;
+
+        Debug.LogWarning(IMG_hpBar.fillAmount);
     }
 }

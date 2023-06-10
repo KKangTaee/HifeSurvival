@@ -29,6 +29,12 @@ public abstract class EntityObject : MonoBehaviour
 
     public abstract bool IsPlayer { get;}
 
+
+
+    //-------------
+    // virtual
+    //-------------
+
     public virtual void Init(int inTargetId, EntityStat inStat, in Vector3 inPos)
     {
         TargetId = inTargetId;
@@ -43,10 +49,14 @@ public abstract class EntityObject : MonoBehaviour
         Status = inStatus;
     }
 
+    public virtual void OnDamaged(int inDamageValue)
+    {
+        // Empty
+    }
 
 
     //----------------
-    // �̵�����
+    // 이동관련
     //----------------
 
     public void SetPos(in Vector3 inPos)

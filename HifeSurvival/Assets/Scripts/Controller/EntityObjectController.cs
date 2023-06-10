@@ -93,7 +93,6 @@ public abstract class EntityObjectController<T> : ControllerBase where T : Entit
                        inEntity.pos.ConvertUnityVector3());
     }
 
-
     //------------------
     // functions
     //------------------

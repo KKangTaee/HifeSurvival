@@ -72,29 +72,28 @@ public class Player : EntityObject
 
         private void OnAttack(Player inFrom, AttackParam inParam)
         {
-            if (inParam.target is Player inTo)
+            EntityObject inTo = inParam.target;
+
+            // 내 클라의 전송값과 서버의 위치값이 크게 다르다면..?
+            if (Vector3.Distance(inFrom.GetPos(), inParam.target.GetPos()) > 1f)
             {
-                // 내 클라의 전송값과 서버의 위치값이 크게 다르다면..?
-                if (Vector3.Distance(inFrom.GetPos(), inTo.GetPos()) > 1f)
-                {
-                    // 이동보간 후 처리
-                    inFrom.MoveLerpEntity(() => inParam.fromPos,
-                                          null,
-                                          null,
-                                          () =>
-                                          {
-                                              Attack(inParam, inFrom, inTo);
-                                          });
-                }
-                else
-                {
-                    Attack(inParam, inFrom, inTo);
-                }
+                // 이동보간 후 처리
+                inFrom.MoveLerpEntity(() => inParam.fromPos,
+                                        null,
+                                        null,
+                                        () =>
+                                        {
+                                            Attack(inParam, inFrom, inTo);
+                                        });
+            }
+            else
+            {
+                Attack(inParam, inFrom, inTo);
             }
         }
 
         #region  Local Func
-        void Attack(AttackParam inParam, Player inFrom, Player inTo)
+        void Attack(AttackParam inParam, Player inFrom, EntityObject inTo)
         {
             inFrom.OnAttack(inParam.fromDir);
             inTo.OnDamaged(inParam.attackValue);
@@ -327,6 +326,13 @@ public class Player : EntityObject
     // Player State
     //-------------------
 
+    public override void OnDamaged(int inDamageValue)
+    {
+        _anim.OnDamaged();
+        _playerUI.DecreaseHP(inDamageValue);
+    }
+
+
     public void OnMove(in Vector3 inDir)
     {
         _anim.OnWalk(inDir);
@@ -375,13 +381,6 @@ public class Player : EntityObject
     {
         _anim.OnAttack(inDir);
         StopMoveEntity(GetPos());
-    }
-
-
-    public void OnDamaged(int inDamageValue)
-    {
-        _anim.OnDamaged();
-        _playerUI.DecreaseHP(inDamageValue);
     }
 
 

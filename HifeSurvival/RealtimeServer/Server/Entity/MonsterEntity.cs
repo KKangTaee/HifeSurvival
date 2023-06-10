@@ -73,7 +73,7 @@ namespace Server
         public void NotifyAttack(AttackParam inParam)
         {
             // NOTE@taeho.kang 현재 몬스터가 공격을 하고 있지 않는 상황에만 어그로를 끈다.
-            if(Status != EStatus.ATTACK)
+            if (Status != EStatus.ATTACK)
                 OnAttack(inParam);
         }
     }
@@ -145,18 +145,39 @@ namespace Server
 
                         inOther.stat.AddCurrHp(-damagedVal);
 
-                        CS_Attack attackPacket = new CS_Attack()
+                        // 공격하던 플레이어가 사망했다면..?
+                        if (inOther.stat.currHp <= 0)
                         {
-                            toIsPlayer = true,
-                            toId = inOther.targetId,
-                            fromIsPlayer = false,
-                            fromId = inSelf.targetId,
-                            attackValue = damagedVal,
-                        };
+                            S_Dead deadPacket = new S_Dead()
+                            {
+                                toIsPlayer = true,
+                                toId = inOther.targetId,
+                                fromIsPlayer = false,
+                                fromId = inSelf.targetId,
+                                respawnTime = 15,
+                            };
 
-                        inSelf.broadcaster.Broadcast(attackPacket);
+                             inSelf.broadcaster.Broadcast(deadPacket);
 
-                        JobTimer.Instance.Push(() => { UpdateAttack(inSelf, inOther); }, (int)(inOther.stat.attackSpeed * 1000));
+                             // 다시 자리로 돌아간다.
+                             inSelf.OnBackToSpawn();
+                        }
+                        else
+                        {
+                            CS_Attack attackPacket = new CS_Attack()
+                            {
+                                toIsPlayer = true,
+                                toId = inOther.targetId,
+                                fromIsPlayer = false,
+                                fromId = inSelf.targetId,
+                                attackValue = damagedVal,
+                            };
+
+                            inSelf.broadcaster.Broadcast(attackPacket);
+
+                            JobTimer.Instance.Push(() => { UpdateAttack(inSelf, inOther); }, (int)(inOther.stat.attackSpeed * 1000));
+                        }
+
                     }
 
                     // 공격을 못한다면 다시추격
@@ -202,7 +223,7 @@ namespace Server
                 if (this != null && _isRunning == true && inSelf != null)
                 {
                     // 공격범위를 벗어났다면..?
-                    if(inSelf.OutOfSpawnRange() == true)
+                    if (inSelf.OutOfSpawnRange() == true)
                     {
                         inSelf.OnBackToSpawn();
                     }
@@ -221,7 +242,7 @@ namespace Server
                     {
                         // 이동방향을 구한다.
                         var newDir = inOther.pos.SubtractVec3(inSelf.pos).NormalizeVec3();
-                      
+
                         inSelf.OnMoveAndBroadcast(newDir, UPDATE_TIME * 0.001f);
                         JobTimer.Instance.Push(() => { UpdateFollow(inSelf, inOther); }, UPDATE_TIME);
                     }
@@ -233,15 +254,15 @@ namespace Server
         {
             private const int UPDATE_TIME = 125;
 
-            private bool    _isRunning;
-            private float   _currDist;
-            private float   _totalDist;
-            private Vec3    _startPos;
+            private bool _isRunning;
+            private float _currDist;
+            private float _totalDist;
+            private Vec3 _startPos;
 
             public void Enter<P>(MonsterEntity inSelf, in P inParam = default) where P : struct, IStateParam
             {
-                _isRunning  = true;
-                _startPos   = inSelf.pos;
+                _isRunning = true;
+                _startPos = inSelf.pos;
                 _currDist = 0;
                 _totalDist = _startPos.DistanceTo(inSelf.spawnPos);
 
@@ -260,12 +281,12 @@ namespace Server
 
             public void UpdateBackToSpawn(MonsterEntity inSelf)
             {
-                if(this != null && _isRunning == true && inSelf != null)
+                if (this != null && _isRunning == true && inSelf != null)
                 {
                     _currDist += UPDATE_TIME * 0.001f * inSelf.stat.moveSpeed;
                     float ratio = _currDist / _totalDist;
 
-                    if(ratio < 1)
+                    if (ratio < 1)
                     {
                         inSelf.OnMoveLerpAndBroadcast(_startPos, inSelf.spawnPos, ratio);
                         JobTimer.Instance.Push(() => { UpdateBackToSpawn(inSelf); }, UPDATE_TIME);
@@ -307,12 +328,12 @@ namespace Server
     {
         private Dictionary<int, MonsterEntity> _monstersDict = new Dictionary<int, MonsterEntity>();
 
-        public int GroupId      { get; private set;}
-        public int RespawnTime  { get; private set; }
+        public int GroupId { get; private set; }
+        public int RespawnTime { get; private set; }
 
         public MonsterGroup(int inGroupId, int inRespawnTime)
         {
-            GroupId     = inGroupId;
+            GroupId = inGroupId;
             RespawnTime = inRespawnTime;
         }
 
@@ -357,7 +378,7 @@ namespace Server
 
         public MonsterEntity GetMonsterEntity(int inTargetId)
         {
-            if(_monstersDict.TryGetValue(inTargetId, out var monster) == true && monster != null)
+            if (_monstersDict.TryGetValue(inTargetId, out var monster) == true && monster != null)
             {
                 return monster;
             }

@@ -106,6 +106,7 @@ public class IngameUI : MonoBehaviour
     public void ShowRespawnTimer(int totalTime)
     {
         RT_respawnPanel?.gameObject.SetActive(true);
+        RT_kdList?.gameObject.SetActive(false);
 
         int elapsedSeconds = totalTime;
 
@@ -133,5 +134,6 @@ public class IngameUI : MonoBehaviour
     {
         _respawnTimer?.Dispose();
         RT_respawnPanel?.gameObject.SetActive(false);
+        RT_kdList?.gameObject.SetActive(true);
     }
 }

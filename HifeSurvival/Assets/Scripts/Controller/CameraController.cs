@@ -100,22 +100,22 @@ public class CameraController : ControllerBase, TouchController.ITouchUpdate
 
                 break;
 
-            case TouchController.ETouchCommand.CAMERA_ZOOM:
+            // case TouchController.ETouchCommand.CAMERA_ZOOM:
 
-                if (inTouchPos?.Length != 2)
-                    return;
+            //     if (inTouchPos?.Length != 2)
+            //         return;
 
-                float currDist = Vector2.Distance(inTouchPos[0], inTouchPos[1]);
+            //     float currDist = Vector2.Distance(inTouchPos[0], inTouchPos[1]);
 
-                if (Mathf.Abs(_prevZoomDist - float.MinValue) > 1e-6f)
-                {
-                    float zoomDelta = currDist - _prevZoomDist;
-                    _main.orthographicSize += (zoomDelta);
-                }
+            //     if (Mathf.Abs(_prevZoomDist - float.MinValue) > 1e-6f)
+            //     {
+            //         float zoomDelta = currDist - _prevZoomDist;
+            //         _main.orthographicSize += (zoomDelta);
+            //     }
 
-                _prevZoomDist = currDist;
+            //     _prevZoomDist = currDist;
 
-                break;
+            //     break;
 
             case TouchController.ETouchCommand.CAMERA_MOVE_DONE:
                 

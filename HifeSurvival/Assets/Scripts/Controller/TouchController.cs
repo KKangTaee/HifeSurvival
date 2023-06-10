@@ -29,8 +29,6 @@ public class TouchController : ControllerBase
         //------------
         // 카메라 관련
         //------------
-        CAMERA_ZOOM = 0,            // 카메라 줌
-
         CAMERA_MOVE,                // 카메라 무브
 
         CAMERA_MOVE_DONE,           // 카메라 무빙끝남
@@ -39,11 +37,14 @@ public class TouchController : ControllerBase
 
 
         //-------------
-        // 입력 관련
+        // 조이스틱 관련
         //-------------
-        WORLD_MAP_TOUCH = 201,      // 맵 터치
+        JOYSTICK_DOWN,
 
-        PLAYER_TOUCH,               // 플레이어 터치
+        JOYSTICK_TOUCHING,
+
+        JOYSTICK_UP,
+
 
         NONE,
     }
@@ -57,9 +58,9 @@ public class TouchController : ControllerBase
     public struct TouchResult
     {
         public ETouchState state;
-        public TouchPhase  phase;
-        public Vector2[]   posArr;
-        public float       touchPressure;
+        public TouchPhase phase;
+        public Vector2[] posArr;
+        public float touchPressure;
 
         public int touchCount => posArr?.Length ?? 0;
     }
@@ -81,16 +82,16 @@ public class TouchController : ControllerBase
     // variables
     //------------------
 
-    private ETouchState      _eTouch   = ETouchState.NONE;
-    private ETouchCommand    _eCommand = ETouchCommand.NONE;
+    private ETouchState _eTouch = ETouchState.NONE;
+    private ETouchCommand _eCommand = ETouchCommand.NONE;
 
     private CameraController _cameraController;
     private PlayerController _playerController;
+    private JoystickController _joystickController;
 
-    private Vector2          _prevMousePos;
-    private float            _mouseWheelDelta = 50;
-
-    private float            _touchingDelta;
+    private Vector2 _prevMousePos;
+    private float _mouseWheelDelta = 50;
+    private float _touchingDelta;
 
 
     //------------------
@@ -118,7 +119,9 @@ public class TouchController : ControllerBase
 
         _playerController = ControllerManager.Instance.GetController<PlayerController>();
 
-        SetActive(false);
+        _joystickController = ControllerManager.Instance.GetController<JoystickController>();
+
+        // SetActive(false);
     }
 
 
@@ -173,8 +176,8 @@ public class TouchController : ControllerBase
 
     public bool OnTouch(out TouchResult inResult)
     {
-        Vector2[]   touchPosArr = null;
-        TouchPhase  touchPhase = TouchPhase.Canceled;
+        Vector2[] touchPosArr = null;
+        TouchPhase touchPhase = TouchPhase.Canceled;
 
 #if UNITY_EDITOR
         // ���콺 �� ó��
@@ -204,12 +207,12 @@ public class TouchController : ControllerBase
 
 
                 touchPosArr = new Vector2[] { Input.mousePosition };
-                touchPhase  = Mathf.Abs(currMousePos.x - _prevMousePos.x) < 0.33f &&
-                              Mathf.Abs(currMousePos.y - _prevMousePos.y) < 0.33f ? TouchPhase.Stationary
+                touchPhase = Mathf.Abs(currMousePos.x - _prevMousePos.x) < 0.33f &&
+                             Mathf.Abs(currMousePos.y - _prevMousePos.y) < 0.33f ? TouchPhase.Stationary
                                                                                   : TouchPhase.Moved;
 
                 _prevMousePos = currMousePos;
-               
+
             }
 #else
             if (Input.touchCount > 0)
@@ -248,7 +251,7 @@ public class TouchController : ControllerBase
 
     public bool OnTouchUp(out TouchResult inResult)
     {
-        Vector2[]  touchPosArr = null;
+        Vector2[] touchPosArr = null;
 
         if (_eTouch == ETouchState.DOWN || _eTouch == ETouchState.TOUCHING)
         {
@@ -293,20 +296,31 @@ public class TouchController : ControllerBase
 
     public void UpdateTouch(TouchResult inResult)
     {
-        Collider2D col = null;
-
         switch (inResult.state)
         {
             case ETouchState.DOWN:
+                // 여기서 조이스틱이 현재 화면에 노출중인지를 파악해야 함.
+                if (_joystickController.IsShowJoyStick() == true)
+                    _eCommand = ETouchCommand.JOYSTICK_DOWN;
 
                 break;
 
             case ETouchState.TOUCHING:
 
-                if(inResult.touchPressure > 0.2f && inResult.phase == TouchPhase.Moved)
+                if (_joystickController.IsShowJoyStick() == true)
                 {
-                    _eCommand = inResult.touchCount == 1 ? ETouchCommand.CAMERA_MOVE
-                                                         : ETouchCommand.CAMERA_ZOOM;
+                    _eCommand = ETouchCommand.JOYSTICK_TOUCHING;
+                }
+                else
+                {
+                    if (inResult.touchPressure > 0.2f && inResult.phase == TouchPhase.Moved)
+                    {
+                        // _eCommand = inResult.touchCount == 1 ? ETouchCommand.CAMERA_MOVE
+                        //                                      : ETouchCommand.CAMERA_ZOOM;
+
+                        // TODO@taeho.kang 여기서 상황에 따라 다르게 처리가 이루어 져야함.
+                        // 내가 지금 살아 있다면, JOYSTICK
+                    }
                 }
 
                 break;
@@ -314,31 +328,13 @@ public class TouchController : ControllerBase
             case ETouchState.UP:
 
                 if (_eCommand == ETouchCommand.CAMERA_MOVE)
-                {
                     _eCommand = ETouchCommand.CAMERA_MOVE_DONE;
-                }
-                else if(inResult.touchCount == 1)
-                {
-                    col = GetCollider2D(inResult.posArr.First());
 
-                    if (col?.CompareTag(TagName.WORLDMAP_TOUCH) == true)
-                    {
-                        _eCommand = ETouchCommand.WORLD_MAP_TOUCH;
-                    }
-                    else if(col?.CompareTag(TagName.PLAYER_OTHER) == true)
-                    {
-                        _eCommand = ETouchCommand.PLAYER_TOUCH;
-                    }
-                    else
-                    {
-                        _eCommand = ETouchCommand.NONE;
-                    }
-    
-                }
+                else if (_eCommand == ETouchCommand.JOYSTICK_DOWN || _eCommand == ETouchCommand.JOYSTICK_TOUCHING)
+                    _eCommand = ETouchCommand.JOYSTICK_UP;
+
                 else
-                {
                     _eCommand = ETouchCommand.NONE;
-                }
 
                 break;
 
@@ -347,13 +343,18 @@ public class TouchController : ControllerBase
                 break;
         }
 
-        
-        switch(_eCommand)
+
+        switch (_eCommand)
         {
-            case ETouchCommand.CAMERA_ZOOM:
             case ETouchCommand.CAMERA_MOVE:
             case ETouchCommand.CAMERA_MOVE_DONE:
                 _cameraController.OnTouchUpdate(_eCommand, inResult.posArr);
+                break;
+
+            case ETouchCommand.JOYSTICK_DOWN:
+            case ETouchCommand.JOYSTICK_TOUCHING:
+            case ETouchCommand.JOYSTICK_UP:
+                _joystickController.OnTouchUpdate(_eCommand, inResult.posArr);
                 break;
         }
     }
@@ -362,14 +363,5 @@ public class TouchController : ControllerBase
     public void SetActive(bool isTrue)
     {
         gameObject.SetActive(isTrue);
-    }
-
-
-    public static Collider2D GetCollider2D(Vector2 inPos)
-    {
-        Vector2 mousePosition = Camera.main.ScreenToWorldPoint(inPos);
-        RaycastHit2D hitInfo = Physics2D.Raycast(mousePosition, Vector2.zero);
-
-        return hitInfo.collider;
     }
 }

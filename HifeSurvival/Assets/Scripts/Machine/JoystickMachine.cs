@@ -10,7 +10,7 @@ public class JoystickMachine : MonoBehaviour, IDragHandler, IPointerUpHandler, I
     [SerializeField] RectTransform joystick;
 
     private Action<Vector2> _dragCB;
-    private Action      _pointUpCB;
+    private Action _pointUpCB;
 
     public Vector2 inputDirection;
     private bool isTouching;
@@ -40,7 +40,7 @@ public class JoystickMachine : MonoBehaviour, IDragHandler, IPointerUpHandler, I
         inputDirection = Vector2.ClampMagnitude(inputDirection, joystickBackground.sizeDelta.x * 0.5f);
         joystick.anchoredPosition = inputDirection;
 
-        inputDirection =  inputDirection / (joystickBackground.sizeDelta.x * 0.5f);
+        inputDirection = inputDirection / (joystickBackground.sizeDelta.x * 0.5f);
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -57,6 +57,32 @@ public class JoystickMachine : MonoBehaviour, IDragHandler, IPointerUpHandler, I
         _pointUpCB?.Invoke();
     }
 
+
+    public void OnDragV2(Vector2 screenPoint)
+    {
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(joystickBackground, screenPoint, null, out Vector2 localPoint);
+
+        inputDirection = localPoint;
+        inputDirection = Vector2.ClampMagnitude(inputDirection, joystickBackground.sizeDelta.x * 0.5f);
+        joystick.anchoredPosition = inputDirection;
+
+        inputDirection = inputDirection / (joystickBackground.sizeDelta.x * 0.5f);
+    }
+
+    public void OnPointerDownV2(Vector2 localPoint)
+    {
+        OnDragV2(localPoint);
+        isTouching = true;
+    }
+
+    public void OnPointerUpV2(Vector2 localPoint)
+    {
+        inputDirection = Vector2.zero;
+        joystick.anchoredPosition = inputDirection;
+        isTouching = false;
+        _pointUpCB?.Invoke();
+    }
+
     public void AddDragEvent(Action<Vector2> inCallback) =>
         _dragCB = inCallback;
 
@@ -64,7 +90,7 @@ public class JoystickMachine : MonoBehaviour, IDragHandler, IPointerUpHandler, I
         _pointUpCB = inCallback;
 
 
-    
+
     public void OnKeyEvent()
     {
         inputDirection = Vector2.zero;

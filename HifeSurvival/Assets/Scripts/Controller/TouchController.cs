@@ -115,9 +115,9 @@ public class TouchController : ControllerBase
 
     public override void Init()
     {
-        _cameraController   = ControllerManager.Instance.GetController<CameraController>();
+        _cameraController = ControllerManager.Instance.GetController<CameraController>();
 
-        _playerController   = ControllerManager.Instance.GetController<PlayerController>();
+        _playerController = ControllerManager.Instance.GetController<PlayerController>();
 
         _joystickController = ControllerManager.Instance.GetController<JoystickController>();
 
@@ -311,18 +311,19 @@ public class TouchController : ControllerBase
                 {
                     _eCommand = ETouchCommand.JOYSTICK_TOUCHING;
                 }
+                else if (inResult.touchPressure > 0.2f && inResult.phase == TouchPhase.Moved)
+                {
+                    // _eCommand = inResult.touchCount == 1 ? ETouchCommand.CAMERA_MOVE
+                    //                                      : ETouchCommand.CAMERA_ZOOM;
+
+                    // TODO@taeho.kang 여기서 상황에 따라 다르게 처리가 이루어 져야함.
+                    // 내가 지금 살아 있다면, JOYSTICK
+                }
                 else
                 {
-                    if (inResult.touchPressure > 0.2f && inResult.phase == TouchPhase.Moved)
-                    {
-                        // _eCommand = inResult.touchCount == 1 ? ETouchCommand.CAMERA_MOVE
-                        //                                      : ETouchCommand.CAMERA_ZOOM;
-
-                        // TODO@taeho.kang 여기서 상황에 따라 다르게 처리가 이루어 져야함.
-                        // 내가 지금 살아 있다면, JOYSTICK
-                    }
+                    _eCommand = ETouchCommand.NONE;
                 }
-                
+
                 break;
 
             case ETouchState.UP:

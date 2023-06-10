@@ -208,7 +208,6 @@ public sealed class PlayerController : EntityObjectController<Player>
 
         if (inEntity.toId == Self.TargetId)
         {
-            // _touchController.SetActive(true);
             _joystickController.HideJoystick();
         }
     }
@@ -222,8 +221,8 @@ public sealed class PlayerController : EntityObjectController<Player>
         {
             Self.SetSelf();
 
-            // _touchController.SetActive(false);
             _joystickController.ShowJoystick();
+            _cameraController.FollowingTarget(Self.transform);
         }
     }
 

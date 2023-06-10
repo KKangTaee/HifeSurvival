@@ -50,7 +50,7 @@ public class PlayerUI : MonoBehaviour
     {
         _currHP -= damageValue;
 
-        UpdateHpBar();
+        // UpdateHpBar();
 
         // 번쩍이는 효과를 위해 색상을 잠시 흰색으로 변경
         Color originalColor = IMG_hpInner.color;

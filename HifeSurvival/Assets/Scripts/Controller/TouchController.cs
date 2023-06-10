@@ -316,8 +316,8 @@ public class TouchController : ControllerBase
                     // _eCommand = inResult.touchCount == 1 ? ETouchCommand.CAMERA_MOVE
                     //                                      : ETouchCommand.CAMERA_ZOOM;
 
-                    // TODO@taeho.kang 여기서 상황에 따라 다르게 처리가 이루어 져야함.
-                    // 내가 지금 살아 있다면, JOYSTICK
+
+                    _eCommand = ETouchCommand.CAMERA_MOVE;
                 }
                 else
                 {

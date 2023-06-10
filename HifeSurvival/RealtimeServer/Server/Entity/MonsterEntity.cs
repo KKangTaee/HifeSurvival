@@ -167,6 +167,7 @@ namespace Server
                                 respawnTime = 15,
                             };
 
+                             inOther.OnDead();
                              inSelf.broadcaster.Broadcast(deadPacket);
 
                              // 다시 자리로 돌아간다.

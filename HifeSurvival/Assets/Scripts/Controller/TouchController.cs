@@ -322,7 +322,7 @@ public class TouchController : ControllerBase
                         // 내가 지금 살아 있다면, JOYSTICK
                     }
                 }
-
+                
                 break;
 
             case ETouchState.UP:

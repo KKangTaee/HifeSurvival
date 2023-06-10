@@ -77,23 +77,21 @@ public class IngameUI : MonoBehaviour
 
     public void OnRecvDead(S_Dead inPacket)
     {
-        if(inPacket.toIsPlayer == false)
-            return;
-
-        var kill = _kdViewArr.FirstOrDefault(x => x.targetId == inPacket.fromId);
-        var dead = _kdViewArr.FirstOrDefault(x => x.targetId == inPacket.toId);
-
-        if (kill == null || dead == null)
+        if(inPacket.toIsPlayer == true)
         {
-            Debug.LogError("KDView is null or empty!");
-            return;
+            var dead = _kdViewArr.FirstOrDefault(x => x.targetId == inPacket.toId);
+            dead.AddDead(1);
+
+            // 내가 사망했다면...? 리스폰 화면 띄워라
+            if(inPacket.toId == GameMode.Instance.EntitySelf.targetId)
+                ShowRespawnTimer(inPacket.respawnTime);
         }
 
-        kill.AddKill(1);
-        dead.AddDead(1);
-
-        if(inPacket.toId == GameMode.Instance.EntitySelf.targetId)
-            ShowRespawnTimer(inPacket.respawnTime);
+        if(inPacket.fromIsPlayer == true)
+        {
+            var kill = _kdViewArr.FirstOrDefault(x => x.targetId == inPacket.fromId);
+            kill.AddKill(1);
+        }   
     }
 
 

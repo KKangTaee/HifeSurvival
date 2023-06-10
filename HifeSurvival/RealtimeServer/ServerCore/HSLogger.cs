@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -35,7 +34,7 @@ namespace ServerCore
                 Directory.CreateDirectory("logs");
 
             fs = new FileStream($"logs\\{title}.log", FileMode.CreateNew);
-            sw = new StreamWriter(fs, System.Text.Encoding.UTF8);
+            sw = new StreamWriter(fs, Encoding.UTF8);
         }
 
         public void Debug(string message)

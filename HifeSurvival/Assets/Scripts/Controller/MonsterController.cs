@@ -38,6 +38,8 @@ public class MonsterController : EntityObjectController<Monster>
 
             var inst = Instantiate(prefabData.prefab, transform);
             inst.Init(entity.targetId, entity.stat, entity.pos.ConvertUnityVector3());
+
+            _entityObjectDict.Add(inst.TargetId, inst);
         }
     }
 }

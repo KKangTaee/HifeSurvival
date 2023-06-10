@@ -288,7 +288,7 @@ public class Player : EntityObject
         {
             if (col.CompareTag(TagName.PLAYER_OTHER) == true || col.CompareTag(TagName.MONSTER) == true)
             {
-                var entityObj = col.GetComponentInParent<EntityObject>();
+                var entityObj = col.GetComponent<EntityObject>();
 
                 if(entityObj == null)
                 {
@@ -305,7 +305,7 @@ public class Player : EntityObject
         {
             if (col.CompareTag(TagName.PLAYER_OTHER) == true || col.CompareTag(TagName.MONSTER) == true)
             {
-                var entityObj = col.GetComponentInParent<EntityObject>();
+                var entityObj = col.GetComponent<EntityObject>();
 
                 if(entityObj == null)
                 {

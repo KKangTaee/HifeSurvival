@@ -12,8 +12,7 @@ public sealed class PlayerController : EntityObjectController<Player>
     private CameraController    _cameraController;
     private JoystickController  _joystickController;
     private TouchController     _touchController;
-
-    private IDisposable _attackDelay;
+    private IDisposable         _attackDelay;
 
     public Player Self { get; private set; }
 
@@ -163,6 +162,8 @@ public sealed class PlayerController : EntityObjectController<Player>
         _attackDelay = Observable.Timer(TimeSpan.FromSeconds(Self.Stat.attackSpeed))
                                         .Subscribe(_ =>
         {
+            Debug.Log("공격 호출!");
+
             // 이미 상대가 죽었다면
             if (inTarget.Status == EntityObject.EStatus.DEAD)
             {

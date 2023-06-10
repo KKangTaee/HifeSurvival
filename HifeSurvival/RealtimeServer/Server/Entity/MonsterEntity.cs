@@ -72,6 +72,10 @@ namespace Server
 
         public void NotifyAttack(AttackParam inParam)
         {
+            // NOTE@taeho.kang 죽은상태에서는 어그로 노티파이가 되어선 안됨.
+            if(Status == EStatus.DEAD)
+               return;
+
             // NOTE@taeho.kang 현재 몬스터가 공격을 하고 있지 않는 상황에만 어그로를 끈다.
             if (Status != EStatus.ATTACK)
                 OnAttack(inParam);

@@ -77,6 +77,9 @@ public class IngameUI : MonoBehaviour
 
     public void OnRecvDead(S_Dead inPacket)
     {
+        if(inPacket.toIsPlayer == false)
+            return;
+            
         var kill = _kdViewArr.FirstOrDefault(x => x.targetId == inPacket.fromId);
         var dead = _kdViewArr.FirstOrDefault(x => x.targetId == inPacket.toId);
 

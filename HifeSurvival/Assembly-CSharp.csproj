@@ -74,7 +74,7 @@
      <Compile Include="Assets/Scripts/Charactes/HeroAnimator.cs" />
      <Compile Include="Assets/Scripts/Utils/AsyncWaiting.cs" />
      <Compile Include="Assets/Scripts/Machine/ColliderMachine.cs" />
-     <Compile Include="Assets/Scripts/Player/PlayerUI.cs" />
+     <Compile Include="Assets/Scripts/Charactes/Player/PlayerUI.cs" />
      <Compile Include="Assets/Scripts/Realtime/JobQueue.cs" />
      <Compile Include="Assets/Scripts/Scenes/SceneManager.cs" />
      <Compile Include="Assets/Scripts/WorldMap/WorldObjectBase.cs" />
@@ -116,6 +116,7 @@
      <Compile Include="Assets/Scripts/Realtime/Packet/PacketHandler.cs" />
      <Compile Include="Assets/Scripts/WorldMap/WorldMap.cs" />
      <Compile Include="Assets/Scripts/Managers/FirebaseAuthManager.cs" />
+     <Compile Include="Assets/Scripts/Charactes/Monster/MonsterUI.cs" />
      <None Include="Assets/Demigiant/DOTween/DOTween50.xml" />
      <None Include="Assets/TextMesh Pro/Shaders/TMPro.cginc" />
      <None Include="Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile Overlay.shader" />

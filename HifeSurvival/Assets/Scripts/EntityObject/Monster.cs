@@ -6,6 +6,8 @@ using System;
 public class Monster : EntityObject
 {
 
+    [SerializeField] MonsterUI _monsterUI;
+
     public class AttackState : IState<Monster>
     {
         public void Enter<P>(Monster inSelf, in P inParam) where P : struct
@@ -130,5 +132,10 @@ public class Monster : EntityObject
     public void OnMove(in Vector3 inDir)
     {
         MoveEntity(inDir);
+    }
+
+    public override void OnDamaged(int inDamageValue)
+    {
+        _monsterUI.DecreaseHP(inDamageValue);
     }
 }

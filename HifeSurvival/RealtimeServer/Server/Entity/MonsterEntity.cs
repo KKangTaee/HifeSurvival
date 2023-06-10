@@ -137,8 +137,14 @@ namespace Server
             {
                 if (this != null && _isRunning == true && inSelf != null)
                 {
+                    // 상대방이 이미 죽었다면..?
+                    if(inOther.Status == EStatus.DEAD)
+                    {
+                        // 자리로 다시 돌아간다.
+                        inSelf.OnBackToSpawn();
+                    }
                     // 공격이 가능하다면
-                    if (inSelf.CanAttack(inOther.pos) == true)
+                    else if (inSelf.CanAttack(inOther.pos) == true)
                     {
                         var attackVal = inSelf.stat.GetAttackValue();
                         var damagedVal = inOther.stat.GetDamagedValue(attackVal);

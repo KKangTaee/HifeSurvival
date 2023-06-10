@@ -107,6 +107,8 @@ public class Monster : EntityObject
     public override void Init(int inTargetId, EntityStat inStat, in Vector3 inPos)
     {
         base.Init(inTargetId, inStat, inPos);
+
+        _monsterUI.Init(Stat.maxHP);
     }
 
     public override void ChangeState<P>(EStatus inStatus, in P inParam = default) where P : struct

@@ -39,8 +39,8 @@ public class EntityStat
     public int str    { get; private set; }
     public int def    { get; private set; }
     
-    public int hp     { get; private set; }
-    public int currHp { get; private set; }
+    public int maxHP     { get; private set; }
+    public int currHP { get; private set; }
 
 
     public float detectRange { get; private set; }
@@ -54,7 +54,7 @@ public class EntityStat
         str = heros.str;
         def = heros.def;
         
-        currHp = hp  = heros.hp;
+        currHP = maxHP  = heros.hp;
         
         detectRange = heros.detectRange;
         attackRange = heros.attackRange;
@@ -67,7 +67,7 @@ public class EntityStat
         str = monsters.str;
         def = monsters.def;
 
-        currHp = hp = monsters.hp;
+        currHP = maxHP = monsters.hp;
 
         detectRange = monsters.detectRange;
         attackRange = monsters.attackRange;
@@ -88,14 +88,14 @@ public class EntityStat
         def += inDef;
 
     public void AddCurrHp(int inHp) =>
-        currHp += inHp;
+        currHP += inHp;
 
     public void UpdateStat(Stat inStat)
     {
         str += inStat.str;
         def += inStat.def;
-        hp  += inStat.hp;
+        maxHP  += inStat.hp;
 
-        currHp += inStat.hp;
+        currHP += inStat.hp;
     }
 }

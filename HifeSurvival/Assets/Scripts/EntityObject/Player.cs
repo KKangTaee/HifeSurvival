@@ -234,7 +234,7 @@ public class Player : EntityObject
         _playerTrigger.gameObject.layer = LayerMask.NameToLayer(LayerName.PLAYER_OTHER);
 
         _detectRange?.SetActive(false);
-        _playerUI.Init(Stat.hp);
+        _playerUI.Init(Stat.maxHP);
     }
 
 
@@ -386,8 +386,8 @@ public class Player : EntityObject
 
     public void UpdateHp()
     {
-        _playerUI.SetMaxHP(Stat.hp);
-        _playerUI.SetHP(Stat.currHp);
+        _playerUI.SetMaxHP(Stat.maxHP);
+        _playerUI.SetHP(Stat.currHP);
     }
 
 

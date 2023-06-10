@@ -48,7 +48,7 @@ public class IngameUI : MonoBehaviour
 
         TMP_def.text  = inStat.def.ToString();
 
-        TMP_hp.text   = inStat.hp.ToString();
+        TMP_hp.text   = inStat.maxHP.ToString();
 
         TMP_gold.text = inGold.ToString();
     }
@@ -79,7 +79,7 @@ public class IngameUI : MonoBehaviour
     {
         if(inPacket.toIsPlayer == false)
             return;
-            
+
         var kill = _kdViewArr.FirstOrDefault(x => x.targetId == inPacket.fromId);
         var dead = _kdViewArr.FirstOrDefault(x => x.targetId == inPacket.toId);
 

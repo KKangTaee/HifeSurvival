@@ -161,9 +161,14 @@ public sealed class PlayerController : EntityObjectController<Player>
 
         _attackDelay = Observable.Timer(TimeSpan.FromSeconds(Self.Stat.attackSpeed))
                                         .Subscribe(_ =>
-        {
-            Debug.Log("공격 호출!");
-
+        {        
+            // 이미 내가 죽은 상태라면..?
+            if(Self.Status == EntityObject.EStatus.DEAD)
+            {
+                OnStopAttackSelf();
+                return;
+            }
+            
             // 이미 상대가 죽었다면
             if (inTarget.Status == EntityObject.EStatus.DEAD)
             {

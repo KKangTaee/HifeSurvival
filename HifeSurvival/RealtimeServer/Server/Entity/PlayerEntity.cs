@@ -73,7 +73,7 @@ namespace Server
                 };
 
                 broadcaster.Broadcast(respawn);
-            }, 1500);
+            }, 15000);
         }
 
     }

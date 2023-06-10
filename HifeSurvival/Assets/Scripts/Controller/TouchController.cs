@@ -115,9 +115,9 @@ public class TouchController : ControllerBase
 
     public override void Init()
     {
-        _cameraController = ControllerManager.Instance.GetController<CameraController>();
+        _cameraController   = ControllerManager.Instance.GetController<CameraController>();
 
-        _playerController = ControllerManager.Instance.GetController<PlayerController>();
+        _playerController   = ControllerManager.Instance.GetController<PlayerController>();
 
         _joystickController = ControllerManager.Instance.GetController<JoystickController>();
 

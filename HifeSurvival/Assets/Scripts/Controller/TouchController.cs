@@ -301,7 +301,7 @@ public class TouchController : ControllerBase
             case ETouchState.DOWN:
                 // 여기서 조이스틱이 현재 화면에 노출중인지를 파악해야 함.
                 if (_joystickController.IsShowJoyStick() == true)
-                    _eCommand = ETouchCommand.JOYSTICK_DOWN;
+                     _eCommand = ETouchCommand.JOYSTICK_DOWN;
 
                 break;
 
@@ -319,10 +319,8 @@ public class TouchController : ControllerBase
 
                     _eCommand = ETouchCommand.CAMERA_MOVE;
                 }
-                else
-                {
-                    _eCommand = ETouchCommand.NONE;
-                }
+
+            
 
                 break;
 
@@ -358,11 +356,5 @@ public class TouchController : ControllerBase
                 _joystickController.OnTouchUpdate(_eCommand, inResult.posArr);
                 break;
         }
-    }
-
-
-    public void SetActive(bool isTrue)
-    {
-        gameObject.SetActive(isTrue);
     }
 }

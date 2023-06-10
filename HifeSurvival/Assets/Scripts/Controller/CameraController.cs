@@ -81,6 +81,7 @@ public class CameraController : ControllerBase, TouchController.ITouchUpdate
         {
             case TouchController.ETouchCommand.CAMERA_MOVE:
 
+                _followingTarget = null;
                 Vector3 currPos = _main.ScreenToWorldPoint(inTouchPos.First());
 
                 if (_prevPos != INVALIED_VECTOR_VALUE)
@@ -135,7 +136,9 @@ public class CameraController : ControllerBase, TouchController.ITouchUpdate
         {
             case ECamearaStatus.SLIDING:
 
-                if (_dragPower <= 0.5f)
+                Debug.Log($"드래그 : {_dragPower}");
+
+                if (_dragPower <= 0.12f)
                 {
                     _eStatus = ECamearaStatus.NONE;
                     _moveDir = INVALIED_VECTOR_VALUE;
@@ -143,7 +146,7 @@ public class CameraController : ControllerBase, TouchController.ITouchUpdate
                 }
 
                 _main.transform.position += (_moveDir * _dragPower * Time.deltaTime);
-                _dragPower -= 0.5f;
+                _dragPower -= 0.12f;
 
                 break;
 

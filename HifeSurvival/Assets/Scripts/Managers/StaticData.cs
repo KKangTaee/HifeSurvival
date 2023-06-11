@@ -39,6 +39,7 @@ public class StaticData
     public Dictionary<string, Systems> SystemsDict { get; private set; }
     public Dictionary<string, Monsters> MonstersDict { get; private set; }
     public Dictionary<string, MonstersGroup> MonstersGroupDict { get; private set; }
+    public Dictionary<string, item> ItemDict { get; private set; }
 
 
     public async Task Init()
@@ -97,6 +98,10 @@ public class StaticData
                     else if (rangeValue.Equals("monsters_group"))
                     {
                         MonstersGroupDict = JsonToDictionaryGeneric.ParseJsonToDictionary<MonstersGroup>(node.ToString());
+                    }
+                    else if (rangeValue.Equals("item"))
+                    {
+                        ItemDict = JsonToDictionaryGeneric.ParseJsonToDictionary<item>(node.ToString());
                     }
 
                 }
@@ -263,8 +268,7 @@ public class StaticData
         public float attackRange;
         public float detectRange;
         public int grade;
-        public string goldRange;
-        public string itemDrop;
+        public string rewardIds;
         public string desc;
     }
 
@@ -276,5 +280,20 @@ public class StaticData
         public string monsterGroups;
         public int respawnTime;
         public int enabled;
+    }
+
+    [Serializable]
+    public class item
+    {
+        public int id;
+        public string name;
+        public int grade;
+        public int str;
+        public int def;
+        public int hp;
+        public float attackSpeed;
+        public float moveSpeed;
+        public float attackRange;
+        public float detectRange;
     }
 }

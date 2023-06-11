@@ -27,8 +27,8 @@ namespace Server
         // variables
         //------------------
 
-        private string apiKey       = "AIzaSyABnRmQck9SP3Gv7syjremXAjDBDOky8so";
-        private string sheetId      = "104ZnnXWWorMZOAhuY0o1o1xIL2H41opJlrJLsSEk_C4";
+        private string apiKey = "AIzaSyABnRmQck9SP3Gv7syjremXAjDBDOky8so";
+        private string sheetId = "104ZnnXWWorMZOAhuY0o1o1xIL2H41opJlrJLsSEk_C4";
         private string sheetsApiUrl = "https://sheets.googleapis.com/v4/spreadsheets";
 
 
@@ -38,9 +38,9 @@ namespace Server
 
         public Dictionary<string, Heros> HerosDict { get; private set; }
         public Dictionary<string, Systems> SystemsDict { get; private set; }
-
         public Dictionary<string, Monsters> MonstersDict { get; private set; }
         public Dictionary<string, MonstersGroup> MonstersGroupDict { get; private set; }
+        public Dictionary<string, item> ItemDict { get; private set; }
 
         public async Task Init()
         {
@@ -82,8 +82,8 @@ namespace Server
 
                     foreach (JSONNode node in batchDataJson["valueRanges"].AsArray)
                     {
-                        string trimmed =  node["range"].ToString().Trim('\"');
-                        string [] parts = trimmed.Split('!');
+                        string trimmed = node["range"].ToString().Trim('\"');
+                        string[] parts = trimmed.Split('!');
                         var rangeValue = parts[0];
 
                         if (rangeValue.Equals("systems"))
@@ -101,6 +101,10 @@ namespace Server
                         else if (rangeValue.Equals("monsters_group"))
                         {
                             MonstersGroupDict = JsonToDictionaryGeneric.ParseJsonToDictionary<MonstersGroup>(node.ToString());
+                        }
+                        else if (rangeValue.Equals("item"))
+                        {
+                            ItemDict = JsonToDictionaryGeneric.ParseJsonToDictionary<item>(node.ToString());
                         }
 
                     }
@@ -283,6 +287,21 @@ namespace Server
             public string monsterGroups;
             public int respawnTime;
             public int enabled;
+        }
+
+        [Serializable]
+        public class item
+        {
+            public int id;
+            public string name;
+            public int grade;
+            public int str;
+            public int def;
+            public int hp;
+            public float attackSpeed;
+            public float moveSpeed;
+            public float attackRange;
+            public float detectRange;
         }
     }
 }

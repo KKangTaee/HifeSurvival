@@ -19,7 +19,7 @@ public enum PacketID
 	S_Dead = 11,
 	S_Respawn = 12,
 	CS_UpdateStat = 13,
-	S_GetReward = 14,
+	S_DropReward = 14,
 	
 }
 
@@ -776,13 +776,12 @@ public class CS_UpdateStat : IPacket
 	}
 }
 
-public class S_GetReward : IPacket
+public class S_DropReward : IPacket
 {
 	public int targetId;
-	public int gold;
 	public string rewardIds;
 
-	public ushort Protocol { get { return (ushort)PacketID.S_GetReward; } }
+	public ushort Protocol { get { return (ushort)PacketID.S_DropReward; } }
 
 	public void Read(ArraySegment<byte> segment)
 	{
@@ -792,8 +791,6 @@ public class S_GetReward : IPacket
 		count += sizeof(ushort);
 		count += sizeof(ushort);
 		this.targetId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
-		count += sizeof(int);
-		this.gold = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
 		ushort rewardIdsLen = BitConverter.ToUInt16(s.Slice(count, s.Length - count));
 		count += sizeof(ushort);
@@ -810,11 +807,9 @@ public class S_GetReward : IPacket
 		Span<byte> s = new Span<byte>(segment.Array, segment.Offset, segment.Count);
 
 		count += sizeof(ushort);
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.S_GetReward);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.S_DropReward);
 		count += sizeof(ushort);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.targetId);
-		count += sizeof(int);
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.gold);
 		count += sizeof(int);
 		ushort rewardIdsLen = (ushort)Encoding.Unicode.GetByteCount(this.rewardIds);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), rewardIdsLen);

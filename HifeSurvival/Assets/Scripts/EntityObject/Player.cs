@@ -99,7 +99,7 @@ public class Player : EntityObject
             inTo.OnDamaged(inParam.attackValue);
 
             if (inFrom.IsSelf == true)
-                ActionDisplayUI.Show(ActionDisplayUI.ESpawnType.ATTACK_SELF, inParam.attackValue, inTo.GetPos() + Vector3.up);
+                ActionDisplayUI.Show(ActionDisplayUI.ESpawnType.ATTACK, inParam.attackValue, inTo.GetPos() + Vector3.up);
         }
         #endregion
     }
@@ -332,6 +332,9 @@ public class Player : EntityObject
     {
         _anim.OnDamaged();
         _playerUI.DecreaseHP(inDamageValue);
+
+        if(IsSelf == true)
+           ActionDisplayUI.Show(ActionDisplayUI.ESpawnType.TAKE_DAMAGE, inDamageValue, GetPos() + Vector3.up);
     }
 
 
@@ -382,6 +385,7 @@ public class Player : EntityObject
     public void OnAttack(in Vector3 inDir)
     {
         _anim.OnAttack(inDir);
+
         StopMoveEntity(GetPos());
     }
 

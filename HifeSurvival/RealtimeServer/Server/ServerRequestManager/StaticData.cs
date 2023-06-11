@@ -274,8 +274,7 @@ namespace Server
             public float moveSpeed;
             public float attackRange;
             public float detectRange;
-            public string goldRange;
-            public string itemDrop;
+            public string rewardIds;
             public string desc;
         }
 

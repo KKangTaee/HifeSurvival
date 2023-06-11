@@ -9,7 +9,6 @@ namespace PacketGenerator
         static string genPackets;
         static ushort packetId;
         static string packetEnums;
-
         static string clientRegister;
         static string serverRegister;
 

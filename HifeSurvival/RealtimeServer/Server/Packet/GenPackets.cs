@@ -19,7 +19,7 @@ public enum PacketID
 	S_Dead = 11,
 	S_Respawn = 12,
 	CS_UpdateStat = 13,
-	S_DropReward = 14,
+	S_DropItem = 14,
 	
 }
 
@@ -776,12 +776,13 @@ public class CS_UpdateStat : IPacket
 	}
 }
 
-public class S_DropReward : IPacket
+public class S_DropItem : IPacket
 {
-	public int targetId;
-	public string rewardIds;
+	public int dropId;
+	public string itemIds;
+	public Vec3 pos;
 
-	public ushort Protocol { get { return (ushort)PacketID.S_DropReward; } }
+	public ushort Protocol { get { return (ushort)PacketID.S_DropItem; } }
 
 	public void Read(ArraySegment<byte> segment)
 	{
@@ -790,12 +791,13 @@ public class S_DropReward : IPacket
 		ReadOnlySpan<byte> s = new ReadOnlySpan<byte>(segment.Array, segment.Offset, segment.Count);
 		count += sizeof(ushort);
 		count += sizeof(ushort);
-		this.targetId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+		this.dropId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
-		ushort rewardIdsLen = BitConverter.ToUInt16(s.Slice(count, s.Length - count));
+		ushort itemIdsLen = BitConverter.ToUInt16(s.Slice(count, s.Length - count));
 		count += sizeof(ushort);
-		this.rewardIds = Encoding.Unicode.GetString(s.Slice(count, rewardIdsLen));
-		count += rewardIdsLen;
+		this.itemIds = Encoding.Unicode.GetString(s.Slice(count, itemIdsLen));
+		count += itemIdsLen;
+		pos.Read(s, ref count);
 	}
 
 	public ArraySegment<byte> Write()
@@ -807,15 +809,16 @@ public class S_DropReward : IPacket
 		Span<byte> s = new Span<byte>(segment.Array, segment.Offset, segment.Count);
 
 		count += sizeof(ushort);
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.S_DropReward);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.S_DropItem);
 		count += sizeof(ushort);
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.targetId);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.dropId);
 		count += sizeof(int);
-		ushort rewardIdsLen = (ushort)Encoding.Unicode.GetByteCount(this.rewardIds);
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), rewardIdsLen);
+		ushort itemIdsLen = (ushort)Encoding.Unicode.GetByteCount(this.itemIds);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), itemIdsLen);
 		count += sizeof(ushort);
-		Encoding.Unicode.GetBytes(this.rewardIds, s.Slice(count, s.Length - count));
-		count += rewardIdsLen;
+		Encoding.Unicode.GetBytes(this.itemIds, s.Slice(count, s.Length - count));
+		count += itemIdsLen;
+		success &= pos.Write(s,ref count);
 		success &= BitConverter.TryWriteBytes(s, count);
 		if (success == false)
 			return null;

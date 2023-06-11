@@ -82,7 +82,8 @@ namespace Server
                             spawnPos = pos,
                             subId = subId++,
                             broadcaster = _broadcaster,
-                            stat = new EntityStat(data)
+                            stat = new EntityStat(data),
+                            rewardIds = data.rewardIds,
                         };
 
                         MonsterGroup monsterGroup = null;

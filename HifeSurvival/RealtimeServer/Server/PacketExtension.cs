@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using ServerCore;
+using System.Linq;
 
 namespace Server
 {
@@ -87,10 +89,40 @@ namespace Server
             {
                 str = inSelf.str,
                 def = inSelf.def,
-                hp  = inSelf.maxHp,
+                hp = inSelf.maxHp,
                 attackSpeed = inSelf.attackSpeed,
-                moveSpeed   = inSelf.moveSpeed,
+                moveSpeed = inSelf.moveSpeed,
             };
+        }
+
+        public static string FilterRewardIdsByRandomProbability(this string inSelf)
+        {
+            var split = inSelf.Split(':');
+
+
+            // NOTE@taeho.kang 만약 1:0:50 으로 값이 들어올 경우, 100퍼 확률
+            if (split?.Length == 3)
+            {
+                return inSelf;
+            }
+            else if (split?.Length == 4)
+            {
+                var probability = Convert.ToInt32(split[3]);
+                var random = new Random();
+                var randomNumber = random.Next(100); // Generate random number between 0 to 99.
+
+                if (randomNumber < probability)
+                {
+                    return string.Join(":", split.Take(3));
+                }
+                else
+                {
+                    return null;
+                }
+            }
+
+            HSLogger.GetInstance().Error("rewardIds is wrong! check static sheet");
+            return null;
         }
     }
 }

@@ -29,7 +29,7 @@ public sealed class PlayerController : EntityObjectController<Player>
         _joystickController = ControllerManager.Instance.GetController<JoystickController>();
         _touchController    = ControllerManager.Instance.GetController<TouchController>();
 
-        _gameMode.OnRecvUpdateStatCB += OnRecvUpdateStat;
+        _gameMode.OnRecvUpdateStatHandler += OnRecvUpdateStat;
 
         LoadPlayer();
     }

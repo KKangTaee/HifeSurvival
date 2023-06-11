@@ -11,9 +11,9 @@ public class GameMode
 
     public Dictionary<int, PlayerEntity>  PlayerEntitysDict { get; private set; } = new Dictionary<int, PlayerEntity>();
     public Dictionary<int, MonsterEntity> MonsterEntityDict { get; private set; } = new Dictionary<int, MonsterEntity>();
+    
 
     private SimpleTaskCompletionSource<S_JoinToGame> _joinCompleted = new SimpleTaskCompletionSource<S_JoinToGame>();
-
 
     /// <summary>
     /// 입장 관련
@@ -30,13 +30,15 @@ public class GameMode
     //---------------
     // 인게임 진행 관련
     //---------------
-    public event Action<Entity>       OnRecvMoveCB;
-    public event Action<Entity>       OnRecvStopMoveCB;
 
-    public event Action<S_Dead>       OnRecvDeadCB;
-    public event Action<CS_Attack>    OnRecvAttackCB;
-    public event Action<Entity>       OnRecvRespawnCB;
-    public event Action<PlayerEntity> OnRecvUpdateStatCB;
+    public event Action<Entity>       OnRecvMoveHandler;
+    public event Action<Entity>       OnRecvStopMoveHandler;
+    public event Action<S_Dead>       OnRecvDeadHandler;
+    public event Action<CS_Attack>    OnRecvAttackHandler;
+    public event Action<Entity>       OnRecvRespawnHandler;
+    public event Action<PlayerEntity> OnRecvUpdateStatHandler;
+    public event Action<S_DropItem>   OnRecvDropItemHandler;
+
 
     public PlayerEntity EntitySelf { get; private set; }
     public int RoomId { get; private set; }
@@ -371,7 +373,7 @@ public class GameMode
                 player.pos = inPacket.pos;
 
                 if (IsSelf(inPacket.targetId) == false)
-                    OnRecvMoveCB?.Invoke(player);
+                    OnRecvMoveHandler?.Invoke(player);
             }
         }
         else
@@ -381,7 +383,7 @@ public class GameMode
                 monster.dir = inPacket.dir;
                 monster.pos = inPacket.pos;
 
-                OnRecvMoveCB?.Invoke(monster);
+                OnRecvMoveHandler?.Invoke(monster);
             }
         }
     }
@@ -397,7 +399,7 @@ public class GameMode
                 player.dir = inPacket.dir;
 
                 if (IsSelf(inPacket.targetId) == false)
-                    OnRecvStopMoveCB?.Invoke(player);
+                    OnRecvStopMoveHandler?.Invoke(player);
             }
         }
         else
@@ -407,7 +409,7 @@ public class GameMode
                 monster.pos = inPacket.pos;
                 monster.dir = inPacket.dir;
 
-                OnRecvStopMoveCB?.Invoke(monster);
+                OnRecvStopMoveHandler?.Invoke(monster);
             }
         }
     }
@@ -431,13 +433,13 @@ public class GameMode
         toEntity.stat.AddCurrHp(-inPacket.attackValue);
 
         if (IsSelf(inPacket.fromId) == false)
-            OnRecvAttackCB?.Invoke(inPacket);
+            OnRecvAttackHandler?.Invoke(inPacket);
     }
 
 
     public void OnRecvDead(S_Dead inPacket)
     {
-        OnRecvDeadCB?.Invoke(inPacket);
+        OnRecvDeadHandler?.Invoke(inPacket);
     }
 
 
@@ -452,7 +454,7 @@ public class GameMode
 
             player.pos = inPacket.pos;
 
-            OnRecvRespawnCB?.Invoke(player);
+            OnRecvRespawnHandler?.Invoke(player);
         }
         else
         {
@@ -470,5 +472,10 @@ public class GameMode
 
         player.gold -= inPacket.usedGold;
         player.stat.UpdateStat(inPacket.updateStat);
+    }
+
+    public void OnRecvDropItem(S_DropItem inPacket)
+    {
+
     }
 }

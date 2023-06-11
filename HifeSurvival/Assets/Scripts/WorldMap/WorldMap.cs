@@ -25,6 +25,7 @@ public class WorldMap : MonoBehaviour
 
     public void Init()
     {
+
         // 타일맵 세팅
         SetupToTilemap();
 
@@ -211,6 +212,17 @@ public class WorldMap : MonoBehaviour
         var moveList = _aStar.Run(startCoord, endCoord);
 
         return moveList.Select(x => GetWorldPos(x)).ToList();
+    }
+
+
+
+    //-------------
+    // Server
+    //-------------
+    
+    public void OnRecvDropItem(S_DropItem inPacket)
+    {
+        
     }
 
 

@@ -79,6 +79,7 @@ class PacketHandler
 
     internal static void S_DropItemHandler(PacketSession session, IPacket packet)
     {
-        throw new NotImplementedException();
+        S_DropItem dropItem = packet as S_DropItem;
+        GameMode.Instance.OnRecvDropItem(dropItem);
     }
 }

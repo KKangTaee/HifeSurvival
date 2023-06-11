@@ -35,8 +35,8 @@ public class IngameUI : MonoBehaviour
     {
         GetComponent<Canvas>().worldCamera = ControllerManager.Instance.GetController<CameraController>().MainCamera;
 
-        GameMode.Instance.OnRecvDeadCB    += OnRecvDead;
-        GameMode.Instance.OnRecvRespawnCB += OnRecvRespawn;
+        GameMode.Instance.OnRecvDeadHandler    += OnRecvDead;
+        GameMode.Instance.OnRecvRespawnHandler += OnRecvRespawn;
 
         SetKDView();
     }

@@ -17,11 +17,11 @@ public abstract class EntityObjectController<T> : ControllerBase where T : Entit
     {
         _gameMode = GameMode.Instance;
 
-        _gameMode.OnRecvMoveCB      += OnRecvMove;
-        _gameMode.OnRecvStopMoveCB  += OnRecvStopMove;
-        _gameMode.OnRecvDeadCB      += OnRecvDead;
-        _gameMode.OnRecvAttackCB    += OnRecvAttack;
-        _gameMode.OnRecvRespawnCB   += OnRecvRespawn;
+        _gameMode.OnRecvMoveHandler      += OnRecvMove;
+        _gameMode.OnRecvStopMoveHandler  += OnRecvStopMove;
+        _gameMode.OnRecvDeadHandler      += OnRecvDead;
+        _gameMode.OnRecvAttackHandler    += OnRecvAttack;
+        _gameMode.OnRecvRespawnHandler   += OnRecvRespawn;
     }
 
 

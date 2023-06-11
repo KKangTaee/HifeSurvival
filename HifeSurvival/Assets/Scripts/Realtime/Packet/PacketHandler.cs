@@ -76,4 +76,9 @@ class PacketHandler
         CS_UpdateStat updateStat = packet as CS_UpdateStat;
         GameMode.Instance.OnRecvUpdateStat(updateStat);
     }
+
+    internal static void S_GetRewardHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
 }

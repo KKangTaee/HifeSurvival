@@ -316,10 +316,8 @@ public class TouchController : ControllerBase
                     // _eCommand = inResult.touchCount == 1 ? ETouchCommand.CAMERA_MOVE
                     //                                      : ETouchCommand.CAMERA_ZOOM;
 
-
                     _eCommand = ETouchCommand.CAMERA_MOVE;
                 }
-
             
 
                 break;

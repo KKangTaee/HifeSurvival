@@ -19,6 +19,7 @@ public enum PacketID
 	S_Dead = 11,
 	S_Respawn = 12,
 	CS_UpdateStat = 13,
+	S_GetReward = 14,
 	
 }
 
@@ -768,6 +769,58 @@ public class CS_UpdateStat : IPacket
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.usedGold);
 		count += sizeof(int);
 		success &= updateStat.Write(s,ref count);
+		success &= BitConverter.TryWriteBytes(s, count);
+		if (success == false)
+			return null;
+		return SendBufferHelper.Close(count);
+	}
+}
+
+public class S_GetReward : IPacket
+{
+	public int targetId;
+	public int gold;
+	public string rewardIds;
+
+	public ushort Protocol { get { return (ushort)PacketID.S_GetReward; } }
+
+	public void Read(ArraySegment<byte> segment)
+	{
+		ushort count = 0;
+
+		ReadOnlySpan<byte> s = new ReadOnlySpan<byte>(segment.Array, segment.Offset, segment.Count);
+		count += sizeof(ushort);
+		count += sizeof(ushort);
+		this.targetId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+		count += sizeof(int);
+		this.gold = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+		count += sizeof(int);
+		ushort rewardIdsLen = BitConverter.ToUInt16(s.Slice(count, s.Length - count));
+		count += sizeof(ushort);
+		this.rewardIds = Encoding.Unicode.GetString(s.Slice(count, rewardIdsLen));
+		count += rewardIdsLen;
+	}
+
+	public ArraySegment<byte> Write()
+	{
+		ArraySegment<byte> segment = SendBufferHelper.Open(4096);
+		ushort count = 0;
+		bool success = true;
+
+		Span<byte> s = new Span<byte>(segment.Array, segment.Offset, segment.Count);
+
+		count += sizeof(ushort);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.S_GetReward);
+		count += sizeof(ushort);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.targetId);
+		count += sizeof(int);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.gold);
+		count += sizeof(int);
+		ushort rewardIdsLen = (ushort)Encoding.Unicode.GetByteCount(this.rewardIds);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), rewardIdsLen);
+		count += sizeof(ushort);
+		Encoding.Unicode.GetBytes(this.rewardIds, s.Slice(count, s.Length - count));
+		count += rewardIdsLen;
 		success &= BitConverter.TryWriteBytes(s, count);
 		if (success == false)
 			return null;

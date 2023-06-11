@@ -44,6 +44,8 @@ class PacketManager
 		_handler.Add((ushort)PacketID.S_Respawn, PacketHandler.S_RespawnHandler);
 		_makeFunc.Add((ushort)PacketID.CS_UpdateStat, MakePacket<CS_UpdateStat>);
 		_handler.Add((ushort)PacketID.CS_UpdateStat, PacketHandler.CS_UpdateStatHandler);
+		_makeFunc.Add((ushort)PacketID.S_GetReward, MakePacket<S_GetReward>);
+		_handler.Add((ushort)PacketID.S_GetReward, PacketHandler.S_GetRewardHandler);
 
 	}
 

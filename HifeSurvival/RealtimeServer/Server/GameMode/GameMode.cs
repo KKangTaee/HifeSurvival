@@ -98,7 +98,6 @@ namespace Server
                         }
 
                         monsterGroup.Add(entity);
-                        // _monstersDict.Add(entity.targetId, entity);
 
                         var mData = new S_StartGame.Monster()
                         {

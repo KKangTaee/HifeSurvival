@@ -86,4 +86,9 @@ class PacketHandler
     {
         throw new NotImplementedException();
     }
+
+    internal static void S_GetRewardHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -19,6 +19,8 @@ public class Player : EntityObject
 
     private HashSet<EntityObject> _targetSet;
 
+    private Action<int> _getItemCB;
+
     public bool IsSelf { get; private set; }
 
     public override bool IsPlayer => true;
@@ -235,12 +237,12 @@ public class Player : EntityObject
 
         _detectRange?.SetActive(false);
         _playerUI.Init(Stat.maxHP);
-        
+
         _anim.OnIdle();
     }
 
 
-    public void SetSelf()
+    public void SetSelf(Action<int> inGetItemCB)
     {
         IsSelf = true;
 
@@ -253,6 +255,7 @@ public class Player : EntityObject
         _detectTrigger.gameObject.layer = LayerMask.NameToLayer(LayerName.DETECT_SELF);
 
         _detectRange?.SetActive(true);
+        _getItemCB = inGetItemCB;
     }
 
 
@@ -260,6 +263,22 @@ public class Player : EntityObject
     {
         _detectTrigger.enabled = true;
         _playerTrigger.enabled = true;
+
+        _playerTrigger.AddTriggerEnter((col) =>
+        {
+            // 드랍된 아이템과 접촉했다면..?
+            // if(col.CompareTag(TagName.DROP_ITEM) == true)
+            // {
+            //     var dropItem = col.GetComponent<WorldItem>();
+
+            //     if (dropItem == null)
+            //         return;
+
+            //     // 여기에 브로드캐스팅 처리
+            //     _getItemCB?.Invoke(dropItem.ItemId);
+            //     dropItem.PlayGetItem();
+            // }
+        });
 
         _playerTrigger.AddTriggerStay((col) =>
         {
@@ -292,7 +311,7 @@ public class Player : EntityObject
             {
                 var entityObj = col.GetComponent<EntityObject>();
 
-                if(entityObj == null)
+                if (entityObj == null)
                 {
                     Debug.LogWarning($"[{nameof(SetTrigger)}] col object is null or empty!");
                     return;
@@ -309,7 +328,7 @@ public class Player : EntityObject
             {
                 var entityObj = col.GetComponent<EntityObject>();
 
-                if(entityObj == null)
+                if (entityObj == null)
                 {
                     Debug.LogWarning($"[{nameof(SetTrigger)}] col object is null or empty!");
                     return;
@@ -333,8 +352,8 @@ public class Player : EntityObject
         _anim.OnDamaged();
         _playerUI.DecreaseHP(inDamageValue);
 
-        if(IsSelf == true)
-           ActionDisplayUI.Show(ActionDisplayUI.ESpawnType.TAKE_DAMAGE, inDamageValue, GetPos() + Vector3.up);
+        if (IsSelf == true)
+            ActionDisplayUI.Show(ActionDisplayUI.ESpawnType.TAKE_DAMAGE, inDamageValue, GetPos() + Vector3.up);
     }
 
 

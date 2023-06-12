@@ -65,4 +65,9 @@ class PacketHandler
         GameRoom room = client.Room;
         room?.Push(()=> job?.Invoke(room));
     }
+
+    internal static void C_GetItemHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -8,11 +8,12 @@ namespace Server
     {
         public string userId;
         public string userName;
-
-        public int  gold;
         
         public int  heroId;
         public bool isReady;
+
+        public int  gold;
+        public PlayerItem[] itemSlot = new PlayerItem[4];
 
         public override bool IsPlayer => true;
 
@@ -205,5 +206,19 @@ namespace Server
 
             }
         }
+    }
+
+    public class PlayerItem
+    {
+        public int itemType;
+        public int level;
+
+        public int str;
+        public int def;
+        public int hp;
+
+        public int cooltime;
+
+        public bool canUse;
     }
 }

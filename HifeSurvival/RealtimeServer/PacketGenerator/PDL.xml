@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <PDL>
-	
+
 	<packet name="C_JoinToGame">
 		<string name ="userId"/>
 		<string name ="userName"/>
@@ -51,7 +51,7 @@
 
 	<packet name ="CS_Attack">
 		<bool name = "toIsPlayer"/>
-		<bool name = "fromIsPlayer"/> 
+		<bool name = "fromIsPlayer"/>
 		<int name ="toId"/>
 		<int name ="fromId"/>
 		<struct_Vec3 name ="fromPos"/>
@@ -66,14 +66,14 @@
 		<struct_Vec3 name ="dir"/>
 		<float name ="speed"/>
 	</packet>
-	
+
 	<packet name ="CS_StopMove">
 		<int name ="targetId"/>
 		<bool name ="isPlayer"/>
 		<struct_Vec3 name ="pos"/>
 		<struct_Vec3 name ="dir"/>
 	</packet>
-	
+
 	<packet name ="S_Dead">
 		<bool name ="toIsPlayer"/>
 		<bool name ="fromIsPlayer"/>
@@ -94,7 +94,18 @@
 		<int name ="usedGold"/>
 		<struct_Stat name ="updateStat"/>
 	</packet>
-	
+
+	<packet name ="S_DropItem">
+		<int name="itemId"/>
+		<string name="itemData"/>
+		<struct_Vec3 name ="pos"/>
+	</packet>
+
+	<packet name ="C_GetItem">
+		<int name ="targetId"/>
+		<int name ="itemId"/>
+	</packet>
+
 	<struct name="Vec3">
 		<float name ="x"/>
 		<float name ="y"/>
@@ -108,5 +119,5 @@
 		<float name = "moveSpeed"/>
 		<float name = "attackSpeed"/>
 	</struct>
-	
+
 </PDL>

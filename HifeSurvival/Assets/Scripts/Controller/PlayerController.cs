@@ -11,7 +11,6 @@ public sealed class PlayerController : EntityObjectController<Player>
 
     private CameraController    _cameraController;
     private JoystickController  _joystickController;
-    private TouchController     _touchController;
     private IDisposable         _attackDelay;
 
     public Player Self { get; private set; }
@@ -27,7 +26,6 @@ public sealed class PlayerController : EntityObjectController<Player>
 
         _cameraController   = ControllerManager.Instance.GetController<CameraController>();
         _joystickController = ControllerManager.Instance.GetController<JoystickController>();
-        _touchController    = ControllerManager.Instance.GetController<TouchController>();
 
         _gameMode.OnRecvUpdateStatHandler += OnRecvUpdateStat;
 
@@ -56,7 +54,7 @@ public sealed class PlayerController : EntityObjectController<Player>
             if (ServerData.Instance.UserData.user_id == entity.userId)
             {
                 Self = inst;
-                inst.SetSelf();
+                inst.SetSelf(OnGetItemSelf);
             }
 
             _entityObjectDict.Add(entity.targetId, inst);
@@ -197,6 +195,11 @@ public sealed class PlayerController : EntityObjectController<Player>
         _attackDelay?.Dispose();
     }
 
+    public void OnGetItemSelf(int inId)
+    {
+        // TODO
+    }
+
 
     //----------------
     // server
@@ -219,7 +222,7 @@ public sealed class PlayerController : EntityObjectController<Player>
 
         if (Self.TargetId == inEntity.targetId)
         {
-            Self.SetSelf();
+            Self.SetSelf(OnGetItemSelf);
 
             _joystickController.ShowJoystick();
             _cameraController.FollowingTarget(Self.transform);

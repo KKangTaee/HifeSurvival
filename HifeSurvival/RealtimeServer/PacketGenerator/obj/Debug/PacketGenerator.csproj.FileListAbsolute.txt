@@ -26,3 +26,17 @@
 /Users/taehokang/Documents/GitHub/HifeSurvival/HifeSurvival/RealtimeServer/PacketGenerator/obj/Debug/PacketGenerator.dll
 /Users/taehokang/Documents/GitHub/HifeSurvival/HifeSurvival/RealtimeServer/PacketGenerator/obj/Debug/PacketGenerator.pdb
 /Users/taehokang/Documents/GitHub/HifeSurvival/HifeSurvival/RealtimeServer/PacketGenerator/obj/Debug/PacketGenerator.genruntimeconfig.cache
+C:\Projects\HifeSurvival-master\HifeSurvival\RealtimeServer\PacketGenerator\bin\PacketGenerator.exe
+C:\Projects\HifeSurvival-master\HifeSurvival\RealtimeServer\PacketGenerator\bin\PacketGenerator.deps.json
+C:\Projects\HifeSurvival-master\HifeSurvival\RealtimeServer\PacketGenerator\bin\PacketGenerator.runtimeconfig.json
+C:\Projects\HifeSurvival-master\HifeSurvival\RealtimeServer\PacketGenerator\bin\PacketGenerator.runtimeconfig.dev.json
+C:\Projects\HifeSurvival-master\HifeSurvival\RealtimeServer\PacketGenerator\bin\PacketGenerator.dll
+C:\Projects\HifeSurvival-master\HifeSurvival\RealtimeServer\PacketGenerator\bin\PacketGenerator.pdb
+C:\Projects\HifeSurvival-master\HifeSurvival\RealtimeServer\PacketGenerator\obj\Debug\PacketGenerator.csproj.AssemblyReference.cache
+C:\Projects\HifeSurvival-master\HifeSurvival\RealtimeServer\PacketGenerator\obj\Debug\PacketGenerator.GeneratedMSBuildEditorConfig.editorconfig
+C:\Projects\HifeSurvival-master\HifeSurvival\RealtimeServer\PacketGenerator\obj\Debug\PacketGenerator.AssemblyInfoInputs.cache
+C:\Projects\HifeSurvival-master\HifeSurvival\RealtimeServer\PacketGenerator\obj\Debug\PacketGenerator.AssemblyInfo.cs
+C:\Projects\HifeSurvival-master\HifeSurvival\RealtimeServer\PacketGenerator\obj\Debug\PacketGenerator.csproj.CoreCompileInputs.cache
+C:\Projects\HifeSurvival-master\HifeSurvival\RealtimeServer\PacketGenerator\obj\Debug\PacketGenerator.dll
+C:\Projects\HifeSurvival-master\HifeSurvival\RealtimeServer\PacketGenerator\obj\Debug\PacketGenerator.pdb
+C:\Projects\HifeSurvival-master\HifeSurvival\RealtimeServer\PacketGenerator\obj\Debug\PacketGenerator.genruntimeconfig.cache

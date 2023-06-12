@@ -106,14 +106,14 @@ namespace Server
             broadcaster.Broadcast(move);
         }
     }
-   
+
 
     public class EntityStat
     {
-        public int str    { get; private set; }
-        public int def    { get; private set; }
-        
-        public int maxHp  { get; private set; }
+        public int str { get; private set; }
+        public int def { get; private set; }
+
+        public int maxHp { get; private set; }
         public int currHp { get; private set; }
 
         public float detectRange { get; private set; }
@@ -129,7 +129,7 @@ namespace Server
             currHp = maxHp = heros.hp;
             detectRange = heros.detectRange;
             attackRange = heros.attackRange;
-            moveSpeed   = heros.moveSpeed;
+            moveSpeed = heros.moveSpeed;
             attackSpeed = heros.attackSpeed;
         }
 
@@ -140,7 +140,7 @@ namespace Server
             currHp = maxHp = monsters.hp;
             detectRange = monsters.detectRange;
             attackRange = monsters.attackRange;
-            moveSpeed   = monsters.moveSpeed;
+            moveSpeed = monsters.moveSpeed;
             attackSpeed = monsters.attackSpeed;
         }
 

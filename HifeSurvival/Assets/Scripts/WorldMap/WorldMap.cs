@@ -9,31 +9,30 @@ using System.Reflection;
 
 public class WorldMap : MonoBehaviour
 {
-    [SerializeField] private Tilemap _background;
-    [SerializeField] private Tilemap _wall;
-    [SerializeField] private Tilemap _collider;
-    [SerializeField] private Transform _objectRoot;
+    [SerializeField] private Tilemap    _background;
+    [SerializeField] private Tilemap    _wall;
+    [SerializeField] private Tilemap    _collider;
 
+    [SerializeField] private Transform  _objectRoot;
 
+    private Dictionary<Type, List<WorldObjectBase>> _worldObjDic;
     private Dictionary<Vector3Int, WorldTile> _bgTileDic;
+    
     private Material _wallMat;
-    private AStar _aStar;
 
-
-    Dictionary<Type, List<WorldObjectBase>> _worldObjDic;
-
+    private ObjectPoolController _objectPoolController;
 
     public void Init()
     {
-
         // 타일맵 세팅
         SetupToTilemap();
 
-        // Astar
-        SetupToAStar();
-
         // 월드 오브젝트 설정
         SetupToWorldObject();
+
+        _objectPoolController = ControllerManager.Instance.GetController<ObjectPoolController>();
+
+        GameMode.Instance.OnRecvDropItemHandler += OnRecvDropItem;
     }
 
 
@@ -86,19 +85,6 @@ public class WorldMap : MonoBehaviour
         }
     }
 
-    public void SetupToAStar()
-    {
-        _aStar = new AStar((nextCoord) =>
-        {
-            if (_bgTileDic.TryGetValue(nextCoord, out var nextTile) == false)
-                return false;
-
-            if (nextTile.IsBlock == true)
-                return false;
-
-            return true;
-        });
-    }
 
     public IEnumerable<T> GetWorldObject<T>() where T : WorldObjectBase
     {
@@ -201,20 +187,6 @@ public class WorldMap : MonoBehaviour
     }
 
 
-    public List<Vector3> GetMoveList(Vector3 inStartWorldPos, Vector3 inEndWorldPos)
-    {
-        Vector3Int startCoord = GetCoord(inStartWorldPos);
-        Vector3Int endCoord = GetCoord(inEndWorldPos);
-
-        if (CanGo(endCoord) == false)
-            return null;
-
-        var moveList = _aStar.Run(startCoord, endCoord);
-
-        return moveList.Select(x => GetWorldPos(x)).ToList();
-    }
-
-
 
     //-------------
     // Server
@@ -222,7 +194,18 @@ public class WorldMap : MonoBehaviour
     
     public void OnRecvDropItem(S_DropItem inPacket)
     {
-        
+        var itemObj = _objectPoolController.SpawnFromPool<WorldItem>();
+
+        if(itemObj == null)
+        {
+            Debug.LogError($"[{nameof(OnRecvDropItem)}] itemObj is null or empty!");
+            return;
+        }
+
+        ItemData itemIds = ItemData.Parse(inPacket.itemData)?.FirstOrDefault() ?? default;
+
+        itemObj.SetInfo(inPacket.itemId, itemIds);
+        itemObj.PlayDropItem();
     }
 
 

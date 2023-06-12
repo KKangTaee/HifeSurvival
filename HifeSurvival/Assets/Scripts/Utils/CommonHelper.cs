@@ -1,8 +1,6 @@
 
 public class TagName
 {
-    public const string WORLDMAP_TOUCH    = "WorldMap_Touch";
-    
     public const string WORLDMAP_WALL     = "WorldMap_Wall";
 
     public const string WORLDMAP_COLLIDER = "WorldMap_Collider";
@@ -14,6 +12,8 @@ public class TagName
     public const string DETECT_SELF       = "Detect_Self";
 
     public const string MONSTER           = "Monster";
+
+    public const string DROP_ITEM         = "Drop_Item";
 }
 
 public class LayerName

@@ -48,3 +48,13 @@ C:\Projects\HifeSurvival-master\HifeSurvival-master\HifeSurvival\RealtimeServer\
 C:\Projects\HifeSurvival-master\HifeSurvival-master\HifeSurvival\RealtimeServer\ServerCore\obj\Debug\netcoreapp3.1\ServerCore.csproj.CoreCompileInputs.cache
 C:\Projects\HifeSurvival-master\HifeSurvival-master\HifeSurvival\RealtimeServer\ServerCore\obj\Debug\netcoreapp3.1\ServerCore.dll
 C:\Projects\HifeSurvival-master\HifeSurvival-master\HifeSurvival\RealtimeServer\ServerCore\obj\Debug\netcoreapp3.1\ServerCore.pdb
+C:\Projects\HifeSurvival-master\HifeSurvival\RealtimeServer\ServerCore\bin\Debug\netcoreapp3.1\ServerCore.deps.json
+C:\Projects\HifeSurvival-master\HifeSurvival\RealtimeServer\ServerCore\bin\Debug\netcoreapp3.1\ServerCore.dll
+C:\Projects\HifeSurvival-master\HifeSurvival\RealtimeServer\ServerCore\bin\Debug\netcoreapp3.1\ServerCore.pdb
+C:\Projects\HifeSurvival-master\HifeSurvival\RealtimeServer\ServerCore\obj\Debug\netcoreapp3.1\ServerCore.csproj.AssemblyReference.cache
+C:\Projects\HifeSurvival-master\HifeSurvival\RealtimeServer\ServerCore\obj\Debug\netcoreapp3.1\ServerCore.GeneratedMSBuildEditorConfig.editorconfig
+C:\Projects\HifeSurvival-master\HifeSurvival\RealtimeServer\ServerCore\obj\Debug\netcoreapp3.1\ServerCore.AssemblyInfoInputs.cache
+C:\Projects\HifeSurvival-master\HifeSurvival\RealtimeServer\ServerCore\obj\Debug\netcoreapp3.1\ServerCore.AssemblyInfo.cs
+C:\Projects\HifeSurvival-master\HifeSurvival\RealtimeServer\ServerCore\obj\Debug\netcoreapp3.1\ServerCore.csproj.CoreCompileInputs.cache
+C:\Projects\HifeSurvival-master\HifeSurvival\RealtimeServer\ServerCore\obj\Debug\netcoreapp3.1\ServerCore.dll
+C:\Projects\HifeSurvival-master\HifeSurvival\RealtimeServer\ServerCore\obj\Debug\netcoreapp3.1\ServerCore.pdb

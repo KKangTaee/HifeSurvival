@@ -45,7 +45,7 @@ public class ObjectPoolController : ControllerBase
         return inst;
     }
 
-    public void RestoreToSpawn<T>(T inObj) where T : Component
+    public void StoreToPool<T>(T inObj) where T : Component
     {
         inObj.gameObject.SetActive(false);
         inObj.transform.SetParent(this.transform);

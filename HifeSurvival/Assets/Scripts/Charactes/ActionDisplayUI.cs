@@ -90,14 +90,14 @@ public class ActionDisplayUI : MonoBehaviour
         {
             case ESpawnType.ATTACK:
                 inst.transform.position = inPos;
-                inst.PlayAttack(inVal, () => objectPool.RestoreToSpawn(inst));
+                inst.PlayAttack(inVal, () => objectPool.StoreToPool(inst));
                 break;
 
             case ESpawnType.TAKE_DAMAGE:
                 int offsetX = UnityEngine.Random.Range(-5, 5);
                 // int offsetY = UnityEngine.Random.Range(-3, 3);
                 inst.transform.position = inPos + new Vector3(offsetX * 0.1f, 0, 0);
-                inst.PlayDamaged(inVal, () => objectPool.RestoreToSpawn(inst));
+                inst.PlayDamaged(inVal, () => objectPool.StoreToPool(inst));
                 break;
         }
     }

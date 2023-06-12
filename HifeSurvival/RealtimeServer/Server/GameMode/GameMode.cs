@@ -64,7 +64,6 @@ namespace Server
 
                 var pivotIter = spawnData.pivotList.GetEnumerator();
                 
-                int subId = 0;
 
                 foreach (var id in monstersId)
                 {
@@ -80,7 +79,7 @@ namespace Server
                             monsterId = int.Parse(id),
                             pos = pos,
                             spawnPos = pos,
-                            subId = subId++,
+                            grade = data.grade,
                             broadcaster = _broadcaster,
                             stat = new EntityStat(data),
                             rewardIds = data.rewardIds,
@@ -105,7 +104,7 @@ namespace Server
                             targetId  = entity.targetId,
                             monsterId = entity.monsterId,
                             groupId   = entity.groupId,
-                            subId     = entity.subId,
+                            grade     = entity.grade,
                             spawnPos  = entity.spawnPos,
                         };
 

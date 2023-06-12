@@ -159,4 +159,9 @@ public class Monster : EntityObject
     {
         _monsterUI.DecreaseHP(inDamageValue);
     }
+
+    public void SetMonster(int inMosterId)
+    {
+        _anim.SetTargetAnim(inMosterId, pivotUI => _monsterUI.transform.position = pivotUI);
+    }
 }

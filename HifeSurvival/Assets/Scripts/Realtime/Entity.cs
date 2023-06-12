@@ -30,7 +30,7 @@ public class PlayerEntity : Entity
 public class MonsterEntity : Entity
 {
     public int monsterId;
-    public int subId;
+    public int grade;
 }
 
 

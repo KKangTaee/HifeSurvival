@@ -44,7 +44,7 @@
 			<int name ="targetId"/>
 			<int name ="monsterId"/>
 			<int name ="groupId"/>
-			<int name ="subId"/>
+			<int name ="grade"/>
 			<struct_Vec3 name="spawnPos"/>
 		</list>
 	</packet>

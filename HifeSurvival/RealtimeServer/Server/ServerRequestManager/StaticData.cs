@@ -267,6 +267,7 @@ namespace Server
         {
             public int id;
             public string name;
+            public int grade;
             public int str;
             public int def;
             public int hp;

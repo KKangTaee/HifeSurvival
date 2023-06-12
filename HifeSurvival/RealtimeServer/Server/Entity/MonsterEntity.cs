@@ -9,7 +9,7 @@ namespace Server
     {
         public int monsterId;
         public int groupId;
-        public int subId;
+        public int grade;
 
         StateMachine<MonsterEntity> _stateMachine;
 

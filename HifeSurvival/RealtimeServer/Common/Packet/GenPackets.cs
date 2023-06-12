@@ -375,7 +375,7 @@ public class S_StartGame : IPacket
 		public int targetId;
 		public int monsterId;
 		public int groupId;
-		public int subId;
+		public int grade;
 		public Vec3 spawnPos;
 	
 		public void Read(ReadOnlySpan<byte> s, ref ushort count)
@@ -386,7 +386,7 @@ public class S_StartGame : IPacket
 			count += sizeof(int);
 			this.groupId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 			count += sizeof(int);
-			this.subId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+			this.grade = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 			count += sizeof(int);
 			spawnPos.Read(s, ref count);
 		}
@@ -400,7 +400,7 @@ public class S_StartGame : IPacket
 			count += sizeof(int);
 			success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.groupId);
 			count += sizeof(int);
-			success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.subId);
+			success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.grade);
 			count += sizeof(int);
 			success &= spawnPos.Write(s,ref count);
 			return success;

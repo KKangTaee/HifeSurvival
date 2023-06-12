@@ -9,7 +9,7 @@ public class MonsterController : EntityObjectController<Monster>
     [Serializable]
     public class MonsterPrefabs
     {
-        public int id;
+        public int grade;
         public Monster prefab;
     }
 
@@ -28,7 +28,7 @@ public class MonsterController : EntityObjectController<Monster>
 
         foreach (var entity in entitys)
         {
-            var prefabData = _prefabList.FirstOrDefault(x=>x.id == entity.monsterId);
+            var prefabData = _prefabList.FirstOrDefault(x=>x.grade == entity.grade);
 
             if(prefabData == null)
             {
@@ -38,6 +38,7 @@ public class MonsterController : EntityObjectController<Monster>
 
             var inst = Instantiate(prefabData.prefab, transform);
             inst.Init(entity.targetId, entity.stat, entity.pos.ConvertUnityVector3());
+            inst.SetMonster(entity.monsterId);
 
             _entityObjectDict.Add(inst.TargetId, inst);
         }

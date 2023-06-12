@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 using System.Linq;
+using System;
 
 using MonsterAnim = Assets.FantasyMonsters.Scripts.Monster;
 using MonsterState = Assets.FantasyMonsters.Scripts.MonsterState;
@@ -15,7 +16,7 @@ public class MonsterAnimator : MonoBehaviour
     {
         public int id;
         public MonsterAnim anim;
-        public Transform   pivotUI;
+        public Transform pivotUI;
     }
 
 
@@ -23,18 +24,20 @@ public class MonsterAnimator : MonoBehaviour
 
     MonsterAnim _targetAnim;
 
-    public void SetTargetAnim(int inMosterId)
+    public void SetTargetAnim(int inMosterId, Action<Vector3> pivotUICallback)
     {
-        _targetAnim = _animDataArr.FirstOrDefault(x => x.id == inMosterId).anim;
+        var animData = _animDataArr.FirstOrDefault(x => x.id == inMosterId);
 
-        if (_targetAnim == null)
+        if (animData == null)
         {
-            Debug.LogError($"[{nameof(SetTargetAnim)}] targetAnim is null or empty!");
+            Debug.LogError($"[{nameof(SetTargetAnim)}] targetAnim is null or empty! : monsterId : {inMosterId}");
             return;
         }
 
-        // _targetAnim = _animData
+        _targetAnim = animData.anim;
         _targetAnim.gameObject.SetActive(true);
+        
+        pivotUICallback?.Invoke(animData.pivotUI.position);
     }
 
     public void OnIdle()
@@ -72,12 +75,12 @@ public class MonsterAnimator : MonoBehaviour
 
     public void SetDir(float inDir)
     {
-         var scaleX = inDir > 0 ? -1 : 1;
-         transform.localScale = new Vector3()
-         {
-            x = scaleX*transform.localScale.x,
+        var scaleX = inDir > 0 ? -1 : 1;
+        transform.localScale = new Vector3()
+        {
+            x = scaleX * transform.localScale.x,
             y = transform.localScale.y,
             z = transform.localScale.z,
-         };
+        };
     }
 }

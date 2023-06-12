@@ -260,6 +260,7 @@ public class StaticData
     {
         public int id;
         public string name;
+        public int grade;
         public int str;
         public int def;
         public int hp;
@@ -267,7 +268,6 @@ public class StaticData
         public float moveSpeed;
         public float attackRange;
         public float detectRange;
-        public int grade;
         public string rewardIds;
         public string desc;
     }

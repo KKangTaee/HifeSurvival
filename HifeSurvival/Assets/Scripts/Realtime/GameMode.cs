@@ -352,7 +352,7 @@ public class GameMode
             {
                 targetId = m.targetId,
                 monsterId = m.monsterId,
-                subId = m.subId,
+                grade = m.grade,
                 pos = m.spawnPos,
                 stat = new EntityStat(monster),
             };

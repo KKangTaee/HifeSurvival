@@ -72,7 +72,7 @@ namespace ServerCore
                     case "INF":
                         break;
                     case "DBG":
-                        Console.ForegroundColor = ConsoleColor.Gray;
+                        Console.ForegroundColor = ConsoleColor.DarkCyan;
                         break;
                     case "WRN":
                         Console.ForegroundColor = ConsoleColor.Yellow;

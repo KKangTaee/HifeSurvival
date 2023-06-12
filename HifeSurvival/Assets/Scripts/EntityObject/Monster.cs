@@ -5,7 +5,8 @@ using System;
 
 public class Monster : EntityObject
 {
-    [SerializeField] MonsterUI _monsterUI;
+    [SerializeField] MonsterAnimator _anim;
+    [SerializeField] MonsterUI       _monsterUI;
 
     public class AttackState : IState<Monster>
     {
@@ -140,6 +141,7 @@ public class Monster : EntityObject
 
     public void OnMove(in Vector3 inDir)
     {
+        _anim.OnWalk();
         MoveEntity(inDir);
     }
 

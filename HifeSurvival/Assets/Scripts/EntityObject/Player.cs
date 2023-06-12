@@ -267,17 +267,17 @@ public class Player : EntityObject
         _playerTrigger.AddTriggerEnter((col) =>
         {
             // 드랍된 아이템과 접촉했다면..?
-            // if(col.CompareTag(TagName.DROP_ITEM) == true)
-            // {
-            //     var dropItem = col.GetComponent<WorldItem>();
+            if(col.CompareTag(TagName.DROP_ITEM) == true)
+            {
+                var dropItem = col.GetComponent<WorldItem>();
 
-            //     if (dropItem == null)
-            //         return;
+                if (dropItem == null)
+                    return;
 
-            //     // 여기에 브로드캐스팅 처리
-            //     _getItemCB?.Invoke(dropItem.ItemId);
-            //     dropItem.PlayGetItem();
-            // }
+                // 여기에 브로드캐스팅 처리
+                _getItemCB?.Invoke(dropItem.ItemId);
+                dropItem.PlayGetItem();
+            }
         });
 
         _playerTrigger.AddTriggerStay((col) =>

@@ -3,23 +3,23 @@ using System.Collections.Generic;
 
 namespace ServerCore
 {
-	class PacketHandler
+	public abstract class PacketHandler
 	{
-		public void C_JoinToGameHandler(PacketSession session, IPacket packet) { }
-		public void S_JoinToGameHandler(PacketSession session, IPacket packet) { }
-		public void S_LeaveToGameHandler(PacketSession session, IPacket packet) { }
-		public void CS_SelectHeroHandler(PacketSession session, IPacket packet) { }
-		public void CS_ReadyToGameHandler(PacketSession session, IPacket packet) { }
-		public void S_CountdownHandler(PacketSession session, IPacket packet) { }
-		public void S_StartGameHandler(PacketSession session, IPacket packet) { }
-		public void CS_AttackHandler(PacketSession session, IPacket packet) { }
-		public void CS_MoveHandler(PacketSession session, IPacket packet) { }
-		public void CS_StopMoveHandler(PacketSession session, IPacket packet) { }
-		public void S_DeadHandler(PacketSession session, IPacket packet) { }
-		public void S_RespawnHandler(PacketSession session, IPacket packet) { }
-		public void CS_UpdateStatHandler(PacketSession session, IPacket packet) { }
-		public void S_DropItemHandler(PacketSession session, IPacket packet) { }
-		public void C_GetItemHandler(PacketSession session, IPacket packet) { }
+		public abstract void C_JoinToGameHandler(PacketSession session, IPacket packet);
+		public abstract void S_JoinToGameHandler(PacketSession session, IPacket packet);
+		public abstract void S_LeaveToGameHandler(PacketSession session, IPacket packet);
+		public abstract void CS_SelectHeroHandler(PacketSession session, IPacket packet);
+		public abstract void CS_ReadyToGameHandler(PacketSession session, IPacket packet);
+		public abstract void S_CountdownHandler(PacketSession session, IPacket packet);
+		public abstract void S_StartGameHandler(PacketSession session, IPacket packet);
+		public abstract void CS_AttackHandler(PacketSession session, IPacket packet);
+		public abstract void CS_MoveHandler(PacketSession session, IPacket packet);
+		public abstract void CS_StopMoveHandler(PacketSession session, IPacket packet);
+		public abstract void S_DeadHandler(PacketSession session, IPacket packet);
+		public abstract void S_RespawnHandler(PacketSession session, IPacket packet);
+		public abstract void CS_UpdateStatHandler(PacketSession session, IPacket packet);
+		public abstract void S_DropItemHandler(PacketSession session, IPacket packet);
+		public abstract void C_GetItemHandler(PacketSession session, IPacket packet);
 
 	}
 

@@ -210,7 +210,7 @@ namespace Server
                         fieldIndex++;
                     }
 
-                    string key = itemType.GetField("id").GetValue(item).ToString();
+                    string key = itemType.GetField("key").GetValue(item).ToString();
 
                     resultDictionary.Add(key, item);
                 }
@@ -243,14 +243,14 @@ namespace Server
         [System.Serializable]
         public class Systems
         {
-            public string id;
+            public string key;
             public string value;
         }
 
         [System.Serializable]
         public class Heros
         {
-            public int id;
+            public int key;
             public string name;
             public int str;
             public int def;
@@ -265,7 +265,7 @@ namespace Server
         [Serializable]
         public class Monsters
         {
-            public int id;
+            public int key;
             public string name;
             public int grade;
             public int str;
@@ -282,7 +282,7 @@ namespace Server
         [Serializable]
         public class MonstersGroup
         {
-            public int id;
+            public int key;
             public int groupId;
             public string monsterGroups;
             public int respawnTime;
@@ -292,7 +292,7 @@ namespace Server
         [Serializable]
         public class item
         {
-            public int id;
+            public int key;
             public string name;
             public int grade;
             public int str;

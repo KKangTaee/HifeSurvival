@@ -39,6 +39,6 @@ public class HeroSelectButton : MonoBehaviour
 
     public void OnClickFrame(int inId)
     {
-        IMG_frame.color = inId == _data.id ? Color.magenta : Color.white;
+        IMG_frame.color = inId == _data.key ? Color.magenta : Color.white;
     }
 }

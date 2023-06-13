@@ -273,7 +273,7 @@ namespace Server
             {
                 userId = inPacket.userId,
                 targetId = inSessionId,
-                heroId = data.id,
+                heroId = data.key,
                 userName = inPacket.userName,
                 broadcaster = _broadcaster,
                 stat = new EntityStat(data)

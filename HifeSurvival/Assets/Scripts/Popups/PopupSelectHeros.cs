@@ -105,7 +105,7 @@ public class PopupSelectHeros : PopupBase
             {
                 OnClickSelectButton(data);
             }
-            , GetHeroSprite(data.id));
+            , GetHeroSprite(data.key));
 
             if(hero == null)
                hero = data;
@@ -138,16 +138,16 @@ public class PopupSelectHeros : PopupBase
         SetHeroInfo(inData);
 
         // 프레임 변경
-        _onClickFrame.OnNext(inData.id);
+        _onClickFrame.OnNext(inData.key);
 
         // 뷰 변경
-        ChangeHeroView(_playerIdSelf, inData.id);
+        ChangeHeroView(_playerIdSelf, inData.key);
 
         // 서버전송
-        _onSendSelectHeroCB?.Invoke(inData.id);
+        _onSendSelectHeroCB?.Invoke(inData.key);
 
         // 캐릭터 변경
-        _capture.GetAnimator().SetAnimatorController(inData.id -1);
+        _capture.GetAnimator().SetAnimatorController(inData.key -1);
     }
 
 
@@ -305,8 +305,8 @@ public class PopupSelectHeros : PopupBase
         foreach (var data in staticData)
         {
             //TODO@taeho.kang 후에 번들이나 다른방식으로 로드..
-            var sprite = Resources.Load<Sprite>($"Prefabs/Textures/Profiles/profile_{data.id}");
-            _heroImageDic.Add(data.id, sprite);
+            var sprite = Resources.Load<Sprite>($"Prefabs/Textures/Profiles/profile_{data.key}");
+            _heroImageDic.Add(data.key, sprite);
         }
     }
 

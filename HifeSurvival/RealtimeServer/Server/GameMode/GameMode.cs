@@ -1,7 +1,8 @@
-using ServerCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Server.Helper;
+using ServerCore;
 
 namespace Server
 {
@@ -58,7 +59,7 @@ namespace Server
                 
                 if(spawnData == null)
                 {
-                    HSLogger.GetInstance().Error("spawnData is null or empty!");
+                    Logger.GetInstance().Error("spawnData is null or empty!");
                     continue;
                 }
 
@@ -125,7 +126,7 @@ namespace Server
 
             if (playerSpawn == null)
             {
-                HSLogger.GetInstance().Error("player spawn null or empty!");
+                Logger.GetInstance().Error("player spawn null or empty!");
                 return null;
             }
 
@@ -158,7 +159,7 @@ namespace Server
                 return player;
             }
 
-            HSLogger.GetInstance().Error("PlayerEntity is null or Empty");
+            Logger.GetInstance().Error("PlayerEntity is null or Empty");
             return null;
         }
 
@@ -169,7 +170,7 @@ namespace Server
 
             if(group == null)
             {
-                HSLogger.GetInstance().Error("MonsterEntity is null or Empty");
+                Logger.GetInstance().Error("MonsterEntity is null or Empty");
                 return null;
             }
 

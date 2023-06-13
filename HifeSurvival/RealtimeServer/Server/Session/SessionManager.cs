@@ -24,7 +24,7 @@ namespace Server
 				session.SessionId = sessionId;
 				_sessions.Add(sessionId, session);
 
-                HSLogger.GetInstance().Info($"Connected : {sessionId}");
+                Logger.GetInstance().Info($"Connected : {sessionId}");
 
 				return session;
 			}

@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Server.Helper;
+using ServerCore;
 
 namespace Server
 {
@@ -92,7 +94,7 @@ namespace Server
 
         public void OnMoveLerpAndBroadcast(in Vec3 inStartPos, in Vec3 inEndPos, float inRaio)
         {
-            pos = Vec3Helper.Lerp(inStartPos, inEndPos, inRaio);
+            pos = PacketExtensionHelper.Lerp(inStartPos, inEndPos, inRaio);
 
             CS_Move move = new CS_Move()
             {

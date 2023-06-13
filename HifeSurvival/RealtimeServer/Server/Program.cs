@@ -24,11 +24,12 @@ namespace Server
 			await StaticData.Instance.Init();
 
 			IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 7777);
-			// endPoint = new IPEndPoint(IPAddress.Parse("192.168.0.3"), 7777);
+            // endPoint = new IPEndPoint(IPAddress.Parse("192.168.0.3"), 7777);
 
-			_listener.Init(endPoint, () => { return SessionManager.Instance.Generate(); });
+            PacketManager.Instance.BindHandler(new ServerPacketHandler());
+            _listener.Init(endPoint, () => { return SessionManager.Instance.Generate(); });
 
-            HSLogger.GetInstance().Debug("Listening...");
+            Logger.GetInstance().Debug("Listening...");
 
 			while (true)
 			{

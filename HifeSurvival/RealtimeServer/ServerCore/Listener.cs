@@ -6,7 +6,8 @@ using System.Text;
 
 namespace ServerCore
 {
-	public class Listener
+#if HS_SERVER
+    public class Listener
 	{
 		Socket _listenSocket;
 		Func<Session> _sessionFactory;
@@ -16,9 +17,10 @@ namespace ServerCore
 			_listenSocket = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 			_sessionFactory += sessionFactory;
 
-            HSLogger.GetInstance().Warn("호출합니까?");
-			// 문지기 교육
-			_listenSocket.Bind(endPoint);
+            Logger.GetInstance().Warn("호출합니까?");
+
+            // 문지기 교육
+            _listenSocket.Bind(endPoint);
 
 			// 영업 시작
 			// backlog : 최대 대기수
@@ -51,10 +53,14 @@ namespace ServerCore
 			}
 			else
 			{
-				HSLogger.GetInstance().Error(args.SocketError.ToString());
+                Console.WriteLine(args.SocketError.ToString());
             }
 
 			RegisterAccept(args);
 		}
 	}
+
+#else
+#define Init
+#endif
 }

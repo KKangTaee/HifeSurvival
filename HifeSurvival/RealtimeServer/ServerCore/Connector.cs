@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -48,8 +49,12 @@ namespace ServerCore
 			}
 			else
 			{
-                HSLogger.GetInstance().Error($"Socket Error : {args.SocketError}");
+#if UNITY_EDITOR
+				Debug.WriteLine($"Socket Error : {args.SocketError}");
+#elif HS_SERVER
+				Logger.GetInstance().Error($"Socket Error : {args.SocketError}");
+#endif
 			}
-		}
+        }
 	}
 }

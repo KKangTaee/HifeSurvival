@@ -37,7 +37,7 @@ namespace ServerCore
 			}
 
 			if (packetCount > 1)
-                HSLogger.GetInstance().Debug($"패킷 모아보내기 : {packetCount}");
+                Logger.GetInstance().Debug($"패킷 모아보내기 : {packetCount}");
 
 			return processLen;
 		}
@@ -140,7 +140,7 @@ namespace ServerCore
 			}
 			catch (Exception e)
 			{
-                HSLogger.GetInstance().Error($"Exception : {e}");
+                Logger.GetInstance().Error($"Exception : {e}");
 			}
 		}
 
@@ -162,7 +162,7 @@ namespace ServerCore
 					}
 					catch (Exception e)
 					{
-                        HSLogger.GetInstance().Error($"Exception : {e}");
+                        Logger.GetInstance().Error($"Exception : {e}");
 					}
 				}
 				else
@@ -189,7 +189,7 @@ namespace ServerCore
 			}
 			catch (Exception e)
 			{
-                HSLogger.GetInstance().Error($"Exception : {e}");
+                Logger.GetInstance().Error($"Exception : {e}");
 			}
 		}
 
@@ -225,7 +225,7 @@ namespace ServerCore
 				}
 				catch (Exception e)
 				{
-                    HSLogger.GetInstance().Error($"Exception : {e}");
+                    Logger.GetInstance().Error($"Exception : {e}");
 				}
 			}
 			else

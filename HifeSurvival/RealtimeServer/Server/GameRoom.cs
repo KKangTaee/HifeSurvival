@@ -1,7 +1,7 @@
-﻿using ServerCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using ServerCore;
 
 namespace Server
 {
@@ -64,7 +64,7 @@ namespace Server
         {
             Push(() =>
             {
-                HSLogger.GetInstance().Log("INF", $"PacketType : {inPacket.GetType()}", $"{nameof(Broadcast)}");
+                Logger.GetInstance().Log("INF", $"PacketType : {inPacket.GetType()}", $"{nameof(Broadcast)}");
                 ArraySegment<byte> segment = inPacket.Write();
                 _pendingList.Add(segment);
             });

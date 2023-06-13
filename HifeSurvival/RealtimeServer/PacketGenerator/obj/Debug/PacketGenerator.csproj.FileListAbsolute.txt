@@ -40,3 +40,17 @@ C:\Projects\HifeSurvival-master\HifeSurvival\RealtimeServer\PacketGenerator\obj\
 C:\Projects\HifeSurvival-master\HifeSurvival\RealtimeServer\PacketGenerator\obj\Debug\PacketGenerator.dll
 C:\Projects\HifeSurvival-master\HifeSurvival\RealtimeServer\PacketGenerator\obj\Debug\PacketGenerator.pdb
 C:\Projects\HifeSurvival-master\HifeSurvival\RealtimeServer\PacketGenerator\obj\Debug\PacketGenerator.genruntimeconfig.cache
+C:\TH\HifeSurvival\HifeSurvival\RealtimeServer\PacketGenerator\bin\PacketGenerator.exe
+C:\TH\HifeSurvival\HifeSurvival\RealtimeServer\PacketGenerator\bin\PacketGenerator.deps.json
+C:\TH\HifeSurvival\HifeSurvival\RealtimeServer\PacketGenerator\bin\PacketGenerator.runtimeconfig.json
+C:\TH\HifeSurvival\HifeSurvival\RealtimeServer\PacketGenerator\bin\PacketGenerator.runtimeconfig.dev.json
+C:\TH\HifeSurvival\HifeSurvival\RealtimeServer\PacketGenerator\bin\PacketGenerator.dll
+C:\TH\HifeSurvival\HifeSurvival\RealtimeServer\PacketGenerator\bin\PacketGenerator.pdb
+C:\TH\HifeSurvival\HifeSurvival\RealtimeServer\PacketGenerator\obj\Debug\PacketGenerator.csproj.AssemblyReference.cache
+C:\TH\HifeSurvival\HifeSurvival\RealtimeServer\PacketGenerator\obj\Debug\PacketGenerator.GeneratedMSBuildEditorConfig.editorconfig
+C:\TH\HifeSurvival\HifeSurvival\RealtimeServer\PacketGenerator\obj\Debug\PacketGenerator.AssemblyInfoInputs.cache
+C:\TH\HifeSurvival\HifeSurvival\RealtimeServer\PacketGenerator\obj\Debug\PacketGenerator.AssemblyInfo.cs
+C:\TH\HifeSurvival\HifeSurvival\RealtimeServer\PacketGenerator\obj\Debug\PacketGenerator.csproj.CoreCompileInputs.cache
+C:\TH\HifeSurvival\HifeSurvival\RealtimeServer\PacketGenerator\obj\Debug\PacketGenerator.dll
+C:\TH\HifeSurvival\HifeSurvival\RealtimeServer\PacketGenerator\obj\Debug\PacketGenerator.pdb
+C:\TH\HifeSurvival\HifeSurvival\RealtimeServer\PacketGenerator\obj\Debug\PacketGenerator.genruntimeconfig.cache

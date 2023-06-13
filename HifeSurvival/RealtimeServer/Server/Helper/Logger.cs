@@ -3,24 +3,24 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 
-namespace ServerCore
+namespace Server.Helper
 {
-    public class HSLogger
+    public class Logger
     {
         FileStream fs = null;
         StreamWriter sw = null;
 
-        private static HSLogger ins;
+        private static Logger ins;
         private string titleName;
         private bool bConsoleWirte = true; // TODO: Config
 
-        public static HSLogger GetInstance()
+        public static Logger GetInstance()
         {
-            ins ??= new HSLogger();
+            ins ??= new Logger();
             return ins;
         }
 
-        private HSLogger()
+        private Logger()
         {
             titleName = System.Reflection.Assembly.GetEntryAssembly().GetName().Name;
             CreateLogFile();

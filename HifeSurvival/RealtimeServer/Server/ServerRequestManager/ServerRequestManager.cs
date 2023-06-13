@@ -73,7 +73,7 @@ namespace Server
 
                     if (!response.IsSuccessStatusCode)
                     {
-                        HSLogger.GetInstance().Error($"status code : {response.StatusCode}");
+                        Logger.GetInstance().Error($"status code : {response.StatusCode}");
                         requestData.doneCallback?.Invoke(null);
                     }
                     else
@@ -84,7 +84,7 @@ namespace Server
                 }
                 catch (Exception e)
                 {
-                    HSLogger.GetInstance().Error($"Exception {e.Message}");
+                    Logger.GetInstance().Error($"Exception {e.Message}");
                 }
             }
 

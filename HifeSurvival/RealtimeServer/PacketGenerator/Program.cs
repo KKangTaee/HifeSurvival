@@ -9,8 +9,9 @@ namespace PacketGenerator
         static string genPackets;
         static ushort packetId;
         static string packetEnums;
-        static string clientRegister;
-        static string serverRegister;
+        static string register;
+        static string bindHandler;
+        static string handler;
 
         static void Main(string[] args)
         {
@@ -41,10 +42,8 @@ namespace PacketGenerator
 
                 string fileText = string.Format(PacketFormat.fileFormat, packetEnums, genPackets);
                 File.WriteAllText("GenPackets.cs", fileText);
-                string clientManagerText = string.Format(PacketFormat.managerFormat, clientRegister);
-                File.WriteAllText("ClientPacketManager.cs", clientManagerText);
-                string serverManagerText = string.Format(PacketFormat.managerFormat, serverRegister);
-                File.WriteAllText("ServerPacketManager.cs", serverManagerText);
+                string managerText = string.Format(PacketFormat.managerFormat, register, handler, bindHandler);
+                File.WriteAllText("PacketManager.cs", managerText);
             }
         }
 
@@ -70,10 +69,9 @@ namespace PacketGenerator
             genPackets += string.Format(PacketFormat.packetFormat, packetName, t.Item1, t.Item2, t.Item3);
             packetEnums += string.Format(PacketFormat.packetEnumFormat, packetName, ++packetId) + Environment.NewLine + "\t";
 
-            if (packetName.StartsWith("C_")== false && packetName.StartsWith("c_") == false)
-                clientRegister += string.Format(PacketFormat.managerRegisterFormat, packetName) + Environment.NewLine;
-            if (packetName.StartsWith("S_")== false && packetName.StartsWith("s_") == false)
-                serverRegister += string.Format(PacketFormat.managerRegisterFormat, packetName) + Environment.NewLine;
+            register += string.Format(PacketFormat.managerRegisterFormat, packetName) + Environment.NewLine;
+            handler += string.Format(PacketFormat.managerHandlerFormat, packetName) + Environment.NewLine;
+            bindHandler += string.Format(PacketFormat.managerBindFormat, packetName) + Environment.NewLine;
         }
 
         public static void ParseSturct(XmlReader r)

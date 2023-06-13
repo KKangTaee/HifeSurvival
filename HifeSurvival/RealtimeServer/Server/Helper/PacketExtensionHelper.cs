@@ -4,9 +4,9 @@ using System.Text;
 using ServerCore;
 using System.Linq;
 
-namespace Server
+namespace Server.Helper
 {
-    public static class PacketExtension
+    public static class PacketExtensionHelper
     {
         public static Vec3 AddVec3(this Vec3 inSelf, in Vec3 inOther)
         {
@@ -121,8 +121,18 @@ namespace Server
                 }
             }
 
-            HSLogger.GetInstance().Error("rewardIds is wrong! check static sheet");
+            Logger.GetInstance().Error("rewardIds is wrong! check static sheet");
             return null;
+        }
+
+        public static Vec3 Lerp(in Vec3 v1, Vec3 v2, float t)
+        {
+            return new Vec3
+            {
+                x = v1.x + (v2.x - v1.x) * t,
+                y = v1.y + (v2.y - v1.y) * t,
+                z = v1.z + (v2.z - v1.z) * t
+            };
         }
     }
 }

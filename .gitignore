@@ -62,7 +62,8 @@ HifeSurvival/Library/
 HifeSurvival/Logs/
 HifeSurvival/.vscode/
 HifeSurvival/Temp/
-HifeSurvival/hifeSurvival_#18_BurstDebugInformation_DoNotShip/
+HifeSurvival/hifeSurvival_\#*_/BurstDebugInformation_DoNotShip/
 HifeSurvival/obj/Debug
 *.cache
 /obj/Debug/
+

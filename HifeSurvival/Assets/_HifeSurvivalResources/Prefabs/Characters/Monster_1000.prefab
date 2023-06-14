@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 911763375469853482}
   m_Layer: 0
   m_Name: Monster_1000
-  m_TagString: Untagged
+  m_TagString: Monster
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -155,6 +155,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8141778609074399421}
   - component: {fileID: 8718856273970809371}
+  - component: {fileID: 2391164045595199310}
   m_Layer: 0
   m_Name: MonsterAnimator
   m_TagString: Untagged
@@ -202,6 +203,17 @@ MonoBehaviour:
   - id: 1003
     anim: {fileID: 8162941148099116059}
     pivotUI: {fileID: 3554055436135552141}
+--- !u!210 &2391164045595199310
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3421564383458735583}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 1
 --- !u!1 &3552185903014906308
 GameObject:
   m_ObjectHideFlags: 0
@@ -387,6 +399,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8364271249298629789, guid: bb53af76b39682941931e3d95dbae2c2, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bb53af76b39682941931e3d95dbae2c2, type: 3}
 --- !u!4 &2017702362176457229 stripped
@@ -464,6 +480,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8364271249298629789, guid: b9d32bdf7741c4e4f89c1b22a0e1077d, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b9d32bdf7741c4e4f89c1b22a0e1077d, type: 3}
 --- !u!114 &1237890347606840623 stripped
@@ -539,6 +559,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2374989008031308591, guid: a840026ad20d41440818b895b39707ff, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8829033274029990554, guid: a840026ad20d41440818b895b39707ff, type: 3}
+      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

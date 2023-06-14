@@ -22,8 +22,8 @@
 	</packet>
 
 	<packet name="CS_SelectHero">
-		<int  name="targetId"/>
-		<int  name="heroId"/>
+		<int name="targetId"/>
+		<int name="heroId"/>
 	</packet>
 
 	<packet name="CS_ReadyToGame">
@@ -84,7 +84,7 @@
 
 	<packet name ="S_Respawn">
 		<int name ="targetId"/>
-		<bool name	="isPlayer"/>
+		<bool name ="isPlayer"/>
 		<struct_Vec3 name ="pos"/>
 		<struct_Stat name ="stat"/>
 	</packet>
@@ -96,14 +96,15 @@
 	</packet>
 
 	<packet name ="S_DropItem">
-		<int name="itemId"/>
+		<int name="worldId"/>
 		<string name="itemData"/>
 		<struct_Vec3 name ="pos"/>
 	</packet>
 
 	<packet name ="C_GetItem">
 		<int name ="targetId"/>
-		<int name ="itemId"/>
+		<int name ="worldId"/>
+		<int name ="itemSlotId"/>
 	</packet>
 
 	<struct name="Vec3">

@@ -39,6 +39,12 @@ public class ObjectPoolController : ControllerBase
             inst = LoadAsset<T>();           
         }
 
+        if(inst == null)
+        {
+            Debug.LogError($"[{nameof(SpawnFromPool)}] typename :  {typeof(T).Name}");
+            return null;
+        }
+
         inst.transform.SetParent(null);
         inst.gameObject.SetActive(true);
 

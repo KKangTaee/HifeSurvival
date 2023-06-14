@@ -7,7 +7,7 @@ using System;
 // NOTE@taeho.kang 구매한 에셋에 대한 정의
 using ItemAnimator = Assets.FantasyMonsters.Scripts.Monster;
 
-[ObjectPool(PATH_IN_RESOURCES_FOLDER = "Prefabs/Characters/ActionDisplayUI",
+[ObjectPool(PATH_IN_RESOURCES_FOLDER = "Prefabs/WorldObjects/WorldItem",
             IN_RESOURCES_FORLDER = true)]
 public class WorldItem : WorldObjectBase
 {
@@ -20,12 +20,13 @@ public class WorldItem : WorldObjectBase
     private float jumpHeight = 2f;
     private float jumpDuration = 0.5f;
 
-    public int ItemId { get; private set; }
+    public int WorldId { get; private set; }
 
-    public void SetInfo(int inDropId, ItemData inItemIds)
+    public void SetInfo(int inWorldId, in Vector3 inPos, in ItemData inItemDatas)
     {
-        ItemId = inDropId;
-        SetTargetAnim(inItemIds.itemType);
+        WorldId = inWorldId;
+        transform.position = inPos;
+        SetTargetAnim(inItemDatas.itemType);
     }
 
     public void SetTargetAnim(int inItemType)
@@ -47,7 +48,7 @@ public class WorldItem : WorldObjectBase
     public void PlayDropItem(Action doneCallback = null)
     {
         Vector3 originalPosition = _pivot.position;
-        Vector3 originalScale    = _pivot.localScale;
+        Vector3 originalScale = _pivot.localScale;
 
         Tweener rotationTween = _pivot.DORotate(new Vector3(0, 0, 360), 0.2f, RotateMode.FastBeyond360)
             .SetLoops(-1, LoopType.Yoyo);
@@ -57,8 +58,11 @@ public class WorldItem : WorldObjectBase
             {
                 rotationTween.Kill(); // Stop the rotation when the object lands.
 
+                // Reset the rotation to zero
+                _pivot.rotation = Quaternion.identity;
+
                 // After jumping, shake the object to simulate the impact of landing.
-                _pivot.DOShakeScale(0.5f).OnComplete(() => 
+                _pivot.DOShakeScale(0.3f).OnComplete(() =>
                 {
                     // Make sure to return the object to its original scale after the shake.
                     _pivot.DOScale(originalScale, 0);
@@ -80,7 +84,7 @@ public class WorldItem : WorldObjectBase
         _pivot.DOMoveY(_pivot.position.y + jumpHeight, jumpDuration).OnComplete(() =>
         {
             // 획득 후 풀에 넣는다.
-            ControllerManager.Instance.GetController<ObjectPoolController>().StoreToPool(this); 
+            ControllerManager.Instance.GetController<ObjectPoolController>().StoreToPool(this);
         });
     }
 }

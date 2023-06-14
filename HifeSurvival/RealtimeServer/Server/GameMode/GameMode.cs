@@ -25,22 +25,22 @@ namespace Server
         private const int PLAYER_MAX_COUNT = 4;
         private const int CONUTDOWN_SEC = 10;
 
-        private Dictionary<int, PlayerEntity>   _playersDict      = new Dictionary<int, PlayerEntity>();
-        private Dictionary<int, MonsterGroup>   _monsterGroupDict = new Dictionary<int, MonsterGroup>();
+        private Dictionary<int, PlayerEntity> _playersDict = new Dictionary<int, PlayerEntity>();
+        private Dictionary<int, MonsterGroup> _monsterGroupDict = new Dictionary<int, MonsterGroup>();
 
         private IBroadcaster _broadcaster = null;
-
+        private WorldMap _worldMap = new WorldMap();
         private int _mId = 10000;
 
-        public EStatus  Status { get; private set; } = EStatus.NONE;
-        public WorldMap MapData { get; private set; } = new WorldMap();
+        public EStatus Status { get; private set; } = EStatus.NONE;
+
 
 
         public GameMode(GameRoom inRoom)
         {
             _broadcaster = new RoomBroadcaster(inRoom);
-            
-            MapData.Init();
+
+            _worldMap.Init();
         }
 
 
@@ -53,17 +53,17 @@ namespace Server
             foreach (var group in groupList)
             {
                 var monstersId = group.monsterGroups.Split(':');
-                var spawnData  = MapData.SpawnList.FirstOrDefault(x=>x.spawnType == (int)WorldMap.ESpawnType.MONSTER &&
+                var spawnData = _worldMap.SpawnList.FirstOrDefault(x => x.spawnType == (int)WorldMap.ESpawnType.MONSTER &&
                                                                      x.groupId == group.groupId);
-                
-                if(spawnData == null)
+
+                if (spawnData == null)
                 {
                     HSLogger.GetInstance().Error("spawnData is null or empty!");
                     continue;
                 }
 
                 var pivotIter = spawnData.pivotList.GetEnumerator();
-                
+
 
                 foreach (var id in monstersId)
                 {
@@ -75,19 +75,19 @@ namespace Server
                         MonsterEntity entity = new MonsterEntity()
                         {
                             targetId = _mId++,
-                            groupId  = group.groupId,
+                            groupId = group.groupId,
                             monsterId = int.Parse(id),
                             pos = pos,
                             spawnPos = pos,
                             grade = data.grade,
                             broadcaster = _broadcaster,
                             stat = new EntityStat(data),
-                            rewardIds = data.rewardIds,
+                            rewardDatas = data.rewardIds,
                         };
 
                         MonsterGroup monsterGroup = null;
 
-                        if(_monsterGroupDict.TryGetValue(entity.groupId, out var mg) == true)
+                        if (_monsterGroupDict.TryGetValue(entity.groupId, out var mg) == true)
                         {
                             monsterGroup = mg;
                         }
@@ -101,11 +101,11 @@ namespace Server
 
                         var mData = new S_StartGame.Monster()
                         {
-                            targetId  = entity.targetId,
+                            targetId = entity.targetId,
                             monsterId = entity.monsterId,
-                            groupId   = entity.groupId,
-                            grade     = entity.grade,
-                            spawnPos  = entity.spawnPos,
+                            groupId = entity.groupId,
+                            grade = entity.grade,
+                            spawnPos = entity.spawnPos,
                         };
 
                         monsterList.Add(mData);
@@ -121,7 +121,7 @@ namespace Server
         {
             var playerList = new List<S_StartGame.Player>();
 
-            var playerSpawn = MapData.SpawnList.FirstOrDefault(x => x.spawnType == (int)WorldMap.ESpawnType.PLAYER);
+            var playerSpawn = _worldMap.SpawnList.FirstOrDefault(x => x.spawnType == (int)WorldMap.ESpawnType.PLAYER);
 
             if (playerSpawn == null)
             {
@@ -167,7 +167,7 @@ namespace Server
         {
             var group = _monsterGroupDict.Values.FirstOrDefault(x => x.HaveEntityInGroup(inId));
 
-            if(group == null)
+            if (group == null)
             {
                 HSLogger.GetInstance().Error("MonsterEntity is null or Empty");
                 return null;
@@ -251,7 +251,7 @@ namespace Server
             {
                 targetId = inPlayerId,
                 isPlayer = true,
-                stat = player.stat.ConvertStat(), 
+                stat = player.stat.ConvertStat(),
             };
 
             _broadcaster.Broadcast(respawn);
@@ -265,7 +265,7 @@ namespace Server
         public void OnRecvJoin(C_JoinToGame inPacket, int inSessionId)
         {
             var data = StaticData.Instance.HerosDict.Values.FirstOrDefault();
-            
+
             if (data == null)
                 return;
 
@@ -351,7 +351,6 @@ namespace Server
             _broadcaster.Broadcast(inPacket);
         }
 
-
         public void OnRecvAttack(CS_Attack inPacket)
         {
             var fromPlayer = GetPlayerEntity(inPacket.fromId);
@@ -390,6 +389,26 @@ namespace Server
                 fromPlayer.OnIdle();
 
                 _broadcaster.Broadcast(dead);
+
+                // 죽은 대상이 몬스터라면
+                if (inPacket.toIsPlayer == false)
+                {
+                    var monsterEntity = toEntity as MonsterEntity;
+                    var worldItem = _worldMap.DropItem(monsterEntity.rewardDatas);
+
+                    // worldItem이 null이라는 것은 확률결과 드랍을 못한것
+                    if (worldItem == null)
+                        return;
+
+                    S_DropItem dropItem = new S_DropItem()
+                    {
+                        worldId  = worldItem.worldId,
+                        itemData = worldItem.itemData,
+                        pos      = monsterEntity.pos,
+                    };
+
+                    _broadcaster.Broadcast(dropItem);
+                }
             }
             else
             {

@@ -19,7 +19,7 @@ namespace Server
 
         public Action OnRespawnCallback;
 
-        public string rewardIds;
+        public string rewardDatas;
 
         public MonsterEntity()
         {
@@ -81,24 +81,6 @@ namespace Server
             // NOTE@taeho.kang 현재 몬스터가 공격을 하고 있지 않는 상황에만 어그로를 끈다.
             if (Status != EStatus.ATTACK)
                 OnAttack(inParam);
-        }
-
-        
-        public void OnDropItem()
-        {
-            var itemData = rewardIds.FilterRewardIdsByRandomProbability();
-
-            if(itemData != null)
-            {
-                S_DropItem dropItem = new S_DropItem()
-                {
-                    // TODO@taeho.kang 아이템 id 발급 부분 생각좀 해야함.
-                    itemId = 1,
-                    itemData = itemData,
-                };
-
-                broadcaster.Broadcast(dropItem);
-            }
         }
     }
 
@@ -334,7 +316,6 @@ namespace Server
         {
             public void Enter<P>(MonsterEntity inSelf, in P inParam = default) where P : struct, IStateParam
             {
-                inSelf.OnDropItem();
                 inSelf.OnRespawnCallback?.Invoke();
             }
 

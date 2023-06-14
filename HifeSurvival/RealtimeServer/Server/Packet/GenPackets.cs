@@ -779,7 +779,7 @@ public class CS_UpdateStat : IPacket
 
 public class S_DropItem : IPacket
 {
-	public int itemId;
+	public int worldId;
 	public string itemData;
 	public Vec3 pos;
 
@@ -792,7 +792,7 @@ public class S_DropItem : IPacket
 		ReadOnlySpan<byte> s = new ReadOnlySpan<byte>(segment.Array, segment.Offset, segment.Count);
 		count += sizeof(ushort);
 		count += sizeof(ushort);
-		this.itemId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+		this.worldId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
 		ushort itemDataLen = BitConverter.ToUInt16(s.Slice(count, s.Length - count));
 		count += sizeof(ushort);
@@ -812,7 +812,7 @@ public class S_DropItem : IPacket
 		count += sizeof(ushort);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.S_DropItem);
 		count += sizeof(ushort);
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.itemId);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.worldId);
 		count += sizeof(int);
 		ushort itemDataLen = (ushort)Encoding.Unicode.GetByteCount(this.itemData);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), itemDataLen);
@@ -830,7 +830,8 @@ public class S_DropItem : IPacket
 public class C_GetItem : IPacket
 {
 	public int targetId;
-	public int itemId;
+	public int worldId;
+	public int itemSlotId;
 
 	public ushort Protocol { get { return (ushort)PacketID.C_GetItem; } }
 
@@ -843,7 +844,9 @@ public class C_GetItem : IPacket
 		count += sizeof(ushort);
 		this.targetId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
-		this.itemId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+		this.worldId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+		count += sizeof(int);
+		this.itemSlotId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
 	}
 
@@ -860,7 +863,9 @@ public class C_GetItem : IPacket
 		count += sizeof(ushort);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.targetId);
 		count += sizeof(int);
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.itemId);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.worldId);
+		count += sizeof(int);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.itemSlotId);
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s, count);
 		if (success == false)

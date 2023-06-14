@@ -204,7 +204,7 @@ public class WorldMap : MonoBehaviour
 
         ItemData itemIds = ItemData.Parse(inPacket.itemData)?.FirstOrDefault() ?? default;
 
-        itemObj.SetInfo(inPacket.itemId, itemIds);
+        itemObj.SetInfo(inPacket.worldId, inPacket.pos.ConvertUnityVector3(), itemIds);
         itemObj.PlayDropItem();
     }
 

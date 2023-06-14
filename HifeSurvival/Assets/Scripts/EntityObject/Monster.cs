@@ -119,6 +119,7 @@ public class Monster : EntityObject
         base.Init(inTargetId, inStat, inPos);
 
         _monsterUI.Init(Stat.maxHP);
+        _monsterUI.gameObject.SetActive(true);
     }
 
     public override void ChangeState<P>(EStatus inStatus, in P inParam = default) where P : struct
@@ -141,12 +142,14 @@ public class Monster : EntityObject
 
     public void OnMove(in Vector3 inDir)
     {
+        _anim.SetDir(inDir.x);
         _anim.OnWalk();
         MoveEntity(inDir);
     }
 
     public void OnAttack(in Vector3 inDir)
     {
+        _anim.SetDir(inDir.x);
         _anim.OnAttack();
         StopMoveEntity(GetPos());
     }
@@ -154,6 +157,7 @@ public class Monster : EntityObject
     public void OnDead()
     {
         // gameObject.SetActive(false);
+        _monsterUI.gameObject.SetActive(false);
         _anim.OnDead();
     }
 

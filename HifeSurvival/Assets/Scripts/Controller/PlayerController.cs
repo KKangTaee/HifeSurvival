@@ -195,9 +195,10 @@ public sealed class PlayerController : EntityObjectController<Player>
         _attackDelay?.Dispose();
     }
 
-    public void OnGetItemSelf(int inId)
+    public void OnGetItemSelf(int inWorldId)
     {
         // TODO
+        Debug.Log("월드아이디 호출!");
     }
 
 

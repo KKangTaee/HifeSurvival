@@ -102,17 +102,22 @@ namespace Assets.FantasyMonsters.Scripts
 
         public void OnDeathCompleted()
         {
+            Fade(0, 0.25f, OnDeathCompletedHandler);
+        }
+
+        public void Fade(float inEndValue, float inDuration, Action doneCallback)
+        {
             Sequence sequence = DOTween.Sequence();
 
             foreach (var renderer in _partsRendererArr)
             {
-                Tweener fadeTween = renderer.DOFade(0f, 0.18f);
+                Tweener fadeTween = renderer.DOFade(inEndValue, inDuration);
                 sequence.Join(fadeTween);
             }
 
             sequence.OnComplete(() =>
             {
-                OnDeathCompletedHandler?.Invoke();
+                doneCallback?.Invoke();
             });
         }
 
@@ -121,13 +126,13 @@ namespace Assets.FantasyMonsters.Scripts
             foreach (var renderer in _partsRendererArr)
                 renderer.color = Color.white;
         }
-
+        
         public void Damage()
         {
             foreach (var renderer in _partsRendererArr)
             {
-                renderer.DOColor(Color.red, 0.1f)
-                .OnComplete(() => renderer.DOColor(Color.white, 0.2f).SetDelay(0.2f));
+                renderer.DOColor(Color.red, 0f)
+                .OnComplete(() => renderer.DOColor(Color.white, 0.2f));
             }
         }
     }

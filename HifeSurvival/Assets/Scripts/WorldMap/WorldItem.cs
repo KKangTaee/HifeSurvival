@@ -11,13 +11,14 @@ using ItemAnimator = Assets.FantasyMonsters.Scripts.Monster;
             IN_RESOURCES_FORLDER = true)]
 public class WorldItem : WorldObjectBase
 {
-    [SerializeField] private Transform _pivot;
+    [SerializeField] private Transform _center;
+    [SerializeField] private CircleCollider2D _col;
 
     [SerializeField] private ItemAnimator[] _animArr;
 
     private ItemAnimator _targetAnim;
 
-    private float jumpHeight = 2f;
+    private float jumpHeight = 2.5f;
     private float jumpDuration = 0.5f;
 
     public int WorldId { get; private set; }
@@ -27,13 +28,15 @@ public class WorldItem : WorldObjectBase
         WorldId = inWorldId;
         transform.position = inPos;
         SetTargetAnim(inItemDatas.itemType);
+
+        _col.enabled = false;
     }
 
     public void SetTargetAnim(int inItemType)
     {
         for (int i = 0; i < _animArr?.Length; i++)
         {
-            if (i == inItemType)
+            if (i == inItemType - 1)
             {
                 _targetAnim = _animArr[i];
                 _targetAnim.gameObject.SetActive(true);
@@ -43,49 +46,52 @@ public class WorldItem : WorldObjectBase
                 _animArr[i].gameObject.SetActive(false);
             }
         }
+
+        _targetAnim.ResetAlphaParts();
     }
 
     public void PlayDropItem(Action doneCallback = null)
     {
-        Vector3 originalPosition = _pivot.position;
-        Vector3 originalScale = _pivot.localScale;
+        Vector3 originalPosition = _center.position;
+        Vector3 originalScale = _center.localScale;
 
-        Tweener rotationTween = _pivot.DORotate(new Vector3(0, 0, 360), 0.2f, RotateMode.FastBeyond360)
+        Tweener rotationTween = _center.DORotate(new Vector3(0, 0, 360), 0.2f, RotateMode.FastBeyond360)
             .SetLoops(-1, LoopType.Yoyo);
 
-        _pivot.DOJump(originalPosition + new Vector3(0, jumpHeight, 0), jumpHeight, 1, jumpDuration)
+        _center.DOJump(originalPosition + new Vector3(0, jumpHeight, 0), jumpHeight, 1, jumpDuration)
             .OnComplete(() =>
             {
                 rotationTween.Kill(); // Stop the rotation when the object lands.
 
                 // Reset the rotation to zero
-                _pivot.rotation = Quaternion.identity;
+                _center.rotation = Quaternion.identity;
 
                 // After jumping, shake the object to simulate the impact of landing.
-                _pivot.DOShakeScale(0.3f).OnComplete(() =>
+                _center.DOShakeScale(0.3f).OnComplete(() =>
                 {
                     // Make sure to return the object to its original scale after the shake.
-                    _pivot.DOScale(originalScale, 0);
+                    _center.DOScale(originalScale, 0);
                     doneCallback?.Invoke();
+                    _col.enabled = true;
+
                 });
             });
     }
 
     public void PlayGetItem(Action doneCallback = null)
     {
-        SpriteRenderer spriteRenderer = _targetAnim.GetComponent<SpriteRenderer>();
+        _col.enabled = false;
+        SpriteRenderer renderer = _targetAnim.GetComponent<SpriteRenderer>();
 
-        if (spriteRenderer != null)
-        {
-            spriteRenderer.material.DOFade(0, jumpDuration);
-        }
-
-        // Move the _pivot object upwards.
-        _pivot.DOMoveY(_pivot.position.y + jumpHeight, jumpDuration).OnComplete(() =>
+        transform.DOMoveY(transform.position.y + jumpHeight, 1).OnComplete(() =>
         {
             // 획득 후 풀에 넣는다.
             ControllerManager.Instance.GetController<ObjectPoolController>().StoreToPool(this);
         });
+
+        _targetAnim.Fade(0, 1.1f, null);
+
+        // Move the _pivot object upwards.
     }
 }
 

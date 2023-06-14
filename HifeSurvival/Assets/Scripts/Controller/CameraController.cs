@@ -136,8 +136,6 @@ public class CameraController : ControllerBase, TouchController.ITouchUpdate
         {
             case ECamearaStatus.SLIDING:
 
-                Debug.Log($"드래그 : {_dragPower}");
-
                 if (_dragPower <= 0.12f)
                 {
                     _eStatus = ECamearaStatus.NONE;

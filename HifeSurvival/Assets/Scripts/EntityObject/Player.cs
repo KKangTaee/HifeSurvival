@@ -274,6 +274,7 @@ public class Player : EntityObject
                 if (dropItem == null)
                     return;
 
+
                 // 여기에 브로드캐스팅 처리
                 _getItemCB?.Invoke(dropItem.WorldId);
                 dropItem.PlayGetItem();

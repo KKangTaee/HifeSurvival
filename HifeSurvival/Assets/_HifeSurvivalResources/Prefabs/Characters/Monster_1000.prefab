@@ -73,7 +73,7 @@ CircleCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0.7}
@@ -156,6 +156,7 @@ GameObject:
   - component: {fileID: 8141778609074399421}
   - component: {fileID: 8718856273970809371}
   - component: {fileID: 2391164045595199310}
+  - component: {fileID: 6217419779076237594}
   m_Layer: 0
   m_Name: MonsterAnimator
   m_TagString: Untagged
@@ -214,6 +215,22 @@ SortingGroup:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
+--- !u!58 &6217419779076237594
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3421564383458735583}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0.15}
+  serializedVersion: 2
+  m_Radius: 0.2
 --- !u!1 &3552185903014906308
 GameObject:
   m_ObjectHideFlags: 0

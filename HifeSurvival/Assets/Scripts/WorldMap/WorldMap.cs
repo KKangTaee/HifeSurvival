@@ -202,9 +202,10 @@ public class WorldMap : MonoBehaviour
             return;
         }
 
-        ItemData itemIds = ItemData.Parse(inPacket.itemData)?.FirstOrDefault() ?? default;
+        ItemData itemDatas = ItemData.Parse(inPacket.itemData)?.FirstOrDefault() ?? default;
+        Debug.Log(itemDatas.itemType);
 
-        itemObj.SetInfo(inPacket.worldId, inPacket.pos.ConvertUnityVector3(), itemIds);
+        itemObj.SetInfo(inPacket.worldId, inPacket.pos.ConvertUnityVector3(), itemDatas);
         itemObj.PlayDropItem();
     }
 

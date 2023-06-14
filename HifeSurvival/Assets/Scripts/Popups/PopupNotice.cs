@@ -24,7 +24,7 @@ public class PopupNotice : PopupBase
     {
         StopTimer();
 
-        _timerDisposable = Observable.Timer(TimeSpan.FromSeconds(3))
+        _timerDisposable = Observable.Timer(TimeSpan.FromSeconds(2.5))
                                       .Subscribe(_=>
                                       {
                                             Close();

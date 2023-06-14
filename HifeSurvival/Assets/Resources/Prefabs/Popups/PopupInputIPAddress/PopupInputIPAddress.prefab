@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3354086447810192699}
   - component: {fileID: 3354086447810192696}
   m_Layer: 0
-  m_Name: TMP_btnJoin
+  m_Name: TMP_btnConnect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -66,7 +66,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Join
+  m_text: Connect
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c2f49fe8c22d94f9a9e6cd06ad490155, type: 2}
   m_sharedMaterial: {fileID: 3074828514974314926, guid: c2f49fe8c22d94f9a9e6cd06ad490155, type: 2}
@@ -148,7 +148,7 @@ GameObject:
   - component: {fileID: 3354086447812668726}
   - component: {fileID: 3354086447812668727}
   m_Layer: 0
-  m_Name: IF_input
+  m_Name: IF_inputAddress
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -432,7 +432,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 3354086447851632661}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 3354086448663485101}
+        m_TargetAssemblyTypeName: PopupBase, Assembly-CSharp
+        m_MethodName: OnButton
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 3354086447851632666}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.UI.Button, UnityEngine.UI
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &3354086448131173633
 GameObject:
   m_ObjectHideFlags: 0
@@ -762,6 +774,9 @@ MonoBehaviour:
   _canvas: {fileID: 3354086448663485102}
   _background: {fileID: 3354086448773272259}
   _backDimmed: {fileID: 3354086448588635693}
+  BTN_connect: {fileID: 3354086448894089518}
+  BTN_close: {fileID: 3354086447851632666}
+  IF_inputAddress: {fileID: 3354086447812668727}
 --- !u!1 &3354086448773272256
 GameObject:
   m_ObjectHideFlags: 0
@@ -909,7 +924,7 @@ GameObject:
   - component: {fileID: 3354086448894089513}
   - component: {fileID: 3354086448894089518}
   m_Layer: 0
-  m_Name: BTN_join
+  m_Name: BTN_connect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -934,7 +949,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: -313}
-  m_SizeDelta: {x: 480, y: 200}
+  m_SizeDelta: {x: 550, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3354086448894089512
 CanvasRenderer:
@@ -1017,7 +1032,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 3354086448894089513}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 3354086448663485101}
+        m_TargetAssemblyTypeName: PopupBase, Assembly-CSharp
+        m_MethodName: OnButton
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 3354086448894089518}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.UI.Button, UnityEngine.UI
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &3354086448992140905
 GameObject:
   m_ObjectHideFlags: 0

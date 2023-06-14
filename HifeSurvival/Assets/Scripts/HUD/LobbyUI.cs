@@ -18,85 +18,18 @@ public class LobbyUI : MonoBehaviour
     {
         GetComponent<Canvas>().worldCamera = Camera.main;
 
-
         HeroRTCapture.GetInstance().GetCaptureTexture();
         HeroRTCapture.GetInstance().GetAnimator().SetAnimatorController(0);
     }
+
 
     public void OnButtonEvent(Button inButton)
     {
         if (inButton == BTN_gameStart)
         {
-           JoinGame();
+            PopupManager.Instance.Show<PopupInputIPAddress>();
         }
-
     }
-
-    private async void JoinGame()
-    {
-        var delayTime = 300;
-
-        SimpleLoading.Show("네트워크 연결중입니다...");
-
-        var isSuccess = await NetworkManager.Instance.ConnectAsync();
-        await UniTask.Delay(delayTime);
-
-        if(isSuccess == false)
-        {
-            PopupManager.Instance.Show<PopupNotice>(popup=>popup.SetDesc("네트워크에 연결 할 수 없습니다./n네트워크를 확인해주세요"));
-            SimpleLoading.Hide();
-            return;
-        }
-
-        SimpleLoading.ChangeDesc("잠시만 기다려주세요");
-        
-        isSuccess = await GameMode.Instance.JoinAsync();
-        await UniTask.Delay(delayTime);
-
-        if(isSuccess == false)
-        {
-            PopupManager.Instance.Show<PopupNotice>(popup=>popup.SetDesc("체널에 대한 정보를 가지고 올 수 없습니다"));
-            NetworkManager.Instance.Disconnect();
-            SimpleLoading.Hide();
-            return;
-        }
-
-        SimpleLoading.Hide();
-
-        Debug.Log($"룸 접속 완료 : {GameMode.Instance.RoomId}");
-
-        PopupManager.Instance.Show<PopupSelectHeros>(
-            inCreateCallback : popup =>
-            {
-                var currPlayerEntitys = GameMode.Instance.PlayerEntitysDict;
-
-                foreach(var entity in currPlayerEntitys.Values)
-                    popup.AddPlayerView(entity);
-
-                popup.SetPlayerIdSelf(GameMode.Instance.EntitySelf.targetId);
-
-                GameMode.Instance.AddEvent(
-                    inRecvJoin  : entity =>  popup.OnRecvJoin(entity),
-                    inRecvLeave : playerId => popup.OnLeave(playerId),
-                    inRecvSelect : entity => popup.OnRecvSelectHero(entity),
-                    inRecvReady : entity => popup.OnRecvReadyToGame(entity),
-                    inRecvCountdown : sec => popup.OnRecvCountdown(sec),
-                    inRecvGameStart: ()=> popup.OnRecvStartGame()
-                );
-
-                popup.AddEvent(
-                    inOnSendSelectHero : (heroId) => GameMode.Instance.OnSendSelectHero(heroId),
-                    inOnSendReadyToGame : ()=> GameMode.Instance.OnSendReadyToGame(),
-                    inDisconnect : ()=> NetworkManager.Instance.Disconnect(GameMode.Instance.Leave)
-                );
-
-                NetworkManager.Instance.AddEvent(
-                    inDisconnect : () => popup.Close( _ => {GameMode.Instance.Leave(); })      
-                );
-            });
-    }
-
-
     
 
     public async UniTask SetProfile()
@@ -109,7 +42,6 @@ public class LobbyUI : MonoBehaviour
         // 닉네임
         TMP_profileName.text = userData.nickname != null ? userData.nickname
                                                          : "일반인";
-
 
         // 프로필이미지.
         if(userData.photo_url != null)

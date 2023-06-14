@@ -33,12 +33,12 @@ public class NetworkManager : MonoBehaviour, IJobQueue
 
     private SimpleTaskCompletionSource<bool> _connectCompleted = new SimpleTaskCompletionSource<bool>();
     private Action _disconnectCB;
-    private bool _isConnected = false;
+    // private bool _isConnected = false;
 
     public ServerSession SessionSelf => _session;
 
     private JobQueue _jobQueue = new JobQueue();
-
+    private string _ipAddr;
 
 
     //----------------
@@ -56,16 +56,27 @@ public class NetworkManager : MonoBehaviour, IJobQueue
     }
 
 
-    public async Task<bool> ConnectAsync()
+    public async Task<bool> ConnectAsync(string inIpAddr)
     {
-        string host = Dns.GetHostName();
-        IPHostEntry ipHost = Dns.GetHostEntry(host);
-        IPAddress ipAddr = ipHost.AddressList.First(ip => ip.AddressFamily == AddressFamily.InterNetwork);
-        IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
 
-        Debug.LogWarning($"접속IP : {endPoint}");
+         IPEndPoint endPoint = null;
+
+        if(inIpAddr == null)
+        {
+            string host = Dns.GetHostName();
+            IPHostEntry ipHost = Dns.GetHostEntry(host);
+            IPAddress ipAddr = ipHost.AddressList.First(ip => ip.AddressFamily == AddressFamily.InterNetwork);
+            endPoint = new IPEndPoint(ipAddr, 7777);
+        }
+        else
+        {
+            endPoint = new IPEndPoint(IPAddress.Parse(inIpAddr), 7777);
+        }
+
+        // Debug.LogWarning($"접속IP : {endPoint}");
+
         // endPoint = new IPEndPoint(IPAddress.Parse("192.168.0.3"), 7777);
-        endPoint = new IPEndPoint(IPAddress.Parse("61.83.232.18"), 7777);
+        // endPoint = new IPEndPoint(IPAddress.Parse("61.83.232.18"), 7777);
 
         _session = new ServerSession();
         Connector connector = new Connector();
@@ -78,8 +89,9 @@ public class NetworkManager : MonoBehaviour, IJobQueue
         if (waitResult.isSuccess == false)
             return false;
 
-        _isConnected = waitResult.isSuccess;
-
+        // _isConnected = waitResult.isSuccess;
+        _ipAddr = inIpAddr;
+        
         return waitResult.result;
     }
 
@@ -88,7 +100,7 @@ public class NetworkManager : MonoBehaviour, IJobQueue
     {
         SimpleLoading.Show("다시 접속중입니다.");
 
-        bool isSuccess = await ConnectAsync();
+        bool isSuccess = await ConnectAsync(_ipAddr);
 
         SimpleLoading.Hide();
 
@@ -116,8 +128,6 @@ public class NetworkManager : MonoBehaviour, IJobQueue
     {
         Push(() =>
         {
-
-
             // NOTE@ytaeho.kang Retry 내부의 UnityEngine 을 사용하기 위해 Push로 래핑처리함.
             if(GameMode.Instance.Status == GameMode.EStatus.GAME_RUNIING)
             {
@@ -125,14 +135,14 @@ public class NetworkManager : MonoBehaviour, IJobQueue
                 {
                     if (isSuccess == false)
                     {
-                        _isConnected = false;
+                        // _isConnected = false;
                         _disconnectCB?.Invoke();
                     }
                 });
             }
             else
             {
-                _isConnected = false;
+                // _isConnected = false;
                 _disconnectCB?.Invoke();
             }
         });

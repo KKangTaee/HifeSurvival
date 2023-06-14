@@ -6,13 +6,13 @@ using System;
 public class Monster : EntityObject
 {
     [SerializeField] MonsterAnimator _anim;
-    [SerializeField] MonsterUI       _monsterUI;
+    [SerializeField] MonsterUI _monsterUI;
 
     public class AttackState : IState<Monster>
     {
         public void Enter<P>(Monster inSelf, in P inParam) where P : struct
         {
-            if(inParam is AttackParam attack)
+            if (inParam is AttackParam attack)
                 Attack(attack, inSelf, attack.target);
         }
 
@@ -23,7 +23,7 @@ public class Monster : EntityObject
 
         public void Update<P>(Monster inSelf, in P inParam) where P : struct
         {
-            if(inParam is AttackParam attack)
+            if (inParam is AttackParam attack)
                 Attack(attack, inSelf, attack.target);
         }
 
@@ -45,7 +45,7 @@ public class Monster : EntityObject
 
         public void Exit()
         {
-            
+
         }
 
         public void Update<P>(Monster inSelf, in P inParam) where P : struct
@@ -131,10 +131,12 @@ public class Monster : EntityObject
 
     public void OnMoveLerp(Vector3 inEndPos, Action doneCallback)
     {
+        var currDir = Vector3.Normalize(inEndPos - GetPos());
+        _anim.SetDir(currDir.x);
         MoveLerpEntity(() => inEndPos,
                        dir =>
                        {
-
+                           
                        },
                        null,
                        doneCallback);
@@ -170,10 +172,10 @@ public class Monster : EntityObject
     public void SetMonster(int inMosterId)
     {
         _anim.SetTargetAnim(inMosterId);
-        
+
         _monsterUI.transform.position = _anim.GetPosPivotUI();
 
-        _anim.AddEventDeathCompleted(()=>
+        _anim.AddEventDeathCompleted(() =>
         {
             // NOTE@taeho.kang 사망 후, 연출이 끝나고 콜백처리를 여기서 한다.
             // 아마 오브젝트 풀에 넣는 작업으로 이루어질듯

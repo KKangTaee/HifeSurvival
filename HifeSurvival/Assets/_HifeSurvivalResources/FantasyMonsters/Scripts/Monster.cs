@@ -106,7 +106,7 @@ namespace Assets.FantasyMonsters.Scripts
 
             foreach (var renderer in _partsRendererArr)
             {
-                Tweener fadeTween = renderer.DOFade(0f, 0.3f);
+                Tweener fadeTween = renderer.DOFade(0f, 0.18f);
                 sequence.Join(fadeTween);
             }
 

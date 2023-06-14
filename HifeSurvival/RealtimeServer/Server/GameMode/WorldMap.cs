@@ -118,19 +118,21 @@ namespace Server
         }
 
 
-        public void GetItem(int inWorldId, int inItemSlotId, ref PlayerEntity inEntity)
+        public EntityItem GetItem(int inWorldId, int inItemSlotId)
         {
             if(ItemDict.TryGetValue(inWorldId, out var worldItem) == false)
             {
-                return;
+                return null;
             }
 
             if(StaticData.Instance.ItemDict.TryGetValue(worldItem.itemData.subType.ToString(), out var item) == false)
             {
-                return;
+                return null;
             }
 
-            inEntity.EquipItem(new EntityItem()
+            ItemDict.Remove(inWorldId);
+
+            return new EntityItem()
             {
                 itemSlotId = inItemSlotId,
                 itemKey_Static = worldItem.itemData.subType,
@@ -138,9 +140,7 @@ namespace Server
                 def = item.def,
                 hp = item.hp,
                 cooltime = 20, // TODO@taeho.kang 생각좀 해야함.
-            });
-
-            ItemDict.Remove(inWorldId);
+            };
         }
     }
 }

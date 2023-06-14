@@ -451,7 +451,12 @@ namespace Server
             if(player == null)
                return;
 
-            _worldMap.GetItem(inPacket.targetId, inPacket.itemSlotId, ref player);
+            var entityItem = _worldMap.GetItem(inPacket.targetId, inPacket.itemSlotId);
+            
+            // 아이템 장착
+            player.EquipItem(entityItem);
+
+            // TODO@taeho.kang 내가 장착에 성공했는지를 클라로 내린다.
         }
     }
 }

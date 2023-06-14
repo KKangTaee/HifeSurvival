@@ -38,7 +38,7 @@ namespace Server
 
         public abstract bool IsPlayer { get; }
 
-        protected virtual void ChangeState<P>(Entity.EStatus inStatue,  P inParam) where P : struct, IStateParam
+        protected virtual void ChangeState<P>(Entity.EStatus inStatue, P inParam) where P : struct, IStateParam
         {
             Status = inStatue;
         }
@@ -73,9 +73,19 @@ namespace Server
             ChangeState(EStatus.BACK_TO_SPAWN, inParam);
         }
 
+        public virtual int GetAttackValue()
+        {
+            return new Random().Next(stat.str - 15, (int)(stat.str * 1.2f));
+        }
+
+        public virtual int GetDamagedValue(int inAttackValue)
+        {
+            return (int)(inAttackValue - stat.def * 0.1f);
+        }
+
         public void OnMoveAndBroadcast(in Vec3 inDir, float deltaTime)
         {
-            var addSpeed = inDir.MulitflyVec3(stat.moveSpeed * deltaTime);            
+            var addSpeed = inDir.MulitflyVec3(stat.moveSpeed * deltaTime);
             pos = pos.AddVec3(addSpeed);
 
             CS_Move move = new CS_Move()
@@ -113,7 +123,7 @@ namespace Server
         public int str { get; private set; }
         public int def { get; private set; }
 
-        public int maxHp { get; private set; }
+        public int hp { get; private set; }
         public int currHp { get; private set; }
 
         public float detectRange { get; private set; }
@@ -126,7 +136,7 @@ namespace Server
         {
             str = heros.str;
             def = heros.def;
-            currHp = maxHp = heros.hp;
+            currHp = hp = heros.hp;
             detectRange = heros.detectRange;
             attackRange = heros.attackRange;
             moveSpeed = heros.moveSpeed;
@@ -137,19 +147,12 @@ namespace Server
         {
             str = monsters.str;
             def = monsters.def;
-            currHp = maxHp = monsters.hp;
+            currHp = hp = monsters.hp;
             detectRange = monsters.detectRange;
             attackRange = monsters.attackRange;
             moveSpeed = monsters.moveSpeed;
             attackSpeed = monsters.attackSpeed;
         }
-
-
-        public int GetAttackValue() =>
-            new Random().Next(str - 15, (int)(str * 1.2f));
-
-        public int GetDamagedValue(int inAttackValue) =>
-           (int)(inAttackValue - def * 0.1f);
 
         public void AddStr(int inStr) =>
             str += inStr;
@@ -158,7 +161,7 @@ namespace Server
             def += inDef;
 
         public void AddMaxHp(int inHp) =>
-            maxHp += inHp;
+            hp += inHp;
 
         public void AddCurrHp(int inHp) =>
             currHp += inHp;

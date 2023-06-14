@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using ServerCore;
+using System.Linq;
 
 namespace Server
 {
@@ -13,7 +15,8 @@ namespace Server
         public bool isReady;
 
         public int  gold;
-        public PlayerItem[] itemSlot = new PlayerItem[4];
+
+        public EntityItem[] _itemSlot = new EntityItem[4];
 
         public override bool IsPlayer => true;
 
@@ -54,6 +57,29 @@ namespace Server
             _stateMachine.ChangeState(inStatue, this, inParam);
         }
 
+        public override int GetAttackValue()
+        {
+            var extraStr = _itemSlot.Sum(x=>
+            {   
+                return x == null ? 0 : x.str; 
+            });
+
+            // TODO@taeho.kang 여기도 나중에 정책으로 수정합시다..
+            return base.GetAttackValue() + extraStr;
+        }
+
+
+        public override int GetDamagedValue(int inAttackValue)
+        {
+            var extraDef = _itemSlot.Sum(x=>
+            {   
+                return x == null ? 0 : x.def; 
+            });
+
+            // TODO@taeho.kang 여기도 나중에 정책을 정해서 수정합시다.
+            return base.GetDamagedValue(inAttackValue) - extraDef;
+        }
+
 
         //-----------------
         // functions
@@ -63,7 +89,7 @@ namespace Server
         {
             JobTimer.Instance.Push(() =>
             {
-                stat.AddCurrHp(stat.maxHp);
+                stat.AddCurrHp(stat.hp);
                 OnIdle();
 
                 S_Respawn respawn = new S_Respawn()
@@ -77,6 +103,16 @@ namespace Server
             }, 15000);
         }
 
+        public void EquipItem(EntityItem inItem)
+        {
+            if(_itemSlot.Length < 0 || _itemSlot.Length >= inItem.itemSlotId || _itemSlot[inItem.itemSlotId] != null)
+            {
+                HSLogger.GetInstance().Error($"[{nameof(EquipItem)}] itemSlot is wrong! : {inItem.itemSlotId}");
+                return;
+            }
+
+            _itemSlot[inItem.itemSlotId] = inItem;
+        }
     }
 
 
@@ -206,19 +242,5 @@ namespace Server
 
             }
         }
-    }
-
-    public class PlayerItem
-    {
-        public int itemType;
-        public int level;
-
-        public int str;
-        public int def;
-        public int hp;
-
-        public int cooltime;
-
-        public bool canUse;
     }
 }

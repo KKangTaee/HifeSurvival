@@ -403,7 +403,7 @@ namespace Server
                     S_DropItem dropItem = new S_DropItem()
                     {
                         worldId  = worldItem.worldId,
-                        itemData = worldItem.itemData,
+                        itemData = worldItem.itemData.ToString(),
                         pos      = monsterEntity.pos,
                     };
 
@@ -441,6 +441,17 @@ namespace Server
             player.stat.AddCurrHp(inPacket.updateStat.hp);
 
             _broadcaster.Broadcast(inPacket);
+        }
+
+
+        public void OnRecvGetItem(C_GetItem inPacket)
+        {
+            var player = GetPlayerEntity(inPacket.targetId);
+
+            if(player == null)
+               return;
+
+            _worldMap.GetItem(inPacket.targetId, inPacket.itemSlotId, ref player);
         }
     }
 }

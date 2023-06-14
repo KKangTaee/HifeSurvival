@@ -18,7 +18,7 @@ namespace Server
         public class WorldItemData
         {
             public int worldId;
-            public string itemData;
+            public ItemData itemData;
         }
 
         public enum ESpawnType
@@ -99,15 +99,17 @@ namespace Server
 
         public WorldItemData DropItem(string inRewardData)
         {
-            var itemData = inRewardData.FilterRewardIdsByRandomProbability();
+            var itemDataStr = inRewardData.FilterRewardIdsByRandomProbability();
 
-            if (itemData == null)
+            if (itemDataStr == null)
                 return null;
+
+            var itemData = ItemData.Parse(itemDataStr).FirstOrDefault();
 
             WorldItemData worldItem = new WorldItemData()
             {
                 worldId  = _mHashCode++,
-                itemData = itemData
+                itemData = itemData,
             };
 
             ItemDict.Add(worldItem.worldId, worldItem);
@@ -118,7 +120,27 @@ namespace Server
 
         public void GetItem(int inWorldId, int inItemSlotId, ref PlayerEntity inEntity)
         {
+            if(ItemDict.TryGetValue(inWorldId, out var worldItem) == false)
+            {
+                return;
+            }
 
+            if(StaticData.Instance.ItemDict.TryGetValue(worldItem.itemData.subType.ToString(), out var item) == false)
+            {
+                return;
+            }
+
+            inEntity.EquipItem(new EntityItem()
+            {
+                itemSlotId = inItemSlotId,
+                itemKey_Static = worldItem.itemData.subType,
+                str = item.str,
+                def = item.def,
+                hp = item.hp,
+                cooltime = 20, // TODO@taeho.kang 생각좀 해야함.
+            });
+
+            ItemDict.Remove(inWorldId);
         }
     }
 }

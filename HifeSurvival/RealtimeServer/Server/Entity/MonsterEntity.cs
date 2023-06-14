@@ -152,8 +152,8 @@ namespace Server
                     // 공격이 가능하다면
                     else if (inSelf.CanAttack(inOther.pos) == true)
                     {
-                        var attackVal = inSelf.stat.GetAttackValue();
-                        var damagedVal = inOther.stat.GetDamagedValue(attackVal);
+                        var attackVal = inSelf.GetAttackValue();
+                        var damagedVal = inOther.GetDamagedValue(attackVal);
 
                         inOther.stat.AddCurrHp(-damagedVal);
 
@@ -420,7 +420,7 @@ namespace Server
                 foreach (var entity in _monstersDict.Values)
                 {
                     entity.OnIdle();
-                    entity.stat.AddCurrHp(entity.stat.maxHp);
+                    entity.stat.AddCurrHp(entity.stat.hp);
 
                     S_Respawn respawn = new S_Respawn()
                     {

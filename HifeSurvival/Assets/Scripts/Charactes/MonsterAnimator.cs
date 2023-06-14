@@ -23,8 +23,9 @@ public class MonsterAnimator : MonoBehaviour
     [SerializeField] private MonsterAnimData[] _animDataArr;
 
     MonsterAnim _targetAnim;
+    Vector3     _targetPivotUIPos;
 
-    public void SetTargetAnim(int inMosterId, Action<Vector3> pivotUICallback)
+    public void SetTargetAnim(int inMosterId)
     {
         var animData = _animDataArr.FirstOrDefault(x => x.id == inMosterId);
 
@@ -35,9 +36,20 @@ public class MonsterAnimator : MonoBehaviour
         }
 
         _targetAnim = animData.anim;
+        _targetAnim.ResetAlphaParts();
         _targetAnim.gameObject.SetActive(true);
-        
-        pivotUICallback?.Invoke(animData.pivotUI.position);
+
+        _targetPivotUIPos = animData.pivotUI.position;
+    }
+
+    public Vector3 GetPosPivotUI()
+    {
+        return _targetPivotUIPos;
+    }
+
+    public void AddEventDeathCompleted(Action inDeathCallback)
+    {
+        _targetAnim.OnDeathCompletedHandler = inDeathCallback;
     }
 
     public void OnIdle()
@@ -52,7 +64,7 @@ public class MonsterAnimator : MonoBehaviour
 
     public void OnDead()
     {
-        _targetAnim.SetState(MonsterState.Death);
+        _targetAnim.Die();
     }
 
     public void OnWalk()
@@ -68,9 +80,7 @@ public class MonsterAnimator : MonoBehaviour
         // Shake object along x-axis
         transform.DOShakePosition(0.2f, new Vector3(1f, 0f, 0f), 2, 90, false, true).SetId(this);
 
-        // Change color to red and then return to original
-        _targetAnim.Head.DOColor(Color.red, 0.1f)
-            .OnComplete(() => _targetAnim.Head.DOColor(Color.white, 0.2f).SetDelay(0.2f));
+        _targetAnim.Damage();
     }
 
     public void SetDir(float inDir)

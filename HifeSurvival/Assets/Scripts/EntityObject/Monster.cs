@@ -45,7 +45,7 @@ public class Monster : EntityObject
 
         public void Exit()
         {
-
+            
         }
 
         public void Update<P>(Monster inSelf, in P inParam) where P : struct
@@ -147,21 +147,32 @@ public class Monster : EntityObject
 
     public void OnAttack(in Vector3 inDir)
     {
+        _anim.OnAttack();
         StopMoveEntity(GetPos());
     }
 
     public void OnDead()
     {
-        gameObject.SetActive(false);
+        // gameObject.SetActive(false);
+        _anim.OnDead();
     }
 
     public override void OnDamaged(int inDamageValue)
     {
+        _anim.OnDamaged();
         _monsterUI.DecreaseHP(inDamageValue);
     }
 
     public void SetMonster(int inMosterId)
     {
-        _anim.SetTargetAnim(inMosterId, pivotUI => _monsterUI.transform.position = pivotUI);
+        _anim.SetTargetAnim(inMosterId);
+        
+        _monsterUI.transform.position = _anim.GetPosPivotUI();
+
+        _anim.AddEventDeathCompleted(()=>
+        {
+            // NOTE@taeho.kang 사망 후, 연출이 끝나고 콜백처리를 여기서 한다.
+            // 아마 오브젝트 풀에 넣는 작업으로 이루어질듯
+        });
     }
 }

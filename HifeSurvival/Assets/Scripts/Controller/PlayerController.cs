@@ -197,8 +197,7 @@ public sealed class PlayerController : EntityObjectController<Player>
 
     public void OnGetItemSelf(int inWorldId)
     {
-        // TODO
-        Debug.Log("월드아이디 호출!");
+        _gameMode.OnSendGetItem(inWorldId);
     }
 
 

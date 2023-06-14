@@ -239,7 +239,6 @@ public class GameMode
         NetworkManager.Instance.Send(readyToGame);
     }
 
-
     public void OnSendUpdateStat(int inUsedGold, in Stat inStat)
     {
         CS_UpdateStat updateStat = new CS_UpdateStat()
@@ -250,6 +249,17 @@ public class GameMode
         };
 
         NetworkManager.Instance.Send(updateStat);
+    }
+
+    public void OnSendGetItem(int inWorldId)
+    {
+        C_GetItem getItem = new C_GetItem()
+        {
+            targetId = EntitySelf.targetId,
+            worldId = inWorldId,
+        };
+
+        NetworkManager.Instance.Send(getItem);
     }
 
 

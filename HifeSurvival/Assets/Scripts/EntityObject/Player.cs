@@ -19,7 +19,7 @@ public class Player : EntityObject
 
     private HashSet<EntityObject> _targetSet;
 
-    private Action<int> _getItemCB;
+    private Action<int> _getItemCallback;
 
     public bool IsSelf { get; private set; }
 
@@ -242,7 +242,7 @@ public class Player : EntityObject
     }
 
 
-    public void SetSelf(Action<int> inGetItemCB)
+    public void SetSelf(Action<int> inGetItemCallback)
     {
         IsSelf = true;
 
@@ -255,7 +255,7 @@ public class Player : EntityObject
         _detectTrigger.gameObject.layer = LayerMask.NameToLayer(LayerName.DETECT_SELF);
 
         _detectRange?.SetActive(true);
-        _getItemCB = inGetItemCB;
+        _getItemCallback = inGetItemCallback;
     }
 
 
@@ -274,9 +274,8 @@ public class Player : EntityObject
                 if (dropItem == null)
                     return;
 
-
                 // 여기에 브로드캐스팅 처리
-                _getItemCB?.Invoke(dropItem.WorldId);
+                _getItemCallback?.Invoke(dropItem.WorldId);
                 dropItem.PlayGetItem();
             }
         });
@@ -334,7 +333,7 @@ public class Player : EntityObject
                     Debug.LogWarning($"[{nameof(SetTrigger)}] col object is null or empty!");
                     return;
                 }
-
+                
                 if (_targetSet.Contains(entityObj) == true)
                     _targetSet.Remove(entityObj);
             }

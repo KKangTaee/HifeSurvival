@@ -90,7 +90,6 @@ public class WorldItem : WorldObjectBase
         });
 
         _targetAnim.Fade(0, 1.1f, null);
-
         // Move the _pivot object upwards.
     }
 }

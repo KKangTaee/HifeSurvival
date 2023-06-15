@@ -18,7 +18,7 @@ namespace Server
         public class WorldItemData
         {
             public int worldId;
-            public ItemData itemData;
+            public RewardData itemData;
         }
 
         public enum ESpawnType
@@ -104,7 +104,7 @@ namespace Server
             if (itemDataStr == null)
                 return null;
 
-            var itemData = ItemData.Parse(itemDataStr).FirstOrDefault();
+            var itemData = RewardData.Parse(itemDataStr).FirstOrDefault();
 
             WorldItemData worldItem = new WorldItemData()
             {
@@ -118,7 +118,7 @@ namespace Server
         }
 
 
-        public ItemData PickReward(int inWorldId)
+        public RewardData PickReward(int inWorldId)
         {
             if(ItemDict.TryGetValue(inWorldId, out var worldItem) == false)
             {

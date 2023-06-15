@@ -6,16 +6,27 @@ using System.Text;
 
 class PacketHandler
 {
+    public static void Push(PacketSession session, Action<GameRoom> job)
+    {
+        ClientSession client = session as ClientSession;
+
+        if (client.Room == null)
+            return;
+
+        GameRoom room = client.Room;
+        room?.Push(() => job?.Invoke(room));
+    }
+
     public static void CS_SelectHeroHandler(PacketSession session, IPacket packet)
     {
-        CS_SelectHero selectHero = packet as CS_SelectHero;  
+        CS_SelectHero selectHero = packet as CS_SelectHero;
         Push(session, room => { room?.Mode.OnRecvSelect(selectHero); });
     }
 
     public static void C_JoinToGameHandler(PacketSession session, IPacket packet)
     {
-		C_JoinToGame joinToGame = packet as C_JoinToGame;
-		ClientSession client = session as ClientSession;
+        C_JoinToGame joinToGame = packet as C_JoinToGame;
+        ClientSession client = session as ClientSession;
 
         if (client.Room == null)
             return;
@@ -55,24 +66,9 @@ class PacketHandler
         Push(session, room => room?.Mode.OnRecvUpdateStat(updateStat));
     }
 
-    public static void Push(PacketSession session, Action<GameRoom> job)
+    public static void C_PickRewardHandler(PacketSession session, IPacket packet)
     {
-        ClientSession client = session as ClientSession;
-
-        if (client.Room == null)
-            return;
-
-        GameRoom room = client.Room;
-        room?.Push(()=> job?.Invoke(room));
-    }
-
-    internal static void C_GetItemHandler(PacketSession session, IPacket packet)
-    {
-        throw new NotImplementedException();
-    }
-
-    internal static void C_PickRewardHandler(PacketSession session, IPacket packet)
-    {
-        throw new NotImplementedException();
+        C_PickReward pickReward = packet as C_PickReward;
+        Push(session,room=>room?.Mode.OnRecvPickReward(pickReward));
     }
 }

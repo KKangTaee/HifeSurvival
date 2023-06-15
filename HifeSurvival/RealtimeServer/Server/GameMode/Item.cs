@@ -18,14 +18,14 @@ namespace Server
         public bool canUse;
     }
 
-    public struct ItemData
+    public struct RewardData
     {
 
         //--------------
         // enums
         //--------------
 
-        public enum EItemType
+        public enum ERewardType
         {
             GOLD,
 
@@ -36,11 +36,11 @@ namespace Server
         public int subType;
         public int count;
 
-        public static ItemData[] Parse(string inItemIds)
+        public static RewardData[] Parse(string inItemIds)
         {
             var itemIdsSet = inItemIds.Split(',');
 
-            var itemDataArr = new ItemData[itemIdsSet.Length];
+            var itemDataArr = new RewardData[itemIdsSet.Length];
 
             for (int i = 0; i < itemIdsSet.Length; i++)
             {
@@ -60,7 +60,7 @@ namespace Server
                     return null;
                 }
 
-                itemDataArr[i] = new ItemData()
+                itemDataArr[i] = new RewardData()
                 {
                     rewardType = item_type,
                     subType = sub_type,

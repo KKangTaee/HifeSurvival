@@ -29,13 +29,13 @@ class PacketHandler
         GameMode.Instance.OnRecvStartGame(startGame);
     }
 
-    internal static void CS_SelectHeroHandler(PacketSession session, IPacket packet)
+    public static void CS_SelectHeroHandler(PacketSession session, IPacket packet)
     {
         CS_SelectHero selectHero = packet as CS_SelectHero;
         GameMode.Instance.OnRecvSelectHero(selectHero);
     }
 
-    internal static void CS_ReadyToGameHandler(PacketSession session, IPacket packet)
+    public static void CS_ReadyToGameHandler(PacketSession session, IPacket packet)
     {
         CS_ReadyToGame readyToGame = packet as CS_ReadyToGame;
         GameMode.Instance.OnRecvReadyToGame(readyToGame);
@@ -77,9 +77,22 @@ class PacketHandler
         GameMode.Instance.OnRecvUpdateStat(updateStat);
     }
 
-    internal static void S_DropItemHandler(PacketSession session, IPacket packet)
+
+    public static void S_DropRewardHandler(PacketSession session, IPacket packet)
     {
-        S_DropItem dropItem = packet as S_DropItem;
+        S_DropReward dropItem = packet as S_DropReward;
         GameMode.Instance.OnRecvDropItem(dropItem);
+    }
+
+    public static void S_GetItemHandler(PacketSession session, IPacket packet)
+    {
+        S_GetItem getItem = packet as S_GetItem;
+        GameMode.Instance.OnRecvGetItem(getItem);
+    }
+
+    public static void S_GetGoldHandler(PacketSession session, IPacket packet)
+    {
+        S_GetGold getGold = packet as S_GetGold;
+        GameMode.Instance.OnRecvGetGold(getGold);
     }
 }

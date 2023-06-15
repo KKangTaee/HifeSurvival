@@ -23,11 +23,11 @@ public class WorldItem : WorldObjectBase
 
     public int WorldId { get; private set; }
 
-    public void SetInfo(int inWorldId, in Vector3 inPos, in ItemData inItemDatas)
+    public void SetInfo(int inWorldId, in Vector3 inPos, int inRewardType)
     {
         WorldId = inWorldId;
         transform.position = inPos;
-        SetTargetAnim(inItemDatas.itemType);
+        SetTargetAnim(inRewardType);
 
         _col.enabled = false;
     }
@@ -50,6 +50,7 @@ public class WorldItem : WorldObjectBase
         _targetAnim.ResetAlphaParts();
     }
 
+
     public void PlayDropItem(Action doneCallback = null)
     {
         Vector3 originalPosition = _center.position;
@@ -61,15 +62,12 @@ public class WorldItem : WorldObjectBase
         _center.DOJump(originalPosition + new Vector3(0, jumpHeight, 0), jumpHeight, 1, jumpDuration)
             .OnComplete(() =>
             {
-                rotationTween.Kill(); // Stop the rotation when the object lands.
+                rotationTween.Kill();
 
-                // Reset the rotation to zero
                 _center.rotation = Quaternion.identity;
 
-                // After jumping, shake the object to simulate the impact of landing.
                 _center.DOShakeScale(0.3f).OnComplete(() =>
                 {
-                    // Make sure to return the object to its original scale after the shake.
                     _center.DOScale(originalScale, 0);
                     doneCallback?.Invoke();
                     _col.enabled = true;
@@ -78,19 +76,18 @@ public class WorldItem : WorldObjectBase
             });
     }
 
+
     public void PlayGetItem(Action doneCallback = null)
     {
         _col.enabled = false;
-        SpriteRenderer renderer = _targetAnim.GetComponent<SpriteRenderer>();
 
-        transform.DOMoveY(transform.position.y + jumpHeight, 1).OnComplete(() =>
+        transform.DOMoveY(transform.position.y + jumpHeight, 1.1f).OnComplete(() =>
         {
             // 획득 후 풀에 넣는다.
-            ControllerManager.Instance.GetController<ObjectPoolController>().StoreToPool(this);
+            doneCallback?.Invoke();
         });
 
-        _targetAnim.Fade(0, 1.1f, null);
-        // Move the _pivot object upwards.
+        _targetAnim.Fade(0, 1.1f);
     }
 }
 
@@ -104,9 +101,9 @@ public struct ItemData
 
     public enum EItemType
     {
-        GOLD,
+        GOLD = 1,
 
-        ITEM,
+        ITEM = 2,
     }
 
     public int itemType;
@@ -148,4 +145,3 @@ public struct ItemData
         return itemDataArr;
     }
 }
-

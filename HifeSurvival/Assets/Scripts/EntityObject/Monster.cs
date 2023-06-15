@@ -114,11 +114,11 @@ public class Monster : EntityObject
     // override
     //---------------
 
-    public override void Init(int inTargetId, EntityStat inStat, in Vector3 inPos)
+    public override void Init(Entity inEntity, in Vector3 inPos)
     {
-        base.Init(inTargetId, inStat, inPos);
+        base.Init(inEntity, inPos);
 
-        _monsterUI.Init(Stat.maxHP);
+        _monsterUI.Init(inEntity.stat.hp);
         _monsterUI.gameObject.SetActive(true);
     }
 
@@ -158,7 +158,6 @@ public class Monster : EntityObject
 
     public void OnDead()
     {
-        // gameObject.SetActive(false);
         _monsterUI.gameObject.SetActive(false);
         _anim.OnDead();
     }

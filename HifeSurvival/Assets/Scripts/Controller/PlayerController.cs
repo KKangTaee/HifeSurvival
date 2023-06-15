@@ -28,6 +28,7 @@ public sealed class PlayerController : EntityObjectController<Player>
         _joystickController = ControllerManager.Instance.GetController<JoystickController>();
 
         _gameMode.OnRecvUpdateStatHandler += OnRecvUpdateStat;
+        _gameMode.OnRecvGetItemHandler    += OnRecvGetItem;
 
         LoadPlayer();
     }
@@ -49,7 +50,7 @@ public sealed class PlayerController : EntityObjectController<Player>
         {
             var inst = Instantiate(_playerPrefab, transform);
 
-            inst.Init(entity.targetId, entity.stat, entity.pos.ConvertUnityVector3());
+            inst.Init(entity, entity.pos.ConvertUnityVector3());
 
             if (ServerData.Instance.UserData.user_id == entity.userId)
             {
@@ -85,7 +86,7 @@ public sealed class PlayerController : EntityObjectController<Player>
         SetMoveState(Self,
                      Self.GetPos(),
                      inDir,
-                     Self.Stat.moveSpeed);
+                     Self.TargetEntity.stat.moveSpeed);
     }
 
 
@@ -99,7 +100,7 @@ public sealed class PlayerController : EntityObjectController<Player>
         SetIdleState(Self,
                      Self.GetPos(),
                      Self.GetDir(),
-                     Self.Stat.moveSpeed);
+                     Self.TargetEntity.stat.moveSpeed);
 
         // 타겟이 있는지 감지
         DetectTargetSelf();
@@ -149,8 +150,8 @@ public sealed class PlayerController : EntityObjectController<Player>
     public void OnAttackSelf(EntityObject inTarget)
     {
         // 상대방의 방어력도 고려한다.
-        var selfAttactValue = Self.Stat.GetAttackValue();
-        var damagedVal = inTarget.Stat.GetDamagedValue(selfAttactValue);
+        var selfAttactValue = Self.TargetEntity.GetAttackValue();
+        var damagedVal = inTarget.TargetEntity.GetDamagedValue(selfAttactValue);
 
         SetAttackState(inTarget, Self, Self.GetPos(), Self.GetDir(), damagedVal);
 
@@ -160,7 +161,7 @@ public sealed class PlayerController : EntityObjectController<Player>
                                inTarget.TargetId, 
                                damagedVal);
 
-        _attackDelay = Observable.Timer(TimeSpan.FromSeconds(Self.Stat.attackSpeed))
+        _attackDelay = Observable.Timer(TimeSpan.FromSeconds(Self.TargetEntity.stat.attackSpeed))
                                         .Subscribe(_ =>
         {        
             // 이미 내가 죽은 상태라면..?
@@ -197,7 +198,7 @@ public sealed class PlayerController : EntityObjectController<Player>
 
     public void OnGetItemSelf(int inWorldId)
     {
-        _gameMode.OnSendGetItem(inWorldId);
+        _gameMode.OnSendPickReward(inWorldId);
     }
 
 
@@ -234,5 +235,12 @@ public sealed class PlayerController : EntityObjectController<Player>
     {
         var player = GetEntityObject(inEntity.targetId);
         player.UpdateHp();
+    }
+
+
+    public void OnRecvGetItem(PlayerEntity inEntity)
+    {
+        var player = GetEntityObject(inEntity.targetId);
+        player.UpdateItemSlot();
     }
 }

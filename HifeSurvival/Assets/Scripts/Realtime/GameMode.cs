@@ -3,9 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Threading.Tasks;
+using System.Linq;
 
 public class GameMode
 {
+    public enum EStatus
+    {
+        JOIN,
+
+        NOT_JOIN,
+
+        GAME_RUNIING,
+    }
+
     private static GameMode _instance = new GameMode();
     public static GameMode Instance { get => _instance; }
 
@@ -31,28 +41,21 @@ public class GameMode
     // 인게임 진행 관련
     //---------------
 
-    public event Action<Entity>       OnRecvMoveHandler;
-    public event Action<Entity>       OnRecvStopMoveHandler;
-    public event Action<S_Dead>       OnRecvDeadHandler;
-    public event Action<CS_Attack>    OnRecvAttackHandler;
-    public event Action<Entity>       OnRecvRespawnHandler;
-    public event Action<PlayerEntity> OnRecvUpdateStatHandler;
-    public event Action<S_DropItem>   OnRecvDropItemHandler;
+    public event Action<Entity>        OnRecvMoveHandler;
+    public event Action<Entity>        OnRecvStopMoveHandler;
+    public event Action<S_Dead>        OnRecvDeadHandler;
+    public event Action<CS_Attack>     OnRecvAttackHandler;
+    public event Action<Entity>        OnRecvRespawnHandler;
+    public event Action<PlayerEntity>  OnRecvUpdateStatHandler;
+    public event Action<S_DropReward>  OnRecvDropRewardHandler;
+    public event Action<PlayerEntity>  OnRecvGetItemHandler;
+    public event Action<S_GetGold>     OnRecvGetGoldHandler;
 
 
-    public PlayerEntity EntitySelf { get; private set; }
     public int RoomId { get; private set; }
-
-    public enum EStatus
-    {
-        JOIN,
-
-        NOT_JOIN,
-
-        GAME_RUNIING,
-    }
-
     public EStatus Status { get; private set; } = EStatus.NOT_JOIN;
+    public PlayerEntity EntitySelf { get; private set; }
+
 
     public void RemovePlayerEntity(int inPlayerId)
     {
@@ -251,9 +254,9 @@ public class GameMode
         NetworkManager.Instance.Send(updateStat);
     }
 
-    public void OnSendGetItem(int inWorldId)
+    public void OnSendPickReward(int inWorldId)
     {
-        C_GetItem getItem = new C_GetItem()
+        C_PickReward getItem = new C_PickReward()
         {
             targetId = EntitySelf.targetId,
             worldId = inWorldId,
@@ -480,12 +483,33 @@ public class GameMode
         if (player == null)
             return;
 
-        player.gold -= inPacket.usedGold;
-        player.stat.UpdateStat(inPacket.updateStat);
+        player.AddGold(-inPacket.usedGold);
+        player.stat.IncreaseStat(inPacket.updateStat);
     }
 
-    public void OnRecvDropItem(S_DropItem inPacket)
+
+    public void OnRecvDropItem(S_DropReward inPacket)
     {
-        OnRecvDropItemHandler?.Invoke(inPacket);
+        OnRecvDropRewardHandler?.Invoke(inPacket);
+    }
+
+
+    public void OnRecvGetItem(S_GetItem inPacket)
+    {
+        var player = GetPlayerEntity(inPacket.targetId);
+
+        player.itemSlot[inPacket.itemSlotId] = new EntityItem(inPacket.item);
+
+        OnRecvGetItemHandler?.Invoke(player);
+    }
+
+
+    public void OnRecvGetGold(S_GetGold inPacket)
+    {
+        var player = GetPlayerEntity(inPacket.targetId);
+
+        player.AddGold(inPacket.gold);
+
+        OnRecvGetGoldHandler?.Invoke(inPacket);
     }
 }

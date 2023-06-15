@@ -34,8 +34,8 @@ class PacketManager
 		_handler.Add((ushort)PacketID.CS_StopMove, PacketHandler.CS_StopMoveHandler);
 		_makeFunc.Add((ushort)PacketID.CS_UpdateStat, MakePacket<CS_UpdateStat>);
 		_handler.Add((ushort)PacketID.CS_UpdateStat, PacketHandler.CS_UpdateStatHandler);
-		_makeFunc.Add((ushort)PacketID.C_GetItem, MakePacket<C_GetItem>);
-		_handler.Add((ushort)PacketID.C_GetItem, PacketHandler.C_GetItemHandler);
+		_makeFunc.Add((ushort)PacketID.C_PickReward, MakePacket<C_PickReward>);
+		_handler.Add((ushort)PacketID.C_PickReward, PacketHandler.C_PickRewardHandler);
 
 	}
 

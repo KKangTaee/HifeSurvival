@@ -38,8 +38,8 @@
   <ItemGroup>
      <Compile Include="Assets/Scripts/Editor/WorldTileEditor.cs" />
      <Compile Include="Assets/Scripts/Editor/GridColorEditor.cs" />
-     <Compile Include="Assets/Scripts/Editor/WorldMapEditor.cs" />
      <Compile Include="Assets/_HifeSurvivalResources/FantasyMonsters/Scripts/Editor/LayerManagerEditor.cs" />
+     <Compile Include="Assets/Scripts/Editor/WorldMapEditor.cs" />
      <None Include="Assets/GoogleSignIn/Editor/GoogleSignInDependencies.xml" />
      <None Include="Assets/GoogleSignIn/Editor/m2repository/com/google/signin/google-signin-support/maven-metadata.xml" />
      <None Include="Assets/GoogleSignIn/Editor/google-signin-plugin_v1.0.4.txt" />

@@ -95,16 +95,28 @@
 		<struct_Stat name ="updateStat"/>
 	</packet>
 
-	<packet name ="S_DropItem">
+	<packet name ="S_DropReward">
 		<int name="worldId"/>
-		<string name="itemData"/>
+		<int name="rewardType"/>
 		<struct_Vec3 name ="pos"/>
 	</packet>
 
-	<packet name ="C_GetItem">
+	<packet name ="C_PickReward">
+		<int name= "targetId"/>
+		<int name= "worldId"/>
+	</packet>
+
+	<packet name ="S_GetItem">
 		<int name ="targetId"/>
 		<int name ="worldId"/>
 		<int name ="itemSlotId"/>
+		<struct_Item name="item"/>
+	</packet>
+
+	<packet name ="S_GetGold">
+		<int name ="targetId"/>
+		<int name ="worldId"/>
+		<int name ="gold"/>
 	</packet>
 
 	<struct name="Vec3">
@@ -119,6 +131,16 @@
 		<int name ="hp"/>
 		<float name = "moveSpeed"/>
 		<float name = "attackSpeed"/>
+	</struct>
+
+	<struct name = "Item">
+		<int name ="itemKey"/>
+		<int name ="level"/>
+		<int name ="str"/>
+		<int name ="def"/>
+		<int name ="hp"/>
+		<int name ="cooltime"/>
+		<bool name ="canUse"/>
 	</struct>
 
 </PDL>

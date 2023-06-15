@@ -91,4 +91,19 @@ class PacketHandler
     {
         throw new NotImplementedException();
     }
+
+    internal static void S_DropRewardHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static void S_GetItemHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static void S_GetGoldHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
 }

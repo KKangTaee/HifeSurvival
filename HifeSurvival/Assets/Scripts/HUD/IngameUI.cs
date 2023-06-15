@@ -48,7 +48,7 @@ public class IngameUI : MonoBehaviour
 
         TMP_def.text  = inStat.def.ToString();
 
-        TMP_hp.text   = inStat.maxHP.ToString();
+        TMP_hp.text   = inStat.hp.ToString();
 
         TMP_gold.text = inGold.ToString();
     }

@@ -70,4 +70,9 @@ class PacketHandler
     {
         throw new NotImplementedException();
     }
+
+    internal static void C_PickRewardHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
 }

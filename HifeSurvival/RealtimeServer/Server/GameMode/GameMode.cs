@@ -400,10 +400,10 @@ namespace Server
                     if (worldItem == null)
                         return;
 
-                    S_DropItem dropItem = new S_DropItem()
+                    S_DropReward dropItem = new S_DropReward()
                     {
                         worldId  = worldItem.worldId,
-                        itemData = worldItem.itemData.ToString(),
+                        // itemData = worldItem.itemData.ToString(),
                         pos      = monsterEntity.pos,
                     };
 
@@ -444,19 +444,47 @@ namespace Server
         }
 
 
-        public void OnRecvGetItem(C_GetItem inPacket)
+        public void OnRecvPickReward(C_PickReward inPacket)
         {
             var player = GetPlayerEntity(inPacket.targetId);
 
             if(player == null)
                return;
 
-            var entityItem = _worldMap.GetItem(inPacket.targetId, inPacket.itemSlotId);
-            
-            // 아이템 장착
-            player.EquipItem(entityItem);
+            var rewardData = _worldMap.PickReward(inPacket.worldId);
 
-            // TODO@taeho.kang 내가 장착에 성공했는지를 클라로 내린다.
+            IPacket packet = null;
+
+            switch((ItemData.EItemType)rewardData.rewardType)
+            {
+                case ItemData.EItemType.GOLD:
+
+                    packet = new S_GetGold()
+                    {
+                        targetId = inPacket.targetId,
+                        worldId = inPacket.worldId,
+                        gold = rewardData.count,
+                    };
+
+                    break;
+
+                case ItemData.EItemType.ITEM:
+
+                    packet = new S_GetItem()
+                    {
+                        targetId = inPacket.targetId,
+                        worldId = inPacket.worldId,
+                        itemSlotId = 1,
+                        item = new Item()
+                        {
+                           
+                        }
+                    };
+
+                    break;
+            }
+
+            _broadcaster.Broadcast(packet);
         }
     }
 }

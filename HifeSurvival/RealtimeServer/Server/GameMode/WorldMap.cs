@@ -118,29 +118,16 @@ namespace Server
         }
 
 
-        public EntityItem GetItem(int inWorldId, int inItemSlotId)
+        public ItemData PickReward(int inWorldId)
         {
             if(ItemDict.TryGetValue(inWorldId, out var worldItem) == false)
             {
-                return null;
-            }
-
-            if(StaticData.Instance.ItemDict.TryGetValue(worldItem.itemData.subType.ToString(), out var item) == false)
-            {
-                return null;
+                HSLogger.GetInstance().Error($"[{nameof(PickReward)}] worldId is wrong : {inWorldId}");
+                return default;
             }
 
             ItemDict.Remove(inWorldId);
-
-            return new EntityItem()
-            {
-                itemSlotId = inItemSlotId,
-                itemKey_Static = worldItem.itemData.subType,
-                str = item.str,
-                def = item.def,
-                hp = item.hp,
-                cooltime = 20, // TODO@taeho.kang 생각좀 해야함.
-            };
+            return worldItem.itemData;
         }
     }
 }

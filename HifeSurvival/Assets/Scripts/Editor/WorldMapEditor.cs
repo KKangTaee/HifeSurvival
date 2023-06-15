@@ -40,7 +40,7 @@ public class WorldMapEditor : Editor
             canGoTile = wm.GetBackgroundCanGoTileList();
 
             wm.SetupToWorldObject();
-            spawnList = wm.GetWorldObject<WorldSpawn>().Select(x => x.GetSpawnData()).ToList();
+            spawnList = wm.GetWorldObjEnumerable<WorldSpawn>().Select(x => x.GetSpawnData()).ToList();
         }
 
         if (GUILayout.Button("Save JsonData", GUILayout.Height(40)) == true)

@@ -32,7 +32,7 @@ namespace Server
             ITEM,
         }
 
-        public int itemType;
+        public int rewardType;
         public int subType;
         public int count;
 
@@ -62,7 +62,7 @@ namespace Server
 
                 itemDataArr[i] = new ItemData()
                 {
-                    itemType = item_type,
+                    rewardType = item_type,
                     subType = sub_type,
                     count = count,
                 };
@@ -73,7 +73,7 @@ namespace Server
 
         public override string ToString()
         {
-            return $"{itemType}:{subType}:{count}";
+            return $"{rewardType}:{subType}:{count}";
         }
     }
 

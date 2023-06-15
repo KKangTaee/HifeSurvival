@@ -105,7 +105,7 @@ namespace Assets.FantasyMonsters.Scripts
             Fade(0, 0.25f, OnDeathCompletedHandler);
         }
 
-        public void Fade(float inEndValue, float inDuration, Action doneCallback)
+        public void Fade(float inEndValue, float inDuration, Action doneCallback = null)
         {
             Sequence sequence = DOTween.Sequence();
 

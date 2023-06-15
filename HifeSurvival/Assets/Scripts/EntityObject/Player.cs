@@ -6,7 +6,7 @@ using System;
 
 
 
-public class Player : EntityObject
+public partial class Player : EntityObject
 {
     [SerializeField] private HeroAnimator _anim;
     [SerializeField] private PlayerUI _playerUI;
@@ -15,21 +15,332 @@ public class Player : EntityObject
 
     [SerializeField] private GameObject _detectRange;
 
-    private WorldMap _worldMap;
+    public override bool IsPlayer => true;
 
     private HashSet<EntityObject> _targetSet;
 
+    private EntityItem[] _itemSlot;
+
     private Action<int> _getItemCallback;
 
+    private WorldMap _worldMap;
+
+    private StateMachine<Player> _stateMachine;
+    
     public bool IsSelf { get; private set; }
 
-    public override bool IsPlayer => true;
+    public override void ChangeState<P>(EStatus inStatus, in P inParam = default) where P : struct
+    {
+        base.ChangeState(inStatus, inParam);
+
+        _stateMachine.ChangeState(inStatus, this, inParam);
+    }
 
 
-    //------------------
-    // state machine
-    //------------------
+    //-----------------
+    // unity events
+    //-----------------
 
+    private void Awake()
+    {
+        _stateMachine = new StateMachine<Player>(
+            new Dictionary<EStatus, IState<Player>>()
+            {
+                {EStatus.IDLE, new IdleState()},
+                {EStatus.MOVE, new MoveState()},
+                {EStatus.DEAD, new DeadState()},
+                {EStatus.ATTACK, new AttackState()},
+                {EStatus.FOLLOW_TARGET, new FollowTargetState()},
+            });
+
+        _targetSet   = new HashSet<EntityObject>();
+    }
+
+
+    //-----------------
+    // functions
+    //-----------------
+
+    public override void Init(Entity inEntity, in Vector3 inPos)
+    {
+        base.Init(inEntity, inPos);
+
+        _detectTrigger.enabled = false;
+        _playerTrigger.enabled = false;
+
+        _playerTrigger.tag = TagName.PLAYER_OTHER;
+        _playerTrigger.gameObject.layer = LayerMask.NameToLayer(LayerName.PLAYER_OTHER);
+
+        _detectRange?.SetActive(false);
+        _playerUI.Init(inEntity.stat.hp);
+
+        _anim.OnIdle();
+    }
+
+
+    public void SetSelf(Action<int> inGetItemCallback)
+    {
+        IsSelf = true;
+
+        SetTrigger();
+
+        _playerTrigger.tag = TagName.PLAEYR_SELF;
+        _detectTrigger.tag = TagName.DETECT_SELF;
+
+        _playerTrigger.gameObject.layer = LayerMask.NameToLayer(LayerName.PLAYER_SELF);
+        _detectTrigger.gameObject.layer = LayerMask.NameToLayer(LayerName.DETECT_SELF);
+
+        _detectRange?.SetActive(true);
+        _getItemCallback = inGetItemCallback;
+    }
+
+
+    public void SetTrigger()
+    {
+        _detectTrigger.enabled = true;
+        _playerTrigger.enabled = true;
+
+        _playerTrigger.AddTriggerEnter((col) =>
+        {
+            // 드랍된 아이템과 접촉했다면..?
+            if(col.CompareTag(TagName.DROP_ITEM) == true)
+            {
+                var dropItem = col.GetComponent<WorldItem>();
+
+                if (dropItem == null)
+                    return;
+
+                // 여기에 브로드캐스팅 처리
+                _getItemCallback?.Invoke(dropItem.WorldId);
+                dropItem.PlayGetItem();
+            }
+        });
+
+        _playerTrigger.AddTriggerStay((col) =>
+        {
+            if (col.CompareTag(TagName.WORLDMAP_WALL) == true)
+            {
+                if (_worldMap == null)
+                    _worldMap = col.gameObject.GetComponentInParent<WorldMap>();
+
+                Vector3 playerPos = transform.position;
+                Vector3 hitPoint = col.ClosestPoint(playerPos);
+
+                _worldMap?.UpdateWallMasking(hitPoint, playerPos);
+            }
+        });
+
+        _playerTrigger.AddTriggerExit((col) =>
+        {
+            if (col.CompareTag(TagName.WORLDMAP_WALL) == true)
+            {
+                if (_worldMap == null)
+                    _worldMap = col.gameObject.GetComponentInParent<WorldMap>();
+
+                _worldMap?.DoneWallMasking();
+            }
+        });
+
+        _detectTrigger.AddTriggerEnter((col) =>
+        {
+            if (col.CompareTag(TagName.PLAYER_OTHER) == true || col.CompareTag(TagName.MONSTER) == true)
+            {
+                var entityObj = col.GetComponent<EntityObject>();
+
+                if (entityObj == null)
+                {
+                    Debug.LogWarning($"[{nameof(SetTrigger)}] col object is null or empty!");
+                    return;
+                }
+
+                if (_targetSet.Contains(entityObj) == false)
+                    _targetSet.Add(entityObj);
+            }
+        });
+
+        _detectTrigger.AddTriggerExit((col) =>
+        {
+            if (col.CompareTag(TagName.PLAYER_OTHER) == true || col.CompareTag(TagName.MONSTER) == true)
+            {
+                var entityObj = col.GetComponent<EntityObject>();
+
+                if (entityObj == null)
+                {
+                    Debug.LogWarning($"[{nameof(SetTrigger)}] col object is null or empty!");
+                    return;
+                }
+                
+                if (_targetSet.Contains(entityObj) == true)
+                    _targetSet.Remove(entityObj);
+            }
+        });
+    }
+
+
+    public void SetItemSlot(EntityItem [] inItemSlot)
+    {
+        _itemSlot = inItemSlot;
+    }
+
+
+    //-------------------
+    // Player State
+    //-------------------
+
+    public override void OnDamaged(int inDamageValue)
+    {
+        _anim.OnDamaged();
+        _playerUI.DecreaseHP(inDamageValue);
+
+        if (IsSelf == true)
+            ActionDisplayUI.Show(ActionDisplayUI.ESpawnType.TAKE_DAMAGE, inDamageValue, GetPos() + Vector3.up);
+    }
+
+
+    public void OnMove(in Vector3 inDir)
+    {
+        _anim.OnWalk(inDir);
+
+        MoveEntity(inDir);
+    }
+
+
+    public void OnMoveLerp(Vector3 inEndPos, Vector3 inDir, Action doneCallback)
+    {
+        SetPoint(inEndPos, Vector3.zero);
+
+        _anim.OnWalk(inDir);
+
+        MoveLerpEntity(() => inEndPos,
+                       dir => { },
+                       null,
+                       doneCallback);
+    }
+
+
+    public void OnIdle(in Vector3 inPos, in Vector3 inDir = default)
+    {
+        _anim.OnIdle();
+
+        StopMoveEntity(inPos);
+
+        RemovePoint();
+    }
+
+
+    public void OnFollowTarget(EntityObject inTarget, Action<Vector3> dirCallback, Action doneCallback)
+    {
+        MoveLerpEntity(() => inTarget.GetPos(),
+                       dir =>
+                       {
+                           _anim.OnWalk(dir);
+                           dirCallback?.Invoke(dir);
+                       },
+                       () => CanAttack(inTarget.GetPos())
+                       , doneCallback);
+    }
+
+
+    public void OnAttack(in Vector3 inDir)
+    {
+        _anim.OnAttack(inDir);
+
+        StopMoveEntity(GetPos());
+    }
+
+
+    public void UpdateHp()
+    {
+        _playerUI.SetMaxHP(TargetEntity.stat.hp);
+        _playerUI.SetHP(TargetEntity.stat.currHP);
+    }
+
+
+    public void UpdateItemSlot()
+    {
+        if (_itemSlot == null)
+            return;
+
+        foreach(var item in _itemSlot)
+        {
+            // TODO@taeho.kang 업데이트 처리
+        }
+    }
+
+
+    public void OnDead()
+    {
+        _playerUI.SetHP(0);
+
+        _anim.OnDead();
+
+        _targetSet?.Clear();
+    }
+
+
+    public bool CanAttack(in Vector3 inPos)
+    {
+        return Vector3.Distance(inPos, transform.position) < TargetEntity.stat.attackRange;
+    }
+
+
+    public EntityObject GetNearestTarget()
+    {
+        float minDistance = float.MaxValue;
+        EntityObject result = null;
+
+        foreach (var target in _targetSet)
+        {
+            if (target == null)
+                continue;
+
+            if (target.Status == EntityObject.EStatus.DEAD)
+                continue;
+
+            float distance = Vector2.Distance(transform.position, target.transform.position);
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                result = target;
+            }
+        }
+
+        return result;
+    }
+
+
+    [SerializeField] private GameObject _pointPrefab;
+    private List<GameObject> _pointList = new List<GameObject>();
+
+    public void SetPoint(Vector3 inPos, Vector3 inDir)
+    {
+        var inst = Instantiate(_pointPrefab);
+        inst.transform.position = inPos;
+
+        Vector2 direction = new Vector2(inDir.x, inDir.y); // 각도를 계산하려는 벡터
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+        inst.transform.localRotation = Quaternion.Euler(0, 0, angle);
+
+        _pointList.Add(inst);
+    }
+
+    public void RemovePoint()
+    {
+        foreach (var point in _pointList)
+            Destroy(point);
+
+        _pointList.Clear();
+    }
+}
+
+
+//------------------
+// state machine
+//------------------
+
+public partial class Player
+{
     public class FollowTargetState : IState<Player>
     {
         public void Enter<P>(Player inSelf, in P inParam) where P : struct
@@ -183,312 +494,4 @@ public class Player : EntityObject
                 inPlayer.OnMove(inMoveParam.dir);
         }
     }
-
-
-    private StateMachine<Player> _stateMachine;
-
-    public override void ChangeState<P>(EStatus inStatus, in P inParam = default) where P : struct
-    {
-        base.ChangeState(inStatus, inParam);
-
-        _stateMachine.ChangeState(inStatus, this, inParam);
-    }
-
-
-    //-----------------
-    // unity events
-    //-----------------
-
-    private void Awake()
-    {
-        _stateMachine = new StateMachine<Player>(
-            new Dictionary<EStatus, IState<Player>>()
-            {
-                {EStatus.IDLE, new IdleState()},
-                {EStatus.MOVE, new MoveState()},
-                {EStatus.DEAD, new DeadState()},
-                {EStatus.ATTACK, new AttackState()},
-                {EStatus.FOLLOW_TARGET, new FollowTargetState()},
-            });
-
-        _targetSet = new HashSet<EntityObject>();
-    }
-
-
-    private void Start()
-    {
-        _anim.OnIdle();
-    }
-
-
-    //-----------------
-    // functions
-    //-----------------
-
-    public override void Init(int inTargetId, EntityStat inStat, in Vector3 inPos)
-    {
-        base.Init(inTargetId, inStat, inPos);
-
-        _detectTrigger.enabled = false;
-        _playerTrigger.enabled = false;
-
-        _playerTrigger.tag = TagName.PLAYER_OTHER;
-        _playerTrigger.gameObject.layer = LayerMask.NameToLayer(LayerName.PLAYER_OTHER);
-
-        _detectRange?.SetActive(false);
-        _playerUI.Init(Stat.maxHP);
-
-        _anim.OnIdle();
-    }
-
-
-    public void SetSelf(Action<int> inGetItemCallback)
-    {
-        IsSelf = true;
-
-        SetTrigger();
-
-        _playerTrigger.tag = TagName.PLAEYR_SELF;
-        _detectTrigger.tag = TagName.DETECT_SELF;
-
-        _playerTrigger.gameObject.layer = LayerMask.NameToLayer(LayerName.PLAYER_SELF);
-        _detectTrigger.gameObject.layer = LayerMask.NameToLayer(LayerName.DETECT_SELF);
-
-        _detectRange?.SetActive(true);
-        _getItemCallback = inGetItemCallback;
-    }
-
-
-    public void SetTrigger()
-    {
-        _detectTrigger.enabled = true;
-        _playerTrigger.enabled = true;
-
-        _playerTrigger.AddTriggerEnter((col) =>
-        {
-            // 드랍된 아이템과 접촉했다면..?
-            if(col.CompareTag(TagName.DROP_ITEM) == true)
-            {
-                var dropItem = col.GetComponent<WorldItem>();
-
-                if (dropItem == null)
-                    return;
-
-                // 여기에 브로드캐스팅 처리
-                _getItemCallback?.Invoke(dropItem.WorldId);
-                dropItem.PlayGetItem();
-            }
-        });
-
-        _playerTrigger.AddTriggerStay((col) =>
-        {
-            if (col.CompareTag(TagName.WORLDMAP_WALL) == true)
-            {
-                if (_worldMap == null)
-                    _worldMap = col.gameObject.GetComponentInParent<WorldMap>();
-
-                Vector3 playerPos = transform.position;
-                Vector3 hitPoint = col.ClosestPoint(playerPos);
-
-                _worldMap?.UpdateWallMasking(hitPoint, playerPos);
-            }
-        });
-
-        _playerTrigger.AddTriggerExit((col) =>
-        {
-            if (col.CompareTag(TagName.WORLDMAP_WALL) == true)
-            {
-                if (_worldMap == null)
-                    _worldMap = col.gameObject.GetComponentInParent<WorldMap>();
-
-                _worldMap?.DoneWallMasking();
-            }
-        });
-
-        _detectTrigger.AddTriggerEnter((col) =>
-        {
-            if (col.CompareTag(TagName.PLAYER_OTHER) == true || col.CompareTag(TagName.MONSTER) == true)
-            {
-                var entityObj = col.GetComponent<EntityObject>();
-
-                if (entityObj == null)
-                {
-                    Debug.LogWarning($"[{nameof(SetTrigger)}] col object is null or empty!");
-                    return;
-                }
-
-                if (_targetSet.Contains(entityObj) == false)
-                    _targetSet.Add(entityObj);
-            }
-        });
-
-        _detectTrigger.AddTriggerExit((col) =>
-        {
-            if (col.CompareTag(TagName.PLAYER_OTHER) == true || col.CompareTag(TagName.MONSTER) == true)
-            {
-                var entityObj = col.GetComponent<EntityObject>();
-
-                if (entityObj == null)
-                {
-                    Debug.LogWarning($"[{nameof(SetTrigger)}] col object is null or empty!");
-                    return;
-                }
-                
-                if (_targetSet.Contains(entityObj) == true)
-                    _targetSet.Remove(entityObj);
-            }
-        });
-    }
-
-
-
-
-    //-------------------
-    // Player State
-    //-------------------
-
-    public override void OnDamaged(int inDamageValue)
-    {
-        _anim.OnDamaged();
-        _playerUI.DecreaseHP(inDamageValue);
-
-        if (IsSelf == true)
-            ActionDisplayUI.Show(ActionDisplayUI.ESpawnType.TAKE_DAMAGE, inDamageValue, GetPos() + Vector3.up);
-    }
-
-
-    public void OnMove(in Vector3 inDir)
-    {
-        _anim.OnWalk(inDir);
-
-        MoveEntity(inDir);
-    }
-
-
-    public void OnMoveLerp(Vector3 inEndPos, Vector3 inDir, Action doneCallback)
-    {
-        SetPoint(inEndPos, Vector3.zero);
-
-        _anim.OnWalk(inDir);
-
-        MoveLerpEntity(() => inEndPos,
-                       dir => { },
-                       null,
-                       doneCallback);
-    }
-
-
-    public void OnIdle(in Vector3 inPos, in Vector3 inDir = default)
-    {
-        _anim.OnIdle();
-
-        StopMoveEntity(inPos);
-
-        RemovePoint();
-    }
-
-
-    public void OnFollowTarget(EntityObject inTarget, Action<Vector3> dirCallback, Action doneCallback)
-    {
-        MoveLerpEntity(() => inTarget.GetPos(),
-                       dir =>
-                       {
-                           _anim.OnWalk(dir);
-                           dirCallback?.Invoke(dir);
-                       },
-                       () => CanAttack(inTarget.GetPos())
-                       , doneCallback);
-    }
-
-
-    public void OnAttack(in Vector3 inDir)
-    {
-        _anim.OnAttack(inDir);
-
-        StopMoveEntity(GetPos());
-    }
-
-
-    public void UpdateHp()
-    {
-        _playerUI.SetMaxHP(Stat.maxHP);
-        _playerUI.SetHP(Stat.currHP);
-    }
-
-
-    public void OnDead()
-    {
-        _playerUI.SetHP(0);
-
-        _anim.OnDead();
-
-        _targetSet?.Clear();
-    }
-
-
-    public bool CanAttack(in Vector3 inPos)
-    {
-        return Vector3.Distance(inPos, transform.position) < Stat.attackRange;
-    }
-
-
-    public EntityObject GetNearestTarget()
-    {
-        float minDistance = float.MaxValue;
-        EntityObject result = null;
-
-        foreach (var target in _targetSet)
-        {
-            if (target == null)
-                continue;
-
-            if (target.Status == EntityObject.EStatus.DEAD)
-                continue;
-
-            float distance = Vector2.Distance(transform.position, target.transform.position);
-            if (distance < minDistance)
-            {
-                minDistance = distance;
-                result = target;
-            }
-        }
-
-        return result;
-    }
-
-
-    [SerializeField] private GameObject _pointPrefab;
-    private List<GameObject> _pointList = new List<GameObject>();
-
-    public void SetPoint(Vector3 inPos, Vector3 inDir)
-    {
-        var inst = Instantiate(_pointPrefab);
-        inst.transform.position = inPos;
-
-        Vector2 direction = new Vector2(inDir.x, inDir.y); // 각도를 계산하려는 벡터
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-
-        inst.transform.localRotation = Quaternion.Euler(0, 0, angle);
-
-        _pointList.Add(inst);
-    }
-
-    public void RemovePoint()
-    {
-        foreach (var point in _pointList)
-            Destroy(point);
-
-        _pointList.Clear();
-    }
-
-}
-
-
-public interface IState<T> where T : EntityObject
-{
-    void Enter<P>(T inSelf, in P inParam) where P : struct;
-
-    void Update<P>(T inSelf, in P inParam) where P : struct;
-
-    void Exit();
 }

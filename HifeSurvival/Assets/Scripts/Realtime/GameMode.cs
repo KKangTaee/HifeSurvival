@@ -512,4 +512,7 @@ public class GameMode
 
         OnRecvGetGoldHandler?.Invoke(inPacket);
     }
+
+
+
 }

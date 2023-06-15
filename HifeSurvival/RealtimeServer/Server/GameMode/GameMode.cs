@@ -399,7 +399,7 @@ namespace Server
                     // worldItem이 null이라는 것은 확률결과 드랍을 못한것
                     if (worldItem == null)
                         return;
-                        
+
                     S_DropReward dropItem = new S_DropReward()
                     {
                         worldId  = worldItem.worldId,
@@ -483,6 +483,7 @@ namespace Server
 
                     break;
             }
+
 
             _broadcaster.Broadcast(packet);
         }

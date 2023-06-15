@@ -25,8 +25,8 @@ public class IngameUI : MonoBehaviour
 
     [SerializeField] RectTransform  RT_respawnPanel;
     [SerializeField] TMP_Text       TMP_respawnCount;
-
-    [SerializeField] KDView[]       _kdViewArr;
+    [SerializeField] KDView []      _kdViewArr;
+    [SerializeField] ItemSlotList   _itemSlotList;
 
     IDisposable _respawnTimer;
 
@@ -37,6 +37,7 @@ public class IngameUI : MonoBehaviour
 
         GameMode.Instance.OnRecvDeadHandler    += OnRecvDead;
         GameMode.Instance.OnRecvRespawnHandler += OnRecvRespawn;
+        GameMode.Instance.OnRecvGetItemHandler += OnRecvGetItem;
 
         SetKDView();
     }
@@ -95,12 +96,6 @@ public class IngameUI : MonoBehaviour
     }
 
 
-    public void OnRecvRespawn(Entity inPacket)
-    {
-        HideRespawnTimer();
-    }
-
-
     public void ShowRespawnTimer(int totalTime)
     {
         RT_respawnPanel?.gameObject.SetActive(true);
@@ -133,5 +128,25 @@ public class IngameUI : MonoBehaviour
         _respawnTimer?.Dispose();
         RT_respawnPanel?.gameObject.SetActive(false);
         RT_kdList?.gameObject.SetActive(true);
+    }
+
+
+    //---------------
+    // Server
+    //---------------
+
+    public void OnRecvRespawn(Entity inEntity)
+    {
+        HideRespawnTimer();
+    }
+
+    public void OnRecvGetItem(PlayerEntity inEntity)
+    {
+        
+    }
+
+    public void OnRecvGetGold(S_GetGold inPacket)
+    {
+
     }
 }

@@ -52,6 +52,7 @@ public class PlayerEntity : Entity
     public int    heroId;
     public int    gold;
 
+    public bool   isSelf;
     public bool   isReady;
 
     public EntityItem[] itemSlot = new EntityItem[4];

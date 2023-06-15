@@ -27,9 +27,9 @@ namespace Server
 
         public enum ERewardType
         {
-            GOLD,
+            GOLD = 1,
 
-            ITEM,
+            ITEM = 2,
         }
 
         public int rewardType;

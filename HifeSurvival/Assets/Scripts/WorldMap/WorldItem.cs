@@ -82,6 +82,7 @@ public class WorldItem : WorldObjectBase
     {
         _col.enabled = false;
 
+        Debug.LogError("sdfsdfsdgdsfgdfg");
         transform.DOMoveY(transform.position.y + jumpHeight, 1.1f).OnComplete(() =>
         {
             // 획득 후 풀에 넣는다.
@@ -89,60 +90,5 @@ public class WorldItem : WorldObjectBase
         });
 
         _targetAnim.Fade(0, 1.1f);
-    }
-}
-
-
-public struct ItemData
-{
-
-    //--------------
-    // enums
-    //--------------
-
-    public enum EItemType
-    {
-        GOLD = 1,
-
-        ITEM = 2,
-    }
-
-    public int itemType;
-    public int subType;
-    public int count;
-
-    public static ItemData[] Parse(string inItemIds)
-    {
-        var itemIdsSet = inItemIds.Split(',');
-
-        var itemDataArr = new ItemData[itemIdsSet.Length];
-
-        for (int i = 0; i < itemIdsSet.Length; i++)
-        {
-            var split = itemIdsSet[i].Split(':');
-
-            if (split?.Length != 3)
-            {
-                Debug.LogError($"itemData is wrong! : {itemIdsSet[i]}");
-                return null;
-            }
-
-            if (int.TryParse(split[0], out var item_type) == false ||
-               int.TryParse(split[1], out var sub_type) == false ||
-               int.TryParse(split[2], out var count) == false)
-            {
-                Debug.LogError($"itemData is wrong! : {itemIdsSet[i]}");
-                return null;
-            }
-
-            itemDataArr[i] = new ItemData()
-            {
-                itemType = item_type,
-                subType = sub_type,
-                count = count,
-            };
-        }
-
-        return itemDataArr;
     }
 }

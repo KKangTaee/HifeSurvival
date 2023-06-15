@@ -48,7 +48,7 @@ public class GameMode
     public event Action<Entity>        OnRecvRespawnHandler;
     public event Action<PlayerEntity>  OnRecvUpdateStatHandler;
     public event Action<S_DropReward>  OnRecvDropRewardHandler;
-    public event Action<PlayerEntity>  OnRecvGetItemHandler;
+    public event Action<S_GetItem>     OnRecvGetItemHandler;
     public event Action<S_GetGold>     OnRecvGetGoldHandler;
 
 
@@ -500,7 +500,7 @@ public class GameMode
 
         player.itemSlot[inPacket.itemSlotId] = new EntityItem(inPacket.item);
 
-        OnRecvGetItemHandler?.Invoke(player);
+        OnRecvGetItemHandler?.Invoke(inPacket);
     }
 
 

@@ -112,7 +112,7 @@ public partial class Player : EntityObject
 
                 // 여기에 브로드캐스팅 처리
                 _getItemCallback?.Invoke(dropItem.WorldId);
-                dropItem.PlayGetItem();
+                // dropItem.PlayGetItem();
             }
         });
 

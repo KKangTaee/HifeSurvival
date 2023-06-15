@@ -238,7 +238,7 @@ public sealed class PlayerController : EntityObjectController<Player>
     }
 
 
-    public void OnRecvGetItem(PlayerEntity inEntity)
+    public void OnRecvGetItem(S_GetItem inEntity)
     {
         var player = GetEntityObject(inEntity.targetId);
         player.UpdateItemSlot();

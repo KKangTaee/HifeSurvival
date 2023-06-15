@@ -33,6 +33,9 @@ public class WorldMap : MonoBehaviour
         _objectPoolController = ControllerManager.Instance.GetController<ObjectPoolController>();
 
         GameMode.Instance.OnRecvDropRewardHandler += OnRecvDropReward;
+        GameMode.Instance.OnRecvGetItemHandler += OnRecvGetItem;
+        GameMode.Instance.OnRecvGetGoldHandler += OnRecvGetGold;
+
     }
 
 
@@ -193,7 +196,7 @@ public class WorldMap : MonoBehaviour
 
         if (itemObj == null)
         {
-            Debug.LogError($"[{nameof(OnRecvGetItem)}] itemObject is null or empty!");
+            Debug.LogError($"[{nameof(PickReward)}] itemObject is null or empty!");
             return;
         }
 

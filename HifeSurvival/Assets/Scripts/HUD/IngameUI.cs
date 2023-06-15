@@ -140,9 +140,9 @@ public class IngameUI : MonoBehaviour
         HideRespawnTimer();
     }
 
-    public void OnRecvGetItem(PlayerEntity inEntity)
+    public void OnRecvGetItem(S_GetItem inEntity)
     {
-        
+
     }
 
     public void OnRecvGetGold(S_GetGold inPacket)

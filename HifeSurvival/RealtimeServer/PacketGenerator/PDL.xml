@@ -1,155 +1,155 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <PDL>
 
-	<packet name="C_JoinToGame">
-		<string name ="userId"/>
-		<string name ="userName"/>
-	</packet>
+  <packet name="C_JoinToGame">
+    <string name ="userId"/>
+    <string name ="userName"/>
+  </packet>
 
-	<packet name = "S_JoinToGame">
-		<list name = "JoinPlayer">
-			<string name = "userId"/>
-			<string name = "userName"/>
-			<int name = "targetId"/>
-			<int name ="heroId"/>
-		</list>
-		<int name="roomId"/>
-	</packet>
+  <packet name = "S_JoinToGame">
+    <list name = "JoinPlayer">
+      <string name = "userId"/>
+      <string name = "userName"/>
+      <int name = "targetId"/>
+      <int name ="heroId"/>
+    </list>
+    <int name="roomId"/>
+  </packet>
 
-	<packet name ="S_LeaveToGame">
-		<string name = "userId"/>
-		<int name ="targetId"/>
-	</packet>
+  <packet name ="S_LeaveToGame">
+    <string name = "userId"/>
+    <int name ="targetId"/>
+  </packet>
 
-	<packet name="CS_SelectHero">
-		<int name="targetId"/>
-		<int name="heroId"/>
-	</packet>
+  <packet name="CS_SelectHero">
+    <int name="targetId"/>
+    <int name="heroId"/>
+  </packet>
 
-	<packet name="CS_ReadyToGame">
-		<int name ="targetId"/>
-	</packet>
+  <packet name="CS_ReadyToGame">
+    <int name ="targetId"/>
+  </packet>
 
-	<packet name="S_Countdown">
-		<int name ="countdownSec"/>
-	</packet>
+  <packet name="S_Countdown">
+    <int name ="countdownSec"/>
+  </packet>
 
-	<packet name="S_StartGame">
-		<int name ="playTimeSec"/>
-		<class_PlayerSpawn_list name ="player"/>
-		<class_MonsterSpawn_list name ="monster"/>	
-	</packet>
+  <packet name="S_StartGame">
+    <int name ="playTimeSec"/>
+    <class_PlayerSpawn_list name ="player"/>
+    <class_MonsterSpawn_list name ="monster"/>
+  </packet>
 
-	<packet name ="S_SpawnMonster">
-		<class_MonsterSpawn_list name ="monster"/>	
-	</packet>
+  <packet name ="S_SpawnMonster">
+    <class_MonsterSpawn_list name ="monster"/>
+  </packet>
 
-	<packet name ="CS_Attack">
-		<bool name = "toIsPlayer"/>
-		<bool name = "fromIsPlayer"/>
-		<int name ="toId"/>
-		<int name ="fromId"/>
-		<struct_Vec3 name ="fromPos"/>
-		<struct_Vec3 name ="fromDir"/>
-		<int name ="attackValue"/>
-	</packet>
+  <packet name ="CS_Attack">
+    <bool name = "toIsPlayer"/>
+    <bool name = "fromIsPlayer"/>
+    <int name ="toId"/>
+    <int name ="fromId"/>
+    <struct_Vec3 name ="fromPos"/>
+    <struct_Vec3 name ="fromDir"/>
+    <int name ="attackValue"/>
+  </packet>
 
-	<packet name ="CS_Move">
-		<int name ="targetId"/>
-		<bool name ="isPlayer"/>
-		<struct_Vec3 name ="pos"/>
-		<struct_Vec3 name ="dir"/>
-		<float name ="speed"/>
-	</packet>
+  <packet name ="CS_Move">
+    <int name ="targetId"/>
+    <bool name ="isPlayer"/>
+    <struct_Vec3 name ="pos"/>
+    <struct_Vec3 name ="dir"/>
+    <float name ="speed"/>
+  </packet>
 
-	<packet name ="CS_StopMove">
-		<int name ="targetId"/>
-		<bool name ="isPlayer"/>
-		<struct_Vec3 name ="pos"/>
-		<struct_Vec3 name ="dir"/>
-	</packet>
+  <packet name ="CS_StopMove">
+    <int name ="targetId"/>
+    <bool name ="isPlayer"/>
+    <struct_Vec3 name ="pos"/>
+    <struct_Vec3 name ="dir"/>
+  </packet>
 
-	<packet name ="S_Dead">
-		<bool name ="toIsPlayer"/>
-		<bool name ="fromIsPlayer"/>
-		<int name  ="toId"/>
-		<int name  ="fromId"/>
-		<int name  ="respawnTime"/>
-	</packet>
+  <packet name ="S_Dead">
+    <bool name ="toIsPlayer"/>
+    <bool name ="fromIsPlayer"/>
+    <int name  ="toId"/>
+    <int name  ="fromId"/>
+    <int name  ="respawnTime"/>
+  </packet>
 
-	<packet name ="S_Respawn">
-		<int name ="targetId"/>
-		<bool name ="isPlayer"/>
-		<struct_Vec3 name ="pos"/>
-		<struct_Stat name ="stat"/>
-	</packet>
+  <packet name ="S_Respawn">
+    <int name ="targetId"/>
+    <bool name ="isPlayer"/>
+    <struct_Vec3 name ="pos"/>
+    <struct_Stat name ="stat"/>
+  </packet>
 
-	<packet name = "CS_UpdateStat">
-		<int name ="targetId"/>
-		<int name ="usedGold"/>
-		<struct_Stat name ="updateStat"/>
-	</packet>
+  <packet name = "CS_UpdateStat">
+    <int name ="targetId"/>
+    <int name ="usedGold"/>
+    <struct_Stat name ="updateStat"/>
+  </packet>
 
-	<packet name ="S_DropReward">
-		<int name="worldId"/>
-		<int name="rewardType"/>
-		<struct_Vec3 name ="pos"/>
-	</packet>
+  <packet name ="S_DropReward">
+    <int name="worldId"/>
+    <int name="rewardType"/>
+    <struct_Vec3 name ="pos"/>
+  </packet>
 
-	<packet name ="C_PickReward">
-		<int name= "targetId"/>
-		<int name= "worldId"/>
-	</packet>
+  <packet name ="C_PickReward">
+    <int name= "targetId"/>
+    <int name= "worldId"/>
+  </packet>
 
-	<packet name ="S_GetItem">
-		<int name ="targetId"/>
-		<int name ="worldId"/>
-		<int name ="itemSlotId"/>
-		<struct_Item name="item"/>
-	</packet>
+  <packet name ="S_GetItem">
+    <int name ="targetId"/>
+    <int name ="worldId"/>
+    <int name ="itemSlotId"/>
+    <struct_Item name="item"/>
+  </packet>
 
-	<packet name ="S_GetGold">
-		<int name ="targetId"/>
-		<int name ="worldId"/>
-		<int name ="gold"/>
-	</packet>
+  <packet name ="S_GetGold">
+    <int name ="targetId"/>
+    <int name ="worldId"/>
+    <int name ="gold"/>
+  </packet>
 
-	<struct name="Vec3">
-		<float name ="x"/>
-		<float name ="y"/>
-		<float name ="z"/>
-	</struct>
+  <struct name="Vec3">
+    <float name ="x"/>
+    <float name ="y"/>
+    <float name ="z"/>
+  </struct>
 
-	<struct name ="Stat">
-		<int name ="str"/>
-		<int name ="def"/>
-		<int name ="hp"/>
-		<float name = "moveSpeed"/>
-		<float name = "attackSpeed"/>
-	</struct>
+  <struct name ="Stat">
+    <int name ="str"/>
+    <int name ="def"/>
+    <int name ="hp"/>
+    <float name = "moveSpeed"/>
+    <float name = "attackSpeed"/>
+  </struct>
 
-	<struct name = "Item">
-		<int name ="itemKey"/>
-		<int name ="level"/>
-		<int name ="str"/>
-		<int name ="def"/>
-		<int name ="hp"/>
-		<int name ="cooltime"/>
-		<bool name ="canUse"/>
-	</struct>
+  <struct name = "Item">
+    <int name ="itemKey"/>
+    <int name ="level"/>
+    <int name ="str"/>
+    <int name ="def"/>
+    <int name ="hp"/>
+    <int name ="cooltime"/>
+    <bool name ="canUse"/>
+  </struct>
 
-	<class name ="PlayerSpawn">
-		<int name="targetId"/>
-		<int name="herosKey"/>
-		<struct_Vec3 name ="pos"/>
-	</class>
+  <class name ="PlayerSpawn">
+    <int name="targetId"/>
+    <int name="herosKey"/>
+    <struct_Vec3 name ="pos"/>
+  </class>
 
-	<class name ="MonsterSpawn">
-		<int name="targetId"/>
-		<int name ="monstersKey"/>
-		<int name ="groupId"/>
-		<int name ="grade"/>
-		<struct_Vec3 name="pos"/>
-	</class>
+  <class name ="MonsterSpawn">
+    <int name="targetId"/>
+    <int name ="monstersKey"/>
+    <int name ="groupId"/>
+    <int name ="grade"/>
+    <struct_Vec3 name="pos"/>
+  </class>
 
 </PDL>

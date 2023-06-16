@@ -65,7 +65,7 @@ namespace Server
         {
             JobTimer.Instance.Push(() =>
             {
-                stat.AddCurrHp(stat.maxHp);
+                stat.AddCurrHp(stat.hp);
                 OnIdle();
 
                 S_Respawn respawn = new S_Respawn()

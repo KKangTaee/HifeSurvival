@@ -48,7 +48,7 @@ namespace Server
 
                 if (split?.Length != 3)
                 {
-                    HSLogger.GetInstance().Error($"itemData is wrong! : {itemIdsSet[i]}");
+                    Logger.GetInstance().Error($"itemData is wrong! : {itemIdsSet[i]}");
                     return null;
                 }
 
@@ -56,7 +56,7 @@ namespace Server
                    int.TryParse(split[1], out var sub_type) == false ||
                    int.TryParse(split[2], out var count) == false)
                 {
-                    HSLogger.GetInstance().Error($"itemData is wrong! : {itemIdsSet[i]}");
+                    Logger.GetInstance().Error($"itemData is wrong! : {itemIdsSet[i]}");
                     return null;
                 }
 

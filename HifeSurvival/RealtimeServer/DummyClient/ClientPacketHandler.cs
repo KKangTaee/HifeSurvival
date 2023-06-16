@@ -72,12 +72,27 @@ public class ClientPacketHandler : PacketHandler
         throw new NotImplementedException();
     }
 
-    public override void S_DropItemHandler(PacketSession session, IPacket packet)
+    public override void S_SpawnMonsterHandler(PacketSession session, IPacket packet)
     {
         throw new NotImplementedException();
     }
 
-    public override void C_GetItemHandler(PacketSession session, IPacket packet)
+    public override void S_DropRewardHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void C_PickRewardHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void S_GetItemHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void S_GetGoldHandler(PacketSession session, IPacket packet)
     {
         throw new NotImplementedException();
     }

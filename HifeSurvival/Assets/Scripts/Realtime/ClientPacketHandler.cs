@@ -77,18 +77,32 @@ public class ClientPacketHandler : PacketHandler
         GameMode.Instance.OnRecvUpdateStat(updateStat);
     }
 
-    public override void S_DropItemHandler(PacketSession session, IPacket packet)
-    {
-        S_DropItem dropItem = packet as S_DropItem;
-        GameMode.Instance.OnRecvDropItem(dropItem);
-    }
-
     public override void C_JoinToGameHandler(PacketSession session, IPacket packet)
     {
         throw new NotImplementedException();
     }
 
-    public override void C_GetItemHandler(PacketSession session, IPacket packet)
+    public override void S_SpawnMonsterHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void S_DropRewardHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void C_PickRewardHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void S_GetItemHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void S_GetGoldHandler(PacketSession session, IPacket packet)
     {
         throw new NotImplementedException();
     }

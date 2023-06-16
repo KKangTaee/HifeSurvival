@@ -73,6 +73,8 @@ public class NetworkManager : MonoBehaviour, IJobQueue
             endPoint = new IPEndPoint(IPAddress.Parse(inIpAddr), 7777);
         }
 
+        PacketManager.Instance.BindHandler(new ClientPacketHandler());
+
         // Debug.LogWarning($"접속IP : {endPoint}");
 
         // endPoint = new IPEndPoint(IPAddress.Parse("192.168.0.3"), 7777);

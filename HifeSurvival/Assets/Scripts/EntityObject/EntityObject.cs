@@ -23,23 +23,25 @@ public abstract class EntityObject : MonoBehaviour
 
     [SerializeField] private MoveMachine _moveMachine;
 
-    public int TargetId      { get; protected set;}
-    public EStatus Status    { get; private set; }
-    public EntityStat Stat   { get; protected set; }
+    public Entity TargetEntity { get; protected set; }
+    public int TargetId        { get; protected set;}
+    public EStatus Status      { get; protected set; }
+    
+    // public EntityStat Stat   { get; protected set; }
 
-    public abstract bool IsPlayer { get;}
-
+    public abstract bool IsPlayer { get; }
 
 
     //-------------
     // virtual
     //-------------
 
-    public virtual void Init(int inTargetId, EntityStat inStat, in Vector3 inPos)
+    public virtual void Init(Entity inEntity, in Vector3 inPos)
     {
-        TargetId = inTargetId;
-        Stat = inStat;
-
+        TargetId = inEntity.targetId;
+        TargetEntity = inEntity;
+        
+        // Stat = inStat;
         SetPos(inPos);
     }
 
@@ -76,12 +78,12 @@ public abstract class EntityObject : MonoBehaviour
 
     public void MoveEntity(in Vector3 inDir)
     {
-        _moveMachine.Move(inDir, Stat.moveSpeed);
+        _moveMachine.Move(inDir, TargetEntity.stat.moveSpeed);
     }
 
     public void MoveLerpEntity(Func<Vector3> inEndFunc, Action<Vector3> inDirCallback, Func<bool> inForceStopFunc, Action inDoneCallback)
     {
-        _moveMachine.MoveLerpV2(inSpeed: Stat.moveSpeed,
+        _moveMachine.MoveLerpV2(inSpeed: TargetEntity.stat.moveSpeed,
                                 inEndPosFunc: inEndFunc,
                                 inUpdateRatio: 0.25f,
                                 updateCallback: inDirCallback,
@@ -93,4 +95,13 @@ public abstract class EntityObject : MonoBehaviour
     {
         _moveMachine.MoveStop(inPos);
     }
+}
+
+public interface IState<T> where T : EntityObject
+{
+    void Enter<P>(T inSelf, in P inParam) where P : struct;
+
+    void Update<P>(T inSelf, in P inParam) where P : struct;
+
+    void Exit();
 }

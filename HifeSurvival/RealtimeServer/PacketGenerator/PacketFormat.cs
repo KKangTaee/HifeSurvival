@@ -214,6 +214,24 @@ public List<{0}> {1}List = new List<{0}>();";
 	}}	
 }}";
 
+		public static string classFormat =
+@"public class {0}
+{{
+	{1}
+
+	public void Read(ReadOnlySpan<byte> s, ref ushort count)
+	{{
+		{2}
+	}}
+
+	public bool Write(Span<byte> s, ref ushort count)
+	{{
+		bool success = true;
+		{3}
+		return success;
+	}}	
+}}";
+
 		// {0} 변수 이름
 		// {1} To~ 변수 형식
 		// {2} 변수 형식

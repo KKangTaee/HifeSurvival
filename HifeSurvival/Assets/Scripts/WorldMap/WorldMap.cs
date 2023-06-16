@@ -15,7 +15,7 @@ public class WorldMap : MonoBehaviour
 
     [SerializeField] private Transform  _objectRoot;
 
-    private Dictionary<Type, List<WorldObjectBase>> _worldObjDic;
+    private Dictionary<Type, List<WorldObjectBase>> _worldObjDict;
     private Dictionary<Vector3Int, WorldTile> _bgTileDic;
     
     private Material _wallMat;
@@ -32,7 +32,10 @@ public class WorldMap : MonoBehaviour
 
         _objectPoolController = ControllerManager.Instance.GetController<ObjectPoolController>();
 
-        GameMode.Instance.OnRecvDropItemHandler += OnRecvDropItem;
+        GameMode.Instance.OnRecvDropRewardHandler   += OnRecvDropReward;
+        GameMode.Instance.OnRecvGetItemHandler      += OnRecvGetItem;
+        GameMode.Instance.OnRecvGetGoldHandler      += OnRecvGetGold;
+
     }
 
 
@@ -45,7 +48,7 @@ public class WorldMap : MonoBehaviour
 
     public void SetupToWorldObject()
     {
-        _worldObjDic = new Dictionary<Type, List<WorldObjectBase>>();
+        _worldObjDict = new Dictionary<Type, List<WorldObjectBase>>();
 
         var typeArr = Assembly.GetAssembly(typeof(WorldObjectBase)).GetTypes();
         var derivedTypes = typeArr.Where(x => x.IsClass == true &&
@@ -53,14 +56,9 @@ public class WorldMap : MonoBehaviour
                                               x.IsSubclassOf(typeof(WorldObjectBase)))
                                   .ToList();
 
-        foreach (var type in derivedTypes)
-        {
-            _worldObjDic.Add(type, new List<WorldObjectBase>());
-        }
 
         var stack = new Stack<Transform>();
         stack.Push(_objectRoot);
-
 
         while (stack.Count > 0)
         {
@@ -73,23 +71,13 @@ public class WorldMap : MonoBehaviour
                 if (worldObj != null)
                 {
                     var type = worldObj.GetType();
-
-                    if (_worldObjDic.ContainsKey(type) == true)
-                        _worldObjDic[type].Add(worldObj);
-
+                    AddWorldObject(worldObj);
                 }
 
                 if (child.childCount > 0)
                     stack.Push(child);
             }
         }
-    }
-
-
-    public IEnumerable<T> GetWorldObject<T>() where T : WorldObjectBase
-    {
-        return _worldObjDic.TryGetValue(typeof(T), out var list) ? list.Cast<T>()
-                                                                 : Enumerable.Empty<T>();
     }
 
     public void SetPosWallMask(Vector3 inWorldPos)
@@ -117,6 +105,37 @@ public class WorldMap : MonoBehaviour
     public void DoneWallMasking()
     {
         SetPosWallMask(new Vector3(-9999, -9999, -9999));
+    }
+
+
+    public IEnumerable<T> GetWorldObjEnumerable<T>() where T : WorldObjectBase
+    {
+        return _worldObjDict.TryGetValue(typeof(T), out var list) ? list.Cast<T>()
+                                                                 : Enumerable.Empty<T>();
+    }
+
+
+    public void AddWorldObject<T>(T inObj) where T : WorldObjectBase
+    {
+        if(_worldObjDict.TryGetValue(typeof(T), out var list) == true)
+        {
+            list.Add(inObj);
+        }
+        else
+        {
+            var objList = new List<WorldObjectBase>();
+            objList.Add(inObj);
+
+            _worldObjDict.Add(typeof(T), objList);
+        }
+    }
+
+    public void RemoveWorldObject<T>(T inObj) where T : WorldObjectBase
+    {
+        if(_worldObjDict.TryGetValue(inObj.GetType(), out var list) == true)
+        {
+            list.Remove(inObj);
+        }
     }
 
 
@@ -187,25 +206,52 @@ public class WorldMap : MonoBehaviour
     }
 
 
+    public void PickReward(int inWorldId)
+    {
+        var itemObj = GetWorldObjEnumerable<WorldItem>().FirstOrDefault(x => x.WorldId == inWorldId);
+
+        if (itemObj == null)
+        {
+            Debug.LogError($"[{nameof(PickReward)}] itemObject is null or empty!");
+            return;
+        }
+
+        itemObj.PlayGetItem(() => 
+        {
+            RemoveWorldObject(itemObj);
+            _objectPoolController.StoreToPool(itemObj); 
+        });
+    }
+
 
     //-------------
     // Server
     //-------------
-    
-    public void OnRecvDropItem(S_DropItem inPacket)
+
+    public void OnRecvDropReward(S_DropReward inPacket)
     {
         var itemObj = _objectPoolController.SpawnFromPool<WorldItem>();
 
         if(itemObj == null)
         {
-            Debug.LogError($"[{nameof(OnRecvDropItem)}] itemObj is null or empty!");
+            Debug.LogError($"[{nameof(OnRecvDropReward)}] itemObj is null or empty!");
             return;
         }
 
-        ItemData itemIds = ItemData.Parse(inPacket.itemData)?.FirstOrDefault() ?? default;
-
-        itemObj.SetInfo(inPacket.itemId, itemIds);
+        itemObj.SetInfo(inPacket.worldId, inPacket.pos.ConvertUnityVector3(), inPacket.rewardType);
         itemObj.PlayDropItem();
+
+        AddWorldObject(itemObj);
+    }
+
+    public void OnRecvGetItem(S_GetItem inPacket)
+    {
+        PickReward(inPacket.worldId);
+    }
+
+    public void OnRecvGetGold(S_GetGold inPacket)
+    {
+        PickReward(inPacket.worldId);
     }
 
 

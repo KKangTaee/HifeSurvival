@@ -62,11 +62,8 @@ HifeSurvival/Library/
 HifeSurvival/Logs/
 HifeSurvival/.vscode/
 HifeSurvival/Temp/
-HifeSurvival/hifeSurvival_#18_BurstDebugInformation_DoNotShip/
-HifeSurvival/obj/
+HifeSurvival/hifeSurvival_\#*_/BurstDebugInformation_DoNotShip/
+HifeSurvival/obj/Debug
 *.cache
-HifeSurvival/RealtimeServer/DummyClient/obj/Debug/netcoreapp3.1/DummyClient.GeneratedMSBuildEditorConfig.editorconfig
-*.editorconfig
-HifeSurvival/RealtimeServer/Server/obj/Debug/netcoreapp3.1/Server.GeneratedMSBuildEditorConfig.editorconfig
-HifeSurvival/RealtimeServer/DummyClient/obj/Debug/netcoreapp3.1/DummyClient.GeneratedMSBuildEditorConfig.editorconfig
-HifeSurvival/RealtimeServer/PacketGenerator/obj/Debug/PacketGenerator.GeneratedMSBuildEditorConfig.editorconfig
+/obj/Debug/
+

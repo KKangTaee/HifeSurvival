@@ -35,11 +35,12 @@ public class StaticData
     // Static Datas
     //------------------
 
-    public Dictionary<string, Heros> HeroDict { get; private set; }
+    public Dictionary<string, Heros> HerosDict { get; private set; }
     public Dictionary<string, Systems> SystemsDict { get; private set; }
     public Dictionary<string, Monsters> MonstersDict { get; private set; }
     public Dictionary<string, MonstersGroup> MonstersGroupDict { get; private set; }
-    public Dictionary<string, item> ItemDict { get; private set; }
+    public Dictionary<string, Item> ItemDict { get; private set; }
+    public Dictionary<string, ChapterData> ChapaterDataDict { get; private set; }
 
 
     public async Task Init()
@@ -89,7 +90,7 @@ public class StaticData
                     }
                     else if (rangeValue.Equals("heros"))
                     {
-                        HeroDict = JsonToDictionaryGeneric.ParseJsonToDictionary<Heros>(node.ToString());
+                        HerosDict = JsonToDictionaryGeneric.ParseJsonToDictionary<Heros>(node.ToString());
                     }
                     else if (rangeValue.Equals("monsters"))
                     {
@@ -101,9 +102,12 @@ public class StaticData
                     }
                     else if (rangeValue.Equals("item"))
                     {
-                        ItemDict = JsonToDictionaryGeneric.ParseJsonToDictionary<item>(node.ToString());
+                        ItemDict = JsonToDictionaryGeneric.ParseJsonToDictionary<Item>(node.ToString());
                     }
-
+                    else if(rangeValue.Equals("chapter_data"))
+                    {
+                        ChapaterDataDict = JsonToDictionaryGeneric.ParseJsonToDictionary<ChapterData>(node.ToString());
+                    }
                 }
 
                 waiter.Signal();
@@ -204,7 +208,7 @@ public class StaticData
                     fieldIndex++;
                 }
 
-                string key = itemType.GetField("id").GetValue(item).ToString();
+                string key = itemType.GetField("key").GetValue(item).ToString();
                 resultDictionary.Add(key, item);
 
             }
@@ -236,14 +240,14 @@ public class StaticData
     [System.Serializable]
     public class Systems
     {
-        public string id;
+        public string key;
         public string value;
     }
 
     [System.Serializable]
     public class Heros
     {
-        public int id;
+        public int key;
         public string name;
         public int str;
         public int def;
@@ -258,7 +262,7 @@ public class StaticData
     [Serializable]
     public class Monsters
     {
-        public int id;
+        public int key;
         public string name;
         public int grade;
         public int str;
@@ -275,7 +279,7 @@ public class StaticData
     [Serializable]
     public class MonstersGroup
     {
-        public int id;
+        public int key;
         public int groupId;
         public string monsterGroups;
         public int respawnTime;
@@ -283,9 +287,9 @@ public class StaticData
     }
 
     [Serializable]
-    public class item
+    public class Item
     {
-        public int id;
+        public int key;
         public string name;
         public int grade;
         public int str;
@@ -295,5 +299,17 @@ public class StaticData
         public float moveSpeed;
         public float attackRange;
         public float detectRange;
+    }
+
+    [Serializable]
+    public class ChapterData
+    {
+        public int key;
+        public string mapData;
+        public string phase1;
+        public string phase2;
+        public string phase3;
+        public string phase4;
+        public int runningTimeSec;
     }
 }

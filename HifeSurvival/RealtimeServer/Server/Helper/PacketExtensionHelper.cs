@@ -89,7 +89,7 @@ namespace Server.Helper
             {
                 str = inSelf.str,
                 def = inSelf.def,
-                hp = inSelf.maxHp,
+                hp = inSelf.hp,
                 attackSpeed = inSelf.attackSpeed,
                 moveSpeed = inSelf.moveSpeed,
             };

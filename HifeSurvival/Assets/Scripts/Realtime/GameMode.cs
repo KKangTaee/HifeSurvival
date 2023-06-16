@@ -3,9 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Threading.Tasks;
+using System.Linq;
 
 public class GameMode
 {
+    public enum EStatus
+    {
+        JOIN,
+
+        NOT_JOIN,
+
+        GAME_RUNIING,
+    }
+
     private static GameMode _instance = new GameMode();
     public static GameMode Instance { get => _instance; }
 
@@ -31,28 +41,21 @@ public class GameMode
     // 인게임 진행 관련
     //---------------
 
-    public event Action<Entity>       OnRecvMoveHandler;
-    public event Action<Entity>       OnRecvStopMoveHandler;
-    public event Action<S_Dead>       OnRecvDeadHandler;
-    public event Action<CS_Attack>    OnRecvAttackHandler;
-    public event Action<Entity>       OnRecvRespawnHandler;
-    public event Action<PlayerEntity> OnRecvUpdateStatHandler;
-    public event Action<S_DropItem>   OnRecvDropItemHandler;
+    public event Action<Entity>        OnRecvMoveHandler;
+    public event Action<Entity>        OnRecvStopMoveHandler;
+    public event Action<S_Dead>        OnRecvDeadHandler;
+    public event Action<CS_Attack>     OnRecvAttackHandler;
+    public event Action<Entity>        OnRecvRespawnHandler;
+    public event Action<PlayerEntity>  OnRecvUpdateStatHandler;
+    public event Action<S_DropReward>  OnRecvDropRewardHandler;
+    public event Action<S_GetItem>     OnRecvGetItemHandler;
+    public event Action<S_GetGold>     OnRecvGetGoldHandler;
 
 
-    public PlayerEntity EntitySelf { get; private set; }
     public int RoomId { get; private set; }
-
-    public enum EStatus
-    {
-        JOIN,
-
-        NOT_JOIN,
-
-        GAME_RUNIING,
-    }
-
     public EStatus Status { get; private set; } = EStatus.NOT_JOIN;
+    public PlayerEntity EntitySelf { get; private set; }
+
 
     public void RemovePlayerEntity(int inPlayerId)
     {
@@ -93,7 +96,7 @@ public class GameMode
             return;
 
 
-        if (StaticData.Instance.HeroDict.TryGetValue(joinPlayer.heroId.ToString(), out var heros) == false)
+        if (StaticData.Instance.HerosDict.TryGetValue(joinPlayer.heroId.ToString(), out var heros) == false)
         {
             Debug.LogError("heros static data is null or empty!");
             return;
@@ -239,7 +242,6 @@ public class GameMode
         NetworkManager.Instance.Send(readyToGame);
     }
 
-
     public void OnSendUpdateStat(int inUsedGold, in Stat inStat)
     {
         CS_UpdateStat updateStat = new CS_UpdateStat()
@@ -250,6 +252,17 @@ public class GameMode
         };
 
         NetworkManager.Instance.Send(updateStat);
+    }
+
+    public void OnSendPickReward(int inWorldId)
+    {
+        C_PickReward getItem = new C_PickReward()
+        {
+            targetId = EntitySelf.targetId,
+            worldId = inWorldId,
+        };
+
+        NetworkManager.Instance.Send(getItem);
     }
 
 
@@ -297,7 +310,7 @@ public class GameMode
             return;
 
         player.heroId = inPacket.heroId;
-        player.stat = new EntityStat(StaticData.Instance.HeroDict[player.heroId.ToString()]);
+        player.stat = new EntityStat(StaticData.Instance.HerosDict[player.heroId.ToString()]);
 
 
         if (IsSelf(inPacket.targetId) == false)
@@ -324,25 +337,29 @@ public class GameMode
         _onRecvCountdownCB?.Invoke(inPacket.countdownSec);
     }
 
-
     public void OnRecvStartGame(S_StartGame inPacket)
     {
         Status = EStatus.GAME_RUNIING;
 
         var playerList = inPacket.playerList;
 
-        foreach (S_StartGame.Player p in playerList)
+        foreach (PlayerSpawn p in playerList)
         {
             var playerEntity = GetPlayerEntity(p.targetId);
-            playerEntity.heroId = p.heroId;
-            playerEntity.pos = p.spawnPos;
+            playerEntity.heroId = p.herosKey;
+            playerEntity.pos = p.pos;
         }
 
-        var mosterList = inPacket.monsterList;
+        _onRecvStartGameCB?.Invoke();
+    }
 
-        foreach (S_StartGame.Monster m in mosterList)
+    public void OnRecvSpawnMonster(S_SpawnMonster inPacket)
+    {
+        var monsterList = inPacket.monsterList;
+
+        foreach (MonsterSpawn m in monsterList)
         {
-            if (StaticData.Instance.MonstersDict.TryGetValue(m.monsterId.ToString(), out var monster) == false)
+            if (StaticData.Instance.MonstersDict.TryGetValue(m.monstersKey.ToString(), out var monster) == false)
             {
                 Debug.LogError($"[{nameof(OnRecvStartGame)}] monster static is null or empty!");
                 continue;
@@ -351,16 +368,14 @@ public class GameMode
             var monsterEntity = new MonsterEntity()
             {
                 targetId = m.targetId,
-                monsterId = m.monsterId,
+                monsterId = m.monstersKey,
                 grade = m.grade,
-                pos = m.spawnPos,
+                pos = m.pos,
                 stat = new EntityStat(monster),
             };
 
             MonsterEntityDict.Add(monsterEntity.targetId, monsterEntity);
         }
-
-        _onRecvStartGameCB?.Invoke();
     }
 
     public void OnRecvMove(CS_Move inPacket)
@@ -470,12 +485,33 @@ public class GameMode
         if (player == null)
             return;
 
-        player.gold -= inPacket.usedGold;
-        player.stat.UpdateStat(inPacket.updateStat);
+        player.AddGold(-inPacket.usedGold);
+        player.stat.IncreaseStat(inPacket.updateStat);
     }
 
-    public void OnRecvDropItem(S_DropItem inPacket)
+
+    public void OnRecvDropItem(S_DropReward inPacket)
     {
-        OnRecvDropItemHandler?.Invoke(inPacket);
+        OnRecvDropRewardHandler?.Invoke(inPacket);
+    }
+
+
+    public void OnRecvGetItem(S_GetItem inPacket)
+    {
+        var player = GetPlayerEntity(inPacket.targetId);
+
+        player.itemSlot[inPacket.itemSlotId] = new EntityItem(inPacket.item);
+
+        OnRecvGetItemHandler?.Invoke(inPacket);
+    }
+
+
+    public void OnRecvGetGold(S_GetGold inPacket)
+    {
+        var player = GetPlayerEntity(inPacket.targetId);
+
+        player.AddGold(inPacket.gold);
+
+        OnRecvGetGoldHandler?.Invoke(inPacket);
     }
 }

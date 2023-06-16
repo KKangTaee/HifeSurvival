@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using System.Linq;
+using UnityEngine.EventSystems;
 
 
 public class TouchController : ControllerBase
@@ -85,13 +86,15 @@ public class TouchController : ControllerBase
     private ETouchState _eTouch = ETouchState.NONE;
     private ETouchCommand _eCommand = ETouchCommand.NONE;
 
-    private CameraController _cameraController;
-    private PlayerController _playerController;
-    private JoystickController _joystickController;
+    private CameraController    _cameraController;
+    private JoystickController  _joystickController;
 
     private Vector2 _prevMousePos;
     private float _mouseWheelDelta = 50;
     private float _touchingDelta;
+
+    private PointerEventData    _eventDataCurrentPosition;
+    private List<RaycastResult> _raycastResultList;
 
 
     //------------------
@@ -117,11 +120,10 @@ public class TouchController : ControllerBase
     {
         _cameraController = ControllerManager.Instance.GetController<CameraController>();
 
-        _playerController = ControllerManager.Instance.GetController<PlayerController>();
-
         _joystickController = ControllerManager.Instance.GetController<JoystickController>();
 
-        // SetActive(false);
+        _eventDataCurrentPosition = new PointerEventData(EventSystem.current);
+        _raycastResultList = new List<RaycastResult>();
     }
 
 
@@ -154,7 +156,7 @@ public class TouchController : ControllerBase
 #endif
         }
 
-        if (touchPosArr?.Length > 0)
+        if (touchPosArr?.Length > 0 && IsPointerOverUIObject() == false)
         {
             _eTouch = ETouchState.DOWN;
             _touchingDelta = 0;
@@ -248,7 +250,6 @@ public class TouchController : ControllerBase
     }
 
 
-
     public bool OnTouchUp(out TouchResult inResult)
     {
         Vector2[] touchPosArr = null;
@@ -313,9 +314,6 @@ public class TouchController : ControllerBase
                 }
                 else if (inResult.touchPressure > 0.2f && inResult.phase == TouchPhase.Moved)
                 {
-                    // _eCommand = inResult.touchCount == 1 ? ETouchCommand.CAMERA_MOVE
-                    //                                      : ETouchCommand.CAMERA_ZOOM;
-
                     _eCommand = ETouchCommand.CAMERA_MOVE;
                 }
             
@@ -354,5 +352,18 @@ public class TouchController : ControllerBase
                 _joystickController.OnTouchUpdate(_eCommand, inResult.posArr);
                 break;
         }
+    }
+
+
+    public bool IsPointerOverUIObject()
+    {
+        // 현재 터치/마우스 좌표 설정
+        _eventDataCurrentPosition.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+
+        // GraphicRaycaster.Raycast를 이용하여 마우스/터치 위치에서 UI 레이캐스트
+        EventSystem.current.RaycastAll(_eventDataCurrentPosition, _raycastResultList);
+
+        // 만약 레이캐스트 결과가 하나 이상이라면 UI 오브젝트 위에 있다고 판단
+        return _raycastResultList.Count > 0;
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Assets.FantasyMonsters.Scripts.Tweens;
 using UnityEngine;
+using DG.Tweening;
 
 namespace Assets.FantasyMonsters.Scripts
 {
@@ -16,6 +17,9 @@ namespace Assets.FantasyMonsters.Scripts
         public Animator Animator;
         public bool Variations;
         public event Action<string> OnEvent = eventName => { };
+
+        public Action OnDeathCompletedHandler;
+        public SpriteRenderer[] _partsRendererArr;
 
         /// <summary>
         /// Called on Awake.
@@ -33,7 +37,7 @@ namespace Assets.FantasyMonsters.Scripts
                 }
             }
 
-            GetComponent<LayerManager>().SetSortingGroupOrder((int) -transform.localPosition.y);
+            GetComponent<LayerManager>().SetSortingGroupOrder((int)-transform.localPosition.y);
 
             var stateHandler = Animator.GetBehaviours<StateHandler>().SingleOrDefault(i => i.Name == "Death");
 
@@ -41,6 +45,8 @@ namespace Assets.FantasyMonsters.Scripts
             {
                 stateHandler.StateExit.AddListener(() => SetHead(0));
             }
+
+            _partsRendererArr = GetComponentsInChildren<SpriteRenderer>();
         }
 
         /// <summary>
@@ -48,7 +54,7 @@ namespace Assets.FantasyMonsters.Scripts
         /// </summary>
         public void SetState(MonsterState state)
         {
-            Animator.SetInteger("State", (int) state);
+            Animator.SetInteger("State", (int)state);
         }
 
         /// <summary>
@@ -86,11 +92,47 @@ namespace Assets.FantasyMonsters.Scripts
         /// </summary>
         public void SetHead(int index)
         {
-            if (index != 2 && Animator.GetInteger("State") == (int) MonsterState.Death) return;
+            if (index != 2 && Animator.GetInteger("State") == (int)MonsterState.Death) return;
 
             if (index < HeadSprites.Count)
             {
                 Head.sprite = HeadSprites[index];
+            }
+        }
+
+        public void OnDeathCompleted()
+        {
+            Fade(0, 0.25f, OnDeathCompletedHandler);
+        }
+
+        public void Fade(float inEndValue, float inDuration, Action doneCallback = null)
+        {
+            Sequence sequence = DOTween.Sequence();
+
+            foreach (var renderer in _partsRendererArr)
+            {
+                Tweener fadeTween = renderer.DOFade(inEndValue, inDuration);
+                sequence.Join(fadeTween);
+            }
+
+            sequence.OnComplete(() =>
+            {
+                doneCallback?.Invoke();
+            });
+        }
+
+        public void ResetAlphaParts()
+        {
+            foreach (var renderer in _partsRendererArr)
+                renderer.color = Color.white;
+        }
+        
+        public void Damage()
+        {
+            foreach (var renderer in _partsRendererArr)
+            {
+                renderer.DOColor(Color.red, 0f)
+                .OnComplete(() => renderer.DOColor(Color.white, 0.2f));
             }
         }
     }

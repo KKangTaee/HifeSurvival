@@ -88,9 +88,7 @@ public abstract class EntityObjectController<T> : ControllerBase where T : Entit
            
         var entityObj = GetEntityObject(inEntity.targetId);
 
-        entityObj.Init(inEntity.targetId,
-                       inEntity.stat,
-                       inEntity.pos.ConvertUnityVector3());
+        entityObj.Init(inEntity, inEntity.pos.ConvertUnityVector3());
     }
 
     //------------------
@@ -137,7 +135,6 @@ public abstract class EntityObjectController<T> : ControllerBase where T : Entit
 
         inTarget.ChangeState(EntityObject.EStatus.IDLE, idleParam);
     }
-
 
     public void SetDeadState(T inTarget)
     {

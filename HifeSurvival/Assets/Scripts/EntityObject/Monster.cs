@@ -6,13 +6,13 @@ using System;
 public class Monster : EntityObject
 {
     [SerializeField] MonsterAnimator _anim;
-    [SerializeField] MonsterUI       _monsterUI;
+    [SerializeField] MonsterUI _monsterUI;
 
     public class AttackState : IState<Monster>
     {
         public void Enter<P>(Monster inSelf, in P inParam) where P : struct
         {
-            if(inParam is AttackParam attack)
+            if (inParam is AttackParam attack)
                 Attack(attack, inSelf, attack.target);
         }
 
@@ -23,7 +23,7 @@ public class Monster : EntityObject
 
         public void Update<P>(Monster inSelf, in P inParam) where P : struct
         {
-            if(inParam is AttackParam attack)
+            if (inParam is AttackParam attack)
                 Attack(attack, inSelf, attack.target);
         }
 
@@ -114,11 +114,12 @@ public class Monster : EntityObject
     // override
     //---------------
 
-    public override void Init(int inTargetId, EntityStat inStat, in Vector3 inPos)
+    public override void Init(Entity inEntity, in Vector3 inPos)
     {
-        base.Init(inTargetId, inStat, inPos);
+        base.Init(inEntity, inPos);
 
-        _monsterUI.Init(Stat.maxHP);
+        _monsterUI.Init(inEntity.stat.hp);
+        _monsterUI.gameObject.SetActive(true);
     }
 
     public override void ChangeState<P>(EStatus inStatus, in P inParam = default) where P : struct
@@ -130,10 +131,12 @@ public class Monster : EntityObject
 
     public void OnMoveLerp(Vector3 inEndPos, Action doneCallback)
     {
+        var currDir = Vector3.Normalize(inEndPos - GetPos());
+        _anim.SetDir(currDir.x);
         MoveLerpEntity(() => inEndPos,
                        dir =>
                        {
-
+                           
                        },
                        null,
                        doneCallback);
@@ -141,27 +144,40 @@ public class Monster : EntityObject
 
     public void OnMove(in Vector3 inDir)
     {
+        _anim.SetDir(inDir.x);
         _anim.OnWalk();
         MoveEntity(inDir);
     }
 
     public void OnAttack(in Vector3 inDir)
     {
+        _anim.SetDir(inDir.x);
+        _anim.OnAttack();
         StopMoveEntity(GetPos());
     }
 
     public void OnDead()
     {
-        gameObject.SetActive(false);
+        _monsterUI.gameObject.SetActive(false);
+        _anim.OnDead();
     }
 
     public override void OnDamaged(int inDamageValue)
     {
+        _anim.OnDamaged();
         _monsterUI.DecreaseHP(inDamageValue);
     }
 
     public void SetMonster(int inMosterId)
     {
-        _anim.SetTargetAnim(inMosterId, pivotUI => _monsterUI.transform.position = pivotUI);
+        _anim.SetTargetAnim(inMosterId);
+
+        _monsterUI.transform.position = _anim.GetPosPivotUI();
+
+        _anim.AddEventDeathCompleted(() =>
+        {
+            // NOTE@taeho.kang 사망 후, 연출이 끝나고 콜백처리를 여기서 한다.
+            // 아마 오브젝트 풀에 넣는 작업으로 이루어질듯
+        });
     }
 }

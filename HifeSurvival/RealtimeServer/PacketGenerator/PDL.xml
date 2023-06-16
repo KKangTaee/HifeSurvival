@@ -22,8 +22,8 @@
 	</packet>
 
 	<packet name="CS_SelectHero">
-		<int  name="targetId"/>
-		<int  name="heroId"/>
+		<int name="targetId"/>
+		<int name="heroId"/>
 	</packet>
 
 	<packet name="CS_ReadyToGame">
@@ -35,18 +35,13 @@
 	</packet>
 
 	<packet name="S_StartGame">
-		<list name="Player">
-			<int name="targetId"/>
-			<int name="heroId"/>
-			<struct_Vec3 name="spawnPos"/>
-		</list>
-		<list name="Monster">
-			<int name ="targetId"/>
-			<int name ="monsterId"/>
-			<int name ="groupId"/>
-			<int name ="grade"/>
-			<struct_Vec3 name="spawnPos"/>
-		</list>
+		<int name ="playTimeSec"/>
+		<class_PlayerSpawn_list name ="player"/>
+		<class_MonsterSpawn_list name ="monster"/>	
+	</packet>
+
+	<packet name ="S_SpawnMonster">
+		<class_MonsterSpawn_list name ="monster"/>	
 	</packet>
 
 	<packet name ="CS_Attack">
@@ -84,7 +79,7 @@
 
 	<packet name ="S_Respawn">
 		<int name ="targetId"/>
-		<bool name	="isPlayer"/>
+		<bool name ="isPlayer"/>
 		<struct_Vec3 name ="pos"/>
 		<struct_Stat name ="stat"/>
 	</packet>
@@ -95,15 +90,28 @@
 		<struct_Stat name ="updateStat"/>
 	</packet>
 
-	<packet name ="S_DropItem">
-		<int name="itemId"/>
-		<string name="itemData"/>
+	<packet name ="S_DropReward">
+		<int name="worldId"/>
+		<int name="rewardType"/>
 		<struct_Vec3 name ="pos"/>
 	</packet>
 
-	<packet name ="C_GetItem">
+	<packet name ="C_PickReward">
+		<int name= "targetId"/>
+		<int name= "worldId"/>
+	</packet>
+
+	<packet name ="S_GetItem">
 		<int name ="targetId"/>
-		<int name ="itemId"/>
+		<int name ="worldId"/>
+		<int name ="itemSlotId"/>
+		<struct_Item name="item"/>
+	</packet>
+
+	<packet name ="S_GetGold">
+		<int name ="targetId"/>
+		<int name ="worldId"/>
+		<int name ="gold"/>
 	</packet>
 
 	<struct name="Vec3">
@@ -119,5 +127,29 @@
 		<float name = "moveSpeed"/>
 		<float name = "attackSpeed"/>
 	</struct>
+
+	<struct name = "Item">
+		<int name ="itemKey"/>
+		<int name ="level"/>
+		<int name ="str"/>
+		<int name ="def"/>
+		<int name ="hp"/>
+		<int name ="cooltime"/>
+		<bool name ="canUse"/>
+	</struct>
+
+	<class name ="PlayerSpawn">
+		<int name="targetId"/>
+		<int name="herosKey"/>
+		<struct_Vec3 name ="pos"/>
+	</class>
+
+	<class name ="MonsterSpawn">
+		<int name="targetId"/>
+		<int name ="monstersKey"/>
+		<int name ="groupId"/>
+		<int name ="grade"/>
+		<struct_Vec3 name="pos"/>
+	</class>
 
 </PDL>

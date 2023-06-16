@@ -28,11 +28,10 @@ namespace Server
 
     public class GameRoom : IJobQueue
     {
-        JobQueue _jobQueue = new JobQueue();
 
-        List<ClientSession>      _sessions = new List<ClientSession>();
-
-        List<ArraySegment<byte>> _pendingList = new List<ArraySegment<byte>>();
+        private JobQueue _jobQueue  = new JobQueue();
+        private List<ClientSession>      _sessions    = new List<ClientSession>();
+        private List<ArraySegment<byte>> _pendingList = new List<ArraySegment<byte>>();
 
         private GameMode _gameMode;
         private bool     _isRunningFlush;

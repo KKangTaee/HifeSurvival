@@ -36,6 +36,7 @@ namespace PacketGenerator
                     {
                         ParsePacket(r);
                         ParseSturct(r);
+                        ParseClass(r);
                     }
                     //Console.WriteLine(r.Name + " " + r["name"]);
                 }
@@ -81,7 +82,7 @@ namespace PacketGenerator
 
             if (r.Name.ToLower() != "struct")
             {
-                Console.WriteLine("Invalid packet node");
+                Console.WriteLine("Invalid struct node");
                 return;
             }
 
@@ -94,6 +95,38 @@ namespace PacketGenerator
 
             Tuple<string, string, string> t = ParseMembers(r);
             genPackets += string.Format(PacketFormat.structFormat,
+                                        FirstCharToUpper(packetName),
+                                        t.Item1, t.Item2, t.Item3) + Environment.NewLine + "\t";
+        }
+
+        
+        public static void ParseClass(XmlReader r)
+        {
+            if (r.NodeType == XmlNodeType.EndElement)
+                return;
+
+            if (r.Name.ToLower() != "class")
+            {
+                Console.WriteLine("Invalid class node");
+                return;
+            }
+
+            string packetName = r["name"];
+            if (string.IsNullOrEmpty(packetName))
+            {
+                Console.WriteLine("Packet without name");
+                return;
+            }
+
+            Tuple<string, string, string> t = ParseMembers(r);
+
+            var str = string.Format(PacketFormat.classFormat,
+                                        FirstCharToUpper(packetName),
+                                        t.Item1, t.Item2, t.Item3) + Environment.NewLine + "\t";
+
+            Console.WriteLine(str);
+
+            genPackets += string.Format(PacketFormat.classFormat,
                                         FirstCharToUpper(packetName),
                                         t.Item1, t.Item2, t.Item3) + Environment.NewLine + "\t";
         }
@@ -129,7 +162,7 @@ namespace PacketGenerator
                 if (string.IsNullOrEmpty(writeCode) == false)
                     writeCode += Environment.NewLine;
 
-                string memberType = r.Name.ToLower();
+                string memberType = r.Name;//.ToLower();
                 switch (memberType)
                 {
                     case "byte":
@@ -163,9 +196,11 @@ namespace PacketGenerator
                     default:
                         var split = memberType.Split('_');
 
+                        Console.WriteLine(split[0]);
+
                         if (split[0] == "struct")
                         {
-                            var structName = FirstCharToUpper(split[1]);
+                            var structName = split[1]; //FirstCharToUpper(split[1]);
 
                             if (split.Length == 2)
                             {
@@ -178,6 +213,23 @@ namespace PacketGenerator
                                 memberCode += string.Format(PacketFormat.memberStructFormat, structName, memberName);
                                 readCode += string.Format(PacketFormat.readListFormat, structName, memberName);
                                 writeCode += string.Format(PacketFormat.writeListFormat, structName, memberName);
+                            }
+                        }
+                        else if(split[0] == "class")
+                        {
+                            var className = split[1]; // FirstCharToUpper(split[1]);
+
+                            if (split.Length == 2)
+                            {
+                                memberCode += string.Format(PacketFormat.memberFormat, className, memberName);
+                                readCode += string.Format(PacketFormat.readStructFormat, memberName);
+                                writeCode += string.Format(PacketFormat.writeStructFormat, memberName);
+                            }
+                            else if (split.Length == 3 && split[2] == "list")
+                            {
+                                memberCode += string.Format(PacketFormat.memberStructFormat, className, memberName);
+                                readCode += string.Format(PacketFormat.readListFormat, className, memberName);
+                                writeCode += string.Format(PacketFormat.writeListFormat, className, memberName);
                             }
                         }
 

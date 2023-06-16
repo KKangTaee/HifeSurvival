@@ -35,10 +35,8 @@ public class CameraController : ControllerBase, TouchController.ITouchUpdate
 
     private Vector3 _prevPos;
     private Vector3 _moveDir;
-    private Vector3 _follwingStartPos;
 
     private float   _dragPower    = 0.0f;
-    private float   _prevZoomDist = float.MinValue;
     
     private ECamearaStatus _eStatus = ECamearaStatus.NONE;
     private Transform _followingTarget;
@@ -51,7 +49,7 @@ public class CameraController : ControllerBase, TouchController.ITouchUpdate
     //-----------------
 
 
-    private void Update()
+    private void LateUpdate()
     {
         UpdateCamera();
     }
@@ -101,23 +99,6 @@ public class CameraController : ControllerBase, TouchController.ITouchUpdate
 
                 break;
 
-            // case TouchController.ETouchCommand.CAMERA_ZOOM:
-
-            //     if (inTouchPos?.Length != 2)
-            //         return;
-
-            //     float currDist = Vector2.Distance(inTouchPos[0], inTouchPos[1]);
-
-            //     if (Mathf.Abs(_prevZoomDist - float.MinValue) > 1e-6f)
-            //     {
-            //         float zoomDelta = currDist - _prevZoomDist;
-            //         _main.orthographicSize += (zoomDelta);
-            //     }
-
-            //     _prevZoomDist = currDist;
-
-            //     break;
-
             case TouchController.ETouchCommand.CAMERA_MOVE_DONE:
                 
                 _prevPos = INVALIED_VECTOR_VALUE;
@@ -135,8 +116,6 @@ public class CameraController : ControllerBase, TouchController.ITouchUpdate
         switch(_eStatus)
         {
             case ECamearaStatus.SLIDING:
-
-                Debug.Log($"드래그 : {_dragPower}");
 
                 if (_dragPower <= 0.12f)
                 {
@@ -180,6 +159,10 @@ public class CameraController : ControllerBase, TouchController.ITouchUpdate
     {
         _eStatus = ECamearaStatus.FOLLWING_TARGET;
         _followingTarget  = inTarget;
-        _follwingStartPos = inTarget.position;
+    }
+
+    public void SetCameraPos(in Vector3 inPos)
+    {
+        _main.transform.position = inPos;
     }
 }

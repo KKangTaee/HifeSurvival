@@ -1,10 +1,10 @@
-﻿using ServerCore;
-using System;
+﻿using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Linq;
+using ServerCore;
 
 namespace DummyClient
 {
@@ -20,10 +20,12 @@ namespace DummyClient
 			IPAddress ipAddr = ipHost.AddressList.First(ip => ip.AddressFamily == AddressFamily.InterNetwork);
 			IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
 
-			endPoint = new IPEndPoint(IPAddress.Parse("192.168.0.3"), 7777);	
-			// System.Console.WriteLine(ipAddr.Address);
+			endPoint = new IPEndPoint(IPAddress.Parse("192.168.0.3"), 7777);
+            // System.Console.WriteLine(ipAddr.Address);
 
-			Connector connector = new Connector();
+            PacketManager.Instance.BindHandler(new ClientPacketHandler());
+
+            Connector connector = new Connector();
 
 			connector.Connect(endPoint, 
 				() => { return SessionManager.Instance.Generate(); },

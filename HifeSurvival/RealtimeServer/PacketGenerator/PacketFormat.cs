@@ -12,86 +12,86 @@ namespace PacketGenerator
 		public static string managerFormat =
 @"using System;
 using System.Collections.Generic;
+using ServerCore;
 
-namespace ServerCore
+
+public abstract class PacketHandler
 {{
-	class PacketHandler
-	{{
 {1}
-	}}
+}}
 
-	class PacketManager
+public class PacketManager
+{{
+	#region Singleton
+	static PacketManager _instance = new PacketManager();
+	public static PacketManager Instance {{ get {{ return _instance; }} }}
+	#endregion
+
+	PacketManager()
 	{{
-		#region Singleton
-		static PacketManager _instance = new PacketManager();
-		public static PacketManager Instance {{ get {{ return _instance; }} }}
-		#endregion
+		Register();
+	}}
 
-		PacketManager()
-		{{
-			Register();
-		}}
 
+	Dictionary<ushort, Func<PacketSession, ArraySegment<byte>, IPacket>> _makeFunc = new Dictionary<ushort, Func<PacketSession, ArraySegment<byte>, IPacket>>();
+	Dictionary<ushort, Action<PacketSession, IPacket>> _handler = new Dictionary<ushort, Action<PacketSession, IPacket>>();
 	
-		Dictionary<ushort, Func<PacketSession, ArraySegment<byte>, IPacket>> _makeFunc = new Dictionary<ushort, Func<PacketSession, ArraySegment<byte>, IPacket>>();
-		Dictionary<ushort, Action<PacketSession, IPacket>> _handler = new Dictionary<ushort, Action<PacketSession, IPacket>>();
-		
-		public void BindHandler(PacketHandler handler)
-		{{
+	public void BindHandler(PacketHandler handler)
+	{{
 {2}
-		}}
+	}}
 
-		public void Register()
-		{{
+	public void Register()
+	{{
 {0}
-		}}
+	}}
 
-		public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer, Action<PacketSession, IPacket> onRecvCallback = null)
+	public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer, Action<PacketSession, IPacket> onRecvCallback = null)
+	{{
+		ushort count = 0;
+
+		ushort size = BitConverter.ToUInt16(buffer.Array, buffer.Offset);
+		count += 2;
+		ushort id = BitConverter.ToUInt16(buffer.Array, buffer.Offset + count);
+		count += 2;
+
+		if(_makeFunc.TryGetValue(id, out var func) == true)
 		{{
-			ushort count = 0;
+			IPacket packet = func.Invoke(session, buffer);
 
-			ushort size = BitConverter.ToUInt16(buffer.Array, buffer.Offset);
-			count += 2;
-			ushort id = BitConverter.ToUInt16(buffer.Array, buffer.Offset + count);
-			count += 2;
-
-			if(_makeFunc.TryGetValue(id, out var func) == true)
-			{{
-				IPacket packet = func.Invoke(session, buffer);
-
-				if(onRecvCallback != null)
-				   onRecvCallback.Invoke(session, packet);
-				else
-					HandlePacket(session,packet);
-			}}
-		}}
-
-		T MakePacket<T>(PacketSession session, ArraySegment<byte> buffer) where T : IPacket, new()
-		{{
-			T pkt = new T();
-			pkt.Read(buffer);
-			return pkt;	
-		}}
-
-		public void HandlePacket(PacketSession inSession, IPacket inPacket)
-		{{
-			Action<PacketSession, IPacket> action = null;
-			if (_handler.TryGetValue(inPacket.Protocol, out action))
-				action.Invoke(inSession, inPacket);
+			if(onRecvCallback != null)
+			   onRecvCallback.Invoke(session, packet);
+			else
+				HandlePacket(session,packet);
 		}}
 	}}
-}}";
+
+	T MakePacket<T>(PacketSession session, ArraySegment<byte> buffer) where T : IPacket, new()
+	{{
+		T pkt = new T();
+		pkt.Read(buffer);
+		return pkt;	
+	}}
+
+	public void HandlePacket(PacketSession inSession, IPacket inPacket)
+	{{
+		Action<PacketSession, IPacket> action = null;
+		if (_handler.TryGetValue(inPacket.Protocol, out action))
+			action.Invoke(inSession, inPacket);
+	}}
+}}
+";
 		// {0} 패킷 이름
 		public static string managerHandlerFormat =
-@"		public void {0}Handler(PacketSession session, IPacket packet) {{ }}";
+@"	public abstract void {0}Handler(PacketSession session, IPacket packet);";
 
 
         // {0} 패킷 이름
         public static string managerRegisterFormat =
-@"			_makeFunc.Add((ushort)PacketID.{0}, MakePacket<{0}>);";
+@"		_makeFunc.Add((ushort)PacketID.{0}, MakePacket<{0}>);";
 
 		public static string managerBindFormat =
-@"			_handler.Add((ushort)PacketID.{0}, handler.{0}Handler);";
+@"		_handler.Add((ushort)PacketID.{0}, handler.{0}Handler);";
 
         // {0} 패킷 이름/번호 목록
         // {1} 패킷 목록
@@ -100,73 +100,72 @@ namespace ServerCore
 using System.Collections.Generic;
 using System.Text;
 using System.Net;
+using ServerCore;
 
 
-namespace ServerCore
+
+public enum PacketID
 {{
-	public enum PacketID
-	{{
-{0}
-	}}
+	{0}
+}}
 
-	public interface IPacket
-	{{
-		ushort Protocol {{ get; }}
-		void Read(ArraySegment<byte> segment);
-		ArraySegment<byte> Write();
-	}}
+public interface IPacket
+{{
+	ushort Protocol {{ get; }}
+	void Read(ArraySegment<byte> segment);
+	ArraySegment<byte> Write();
+}}
 
 {1}
-
-}}
 ";
 
 		// {0} 패킷 이름
 		// {1} 패킷 번호
-		public static string packetEnumFormat =
+		public static string packetEnumFormat = 
 @"{0} = {1},";
 
+		 
 
-		// {0} 패킷 이름
-		// {1} 멤버 변수들
-		// {2} 멤버 변수 Read
-		// {3} 멤버 변수 Write
-		public static string packetFormat =
+        // {0} 패킷 이름
+        // {1} 멤버 변수들
+        // {2} 멤버 변수 Read
+        // {3} 멤버 변수 Write
+        public static string packetFormat =
 @"
-	public class {0} : IPacket
+public class {0} : IPacket
+{{
+	{1}
+
+	public ushort Protocol {{ get {{ return (ushort)PacketID.{0}; }} }}
+
+	public void Read(ArraySegment<byte> segment)
 	{{
-		{1}
+		ushort count = 0;
 
-		public ushort Protocol {{ get {{ return (ushort)PacketID.{0}; }} }}
-
-		public void Read(ArraySegment<byte> segment)
-		{{
-			ushort count = 0;
-
-			ReadOnlySpan<byte> s = new ReadOnlySpan<byte>(segment.Array, segment.Offset, segment.Count);
-			count += sizeof(ushort);
-			count += sizeof(ushort);
-			{2}
-		}}
-
-		public ArraySegment<byte> Write()
-		{{
-			ArraySegment<byte> segment = SendBufferHelper.Open(4096);
-			ushort count = 0;
-			bool success = true;
-
-			Span<byte> s = new Span<byte>(segment.Array, segment.Offset, segment.Count);
-
-			count += sizeof(ushort);
-			success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.{0});
-			count += sizeof(ushort);
-			{3}
-			success &= BitConverter.TryWriteBytes(s, count);
-			if (success == false)
-				return null;
-			return SendBufferHelper.Close(count);
-		}}
+		ReadOnlySpan<byte> s = new ReadOnlySpan<byte>(segment.Array, segment.Offset, segment.Count);
+		count += sizeof(ushort);
+		count += sizeof(ushort);
+		{2}
 	}}
+
+	public ArraySegment<byte> Write()
+	{{
+		ArraySegment<byte> segment = SendBufferHelper.Open(4096);
+		ushort count = 0;
+		bool success = true;
+
+		Span<byte> s = new Span<byte>(segment.Array, segment.Offset, segment.Count);
+
+		count += sizeof(ushort);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.{0});
+		count += sizeof(ushort);
+		{3}
+		success &= BitConverter.TryWriteBytes(s, count);
+		if (success == false)
+			return null;
+		return SendBufferHelper.Close(count);
+	}}
+}}
 ";
 		// {0} 변수 형식
 		// {1} 변수 이름

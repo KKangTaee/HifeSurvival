@@ -67,11 +67,6 @@ namespace Server
             room?.Push(() => job?.Invoke(room));
         }
 
-        public override void C_GetItemHandler(PacketSession session, IPacket packet)
-        {
-            throw new NotImplementedException();
-        }
-
         public override void S_JoinToGameHandler(PacketSession session, IPacket packet)
         {
             throw new NotImplementedException();
@@ -102,7 +97,27 @@ namespace Server
             throw new NotImplementedException();
         }
 
-        public override void S_DropItemHandler(PacketSession session, IPacket packet)
+        public override void S_SpawnMonsterHandler(PacketSession session, IPacket packet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void S_DropRewardHandler(PacketSession session, IPacket packet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void C_PickRewardHandler(PacketSession session, IPacket packet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void S_GetItemHandler(PacketSession session, IPacket packet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void S_GetGoldHandler(PacketSession session, IPacket packet)
         {
             throw new NotImplementedException();
         }

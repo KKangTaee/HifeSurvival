@@ -67,3 +67,7 @@ HifeSurvival/obj/Debug
 *.cache
 /obj/Debug/
 
+HifeSurvival/RealtimeServer/Server/obj/Debug/netcoreapp3.1/Server.csproj.FileListAbsolute.txt
+HifeSurvival/RealtimeServer/ServerCore/obj/Debug/netstandard2.1/ServerCore.GeneratedMSBuildEditorConfig.editorconfig
+HifeSurvival/RealtimeServer/ServerCore/obj/Debug/netstandard2.1/ServerCore.csproj.FileListAbsolute.txt
+HifeSurvival/RealtimeServer/Server/obj/Debug/netcoreapp3.1/Server.GeneratedMSBuildEditorConfig.editorconfig

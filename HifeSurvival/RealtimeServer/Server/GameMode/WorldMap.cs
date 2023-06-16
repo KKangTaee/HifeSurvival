@@ -43,22 +43,17 @@ namespace Server
 
         private int _mHashCode = 0;
 
-        public void Init()
-        {
-            ParseJson();
-        }
 
-        public void ParseJson()
+        public void ParseJson(string inMapData)
         {
-            var mapData = StaticData.Instance.SystemsDict["map_data"].value;
-
-            if (mapData == null)
+      
+            if (inMapData == null)
             {
                 HSLogger.GetInstance().Error("mapData is null or empty!");
                 return;
             }
 
-            var N = SimpleJSON.JSON.Parse(mapData);
+            var N = SimpleJSON.JSON.Parse(inMapData);
 
             CanGoTiles = new HashSet<Vec3>();
             foreach (SimpleJSON.JSONNode node in N["can_go_tile"].AsArray)
@@ -95,6 +90,11 @@ namespace Server
                 }
                 SpawnList.Add(spawnData);
             }
+        }
+
+        public void LoadMap(string inMapData)
+        {
+            ParseJson(inMapData);
         }
 
         public WorldItemData DropItem(string inRewardData)

@@ -35,18 +35,11 @@
 	</packet>
 
 	<packet name="S_StartGame">
-		<list name="Player">
-			<int name="targetId"/>
-			<int name="heroId"/>
-			<struct_Vec3 name="spawnPos"/>
-		</list>
-		<list name="Monster">
-			<int name ="targetId"/>
-			<int name ="monsterId"/>
-			<int name ="groupId"/>
-			<int name ="grade"/>
-			<struct_Vec3 name="spawnPos"/>
-		</list>
+		<class_PlayerSpawn_list name ="player"/>
+	</packet>
+
+	<packet name ="S_SpawnMonster">
+		<class_MonsterSpawn_list name ="monster"/>	
 	</packet>
 
 	<packet name ="CS_Attack">
@@ -142,5 +135,19 @@
 		<int name ="cooltime"/>
 		<bool name ="canUse"/>
 	</struct>
+
+	<class name ="PlayerSpawn">
+		<int name="targetId"/>
+		<int name="herosKey"/>
+		<struct_Vec3 name ="pos"/>
+	</class>
+
+	<class name ="MonsterSpawn">
+		<int name="targetId"/>
+		<int name ="monstersKey"/>
+		<int name ="groupId"/>
+		<int name ="grade"/>
+		<struct_Vec3 name="pos"/>
+	</class>
 
 </PDL>

@@ -29,18 +29,29 @@ namespace Server
         private Dictionary<int, MonsterGroup> _monsterGroupDict = new Dictionary<int, MonsterGroup>();
 
         private IBroadcaster _broadcaster = null;
-        private WorldMap _worldMap = new WorldMap();
+        private WorldMap    _worldMap = new WorldMap();
         private int _mId = 10000;
 
         public EStatus Status { get; private set; } = EStatus.NONE;
 
-
-
         public GameMode(GameRoom inRoom)
         {
             _broadcaster = new RoomBroadcaster(inRoom);
+        }
 
-            _worldMap.Init();
+        public void StartGame()
+        {
+            // TODO@taeho.kang 후에 나중에
+            if(StaticData.Instance.ChapaterDataDict.TryGetValue("1", out var chapterData) == false)
+            {
+                HSLogger.GetInstance().Error("chapterdata is not found");
+                return;
+            }
+
+            // 맵 데이터 로드
+            _worldMap.LoadMap(chapterData.mapData);
+
+            // 몬스터 프리 로드
         }
 
 
@@ -351,6 +362,7 @@ namespace Server
             _broadcaster.Broadcast(inPacket);
         }
 
+
         public void OnRecvAttack(CS_Attack inPacket)
         {
             var fromPlayer = GetPlayerEntity(inPacket.fromId);
@@ -474,7 +486,7 @@ namespace Server
                     {
                         targetId = inPacket.targetId,
                         worldId = inPacket.worldId,
-                        itemSlotId = 1,
+                        // itemSlotId = 1,
                         item = new Item()
                         {
                            

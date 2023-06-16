@@ -40,7 +40,8 @@ namespace Server
         public Dictionary<string, Systems> SystemsDict { get; private set; }
         public Dictionary<string, Monsters> MonstersDict { get; private set; }
         public Dictionary<string, MonstersGroup> MonstersGroupDict { get; private set; }
-        public Dictionary<string, item> ItemDict { get; private set; }
+        public Dictionary<string, Item> ItemDict { get; private set; }
+        public Dictionary<string, ChapterData> ChapaterDataDict { get; private set; }
 
         public async Task Init()
         {
@@ -62,7 +63,6 @@ namespace Server
                     waiter.Signal();
                 }
             });
-
 
             await waiter.Wait();
             waiter.Reset();
@@ -104,9 +104,12 @@ namespace Server
                         }
                         else if (rangeValue.Equals("item"))
                         {
-                            ItemDict = JsonToDictionaryGeneric.ParseJsonToDictionary<item>(node.ToString());
+                            ItemDict = JsonToDictionaryGeneric.ParseJsonToDictionary<Item>(node.ToString());
                         }
-
+                        else if(rangeValue.Equals("chapter_data"))
+                        {
+                            ChapaterDataDict = JsonToDictionaryGeneric.ParseJsonToDictionary<ChapterData>(node.ToString());
+                        }
                     }
 
                     waiter.Signal();
@@ -201,11 +204,8 @@ namespace Server
                         }
 
                         // 다른 필드 유형이 필요한 경우 여기에 추가
-
                         if (value != null)
-                        {
                             field.SetValue(item, value);
-                        }
 
                         fieldIndex++;
                     }
@@ -290,7 +290,7 @@ namespace Server
         }
 
         [Serializable]
-        public class item
+        public class Item
         {
             public int key;
             public string name;
@@ -302,6 +302,18 @@ namespace Server
             public float moveSpeed;
             public float attackRange;
             public float detectRange;
+        }
+
+        [Serializable]
+        public class ChapterData
+        {
+            public int key;
+            public string mapData;
+            public string phase1;
+            public string phase2;
+            public string phase3;
+            public string phase4;
+            public int runningTimeSec;
         }
     }
 }

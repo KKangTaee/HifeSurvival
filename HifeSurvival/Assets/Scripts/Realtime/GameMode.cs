@@ -337,25 +337,29 @@ public class GameMode
         _onRecvCountdownCB?.Invoke(inPacket.countdownSec);
     }
 
-
     public void OnRecvStartGame(S_StartGame inPacket)
     {
         Status = EStatus.GAME_RUNIING;
 
         var playerList = inPacket.playerList;
 
-        foreach (S_StartGame.Player p in playerList)
+        foreach (PlayerSpawn p in playerList)
         {
             var playerEntity = GetPlayerEntity(p.targetId);
-            playerEntity.heroId = p.heroId;
-            playerEntity.pos = p.spawnPos;
+            playerEntity.heroId = p.herosKey;
+            playerEntity.pos = p.pos;
         }
 
-        var mosterList = inPacket.monsterList;
+        _onRecvStartGameCB?.Invoke();
+    }
 
-        foreach (S_StartGame.Monster m in mosterList)
+    public void OnRecvSpawnMonster(S_SpawnMonster inPacket)
+    {
+        var monsterList = inPacket.monsterList;
+
+        foreach (MonsterSpawn m in monsterList)
         {
-            if (StaticData.Instance.MonstersDict.TryGetValue(m.monsterId.ToString(), out var monster) == false)
+            if (StaticData.Instance.MonstersDict.TryGetValue(m.monstersKey.ToString(), out var monster) == false)
             {
                 Debug.LogError($"[{nameof(OnRecvStartGame)}] monster static is null or empty!");
                 continue;
@@ -364,16 +368,14 @@ public class GameMode
             var monsterEntity = new MonsterEntity()
             {
                 targetId = m.targetId,
-                monsterId = m.monsterId,
+                monsterId = m.monstersKey,
                 grade = m.grade,
-                pos = m.spawnPos,
+                pos = m.pos,
                 stat = new EntityStat(monster),
             };
 
             MonsterEntityDict.Add(monsterEntity.targetId, monsterEntity);
         }
-
-        _onRecvStartGameCB?.Invoke();
     }
 
     public void OnRecvMove(CS_Move inPacket)

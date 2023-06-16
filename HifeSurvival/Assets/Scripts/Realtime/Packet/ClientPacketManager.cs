@@ -32,8 +32,8 @@ class PacketManager
 		_handler.Add((ushort)PacketID.S_Countdown, PacketHandler.S_CountdownHandler);
 		_makeFunc.Add((ushort)PacketID.S_StartGame, MakePacket<S_StartGame>);
 		_handler.Add((ushort)PacketID.S_StartGame, PacketHandler.S_StartGameHandler);
-		// _makeFunc.Add((ushort)PacketID.S_SpawnMonster, MakePacket<S_SpawnMonster>);
-		// _handler.Add((ushort)PacketID.S_SpawnMonster, PacketHandler.S_SpawnMonsterHandler);
+		_makeFunc.Add((ushort)PacketID.S_SpawnMonster, MakePacket<S_SpawnMonster>);
+		_handler.Add((ushort)PacketID.S_SpawnMonster, PacketHandler.S_SpawnMonsterHandler);
 		_makeFunc.Add((ushort)PacketID.CS_Attack, MakePacket<CS_Attack>);
 		_handler.Add((ushort)PacketID.CS_Attack, PacketHandler.CS_AttackHandler);
 		_makeFunc.Add((ushort)PacketID.CS_Move, MakePacket<CS_Move>);

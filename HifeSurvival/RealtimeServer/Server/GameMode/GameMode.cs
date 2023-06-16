@@ -29,7 +29,7 @@ namespace Server
         private Dictionary<int, MonsterGroup> _monsterGroupDict = new Dictionary<int, MonsterGroup>();
 
         private IBroadcaster _broadcaster = null;
-        private WorldMap    _worldMap = new WorldMap();
+        private WorldMap _worldMap = new WorldMap();
         private int _mId = 10000;
 
         public EStatus Status { get; private set; } = EStatus.NONE;
@@ -39,98 +39,84 @@ namespace Server
             _broadcaster = new RoomBroadcaster(inRoom);
         }
 
-        public void StartGame()
+
+        public List<MonsterSpawn> SpawnMonster(string[] inGroupKeyArr)
         {
-            // TODO@taeho.kang 후에 나중에
-            if(StaticData.Instance.ChapaterDataDict.TryGetValue("1", out var chapterData) == false)
+            var monsterList = new List<MonsterSpawn>();
+
+            foreach (var groupKey in inGroupKeyArr)
             {
-                HSLogger.GetInstance().Error("chapterdata is not found");
-                return;
-            }
-
-            // 맵 데이터 로드
-            _worldMap.LoadMap(chapterData.mapData);
-
-            // 몬스터 프리 로드
-        }
-
-
-        public List<S_StartGame.Monster> SetupMonster()
-        {
-            var monsterList = new List<S_StartGame.Monster>();
-
-            var groupList = StaticData.Instance.MonstersGroupDict.Values;
-
-            foreach (var group in groupList)
-            {
-                var monstersId = group.monsterGroups.Split(':');
-                var spawnData = _worldMap.SpawnList.FirstOrDefault(x => x.spawnType == (int)WorldMap.ESpawnType.MONSTER &&
-                                                                     x.groupId == group.groupId);
-
-                if (spawnData == null)
+                if (StaticData.Instance.MonstersGroupDict.TryGetValue(groupKey, out var group) == true)
                 {
-                    HSLogger.GetInstance().Error("spawnData is null or empty!");
-                    continue;
-                }
+                    var monsterKey = group.monsterGroups.Split(':');
+                    var spawnData = _worldMap.SpawnList.FirstOrDefault(x => x.spawnType == (int)WorldMap.ESpawnType.MONSTER &&
+                                                                         x.groupId == group.groupId);
 
-                var pivotIter = spawnData.pivotList.GetEnumerator();
-
-
-                foreach (var id in monstersId)
-                {
-                    if (StaticData.Instance.MonstersDict.TryGetValue(id, out var data) == true &&
-                        pivotIter.MoveNext() == true)
+                    if (spawnData == null)
                     {
-                        Vec3 pos = pivotIter.Current;
+                        HSLogger.GetInstance().Error("spawnData is null or empty!");
+                        continue;
+                    }
 
-                        MonsterEntity entity = new MonsterEntity()
+                    var pivotIter = spawnData.pivotList.GetEnumerator();
+
+
+                    foreach (var id in monsterKey)
+                    {
+                        if (StaticData.Instance.MonstersDict.TryGetValue(id, out var data) == true &&
+                            pivotIter.MoveNext() == true)
                         {
-                            targetId = _mId++,
-                            groupId = group.groupId,
-                            monsterId = int.Parse(id),
-                            pos = pos,
-                            spawnPos = pos,
-                            grade = data.grade,
-                            broadcaster = _broadcaster,
-                            stat = new EntityStat(data),
-                            rewardDatas = data.rewardIds,
-                        };
+                            Vec3 pos = pivotIter.Current;
 
-                        MonsterGroup monsterGroup = null;
+                            MonsterEntity entity = new MonsterEntity()
+                            {
+                                targetId = _mId++,
+                                groupId = group.groupId,
+                                monsterId = int.Parse(id),
+                                pos = pos,
+                                spawnPos = pos,
+                                grade = data.grade,
+                                broadcaster = _broadcaster,
+                                stat = new EntityStat(data),
+                                rewardDatas = data.rewardIds,
+                            };
 
-                        if (_monsterGroupDict.TryGetValue(entity.groupId, out var mg) == true)
-                        {
-                            monsterGroup = mg;
+                            MonsterGroup monsterGroup = null;
+
+                            if (_monsterGroupDict.TryGetValue(entity.groupId, out var mg) == true)
+                            {
+                                monsterGroup = mg;
+                            }
+                            else
+                            {
+                                monsterGroup = new MonsterGroup(entity.groupId, group.respawnTime);
+                                _monsterGroupDict.Add(entity.groupId, monsterGroup);
+                            }
+
+                            monsterGroup.Add(entity);
+
+                            var mData = new MonsterSpawn()
+                            {
+                                targetId = entity.targetId,
+                                monstersKey = entity.monsterId,
+                                groupId = entity.groupId,
+                                grade = entity.grade,
+                                pos = entity.spawnPos,
+                            };
+
+                            monsterList.Add(mData);
+
                         }
-                        else
-                        {
-                            monsterGroup = new MonsterGroup(entity.groupId, group.respawnTime);
-                            _monsterGroupDict.Add(entity.groupId, monsterGroup);
-                        }
-
-                        monsterGroup.Add(entity);
-
-                        var mData = new S_StartGame.Monster()
-                        {
-                            targetId = entity.targetId,
-                            monsterId = entity.monsterId,
-                            groupId = entity.groupId,
-                            grade = entity.grade,
-                            spawnPos = entity.spawnPos,
-                        };
-
-                        monsterList.Add(mData);
-
                     }
                 }
             }
 
-            return monsterList;
+             return monsterList;
         }
 
-        public List<S_StartGame.Player> SetupPlayer()
+        public List<PlayerSpawn> SpawnPlayer()
         {
-            var playerList = new List<S_StartGame.Player>();
+            var playerList = new List<PlayerSpawn>();
 
             var playerSpawn = _worldMap.SpawnList.FirstOrDefault(x => x.spawnType == (int)WorldMap.ESpawnType.PLAYER);
 
@@ -148,11 +134,11 @@ namespace Server
                 {
                     var pos = pivotIter.Current;
 
-                    var data = new S_StartGame.Player()
+                    var data = new PlayerSpawn()
                     {
                         targetId = info.targetId,
-                        heroId = info.heroId,
-                        spawnPos = pos
+                        herosKey = info.heroId,
+                        pos = pos
                     };
 
                     playerList.Add(data);
@@ -161,6 +147,7 @@ namespace Server
 
             return playerList;
         }
+
 
         public PlayerEntity GetPlayerEntity(int inId)
         {
@@ -224,16 +211,51 @@ namespace Server
 
         public void OnSendStartGame()
         {
-            S_StartGame gameStart = new S_StartGame();
+            // TODO@taeho.kang 후에 나중에
+            if (StaticData.Instance.ChapaterDataDict.TryGetValue("1", out var chapterData) == false)
+            {
+                HSLogger.GetInstance().Error("chapterdata is not found");
+                return;
+            }
 
-            gameStart.playerList = SetupPlayer();
-            gameStart.monsterList = SetupMonster();
+            // 맵 로드
+            _worldMap.LoadMap(chapterData.mapData);
+
+            // 플레이어 몬스터 스폰
+            var playerSpawnList  = SpawnPlayer();
+      
+            S_StartGame gameStart = new S_StartGame()
+            {
+                playerList = playerSpawnList,
+            };
 
             _broadcaster.Broadcast(gameStart);
 
+            // TODO@taeho.kang 나중에 더 좋은 방법이 있으면 수정
+            // 몬스터 스폰
+            SpawnMonsterTimer(chapterData.phase1, 0);
+            SpawnMonsterTimer(chapterData.phase2, 60);
+            SpawnMonsterTimer(chapterData.phase3, 120);
+            SpawnMonsterTimer(chapterData.phase4, 300);
+          
             Status = EStatus.GAME_START;
         }
 
+        public void SpawnMonsterTimer(string inPhase, int inSec)
+        {
+            if(inPhase == null)
+               return;
+
+              JobTimer.Instance.Push(()=> 
+            {
+                S_SpawnMonster spawnMoster = new S_SpawnMonster()
+                {
+                    monsterList = SpawnMonster(inPhase.Split(':'))
+                };
+
+                _broadcaster.Broadcast(spawnMoster);
+            }, inSec * 1000);
+        }
 
         public void OnSendCountDown()
         {
@@ -249,7 +271,7 @@ namespace Server
             // N초 후 자동으로 호출
             JobTimer.Instance.Push(OnSendStartGame, CONUTDOWN_SEC * 1000);
         }
-
+        
 
         public void OnSendRespawn(int inPlayerId)
         {
@@ -414,7 +436,7 @@ namespace Server
 
                     S_DropReward dropItem = new S_DropReward()
                     {
-                        worldId  = worldItem.worldId,
+                        worldId = worldItem.worldId,
                         rewardType = worldItem.itemData.rewardType,
                         pos = monsterEntity.pos,
                     };
@@ -460,14 +482,14 @@ namespace Server
         {
             var player = GetPlayerEntity(inPacket.targetId);
 
-            if(player == null)
-               return;
+            if (player == null)
+                return;
 
             var rewardData = _worldMap.PickReward(inPacket.worldId);
 
             IPacket packet = null;
 
-            switch((RewardData.ERewardType)rewardData.rewardType)
+            switch ((RewardData.ERewardType)rewardData.rewardType)
             {
                 case RewardData.ERewardType.GOLD:
 
@@ -489,7 +511,7 @@ namespace Server
                         // itemSlotId = 1,
                         item = new Item()
                         {
-                           
+
                         }
                     };
 

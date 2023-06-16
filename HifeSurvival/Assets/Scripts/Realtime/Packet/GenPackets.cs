@@ -13,17 +13,18 @@ public enum PacketID
 	CS_ReadyToGame = 5,
 	S_Countdown = 6,
 	S_StartGame = 7,
-	CS_Attack = 8,
-	CS_Move = 9,
-	CS_StopMove = 10,
-	S_Dead = 11,
-	S_Respawn = 12,
-	CS_UpdateStat = 13,
-	S_DropReward = 14,
-	C_PickReward = 15,
-	S_GetItem = 16,
-	S_GetGold = 17,
-
+	S_SpawnMonster = 8,
+	CS_Attack = 9,
+	CS_Move = 10,
+	CS_StopMove = 11,
+	S_Dead = 12,
+	S_Respawn = 13,
+	CS_UpdateStat = 14,
+	S_DropReward = 15,
+	C_PickReward = 16,
+	S_GetItem = 17,
+	S_GetGold = 18,
+	
 }
 
 public interface IPacket
@@ -94,7 +95,7 @@ public class S_JoinToGame : IPacket
 		public string userName;
 		public int targetId;
 		public int heroId;
-
+	
 		public void Read(ReadOnlySpan<byte> s, ref ushort count)
 		{
 			ushort userIdLen = BitConverter.ToUInt16(s.Slice(count, s.Length - count));
@@ -110,7 +111,7 @@ public class S_JoinToGame : IPacket
 			this.heroId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 			count += sizeof(int);
 		}
-
+	
 		public bool Write(Span<byte> s, ref ushort count)
 		{
 			bool success = true;
@@ -129,7 +130,7 @@ public class S_JoinToGame : IPacket
 			success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.heroId);
 			count += sizeof(int);
 			return success;
-		}
+		}	
 	}
 	public List<JoinPlayer> joinPlayerList = new List<JoinPlayer>();
 	public int roomId;
@@ -345,70 +346,7 @@ public class S_Countdown : IPacket
 
 public class S_StartGame : IPacket
 {
-	public class Player
-	{
-		public int targetId;
-		public int heroId;
-		public Vec3 spawnPos;
-
-		public void Read(ReadOnlySpan<byte> s, ref ushort count)
-		{
-			this.targetId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
-			count += sizeof(int);
-			this.heroId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
-			count += sizeof(int);
-			spawnPos.Read(s, ref count);
-		}
-
-		public bool Write(Span<byte> s, ref ushort count)
-		{
-			bool success = true;
-			success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.targetId);
-			count += sizeof(int);
-			success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.heroId);
-			count += sizeof(int);
-			success &= spawnPos.Write(s, ref count);
-			return success;
-		}
-	}
-	public List<Player> playerList = new List<Player>();
-	public class Monster
-	{
-		public int targetId;
-		public int monsterId;
-		public int groupId;
-		public int grade;
-		public Vec3 spawnPos;
-
-		public void Read(ReadOnlySpan<byte> s, ref ushort count)
-		{
-			this.targetId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
-			count += sizeof(int);
-			this.monsterId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
-			count += sizeof(int);
-			this.groupId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
-			count += sizeof(int);
-			this.grade = BitConverter.ToInt32(s.Slice(count, s.Length - count));
-			count += sizeof(int);
-			spawnPos.Read(s, ref count);
-		}
-
-		public bool Write(Span<byte> s, ref ushort count)
-		{
-			bool success = true;
-			success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.targetId);
-			count += sizeof(int);
-			success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.monsterId);
-			count += sizeof(int);
-			success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.groupId);
-			count += sizeof(int);
-			success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.grade);
-			count += sizeof(int);
-			success &= spawnPos.Write(s, ref count);
-			return success;
-		}
-	}
-	public List<Monster> monsterList = new List<Monster>();
+	public List<PlayerSpawn> playerList = new List<PlayerSpawn>();
 
 	public ushort Protocol { get { return (ushort)PacketID.S_StartGame; } }
 
@@ -424,18 +362,9 @@ public class S_StartGame : IPacket
 		count += sizeof(ushort);
 		for (int i = 0; i < playerLen; i++)
 		{
-			Player player = new Player();
+			PlayerSpawn player = new PlayerSpawn();
 			player.Read(s, ref count);
 			playerList.Add(player);
-		}
-		this.monsterList.Clear();
-		ushort monsterLen = BitConverter.ToUInt16(s.Slice(count, s.Length - count));
-		count += sizeof(ushort);
-		for (int i = 0; i < monsterLen; i++)
-		{
-			Monster monster = new Monster();
-			monster.Read(s, ref count);
-			monsterList.Add(monster);
 		}
 	}
 
@@ -452,11 +381,53 @@ public class S_StartGame : IPacket
 		count += sizeof(ushort);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)this.playerList.Count);
 		count += sizeof(ushort);
-		foreach (Player player in this.playerList)
+		foreach (PlayerSpawn player in this.playerList)
 			success &= player.Write(s, ref count);
+		success &= BitConverter.TryWriteBytes(s, count);
+		if (success == false)
+			return null;
+		return SendBufferHelper.Close(count);
+	}
+}
+
+public class S_SpawnMonster : IPacket
+{
+	public List<MonsterSpawn> monsterList = new List<MonsterSpawn>();
+
+	public ushort Protocol { get { return (ushort)PacketID.S_SpawnMonster; } }
+
+	public void Read(ArraySegment<byte> segment)
+	{
+		ushort count = 0;
+
+		ReadOnlySpan<byte> s = new ReadOnlySpan<byte>(segment.Array, segment.Offset, segment.Count);
+		count += sizeof(ushort);
+		count += sizeof(ushort);
+		this.monsterList.Clear();
+		ushort monsterLen = BitConverter.ToUInt16(s.Slice(count, s.Length - count));
+		count += sizeof(ushort);
+		for (int i = 0; i < monsterLen; i++)
+		{
+			MonsterSpawn monster = new MonsterSpawn();
+			monster.Read(s, ref count);
+			monsterList.Add(monster);
+		}
+	}
+
+	public ArraySegment<byte> Write()
+	{
+		ArraySegment<byte> segment = SendBufferHelper.Open(4096);
+		ushort count = 0;
+		bool success = true;
+
+		Span<byte> s = new Span<byte>(segment.Array, segment.Offset, segment.Count);
+
+		count += sizeof(ushort);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.S_SpawnMonster);
+		count += sizeof(ushort);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)this.monsterList.Count);
 		count += sizeof(ushort);
-		foreach (Monster monster in this.monsterList)
+		foreach (MonsterSpawn monster in this.monsterList)
 			success &= monster.Write(s, ref count);
 		success &= BitConverter.TryWriteBytes(s, count);
 		if (success == false)
@@ -517,8 +488,8 @@ public class CS_Attack : IPacket
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.fromId);
 		count += sizeof(int);
-		success &= fromPos.Write(s, ref count);
-		success &= fromDir.Write(s, ref count);
+		success &= fromPos.Write(s,ref count);
+		success &= fromDir.Write(s,ref count);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.attackValue);
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s, count);
@@ -570,8 +541,8 @@ public class CS_Move : IPacket
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.isPlayer);
 		count += sizeof(bool);
-		success &= pos.Write(s, ref count);
-		success &= dir.Write(s, ref count);
+		success &= pos.Write(s,ref count);
+		success &= dir.Write(s,ref count);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.speed);
 		count += sizeof(float);
 		success &= BitConverter.TryWriteBytes(s, count);
@@ -620,8 +591,8 @@ public class CS_StopMove : IPacket
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.isPlayer);
 		count += sizeof(bool);
-		success &= pos.Write(s, ref count);
-		success &= dir.Write(s, ref count);
+		success &= pos.Write(s,ref count);
+		success &= dir.Write(s,ref count);
 		success &= BitConverter.TryWriteBytes(s, count);
 		if (success == false)
 			return null;
@@ -725,8 +696,8 @@ public class S_Respawn : IPacket
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.isPlayer);
 		count += sizeof(bool);
-		success &= pos.Write(s, ref count);
-		success &= stat.Write(s, ref count);
+		success &= pos.Write(s,ref count);
+		success &= stat.Write(s,ref count);
 		success &= BitConverter.TryWriteBytes(s, count);
 		if (success == false)
 			return null;
@@ -771,7 +742,7 @@ public class CS_UpdateStat : IPacket
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.usedGold);
 		count += sizeof(int);
-		success &= updateStat.Write(s, ref count);
+		success &= updateStat.Write(s,ref count);
 		success &= BitConverter.TryWriteBytes(s, count);
 		if (success == false)
 			return null;
@@ -816,7 +787,7 @@ public class S_DropReward : IPacket
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.rewardType);
 		count += sizeof(int);
-		success &= pos.Write(s, ref count);
+		success &= pos.Write(s,ref count);
 		success &= BitConverter.TryWriteBytes(s, count);
 		if (success == false)
 			return null;
@@ -908,7 +879,7 @@ public class S_GetItem : IPacket
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.itemSlotId);
 		count += sizeof(int);
-		success &= item.Write(s, ref count);
+		success &= item.Write(s,ref count);
 		success &= BitConverter.TryWriteBytes(s, count);
 		if (success == false)
 			return null;
@@ -988,9 +959,9 @@ public struct Vec3
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.z);
 		count += sizeof(float);
 		return success;
-	}
+	}	
 }
-public struct Stat
+	public struct Stat
 {
 	public int str;
 	public int def;
@@ -1026,9 +997,9 @@ public struct Stat
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.attackSpeed);
 		count += sizeof(float);
 		return success;
-	}
+	}	
 }
-public struct Item
+	public struct Item
 {
 	public int itemKey;
 	public int level;
@@ -1074,6 +1045,68 @@ public struct Item
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.canUse);
 		count += sizeof(bool);
 		return success;
-	}
+	}	
 }
+	public class PlayerSpawn
+{
+	public int targetId;
+	public int herosKey;
+	public Vec3 pos;
 
+	public void Read(ReadOnlySpan<byte> s, ref ushort count)
+	{
+		this.targetId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+		count += sizeof(int);
+		this.herosKey = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+		count += sizeof(int);
+		pos.Read(s, ref count);
+	}
+
+	public bool Write(Span<byte> s, ref ushort count)
+	{
+		bool success = true;
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.targetId);
+		count += sizeof(int);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.herosKey);
+		count += sizeof(int);
+		success &= pos.Write(s,ref count);
+		return success;
+	}	
+}
+	public class MonsterSpawn
+{
+	public int targetId;
+	public int monstersKey;
+	public int groupId;
+	public int grade;
+	public Vec3 pos;
+
+	public void Read(ReadOnlySpan<byte> s, ref ushort count)
+	{
+		this.targetId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+		count += sizeof(int);
+		this.monstersKey = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+		count += sizeof(int);
+		this.groupId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+		count += sizeof(int);
+		this.grade = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+		count += sizeof(int);
+		pos.Read(s, ref count);
+	}
+
+	public bool Write(Span<byte> s, ref ushort count)
+	{
+		bool success = true;
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.targetId);
+		count += sizeof(int);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.monstersKey);
+		count += sizeof(int);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.groupId);
+		count += sizeof(int);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.grade);
+		count += sizeof(int);
+		success &= pos.Write(s,ref count);
+		return success;
+	}	
+}
+	

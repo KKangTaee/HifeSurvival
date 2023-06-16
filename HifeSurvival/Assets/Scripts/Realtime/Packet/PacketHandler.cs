@@ -53,9 +53,10 @@ class PacketHandler
         GameMode.Instance.OnRecvMove(move);
     }
 
-    internal static void S_SpawnMonsterHandler(PacketSession arg1, IPacket arg2)
+    public static void S_SpawnMonsterHandler(PacketSession session, IPacket packet)
     {
-        throw new NotImplementedException();
+        S_SpawnMonster spawnMonster = packet as S_SpawnMonster;
+        GameMode.Instance.OnRecvSpawnMonster(spawnMonster);
     }
 
     public static void CS_StopMoveHandler(PacketSession session, IPacket packet)
@@ -81,7 +82,6 @@ class PacketHandler
         CS_UpdateStat updateStat = packet as CS_UpdateStat;
         GameMode.Instance.OnRecvUpdateStat(updateStat);
     }
-
 
     public static void S_DropRewardHandler(PacketSession session, IPacket packet)
     {

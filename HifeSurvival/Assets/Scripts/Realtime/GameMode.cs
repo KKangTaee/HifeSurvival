@@ -96,7 +96,7 @@ public class GameMode
             return;
 
 
-        if (StaticData.Instance.HeroDict.TryGetValue(joinPlayer.heroId.ToString(), out var heros) == false)
+        if (StaticData.Instance.HerosDict.TryGetValue(joinPlayer.heroId.ToString(), out var heros) == false)
         {
             Debug.LogError("heros static data is null or empty!");
             return;
@@ -310,7 +310,7 @@ public class GameMode
             return;
 
         player.heroId = inPacket.heroId;
-        player.stat = new EntityStat(StaticData.Instance.HeroDict[player.heroId.ToString()]);
+        player.stat = new EntityStat(StaticData.Instance.HerosDict[player.heroId.ToString()]);
 
 
         if (IsSelf(inPacket.targetId) == false)
@@ -514,7 +514,4 @@ public class GameMode
 
         OnRecvGetGoldHandler?.Invoke(inPacket);
     }
-
-
-
 }

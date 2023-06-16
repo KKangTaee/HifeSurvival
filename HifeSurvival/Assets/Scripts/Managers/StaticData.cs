@@ -35,11 +35,12 @@ public class StaticData
     // Static Datas
     //------------------
 
-    public Dictionary<string, Heros> HeroDict { get; private set; }
+    public Dictionary<string, Heros> HerosDict { get; private set; }
     public Dictionary<string, Systems> SystemsDict { get; private set; }
     public Dictionary<string, Monsters> MonstersDict { get; private set; }
     public Dictionary<string, MonstersGroup> MonstersGroupDict { get; private set; }
-    public Dictionary<string, item> ItemDict { get; private set; }
+    public Dictionary<string, Item> ItemDict { get; private set; }
+    public Dictionary<string, ChapterData> ChapaterDataDict { get; private set; }
 
 
     public async Task Init()
@@ -89,7 +90,7 @@ public class StaticData
                     }
                     else if (rangeValue.Equals("heros"))
                     {
-                        HeroDict = JsonToDictionaryGeneric.ParseJsonToDictionary<Heros>(node.ToString());
+                        HerosDict = JsonToDictionaryGeneric.ParseJsonToDictionary<Heros>(node.ToString());
                     }
                     else if (rangeValue.Equals("monsters"))
                     {
@@ -101,9 +102,12 @@ public class StaticData
                     }
                     else if (rangeValue.Equals("item"))
                     {
-                        ItemDict = JsonToDictionaryGeneric.ParseJsonToDictionary<item>(node.ToString());
+                        ItemDict = JsonToDictionaryGeneric.ParseJsonToDictionary<Item>(node.ToString());
                     }
-
+                    else if(rangeValue.Equals("chapter_data"))
+                    {
+                        ChapaterDataDict = JsonToDictionaryGeneric.ParseJsonToDictionary<ChapterData>(node.ToString());
+                    }
                 }
 
                 waiter.Signal();
@@ -283,7 +287,7 @@ public class StaticData
     }
 
     [Serializable]
-    public class item
+    public class Item
     {
         public int key;
         public string name;
@@ -295,5 +299,17 @@ public class StaticData
         public float moveSpeed;
         public float attackRange;
         public float detectRange;
+    }
+
+    [Serializable]
+    public class ChapterData
+    {
+        public int key;
+        public string mapData;
+        public string phase1;
+        public string phase2;
+        public string phase3;
+        public string phase4;
+        public int runningTimeSec;
     }
 }

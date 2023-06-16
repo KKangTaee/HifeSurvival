@@ -238,6 +238,8 @@ namespace Server
             SpawnMonsterTimer(chapterData.phase3, 120);
             SpawnMonsterTimer(chapterData.phase4, 300);
           
+            // 게임종료 타이머도 추가해야함.
+
             Status = EStatus.GAME_START;
         }
 
@@ -271,7 +273,7 @@ namespace Server
             // N초 후 자동으로 호출
             JobTimer.Instance.Push(OnSendStartGame, CONUTDOWN_SEC * 1000);
         }
-        
+
 
         public void OnSendRespawn(int inPlayerId)
         {

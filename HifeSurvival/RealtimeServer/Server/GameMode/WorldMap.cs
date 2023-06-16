@@ -122,7 +122,7 @@ namespace Server
         {
             if(ItemDict.TryGetValue(inWorldId, out var worldItem) == false)
             {
-                HSLogger.GetInstance().Error($"[{nameof(PickReward)}] worldId is wrong : {inWorldId}");
+                Logger.GetInstance().Error($"[{nameof(PickReward)}] worldId is wrong : {inWorldId}");
                 return default;
             }
 

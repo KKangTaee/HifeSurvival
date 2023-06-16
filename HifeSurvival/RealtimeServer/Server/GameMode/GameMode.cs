@@ -1,8 +1,8 @@
+using Server.Helper;
+using ServerCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Server.Helper;
-using ServerCore;
 
 namespace Server
 {
@@ -47,70 +47,72 @@ namespace Server
 
             foreach (var groupKey in inGroupKeyArr)
             {
-                var monsterKey = group.monsterGroups.Split(':');
-                var spawnData = _worldMap.SpawnList.FirstOrDefault(x => x.spawnType == (int)WorldMap.ESpawnType.MONSTER &&
-                                                                     x.groupId == group.groupId);
-
-                if (spawnData == null)
+                if (StaticData.Instance.MonstersGroupDict.TryGetValue(groupKey, out var group) == true)
                 {
-                    Logger.GetInstance().Error("spawnData is null or empty!");
-                    continue;
-                }
+                    var monsterKey = group.monsterGroups.Split(':');
+                    var spawnData = _worldMap.SpawnList.FirstOrDefault(x => x.spawnType == (int)WorldMap.ESpawnType.MONSTER &&
+                                                                         x.groupId == group.groupId);
 
-                var pivotIter = spawnData.pivotList.GetEnumerator();
-
-
-                foreach (var id in monsterKey)
-                {
-                    if (StaticData.Instance.MonstersDict.TryGetValue(id, out var data) == true &&
-                        pivotIter.MoveNext() == true)
+                    if (spawnData == null)
                     {
-                        Vec3 pos = pivotIter.Current;
-
-                        MonsterEntity entity = new MonsterEntity()
-                        {
-                            targetId = _mId++,
-                            groupId = group.groupId,
-                            monsterId = int.Parse(id),
-                            pos = pos,
-                            spawnPos = pos,
-                            grade = data.grade,
-                            broadcaster = _broadcaster,
-                            stat = new EntityStat(data),
-                            rewardDatas = data.rewardIds,
-                        };
-
-                        MonsterGroup monsterGroup = null;
-
-                        if (_monsterGroupDict.TryGetValue(entity.groupId, out var mg) == true)
-                        {
-                            monsterGroup = mg;
-                        }
-                        else
-                        {
-                            monsterGroup = new MonsterGroup(entity.groupId, group.respawnTime);
-                            _monsterGroupDict.Add(entity.groupId, monsterGroup);
-                        }
-
-                        monsterGroup.Add(entity);
-
-                        var mData = new MonsterSpawn()
-                        {
-                            targetId = entity.targetId,
-                            monstersKey = entity.monsterId,
-                            groupId = entity.groupId,
-                            grade = entity.grade,
-                            pos = entity.spawnPos,
-                        };
-
-                        monsterList.Add(mData);
-
+                        Logger.GetInstance().Error("spawnData is null or empty!");
+                        continue;
                     }
-                }
+
+                    var pivotIter = spawnData.pivotList.GetEnumerator();
+
+
+                    foreach (var id in monsterKey)
+                    {
+                        if (StaticData.Instance.MonstersDict.TryGetValue(id, out var data) == true &&
+                            pivotIter.MoveNext() == true)
+                        {
+                            Vec3 pos = pivotIter.Current;
+
+                            MonsterEntity entity = new MonsterEntity()
+                            {
+                                targetId = _mId++,
+                                groupId = group.groupId,
+                                monsterId = int.Parse(id),
+                                pos = pos,
+                                spawnPos = pos,
+                                grade = data.grade,
+                                broadcaster = _broadcaster,
+                                stat = new EntityStat(data),
+                                rewardDatas = data.rewardIds,
+                            };
+
+                            MonsterGroup monsterGroup = null;
+
+                            if (_monsterGroupDict.TryGetValue(entity.groupId, out var mg) == true)
+                            {
+                                monsterGroup = mg;
+                            }
+                            else
+                            {
+                                monsterGroup = new MonsterGroup(entity.groupId, group.respawnTime);
+                                _monsterGroupDict.Add(entity.groupId, monsterGroup);
+                            }
+
+                            monsterGroup.Add(entity);
+
+                            var mData = new MonsterSpawn()
+                            {
+                                targetId = entity.targetId,
+                                monstersKey = entity.monsterId,
+                                groupId = entity.groupId,
+                                grade = entity.grade,
+                                pos = entity.spawnPos,
+                            };
+
+                            monsterList.Add(mData);
+
+                        }
+                    }
                 }
             }
 
-             return monsterList;
+            return monsterList;
         }
 
         public List<PlayerSpawn> SpawnPlayer()
@@ -213,7 +215,7 @@ namespace Server
             // TODO@taeho.kang 후에 나중에
             if (StaticData.Instance.ChapaterDataDict.TryGetValue("1", out var chapterData) == false)
             {
-                HSLogger.GetInstance().Error("chapterdata is not found");
+                Logger.GetInstance().Error("chapterdata is not found");
                 return;
             }
 
@@ -221,12 +223,12 @@ namespace Server
             _worldMap.LoadMap(chapterData.mapData);
 
             // 플레이어 몬스터 스폰
-            var playerSpawnList  = SpawnPlayer();
-      
+            var playerSpawnList = SpawnPlayer();
+
             S_StartGame gameStart = new S_StartGame()
             {
                 playTimeSec = chapterData.playTimeSec,
-                playerList  = playerSpawnList,
+                playerList = playerSpawnList,
                 monsterList = SpawnMonster(chapterData.phase1.Split(':'))
             };
 
@@ -238,7 +240,7 @@ namespace Server
             SpawnMonsterTimer(chapterData.phase2, 60);
             SpawnMonsterTimer(chapterData.phase3, 120);
             SpawnMonsterTimer(chapterData.phase4, 300);
-          
+
             // 게임종료 타이머도 추가해야함.
 
             Status = EStatus.GAME_START;
@@ -246,10 +248,10 @@ namespace Server
 
         public void SpawnMonsterTimer(string inPhase, int inSec)
         {
-            if(inPhase == null)
-               return;
+            if (inPhase == null)
+                return;
 
-              JobTimer.Instance.Push(()=> 
+            JobTimer.Instance.Push(() =>
             {
                 S_SpawnMonster spawnMoster = new S_SpawnMonster()
                 {

@@ -346,7 +346,9 @@ public class S_Countdown : IPacket
 
 public class S_StartGame : IPacket
 {
+	public int playTimeSec;
 	public List<PlayerSpawn> playerList = new List<PlayerSpawn>();
+	public List<MonsterSpawn> monsterList = new List<MonsterSpawn>();
 
 	public ushort Protocol { get { return (ushort)PacketID.S_StartGame; } }
 
@@ -357,6 +359,8 @@ public class S_StartGame : IPacket
 		ReadOnlySpan<byte> s = new ReadOnlySpan<byte>(segment.Array, segment.Offset, segment.Count);
 		count += sizeof(ushort);
 		count += sizeof(ushort);
+		this.playTimeSec = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+		count += sizeof(int);
 		this.playerList.Clear();
 		ushort playerLen = BitConverter.ToUInt16(s.Slice(count, s.Length - count));
 		count += sizeof(ushort);
@@ -365,6 +369,15 @@ public class S_StartGame : IPacket
 			PlayerSpawn player = new PlayerSpawn();
 			player.Read(s, ref count);
 			playerList.Add(player);
+		}
+		this.monsterList.Clear();
+		ushort monsterLen = BitConverter.ToUInt16(s.Slice(count, s.Length - count));
+		count += sizeof(ushort);
+		for (int i = 0; i < monsterLen; i++)
+		{
+			MonsterSpawn monster = new MonsterSpawn();
+			monster.Read(s, ref count);
+			monsterList.Add(monster);
 		}
 	}
 
@@ -379,10 +392,16 @@ public class S_StartGame : IPacket
 		count += sizeof(ushort);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.S_StartGame);
 		count += sizeof(ushort);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.playTimeSec);
+		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)this.playerList.Count);
 		count += sizeof(ushort);
 		foreach (PlayerSpawn player in this.playerList)
 			success &= player.Write(s, ref count);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)this.monsterList.Count);
+		count += sizeof(ushort);
+		foreach (MonsterSpawn monster in this.monsterList)
+			success &= monster.Write(s, ref count);
 		success &= BitConverter.TryWriteBytes(s, count);
 		if (success == false)
 			return null;

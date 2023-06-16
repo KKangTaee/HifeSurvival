@@ -313,7 +313,7 @@ namespace Server
             public string phase2;
             public string phase3;
             public string phase4;
-            public int runningTimeSec;
+            public int playTimeSec;
         }
     }
 }

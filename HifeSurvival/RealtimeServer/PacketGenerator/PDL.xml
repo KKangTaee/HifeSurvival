@@ -35,7 +35,9 @@
 	</packet>
 
 	<packet name="S_StartGame">
+		<int name ="playTimeSec"/>
 		<class_PlayerSpawn_list name ="player"/>
+		<class_MonsterSpawn_list name ="monster"/>	
 	</packet>
 
 	<packet name ="S_SpawnMonster">

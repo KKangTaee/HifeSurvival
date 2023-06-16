@@ -226,14 +226,16 @@ namespace Server
       
             S_StartGame gameStart = new S_StartGame()
             {
-                playerList = playerSpawnList,
+                playTimeSec = chapterData.playTimeSec,
+                playerList  = playerSpawnList,
+                monsterList = SpawnMonster(chapterData.phase1.Split(':'))
             };
 
             _broadcaster.Broadcast(gameStart);
 
             // TODO@taeho.kang 나중에 더 좋은 방법이 있으면 수정
             // 몬스터 스폰
-            SpawnMonsterTimer(chapterData.phase1, 0);
+            // SpawnMonsterTimer(chapterData.phase1, 0);
             SpawnMonsterTimer(chapterData.phase2, 60);
             SpawnMonsterTimer(chapterData.phase3, 120);
             SpawnMonsterTimer(chapterData.phase4, 300);

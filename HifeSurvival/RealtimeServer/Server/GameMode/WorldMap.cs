@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ServerCore;
+using Server.Helper;
 
 namespace Server
 {
@@ -99,7 +100,7 @@ namespace Server
 
         public WorldItemData DropItem(string inRewardData)
         {
-            var itemDataStr = inRewardData.FilterRewardIdsByRandomProbability();
+            var itemDataStr = PacketExtensionHelper.FilterRewardIdsByRandomProbability(inRewardData);
 
             if (itemDataStr == null)
                 return null;

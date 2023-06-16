@@ -12,14 +12,17 @@ public abstract class PacketHandler
 	public abstract void CS_ReadyToGameHandler(PacketSession session, IPacket packet);
 	public abstract void S_CountdownHandler(PacketSession session, IPacket packet);
 	public abstract void S_StartGameHandler(PacketSession session, IPacket packet);
+	public abstract void S_SpawnMonsterHandler(PacketSession session, IPacket packet);
 	public abstract void CS_AttackHandler(PacketSession session, IPacket packet);
 	public abstract void CS_MoveHandler(PacketSession session, IPacket packet);
 	public abstract void CS_StopMoveHandler(PacketSession session, IPacket packet);
 	public abstract void S_DeadHandler(PacketSession session, IPacket packet);
 	public abstract void S_RespawnHandler(PacketSession session, IPacket packet);
 	public abstract void CS_UpdateStatHandler(PacketSession session, IPacket packet);
-	public abstract void S_DropItemHandler(PacketSession session, IPacket packet);
-	public abstract void C_GetItemHandler(PacketSession session, IPacket packet);
+	public abstract void S_DropRewardHandler(PacketSession session, IPacket packet);
+	public abstract void C_PickRewardHandler(PacketSession session, IPacket packet);
+	public abstract void S_GetItemHandler(PacketSession session, IPacket packet);
+	public abstract void S_GetGoldHandler(PacketSession session, IPacket packet);
 
 }
 
@@ -48,14 +51,17 @@ public class PacketManager
 		_handler.Add((ushort)PacketID.CS_ReadyToGame, handler.CS_ReadyToGameHandler);
 		_handler.Add((ushort)PacketID.S_Countdown, handler.S_CountdownHandler);
 		_handler.Add((ushort)PacketID.S_StartGame, handler.S_StartGameHandler);
+		_handler.Add((ushort)PacketID.S_SpawnMonster, handler.S_SpawnMonsterHandler);
 		_handler.Add((ushort)PacketID.CS_Attack, handler.CS_AttackHandler);
 		_handler.Add((ushort)PacketID.CS_Move, handler.CS_MoveHandler);
 		_handler.Add((ushort)PacketID.CS_StopMove, handler.CS_StopMoveHandler);
 		_handler.Add((ushort)PacketID.S_Dead, handler.S_DeadHandler);
 		_handler.Add((ushort)PacketID.S_Respawn, handler.S_RespawnHandler);
 		_handler.Add((ushort)PacketID.CS_UpdateStat, handler.CS_UpdateStatHandler);
-		_handler.Add((ushort)PacketID.S_DropItem, handler.S_DropItemHandler);
-		_handler.Add((ushort)PacketID.C_GetItem, handler.C_GetItemHandler);
+		_handler.Add((ushort)PacketID.S_DropReward, handler.S_DropRewardHandler);
+		_handler.Add((ushort)PacketID.C_PickReward, handler.C_PickRewardHandler);
+		_handler.Add((ushort)PacketID.S_GetItem, handler.S_GetItemHandler);
+		_handler.Add((ushort)PacketID.S_GetGold, handler.S_GetGoldHandler);
 
 	}
 
@@ -68,14 +74,17 @@ public class PacketManager
 		_makeFunc.Add((ushort)PacketID.CS_ReadyToGame, MakePacket<CS_ReadyToGame>);
 		_makeFunc.Add((ushort)PacketID.S_Countdown, MakePacket<S_Countdown>);
 		_makeFunc.Add((ushort)PacketID.S_StartGame, MakePacket<S_StartGame>);
+		_makeFunc.Add((ushort)PacketID.S_SpawnMonster, MakePacket<S_SpawnMonster>);
 		_makeFunc.Add((ushort)PacketID.CS_Attack, MakePacket<CS_Attack>);
 		_makeFunc.Add((ushort)PacketID.CS_Move, MakePacket<CS_Move>);
 		_makeFunc.Add((ushort)PacketID.CS_StopMove, MakePacket<CS_StopMove>);
 		_makeFunc.Add((ushort)PacketID.S_Dead, MakePacket<S_Dead>);
 		_makeFunc.Add((ushort)PacketID.S_Respawn, MakePacket<S_Respawn>);
 		_makeFunc.Add((ushort)PacketID.CS_UpdateStat, MakePacket<CS_UpdateStat>);
-		_makeFunc.Add((ushort)PacketID.S_DropItem, MakePacket<S_DropItem>);
-		_makeFunc.Add((ushort)PacketID.C_GetItem, MakePacket<C_GetItem>);
+		_makeFunc.Add((ushort)PacketID.S_DropReward, MakePacket<S_DropReward>);
+		_makeFunc.Add((ushort)PacketID.C_PickReward, MakePacket<C_PickReward>);
+		_makeFunc.Add((ushort)PacketID.S_GetItem, MakePacket<S_GetItem>);
+		_makeFunc.Add((ushort)PacketID.S_GetGold, MakePacket<S_GetGold>);
 
 	}
 

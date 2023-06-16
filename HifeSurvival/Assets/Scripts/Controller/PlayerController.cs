@@ -61,6 +61,7 @@ public sealed class PlayerController : EntityObjectController<Player>
             _entityObjectDict.Add(entity.targetId, inst);
         }
 
+        _cameraController.SetCameraPos(Self.GetPos());
         _cameraController.FollowingTarget(Self.transform);
     }
 

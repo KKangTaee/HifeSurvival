@@ -53,6 +53,11 @@ class PacketHandler
         GameMode.Instance.OnRecvMove(move);
     }
 
+    internal static void S_SpawnMonsterHandler(PacketSession arg1, IPacket arg2)
+    {
+        throw new NotImplementedException();
+    }
+
     public static void CS_StopMoveHandler(PacketSession session, IPacket packet)
     {
          CS_StopMove stopMove = packet as CS_StopMove;

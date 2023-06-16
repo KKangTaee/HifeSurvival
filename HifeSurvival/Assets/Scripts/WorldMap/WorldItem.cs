@@ -82,7 +82,6 @@ public class WorldItem : WorldObjectBase
     {
         _col.enabled = false;
 
-        Debug.LogError("sdfsdfsdgdsfgdfg");
         transform.DOMoveY(transform.position.y + jumpHeight, 1.1f).OnComplete(() =>
         {
             // 획득 후 풀에 넣는다.

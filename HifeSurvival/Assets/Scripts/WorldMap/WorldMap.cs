@@ -32,9 +32,9 @@ public class WorldMap : MonoBehaviour
 
         _objectPoolController = ControllerManager.Instance.GetController<ObjectPoolController>();
 
-        GameMode.Instance.OnRecvDropRewardHandler += OnRecvDropReward;
-        GameMode.Instance.OnRecvGetItemHandler += OnRecvGetItem;
-        GameMode.Instance.OnRecvGetGoldHandler += OnRecvGetGold;
+        GameMode.Instance.OnRecvDropRewardHandler   += OnRecvDropReward;
+        GameMode.Instance.OnRecvGetItemHandler      += OnRecvGetItem;
+        GameMode.Instance.OnRecvGetGoldHandler      += OnRecvGetGold;
 
     }
 
@@ -56,14 +56,9 @@ public class WorldMap : MonoBehaviour
                                               x.IsSubclassOf(typeof(WorldObjectBase)))
                                   .ToList();
 
-        foreach (var type in derivedTypes)
-        {
-            _worldObjDict.Add(type, new List<WorldObjectBase>());
-        }
 
         var stack = new Stack<Transform>();
         stack.Push(_objectRoot);
-
 
         while (stack.Count > 0)
         {
@@ -76,23 +71,13 @@ public class WorldMap : MonoBehaviour
                 if (worldObj != null)
                 {
                     var type = worldObj.GetType();
-
-                    if (_worldObjDict.ContainsKey(type) == true)
-                        _worldObjDict[type].Add(worldObj);
-
+                    AddWorldObject(worldObj);
                 }
 
                 if (child.childCount > 0)
                     stack.Push(child);
             }
         }
-    }
-
-
-    public IEnumerable<T> GetWorldObjEnumerable<T>() where T : WorldObjectBase
-    {
-        return _worldObjDict.TryGetValue(typeof(T), out var list) ? list.Cast<T>()
-                                                                 : Enumerable.Empty<T>();
     }
 
     public void SetPosWallMask(Vector3 inWorldPos)
@@ -120,6 +105,37 @@ public class WorldMap : MonoBehaviour
     public void DoneWallMasking()
     {
         SetPosWallMask(new Vector3(-9999, -9999, -9999));
+    }
+
+
+    public IEnumerable<T> GetWorldObjEnumerable<T>() where T : WorldObjectBase
+    {
+        return _worldObjDict.TryGetValue(typeof(T), out var list) ? list.Cast<T>()
+                                                                 : Enumerable.Empty<T>();
+    }
+
+
+    public void AddWorldObject<T>(T inObj) where T : WorldObjectBase
+    {
+        if(_worldObjDict.TryGetValue(typeof(T), out var list) == true)
+        {
+            list.Add(inObj);
+        }
+        else
+        {
+            var objList = new List<WorldObjectBase>();
+            objList.Add(inObj);
+
+            _worldObjDict.Add(typeof(T), objList);
+        }
+    }
+
+    public void RemoveWorldObject<T>(T inObj) where T : WorldObjectBase
+    {
+        if(_worldObjDict.TryGetValue(inObj.GetType(), out var list) == true)
+        {
+            list.Remove(inObj);
+        }
     }
 
 
@@ -200,7 +216,11 @@ public class WorldMap : MonoBehaviour
             return;
         }
 
-        itemObj.PlayGetItem(() => _objectPoolController.StoreToPool(itemObj));
+        itemObj.PlayGetItem(() => 
+        {
+            RemoveWorldObject(itemObj);
+            _objectPoolController.StoreToPool(itemObj); 
+        });
     }
 
 
@@ -220,8 +240,9 @@ public class WorldMap : MonoBehaviour
 
         itemObj.SetInfo(inPacket.worldId, inPacket.pos.ConvertUnityVector3(), inPacket.rewardType);
         itemObj.PlayDropItem();
-    }
 
+        AddWorldObject(itemObj);
+    }
 
     public void OnRecvGetItem(S_GetItem inPacket)
     {

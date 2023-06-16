@@ -23,7 +23,7 @@ public enum PacketID
 	C_PickReward = 15,
 	S_GetItem = 16,
 	S_GetGold = 17,
-	
+
 }
 
 public interface IPacket
@@ -94,7 +94,7 @@ public class S_JoinToGame : IPacket
 		public string userName;
 		public int targetId;
 		public int heroId;
-	
+
 		public void Read(ReadOnlySpan<byte> s, ref ushort count)
 		{
 			ushort userIdLen = BitConverter.ToUInt16(s.Slice(count, s.Length - count));
@@ -110,7 +110,7 @@ public class S_JoinToGame : IPacket
 			this.heroId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 			count += sizeof(int);
 		}
-	
+
 		public bool Write(Span<byte> s, ref ushort count)
 		{
 			bool success = true;
@@ -129,7 +129,7 @@ public class S_JoinToGame : IPacket
 			success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.heroId);
 			count += sizeof(int);
 			return success;
-		}	
+		}
 	}
 	public List<JoinPlayer> joinPlayerList = new List<JoinPlayer>();
 	public int roomId;
@@ -350,7 +350,7 @@ public class S_StartGame : IPacket
 		public int targetId;
 		public int heroId;
 		public Vec3 spawnPos;
-	
+
 		public void Read(ReadOnlySpan<byte> s, ref ushort count)
 		{
 			this.targetId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
@@ -359,7 +359,7 @@ public class S_StartGame : IPacket
 			count += sizeof(int);
 			spawnPos.Read(s, ref count);
 		}
-	
+
 		public bool Write(Span<byte> s, ref ushort count)
 		{
 			bool success = true;
@@ -367,9 +367,9 @@ public class S_StartGame : IPacket
 			count += sizeof(int);
 			success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.heroId);
 			count += sizeof(int);
-			success &= spawnPos.Write(s,ref count);
+			success &= spawnPos.Write(s, ref count);
 			return success;
-		}	
+		}
 	}
 	public List<Player> playerList = new List<Player>();
 	public class Monster
@@ -379,7 +379,7 @@ public class S_StartGame : IPacket
 		public int groupId;
 		public int grade;
 		public Vec3 spawnPos;
-	
+
 		public void Read(ReadOnlySpan<byte> s, ref ushort count)
 		{
 			this.targetId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
@@ -392,7 +392,7 @@ public class S_StartGame : IPacket
 			count += sizeof(int);
 			spawnPos.Read(s, ref count);
 		}
-	
+
 		public bool Write(Span<byte> s, ref ushort count)
 		{
 			bool success = true;
@@ -404,9 +404,9 @@ public class S_StartGame : IPacket
 			count += sizeof(int);
 			success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.grade);
 			count += sizeof(int);
-			success &= spawnPos.Write(s,ref count);
+			success &= spawnPos.Write(s, ref count);
 			return success;
-		}	
+		}
 	}
 	public List<Monster> monsterList = new List<Monster>();
 
@@ -517,8 +517,8 @@ public class CS_Attack : IPacket
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.fromId);
 		count += sizeof(int);
-		success &= fromPos.Write(s,ref count);
-		success &= fromDir.Write(s,ref count);
+		success &= fromPos.Write(s, ref count);
+		success &= fromDir.Write(s, ref count);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.attackValue);
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s, count);
@@ -570,8 +570,8 @@ public class CS_Move : IPacket
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.isPlayer);
 		count += sizeof(bool);
-		success &= pos.Write(s,ref count);
-		success &= dir.Write(s,ref count);
+		success &= pos.Write(s, ref count);
+		success &= dir.Write(s, ref count);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.speed);
 		count += sizeof(float);
 		success &= BitConverter.TryWriteBytes(s, count);
@@ -620,8 +620,8 @@ public class CS_StopMove : IPacket
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.isPlayer);
 		count += sizeof(bool);
-		success &= pos.Write(s,ref count);
-		success &= dir.Write(s,ref count);
+		success &= pos.Write(s, ref count);
+		success &= dir.Write(s, ref count);
 		success &= BitConverter.TryWriteBytes(s, count);
 		if (success == false)
 			return null;
@@ -725,8 +725,8 @@ public class S_Respawn : IPacket
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.isPlayer);
 		count += sizeof(bool);
-		success &= pos.Write(s,ref count);
-		success &= stat.Write(s,ref count);
+		success &= pos.Write(s, ref count);
+		success &= stat.Write(s, ref count);
 		success &= BitConverter.TryWriteBytes(s, count);
 		if (success == false)
 			return null;
@@ -771,7 +771,7 @@ public class CS_UpdateStat : IPacket
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.usedGold);
 		count += sizeof(int);
-		success &= updateStat.Write(s,ref count);
+		success &= updateStat.Write(s, ref count);
 		success &= BitConverter.TryWriteBytes(s, count);
 		if (success == false)
 			return null;
@@ -816,7 +816,7 @@ public class S_DropReward : IPacket
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.rewardType);
 		count += sizeof(int);
-		success &= pos.Write(s,ref count);
+		success &= pos.Write(s, ref count);
 		success &= BitConverter.TryWriteBytes(s, count);
 		if (success == false)
 			return null;
@@ -908,7 +908,7 @@ public class S_GetItem : IPacket
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.itemSlotId);
 		count += sizeof(int);
-		success &= item.Write(s,ref count);
+		success &= item.Write(s, ref count);
 		success &= BitConverter.TryWriteBytes(s, count);
 		if (success == false)
 			return null;
@@ -988,9 +988,9 @@ public struct Vec3
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.z);
 		count += sizeof(float);
 		return success;
-	}	
+	}
 }
-	public struct Stat
+public struct Stat
 {
 	public int str;
 	public int def;
@@ -1026,9 +1026,9 @@ public struct Vec3
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.attackSpeed);
 		count += sizeof(float);
 		return success;
-	}	
+	}
 }
-	public struct Item
+public struct Item
 {
 	public int itemKey;
 	public int level;
@@ -1074,6 +1074,6 @@ public struct Vec3
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.canUse);
 		count += sizeof(bool);
 		return success;
-	}	
+	}
 }
-	
+

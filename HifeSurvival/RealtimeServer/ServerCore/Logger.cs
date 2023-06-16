@@ -62,7 +62,7 @@ namespace ServerCore
 
             var methodName = manualMethodName == "" ? stackFrame.GetMethod().Name : manualMethodName;
 
-            string logMsg = $"{DateTime.Now.ToString("yyyy-mm-dd HH:mm:ss.fff")}   {verbose}   {methodName} - {message}";
+            string logMsg = $"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")}   {verbose}   {methodName} - {message}";
             sw.WriteLine(logMsg);
 
             if(bConsoleWirte)

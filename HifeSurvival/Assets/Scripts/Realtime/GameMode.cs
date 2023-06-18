@@ -19,9 +19,9 @@ public class GameMode
     private static GameMode _instance = new GameMode();
     public static GameMode Instance { get => _instance; }
 
-    public Dictionary<int, PlayerEntity>  PlayerEntitysDict { get; private set; } = new Dictionary<int, PlayerEntity>();
+    public Dictionary<int, PlayerEntity> PlayerEntitysDict { get; private set; } = new Dictionary<int, PlayerEntity>();
     public Dictionary<int, MonsterEntity> MonsterEntityDict { get; private set; } = new Dictionary<int, MonsterEntity>();
-    
+
 
     private SimpleTaskCompletionSource<S_JoinToGame> _joinCompleted = new SimpleTaskCompletionSource<S_JoinToGame>();
 
@@ -34,22 +34,22 @@ public class GameMode
 
     private Action<int> _onRecvLeaveCB;
     private Action<int> _onRecvCountdownCB;
-    private Action     _onRecvStartGameCB;
+    private Action _onRecvStartGameCB;
 
 
     //---------------
     // 인게임 진행 관련
     //---------------
 
-    public event Action<Entity>        OnRecvMoveHandler;
-    public event Action<Entity>        OnRecvStopMoveHandler;
-    public event Action<S_Dead>        OnRecvDeadHandler;
-    public event Action<CS_Attack>     OnRecvAttackHandler;
-    public event Action<Entity>        OnRecvRespawnHandler;
-    public event Action<PlayerEntity>  OnRecvUpdateStatHandler;
-    public event Action<S_DropReward>  OnRecvDropRewardHandler;
-    public event Action<S_GetItem>     OnRecvGetItemHandler;
-    public event Action<S_GetGold>     OnRecvGetGoldHandler;
+    public event Action<Entity> OnRecvMoveHandler;
+    public event Action<Entity> OnRecvStopMoveHandler;
+    public event Action<S_Dead> OnRecvDeadHandler;
+    public event Action<CS_Attack> OnRecvAttackHandler;
+    public event Action<Entity> OnRecvRespawnHandler;
+    public event Action<PlayerEntity> OnRecvUpdateStatHandler;
+    public event Action<S_DropReward> OnRecvDropRewardHandler;
+    public event Action<S_GetItem> OnRecvGetItemHandler;
+    public event Action<S_GetGold> OnRecvGetGoldHandler;
 
 
     public int RoomId { get; private set; }
@@ -342,6 +342,7 @@ public class GameMode
         Status = EStatus.GAME_RUNIING;
 
         var playerList = inPacket.playerList;
+        var monsterList = inPacket.monsterList;
 
         foreach (PlayerSpawn p in playerList)
         {
@@ -350,6 +351,12 @@ public class GameMode
             playerEntity.pos = p.pos;
         }
 
+        foreach (MonsterSpawn m in monsterList)
+        {
+            var monsterEntity = CreateMonsterEntity(m);
+            MonsterEntityDict.Add(monsterEntity.targetId, monsterEntity);
+        }
+        
         _onRecvStartGameCB?.Invoke();
     }
 
@@ -359,23 +366,28 @@ public class GameMode
 
         foreach (MonsterSpawn m in monsterList)
         {
-            if (StaticData.Instance.MonstersDict.TryGetValue(m.monstersKey.ToString(), out var monster) == false)
-            {
-                Debug.LogError($"[{nameof(OnRecvStartGame)}] monster static is null or empty!");
-                continue;
-            }
-
-            var monsterEntity = new MonsterEntity()
-            {
-                targetId = m.targetId,
-                monsterId = m.monstersKey,
-                grade = m.grade,
-                pos = m.pos,
-                stat = new EntityStat(monster),
-            };
-
+            var monsterEntity = CreateMonsterEntity(m);
             MonsterEntityDict.Add(monsterEntity.targetId, monsterEntity);
         }
+    }
+
+    public MonsterEntity CreateMonsterEntity(MonsterSpawn m)
+    {
+        if (StaticData.Instance.MonstersDict.TryGetValue(m.monstersKey.ToString(), out var monster) == false)
+        {
+            Debug.LogError($"[{nameof(OnRecvStartGame)}] monster static is null or empty!");
+            return null;
+        }
+
+        var monsterEntity = new MonsterEntity()
+        {
+            targetId = m.targetId,
+            monsterId = m.monstersKey,
+            grade = m.grade,
+            pos = m.pos,
+            stat = new EntityStat(monster),
+        };
+        return monsterEntity;
     }
 
     public void OnRecvMove(CS_Move inPacket)

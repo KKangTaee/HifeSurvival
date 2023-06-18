@@ -47,6 +47,7 @@
      <Compile Include="Assets/Scripts/Realtime/Connector.cs" />
      <Compile Include="Assets/Scripts/Controller/PlayerController.cs" />
      <Compile Include="Assets/Scripts/Popups/PopupNotice.cs" />
+     <Compile Include="Assets/Scripts/Items/ItemSlot.cs" />
      <Compile Include="Assets/_HifeSurvivalResources/FantasyMonsters/Scripts/Inanimate.cs" />
      <Compile Include="Assets/Scripts/Managers/ServerRequestManager.cs" />
      <Compile Include="Assets/Scripts/EntityObject/Player.cs" />
@@ -93,6 +94,7 @@
      <Compile Include="Assets/Scripts/Controller/ObjectPoolController.cs" />
      <Compile Include="Assets/_HifeSurvivalResources/FantasyMonsters/Scripts/CustomGrid.cs" />
      <Compile Include="Assets/GoogleSignIn/Impl/NativeFuture.cs" />
+     <Compile Include="Assets/Scripts/Items/ItemSlotList.cs" />
      <Compile Include="Assets/Scripts/Popups/PopupBase.cs" />
      <Compile Include="Assets/_HifeSurvivalResources/GUI PRO Kit - Casual Game/Scripts/PanelCasualGame.cs" />
      <Compile Include="Assets/Scripts/Charactes/Monster/MonsterUI.cs" />

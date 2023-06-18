@@ -72,8 +72,8 @@ public class FirebaseAuthManager : MonoBehaviour
 
         ServerData.Instance.SetUserData(new User()
         {
-            user_id   = "12345",
-            nickname  = "탁탁공익",
+            user_id   = "1234567",
+            nickname  = "섹스머신이형주",
             photo_url = null, 
         });
 

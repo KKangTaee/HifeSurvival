@@ -2,8 +2,8 @@
 START ..\..\PacketGenerator\bin\PacketGenerator.exe ..\..\PacketGenerator\PDL.xml
 
 ::ServerCore 프로젝트에 생성된 패킷 복사
-XCOPY /Y GenPackets.cs "..\..\ServerCore"
-XCOPY /Y PacketManager.cs "..\..\ServerCore"
+XCOPY /Y /C GenPackets.cs "..\..\ServerCore"
+XCOPY /Y /C PacketManager.cs "..\..\ServerCore"
 
 ::DLL 빌드 생성
 cd ..\..\ServerCore

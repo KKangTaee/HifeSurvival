@@ -10,8 +10,8 @@ using System.IO;
 public class LobbyUI : MonoBehaviour
 {
     [SerializeField] Button BTN_gameStart;
-    [SerializeField] Image IMG_profile;
-    [SerializeField] TMP_Text TMP_profileName;
+    // [SerializeField] Image IMG_profile;
+    [SerializeField] TMP_Text TMP_userName;
 
 
     private void Awake()
@@ -40,28 +40,28 @@ public class LobbyUI : MonoBehaviour
             return;
 
         // 닉네임
-        TMP_profileName.text = userData.nickname != null ? userData.nickname
+        TMP_userName.text = userData.nickname != null ? userData.nickname
                                                          : "일반인";
 
         // 프로필이미지.
-        if(userData.photo_url != null)
-        {
-            Texture2D tex = LoadTexture2DFromLocal(userData.photo_url);
+        // if(userData.photo_url != null)
+        // {
+        //     Texture2D tex = LoadTexture2DFromLocal(userData.photo_url);
 
-            if(tex == null)
-            {
-                tex = await LoadTexture2DFromWebAsync(userData.photo_url);
+        //     if(tex == null)
+        //     {
+        //         tex = await LoadTexture2DFromWebAsync(userData.photo_url);
 
-                if(tex != null)
-                   SaveTexture2DToLocal(tex, $"{userData.photo_url}.png");
-            }
+        //         if(tex != null)
+        //            SaveTexture2DToLocal(tex, $"{userData.photo_url}.png");
+        //     }
 
-            IMG_profile.sprite = Sprite.Create(tex, new Rect(0,0,tex.width, tex.height), new Vector2(0.5f,0.5f));
-        }
-        else
-        {
-            //TODO@taeho.kang 디폴트 프로필 이미지로 처리하기.
-        }
+        //     IMG_profile.sprite = Sprite.Create(tex, new Rect(0,0,tex.width, tex.height), new Vector2(0.5f,0.5f));
+        // }
+        // else
+        // {
+        //     //TODO@taeho.kang 디폴트 프로필 이미지로 처리하기.
+        // }
     }
 
     public void SaveTexture2DToLocal(Texture2D texture, string inFileName)

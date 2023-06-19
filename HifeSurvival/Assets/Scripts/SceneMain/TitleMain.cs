@@ -12,7 +12,8 @@ public class TitleMain : MonoBehaviour
     // Start is called before the first frame update
     [SerializeField] Button BTN_Google;
     [SerializeField] RectTransform RT_progressBG;
-    [SerializeField] Image IMG_progress;
+    [SerializeField] Slider SLD_progress;
+    [SerializeField] TMP_Text TMP_progressRatio;
     [SerializeField] TMP_Text TMP_progressDesc;
 
     List<(string desc, Func<Task<bool>> action)> processSchedulers;
@@ -42,14 +43,14 @@ public class TitleMain : MonoBehaviour
 
     public async UniTaskVoid Init()
     {
-        for(int i =0; i<processSchedulers?.Count; i++)
+        for (int i = 0; i < processSchedulers?.Count; i++)
         {
             var process = processSchedulers[i];
 
             // 여기서 로딩바 액션 처리
-            SetProgress(process.desc, i /(float)(processSchedulers.Count - 1));
+            SetProgress(process.desc, i / (float)(processSchedulers.Count - 1));
 
-            if(await process.action?.Invoke())
+            if (await process.action?.Invoke())
             {
                 // 성공처리
             }
@@ -80,16 +81,17 @@ public class TitleMain : MonoBehaviour
     public void SetProgress(string inDesc, float inRatio)
     {
         TMP_progressDesc.text = inDesc;
-        IMG_progress.fillAmount = inRatio;
+        SLD_progress.value = inRatio;
+        TMP_progressRatio.text = $"{inRatio * 100}%";
     }
 
     private async Task<bool> PROC_LOAD_STATIC_DATA()
     {
-        SetActiveLoginButton(false);  
+        SetActiveLoginButton(false);
 
         // 1. 서버 스태틱 데이터 로드(테스트)
         await StaticData.Instance.Init();
-        
+
         return true;
     }
 
@@ -97,13 +99,13 @@ public class TitleMain : MonoBehaviour
     {
         // 2. 로그인 초기화
 
-        SetActiveLoginButton(true);        
+        SetActiveLoginButton(true);
 
         await FirebaseAuthManager.Instance.Init();
-        
+
         SetActiveLoginButton(false);
 
-        return true;    
+        return true;
     }
 
     public async Task<bool> PROC_LOAD_SERVER_DATA()

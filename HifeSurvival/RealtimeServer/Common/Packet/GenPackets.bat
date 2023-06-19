@@ -11,4 +11,4 @@ dotnet build
  
 ::클라이언트에 생성된 DLL 배포
 XCOPY /Y "bin\Debug\netstandard2.1\ServerCore.dll" "..\..\Assets\Plugins"
-pause
+timeout /t 10

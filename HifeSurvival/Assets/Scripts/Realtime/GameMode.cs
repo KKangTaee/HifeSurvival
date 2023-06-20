@@ -169,8 +169,8 @@ public class GameMode
     {
         CS_Move move = new CS_Move()
         {
-            dir = inDir.ConvertVec3(),
-            pos = inPos.ConvertVec3(),
+            dir = inDir.ConvertPVec3(),
+            pos = inPos.ConvertPVec3(),
             isPlayer = true,
             speed = EntitySelf.stat.moveSpeed,
             targetId = EntitySelf.targetId,
@@ -184,8 +184,8 @@ public class GameMode
     {
         CS_StopMove stopMove = new CS_StopMove()
         {
-            pos = inPos.ConvertVec3(),
-            dir = inDir.ConvertVec3(),
+            pos = inPos.ConvertPVec3(),
+            dir = inDir.ConvertPVec3(),
             isPlayer = true,
             targetId = EntitySelf.targetId,
         };
@@ -202,8 +202,8 @@ public class GameMode
             toId = toId,
             fromIsPlayer = true,
             fromId = EntitySelf.targetId,
-            fromPos = inPos.ConvertVec3(),
-            fromDir = inDir.ConvertVec3(),
+            fromPos = inPos.ConvertPVec3(),
+            fromDir = inDir.ConvertPVec3(),
             attackValue = damageValue,
         };
 

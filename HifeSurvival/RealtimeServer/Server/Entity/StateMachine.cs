@@ -65,15 +65,15 @@ namespace Server
 
     public struct IdleParam : IStateParam
     {
-        public Vec3 pos;
-        public Vec3 dir;
+        public PVec3 pos;
+        public PVec3 dir;
     }
 
 
     public struct MoveParam : IStateParam
     {
-        public Vec3 pos;
-        public Vec3 dir;
+        public PVec3 pos;
+        public PVec3 dir;
         public float speed;
     }
 

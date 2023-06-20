@@ -49,24 +49,24 @@
     <bool name = "fromIsPlayer"/>
     <int name ="toId"/>
     <int name ="fromId"/>
-    <struct_Vec3 name ="fromPos"/>
-    <struct_Vec3 name ="fromDir"/>
+    <struct_PVec3 name ="fromPos"/>
+    <struct_PVec3 name ="fromDir"/>
     <int name ="attackValue"/>
   </packet>
 
   <packet name ="CS_Move">
     <int name ="targetId"/>
     <bool name ="isPlayer"/>
-    <struct_Vec3 name ="pos"/>
-    <struct_Vec3 name ="dir"/>
+    <struct_PVec3 name ="pos"/>
+    <struct_PVec3 name ="dir"/>
     <float name ="speed"/>
   </packet>
 
   <packet name ="CS_StopMove">
     <int name ="targetId"/>
     <bool name ="isPlayer"/>
-    <struct_Vec3 name ="pos"/>
-    <struct_Vec3 name ="dir"/>
+    <struct_PVec3 name ="pos"/>
+    <struct_PVec3 name ="dir"/>
   </packet>
 
   <packet name ="S_Dead">
@@ -80,7 +80,7 @@
   <packet name ="S_Respawn">
     <int name ="targetId"/>
     <bool name ="isPlayer"/>
-    <struct_Vec3 name ="pos"/>
+    <struct_PVec3 name ="pos"/>
     <struct_Stat name ="stat"/>
   </packet>
 
@@ -93,7 +93,7 @@
   <packet name ="S_DropReward">
     <int name="worldId"/>
     <int name="rewardType"/>
-    <struct_Vec3 name ="pos"/>
+    <struct_PVec3 name ="pos"/>
   </packet>
 
   <packet name ="C_PickReward">
@@ -114,7 +114,7 @@
     <int name ="gold"/>
   </packet>
 
-  <struct name="Vec3">
+  <struct name="PVec3">
     <float name ="x"/>
     <float name ="y"/>
     <float name ="z"/>
@@ -141,7 +141,7 @@
   <class name ="PlayerSpawn">
     <int name="targetId"/>
     <int name="herosKey"/>
-    <struct_Vec3 name ="pos"/>
+    <struct_PVec3 name ="pos"/>
   </class>
 
   <class name ="MonsterSpawn">
@@ -149,7 +149,7 @@
     <int name ="monstersKey"/>
     <int name ="groupId"/>
     <int name ="grade"/>
-    <struct_Vec3 name="pos"/>
+    <struct_PVec3 name="pos"/>
   </class>
 
 </PDL>

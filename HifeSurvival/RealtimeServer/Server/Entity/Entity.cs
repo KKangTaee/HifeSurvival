@@ -30,9 +30,9 @@ namespace Server
 
         public int targetId;
 
-        public Vec3 pos;
-        public Vec3 dir;
-        public Vec3 spawnPos;
+        public PVec3 pos;
+        public PVec3 dir;
+        public PVec3 spawnPos;
 
         public EntityStat stat;
 
@@ -85,10 +85,10 @@ namespace Server
             return (int)(inAttackValue - stat.def * 0.1f);
         }
 
-        public void OnMoveAndBroadcast(in Vec3 inDir, float deltaTime)
+        public void OnMoveAndBroadcast(in PVec3 inDir, float deltaTime)
         {
-            var addSpeed = inDir.MulitflyVec3(stat.moveSpeed * deltaTime);
-            pos = pos.AddVec3(addSpeed);
+            var addSpeed = inDir.MulitflyPVec3(stat.moveSpeed * deltaTime);
+            pos = pos.AddPVec3(addSpeed);
 
             CS_Move move = new CS_Move()
             {
@@ -102,7 +102,7 @@ namespace Server
             broadcaster.Broadcast(move);
         }
 
-        public void OnMoveLerpAndBroadcast(in Vec3 inStartPos, in Vec3 inEndPos, float inRaio)
+        public void OnMoveLerpAndBroadcast(in PVec3 inStartPos, in PVec3 inEndPos, float inRaio)
         {
             pos = PacketExtensionHelper.Lerp(inStartPos, inEndPos, inRaio);
 

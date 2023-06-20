@@ -13,7 +13,7 @@ namespace Server
         {
             public int spawnType;
             public int groupId;
-            public List<Vec3> pivotList;
+            public List<PVec3> pivotList;
         }
 
         public class WorldItemData
@@ -34,7 +34,7 @@ namespace Server
         }
 
 
-        public HashSet<Vec3> CanGoTiles { get; private set; }
+        public HashSet<PVec3> CanGoTiles { get; private set; }
 
         // 몬스터 혹은 플레이어의 스폰 위치정보
         public List<WorldSpawnData> SpawnList { get; private set; }
@@ -56,11 +56,11 @@ namespace Server
 
             var N = SimpleJSON.JSON.Parse(inMapData);
 
-            CanGoTiles = new HashSet<Vec3>();
+            CanGoTiles = new HashSet<PVec3>();
             foreach (SimpleJSON.JSONNode node in N["can_go_tile"].AsArray)
             {
                 string[] parts = node.Value.Split(',');
-                Vec3 tile = new Vec3()
+                PVec3 tile = new PVec3()
                 {
                     x = float.Parse(parts[0]),
                     y = float.Parse(parts[1]),
@@ -77,11 +77,11 @@ namespace Server
                 spawnData.spawnType = node["spawn_type"].AsInt;
                 spawnData.groupId = node["group_id"].AsInt;
 
-                spawnData.pivotList = new List<Vec3>();
+                spawnData.pivotList = new List<PVec3>();
                 foreach (SimpleJSON.JSONNode pivotNode in node["pivot_list"].AsArray)
                 {
                     string[] parts = pivotNode.Value.Split(',');
-                    Vec3 pivot = new Vec3()
+                    PVec3 pivot = new PVec3()
                     {
                         x = float.Parse(parts[0]),
                         y = float.Parse(parts[1]),

@@ -52,7 +52,7 @@ namespace Server
         // functions
         //-----------------
 
-        public bool CanAttack(in Vec3 inPos)
+        public bool CanAttack(in PVec3 inPos)
         {
             return pos.DistanceTo(inPos) < stat.attackRange;
         }
@@ -255,7 +255,7 @@ namespace Server
                     else
                     {
                         // 이동방향을 구한다.
-                        var newDir = inOther.pos.SubtractVec3(inSelf.pos).NormalizeVec3();
+                        var newDir = inOther.pos.SubtractPVec3(inSelf.pos).NormalizePVec3();
 
                         inSelf.OnMoveAndBroadcast(newDir, UPDATE_TIME * 0.001f);
                         JobTimer.Instance.Push(() => { UpdateFollow(inSelf, inOther); }, UPDATE_TIME);
@@ -271,7 +271,7 @@ namespace Server
             private bool _isRunning;
             private float _currDist;
             private float _totalDist;
-            private Vec3 _startPos;
+            private PVec3 _startPos;
 
             public void Enter<P>(MonsterEntity inSelf, in P inParam = default) where P : struct, IStateParam
             {

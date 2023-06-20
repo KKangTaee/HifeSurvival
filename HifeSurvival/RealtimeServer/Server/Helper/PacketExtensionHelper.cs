@@ -8,9 +8,9 @@ namespace Server.Helper
 {
     public static class PacketExtensionHelper
     {
-        public static Vec3 AddVec3(this Vec3 inSelf, in Vec3 inOther)
+        public static PVec3 AddPVec3(this PVec3 inSelf, in PVec3 inOther)
         {
-            return new Vec3()
+            return new PVec3()
             {
                 x = inSelf.x + inOther.x,
                 y = inSelf.y + inOther.y,
@@ -18,9 +18,9 @@ namespace Server.Helper
             };
         }
 
-        public static Vec3 MulitflyVec3(this Vec3 inSelf, float inOther)
+        public static PVec3 MulitflyPVec3(this PVec3 inSelf, float inOther)
         {
-            return new Vec3()
+            return new PVec3()
             {
                 x = inSelf.x * inOther,
                 y = inSelf.y * inOther,
@@ -28,9 +28,9 @@ namespace Server.Helper
             };
         }
 
-        public static Vec3 SubtractVec3(this Vec3 inSelf, in Vec3 inOther)
+        public static PVec3 SubtractPVec3(this PVec3 inSelf, in PVec3 inOther)
         {
-            return new Vec3()
+            return new PVec3()
             {
                 x = inSelf.x - inOther.x,
                 y = inSelf.y - inOther.y,
@@ -38,13 +38,13 @@ namespace Server.Helper
             };
         }
 
-        public static Vec3 NormalizeVec3(this Vec3 inSelf)
+        public static PVec3 NormalizePVec3(this PVec3 inSelf)
         {
             float length = (float)Math.Sqrt(inSelf.x * inSelf.x + inSelf.y * inSelf.y + inSelf.z * inSelf.z);
 
             if (length > 0)
             {
-                return new Vec3
+                return new PVec3
                 {
                     x = inSelf.x / length,
                     y = inSelf.y / length,
@@ -57,7 +57,7 @@ namespace Server.Helper
             }
         }
 
-        public static float DistanceTo(this Vec3 inSelf, in Vec3 inOther)
+        public static float DistanceTo(this PVec3 inSelf, in PVec3 inOther)
         {
             float dx = inOther.x - inSelf.x;
             float dy = inOther.y - inSelf.y;
@@ -125,9 +125,9 @@ namespace Server.Helper
             return null;
         }
 
-        public static Vec3 Lerp(in Vec3 v1, Vec3 v2, float t)
+        public static PVec3 Lerp(in PVec3 v1, PVec3 v2, float t)
         {
-            return new Vec3
+            return new PVec3
             {
                 x = v1.x + (v2.x - v1.x) * t,
                 y = v1.y + (v2.y - v1.y) * t,

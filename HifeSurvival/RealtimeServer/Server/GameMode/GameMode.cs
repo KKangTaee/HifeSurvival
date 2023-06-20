@@ -67,7 +67,7 @@ namespace Server
                         if (StaticData.Instance.MonstersDict.TryGetValue(id, out var data) == true &&
                             pivotIter.MoveNext() == true)
                         {
-                            Vec3 pos = pivotIter.Current;
+                            PVec3 pos = pivotIter.Current;
 
                             MonsterEntity entity = new MonsterEntity()
                             {

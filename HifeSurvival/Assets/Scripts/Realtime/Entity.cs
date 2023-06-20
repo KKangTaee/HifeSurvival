@@ -10,8 +10,8 @@ public abstract class Entity
 
     public EntityStat stat;
 
-    public Vec3 pos;
-    public Vec3 dir;
+    public PVec3 pos;
+    public PVec3 dir;
 
     public int GetAttackValue()
     {

@@ -24,11 +24,11 @@ namespace Server
         public PlayerEntity()
         {
             var smdic = new Dictionary<EStatus, IState<PlayerEntity, IStateParam>>();
-            smdic[EStatus.IDLE] = (IState<PlayerEntity, IStateParam>)new IdleState();
-            smdic[EStatus.ATTACK] = (IState<PlayerEntity, IStateParam>)new AttackState();
-            smdic[EStatus.MOVE] = (IState<PlayerEntity, IStateParam>)new MoveState();
-            smdic[EStatus.USE_SKILL] = (IState<PlayerEntity, IStateParam>)new UseSkillState();
-            smdic[EStatus.DEAD] = (IState<PlayerEntity, IStateParam>)new DeadState();
+            smdic[EStatus.IDLE] = new IdleState();
+            smdic[EStatus.ATTACK] = new AttackState();
+            smdic[EStatus.MOVE] = new MoveState();
+            smdic[EStatus.USE_SKILL] = new UseSkillState();
+            smdic[EStatus.DEAD] = new DeadState();
 
             _stateMachine = new StateMachine<PlayerEntity>(smdic);
         }
@@ -90,25 +90,25 @@ namespace Server
 
     public partial class PlayerEntity
     {
-        public class IdleState : IState<PlayerEntity, IdleParam>
+        public class IdleState : IState<PlayerEntity, IStateParam>
         {
-            public void Enter(PlayerEntity inSelf, in IdleParam inParam = default)
+            public void Enter(PlayerEntity inSelf, in IStateParam inParam = default)
             {
 
             }
 
-            public void Exit(PlayerEntity inSelf, in IdleParam inParam = default)
+            public void Exit(PlayerEntity inSelf, in IStateParam inParam = default)
             {
             }
 
-            public void Update(PlayerEntity inSelf, in IdleParam inParam = default)
+            public void Update(PlayerEntity inSelf, in IStateParam inParam = default)
             {
             }
         }
 
-        public class AttackState : IState<PlayerEntity, AttackParam>
+        public class AttackState : IState<PlayerEntity, IStateParam>
         {
-            public void Enter(PlayerEntity inSelf, in AttackParam inParam = default)
+            public void Enter(PlayerEntity inSelf, in IStateParam inParam = default)
             {
                 if (inParam is AttackParam attack)
                 {
@@ -133,36 +133,36 @@ namespace Server
                 }
             }
 
-            public void Exit(PlayerEntity inSelf, in AttackParam inParam = default)
+            public void Exit(PlayerEntity inSelf, in IStateParam inParam = default)
             {
                 
             }
 
-            public void Update(PlayerEntity inSelf, in AttackParam inParam = default)
+            public void Update(PlayerEntity inSelf, in IStateParam inParam = default)
             {
                 
             }
         }
 
-        public class MoveState : IState<PlayerEntity, MoveParam>
+        public class MoveState : IState<PlayerEntity, IStateParam>
         {
             private const int UPDATE_TIME = 125;
 
             private bool _isRunning = false;
 
-            public void Enter(PlayerEntity inSelf, in MoveParam inParam = default)
+            public void Enter(PlayerEntity inSelf, in IStateParam inParam = default)
             {
                 _isRunning = true;
 
-                updateMove(inSelf, inParam);
+                updateMove(inSelf, (MoveParam)inParam);
             }
 
-            public void Update(PlayerEntity inSelf, in MoveParam inParam = default)
+            public void Update(PlayerEntity inSelf, in IStateParam inParam = default)
             {
-                updateMove(inSelf,  inParam);
+                updateMove(inSelf, (MoveParam)inParam);
             }
 
-            public void Exit(PlayerEntity inSelf, in MoveParam inParam = default)
+            public void Exit(PlayerEntity inSelf, in IStateParam inParam = default)
             {
                 _isRunning = false;
             }
@@ -178,37 +178,37 @@ namespace Server
             }
         }
 
-        public class UseSkillState : IState<PlayerEntity, UseSkillParam>
+        public class UseSkillState : IState<PlayerEntity, IStateParam>
         {
-            public void Enter(PlayerEntity inSelf, in UseSkillParam inParam = default)
+            public void Enter(PlayerEntity inSelf, in IStateParam inParam = default)
             {
 
             }
 
-            public void Exit(PlayerEntity inSelf, in UseSkillParam inParam = default)
+            public void Exit(PlayerEntity inSelf, in IStateParam inParam = default)
             {
 
             }
 
-            public void Update(PlayerEntity inSelf, in UseSkillParam inParam = default)
+            public void Update(PlayerEntity inSelf, in IStateParam inParam = default)
             {
 
             }
         }
 
-        public class DeadState : IState<PlayerEntity, DeadParam>
+        public class DeadState : IState<PlayerEntity, IStateParam>
         {
-            public void Enter(PlayerEntity inSelf, in DeadParam inParam = default)
+            public void Enter(PlayerEntity inSelf, in IStateParam inParam = default)
             {
                 inSelf.OnSendRespawn();
             }
 
-            public void Exit(PlayerEntity inSelf, in DeadParam inParam = default)
+            public void Exit(PlayerEntity inSelf, in IStateParam inParam = default)
             {
 
             }
 
-            public void Update(PlayerEntity inSelf, in DeadParam inParam = default)
+            public void Update(PlayerEntity inSelf, in IStateParam inParam = default)
             {
 
             }

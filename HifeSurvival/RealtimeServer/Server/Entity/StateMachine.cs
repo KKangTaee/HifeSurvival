@@ -19,7 +19,7 @@ namespace Server
         }
 
 
-        public void ChangeState<P>(Entity.EStatus inStatue, T inEntity,  P inParam) where P : struct, IStateParam
+        public void ChangeState(Entity.EStatus inStatue, T inEntity, IStateParam inParam)
         {
             if (_status == inStatue)
             {

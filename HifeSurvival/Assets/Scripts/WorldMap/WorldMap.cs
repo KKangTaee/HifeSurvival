@@ -9,7 +9,7 @@ using System.Reflection;
 
 public class WorldMap : MonoBehaviour
 {
-    [SerializeField] private Tilemap    _background;
+    [SerializeField] private Tilemap    _ground;
     [SerializeField] private Tilemap    _wall;
     [SerializeField] private Tilemap    _collider;
 
@@ -141,14 +141,14 @@ public class WorldMap : MonoBehaviour
 
     public Vector3Int GetCoord(Vector3 inWorldPos)
     {
-        Vector3Int cellPosition = _background.WorldToCell(inWorldPos);
+        Vector3Int cellPosition = _ground.WorldToCell(inWorldPos);
         return cellPosition;
     }
 
 
     public Vector3 GetWorldPos(Vector3Int inCoord, Vector3 inOffset = default)
     {
-        Vector3 worldPos = _background.CellToWorld(inCoord) + new Vector3(0, +_background.cellSize.y / 2, 0) + inOffset;
+        Vector3 worldPos = _ground.CellToWorld(inCoord) + new Vector3(0, +_ground.cellSize.y / 2, 0) + inOffset;
         return worldPos;
     }
 
@@ -165,14 +165,14 @@ public class WorldMap : MonoBehaviour
     private Dictionary<Vector3Int, WorldTile> GetAllTilePositionsAndTileBases()
     {
         Dictionary<Vector3Int, WorldTile> tiles = new Dictionary<Vector3Int, WorldTile>();
-        BoundsInt bounds = _background.cellBounds;
+        BoundsInt bounds = _ground.cellBounds;
 
         for (int x = bounds.xMin; x < bounds.xMax; x++)
         {
             for (int y = bounds.yMin; y < bounds.yMax; y++)
             {
                 Vector3Int cellPosition = new Vector3Int(x, y, 0);
-                TileBase tile = _background.GetTile(cellPosition);
+                TileBase tile = _ground.GetTile(cellPosition);
 
                 if (tile is WorldTile worldTile)
                 {
@@ -188,14 +188,14 @@ public class WorldMap : MonoBehaviour
     public List<Vector3> GetBackgroundCanGoTileList()
     {
         List<Vector3> result = new List<Vector3>();
-        BoundsInt bounds = _background.cellBounds;
+        BoundsInt bounds = _ground.cellBounds;
 
         for (int x = bounds.xMin; x < bounds.xMax; x++)
         {
             for (int y = bounds.yMin; y < bounds.yMax; y++)
             {
                 Vector3Int cellPosition = new Vector3Int(x, y, 0);
-                TileBase tile = _background.GetTile(cellPosition);
+                TileBase tile = _ground.GetTile(cellPosition);
 
                 if (tile is WorldTile worldTile && worldTile.IsBlock == false)
                     result.Add(cellPosition);
@@ -260,7 +260,7 @@ public class WorldMap : MonoBehaviour
 
     public void LogTotalBounds()
     {
-        BoundsInt bounds = _background.cellBounds;
+        BoundsInt bounds = _ground.cellBounds;
         int width = bounds.size.x;
         int height = bounds.size.y;
         int tileCount = width * height;
@@ -287,7 +287,7 @@ public class WorldMap : MonoBehaviour
             style.normal.textColor = textColor;
 
             // Handles.Label(_background.CellToWorld(coord) + _background.tileAnchor + textOffset, $"({coord.x},{coord.y}),\n{GetWorldPos(coord)}", style);
-            Handles.Label(_background.CellToWorld(coord) + _background.tileAnchor + textOffset, $"({coord.x},{coord.y})", style);
+            Handles.Label(_ground.CellToWorld(coord) + _ground.tileAnchor + textOffset, $"({coord.x},{coord.y})", style);
 
             count++;
         }
@@ -301,7 +301,7 @@ public class WorldMap : MonoBehaviour
 
     private void OnValidate()
     {
-        _background?.CompressBounds();
+        _ground?.CompressBounds();
     }
 
 #endif

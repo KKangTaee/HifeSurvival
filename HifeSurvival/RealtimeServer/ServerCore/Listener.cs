@@ -6,7 +6,6 @@ using System.Text;
 
 namespace ServerCore
 {
-#if HS_SERVER
     public class Listener
 	{
 		Socket _listenSocket;
@@ -59,8 +58,4 @@ namespace ServerCore
 			RegisterAccept(args);
 		}
 	}
-
-#else
-#define Init
-#endif
 }

@@ -5,7 +5,6 @@ using System.Text;
 
 namespace ServerCore
 {
-#if HS_SERVER
     public class Logger
     {
         FileStream fs = null;
@@ -100,13 +99,4 @@ namespace ServerCore
             }
         }
     }
-#else
-#define Log
-#define Logger
-#define GetInstance
-#define Debug
-#define Info
-#define Warn
-#define Error
-#endif
 }

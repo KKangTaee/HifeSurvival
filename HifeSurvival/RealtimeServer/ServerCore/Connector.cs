@@ -47,14 +47,6 @@ namespace ServerCore
 				session.Start(args.ConnectSocket);
 				session.OnConnected(args.RemoteEndPoint);
 			}
-			else
-			{
-#if UNITY_EDITOR
-				Debug.WriteLine($"Socket Error : {args.SocketError}");
-#elif HS_SERVER
-				Logger.GetInstance().Error($"Socket Error : {args.SocketError}");
-#endif
-			}
         }
 	}
 }

@@ -9,11 +9,11 @@ namespace Server
     public class StateMachine<T> where T : Entity
     {
         protected Entity.EStatus _status;
-        protected IState<T>      _state;
+        protected IState<T, IStateParam>      _state;
 
-        protected Dictionary<Entity.EStatus, IState<T>> _stateMachine;
+        protected Dictionary<Entity.EStatus, IState<T, IStateParam>> _stateMachine;
 
-        public StateMachine(Dictionary<Entity.EStatus, IState<T>> inStateMachine)
+        public StateMachine(Dictionary<Entity.EStatus, IState<T, IStateParam>> inStateMachine)
         {
             _stateMachine = inStateMachine;
         }
@@ -36,13 +36,13 @@ namespace Server
     }
 
 
-    public interface IState<T> where T : Entity
+    public interface IState<T, P> where T : Entity where P : notnull,  IStateParam
     {
-        void Enter<P>(T inSelf, in P inParam = default) where P : struct, IStateParam;
+        void Enter(T inSelf, in P inParam = default) ;
 
-        void Update<P>(T inSelf, in P inParam = default) where P : struct, IStateParam;
+        void Update(T inSelf, in P inParam = default);
 
-        void Exit<P>(T inSelf, in P inParam = default) where P : struct, IStateParam;
+        void Exit(T inSelf, in P inParam = default);
     }
 
 
@@ -65,22 +65,28 @@ namespace Server
 
     public struct IdleParam : IStateParam
     {
-        public PVec3 pos;
-        public PVec3 dir;
+        public PVec3 currentPos;
+        public long timestamp;
     }
 
 
     public struct MoveParam : IStateParam
     {
-        public PVec3 pos;
-        public PVec3 dir;
+        public PVec3 currentPos;
+        public PVec3 targetPos;
         public float speed;
+        public long timestamp;
     }
 
     public struct DeadParam : IStateParam
     {
         public int    respawnTime;
         public Action respawnCallback;
+    }
+
+    public struct UseSkillParam : IStateParam
+    {
+
     }
 
     public struct BackToSpawnParam :IStateParam

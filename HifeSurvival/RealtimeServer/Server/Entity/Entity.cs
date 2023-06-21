@@ -30,9 +30,13 @@ namespace Server
 
         public int targetId;
 
-        public PVec3 pos;
-        public PVec3 dir;
+
+        [Obsolete] public PVec3 pos;
+        [Obsolete] public PVec3 dir;
         public PVec3 spawnPos;
+
+        public PVec3 currentPos;
+        public PVec3 targetPos;
 
         public EntityStat stat;
 
@@ -60,9 +64,38 @@ namespace Server
             ChangeState(EStatus.IDLE, inParam);
         }
 
+        public virtual void OnMoveStop(in IdleParam inParam = default)
+        {
+            ChangeState(EStatus.IDLE, inParam);
+
+            PlayerUpdateBroadcast move = new PlayerUpdateBroadcast()
+            {
+                targetId = this.targetId,
+                isPlayer = this.IsPlayer,
+                status = (int)EStatus.IDLE,
+                currentPos = inParam.currentPos,
+                timestamp = inParam.timestamp,
+            };
+
+            broadcaster.Broadcast(move);
+        }
+
         public virtual void OnMove(in MoveParam inParam = default)
         {
             ChangeState(EStatus.MOVE, inParam);
+
+            PlayerUpdateBroadcast move = new PlayerUpdateBroadcast()
+            {
+                targetId = this.targetId,
+                isPlayer = this.IsPlayer,
+                status = (int)EStatus.MOVE,
+                currentPos = inParam.currentPos,
+                targetPos = inParam.targetPos,
+                speed = inParam.speed,
+                timestamp = inParam.timestamp,
+            };
+
+            broadcaster.Broadcast(move);
         }
 
         public virtual void OnDead(in DeadParam inParam = default)
@@ -85,6 +118,7 @@ namespace Server
             return (int)(inAttackValue - stat.def * 0.1f);
         }
 
+        [Obsolete]
         public void OnMoveAndBroadcast(in PVec3 inDir, float deltaTime)
         {
             var addSpeed = inDir.MulitflyPVec3(stat.moveSpeed * deltaTime);
@@ -102,6 +136,7 @@ namespace Server
             broadcaster.Broadcast(move);
         }
 
+        [Obsolete]
         public void OnMoveLerpAndBroadcast(in PVec3 inStartPos, in PVec3 inEndPos, float inRaio)
         {
             pos = PacketExtensionHelper.Lerp(inStartPos, inEndPos, inRaio);

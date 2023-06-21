@@ -359,7 +359,7 @@ namespace Server
             _broadcaster.Broadcast(inPacket);
         }
 
-
+        [Obsolete]
         public void OnRecvMove(CS_Move inPacket)
         {
             var player = GetPlayerEntity(inPacket.targetId);
@@ -373,7 +373,40 @@ namespace Server
             player.OnMove();
         }
 
+        public void OnRecvMoveRequest(MoveRequest inPacket)
+        {
+            var player = GetPlayerEntity(inPacket.targetId);
 
+            if (player == null)
+                return;
+
+            player.pos = inPacket.currentPos;
+            player.dir = inPacket.targetPos;
+
+            player.currentPos = inPacket.currentPos;
+            player.targetPos = inPacket.targetPos;
+
+            if(player.currentPos.IsSame(player.targetPos))
+            {
+                player.OnMoveStop(new IdleParam()
+                {
+                    currentPos = inPacket.currentPos,
+                    timestamp = inPacket.timestamp
+                } );
+            }
+            else
+            {
+                player.OnMove(new MoveParam()
+                {
+                    currentPos = inPacket.currentPos,
+                    targetPos = inPacket.targetPos,
+                    speed = inPacket.speed,
+                    timestamp = inPacket.timestamp
+                });
+            }
+        }
+
+        [Obsolete]
         public void OnRecvStopMove(CS_StopMove inPacket)
         {
             var player = GetPlayerEntity(inPacket.targetId);
@@ -388,7 +421,6 @@ namespace Server
 
             _broadcaster.Broadcast(inPacket);
         }
-
 
         public void OnRecvAttack(CS_Attack inPacket)
         {

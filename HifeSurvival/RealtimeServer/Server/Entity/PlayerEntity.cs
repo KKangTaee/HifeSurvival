@@ -23,21 +23,21 @@ namespace Server
 
         public PlayerEntity()
         {
-            _stateMachine = new StateMachine<PlayerEntity>(new Dictionary<EStatus, IState<PlayerEntity>>()
-            {
-                {EStatus.IDLE, new IdleState()},
-                {EStatus.ATTACK,  new AttackState()},
-                {EStatus.MOVE, new MoveState() },
-                {EStatus.USE_SKILL, new UseSkillState()},
-                {EStatus.DEAD, new DeadState()}
-            });
+            var smdic = new Dictionary<EStatus, IState<PlayerEntity, IStateParam>>();
+            smdic[EStatus.IDLE] = (IState<PlayerEntity, IStateParam>)new IdleState();
+            smdic[EStatus.ATTACK] = (IState<PlayerEntity, IStateParam>)new AttackState();
+            smdic[EStatus.MOVE] = (IState<PlayerEntity, IStateParam>)new MoveState();
+            smdic[EStatus.USE_SKILL] = (IState<PlayerEntity, IStateParam>)new UseSkillState();
+            smdic[EStatus.DEAD] = (IState<PlayerEntity, IStateParam>)new DeadState();
+
+            _stateMachine = new StateMachine<PlayerEntity>(smdic);
         }
 
         public S_JoinToGame.JoinPlayer CreateJoinPlayerPacket()
         {
             return new S_JoinToGame.JoinPlayer()
             {
-                userId  = this.userId,
+                userId = this.userId,
                 userName = this.userName,
                 targetId = this.targetId,
                 heroId = this.heroId
@@ -90,24 +90,25 @@ namespace Server
 
     public partial class PlayerEntity
     {
-        public class IdleState : IState<PlayerEntity>
+        public class IdleState : IState<PlayerEntity, IdleParam>
         {
-            public void Enter<P>(PlayerEntity inSelf, in P inParam = default) where P : struct, IStateParam
+            public void Enter(PlayerEntity inSelf, in IdleParam inParam = default)
+            {
+
+            }
+
+            public void Exit(PlayerEntity inSelf, in IdleParam inParam = default)
             {
             }
 
-            public void Exit<P>(PlayerEntity inSelf, in P inParam = default) where P : struct, IStateParam
-            {
-            }
-
-            public void Update<P>(PlayerEntity inSelf, in P inParam = default) where P : struct, IStateParam
+            public void Update(PlayerEntity inSelf, in IdleParam inParam = default)
             {
             }
         }
 
-        public class AttackState : IState<PlayerEntity>
+        public class AttackState : IState<PlayerEntity, AttackParam>
         {
-            public void Enter<P>(PlayerEntity inSelf, in P inParam = default) where P : struct, IStateParam
+            public void Enter(PlayerEntity inSelf, in AttackParam inParam = default)
             {
                 if (inParam is AttackParam attack)
                 {
@@ -126,94 +127,88 @@ namespace Server
 
                     // 플레이어 - 플레이어일 경우에는 그대로 대기
                 }
+                else
+                {
+                    Logger.GetInstance().Warn("AttackState has invalid param");
+                }
             }
 
-
-            public void Exit<P>(PlayerEntity inSelf, in P inParam = default) where P : struct, IStateParam
+            public void Exit(PlayerEntity inSelf, in AttackParam inParam = default)
             {
-
+                
             }
 
-
-            public void Update<P>(PlayerEntity inSelf, in P inParam = default) where P : struct, IStateParam
+            public void Update(PlayerEntity inSelf, in AttackParam inParam = default)
             {
-
+                
             }
         }
 
-        public class MoveState : IState<PlayerEntity>
+        public class MoveState : IState<PlayerEntity, MoveParam>
         {
             private const int UPDATE_TIME = 125;
 
             private bool _isRunning = false;
 
-            public void Enter<P>(PlayerEntity inSelf, in P inParam = default) where P : struct, IStateParam
+            public void Enter(PlayerEntity inSelf, in MoveParam inParam = default)
             {
                 _isRunning = true;
 
-                var temp = new MoveParam()
-                {
-                    currentPos = inSelf.currentPos,
-                    targetPos = inSelf.currentPos,
-                    speed = inSelf.stat.moveSpeed,
-                    timestamp = HTimer.GetCurrentTimestamp(),
-                };
-
-                UpdateMove(inSelf, temp);
+                updateMove(inSelf, inParam);
             }
 
-            public void Update<P>(PlayerEntity inSelf, in P inParam = default) where P : struct, IStateParam
+            public void Update(PlayerEntity inSelf, in MoveParam inParam = default)
             {
-                
+                updateMove(inSelf,  inParam);
             }
 
-            public void Exit<P>(PlayerEntity inSelf, in P inParam = default) where P : struct, IStateParam
+            public void Exit(PlayerEntity inSelf, in MoveParam inParam = default)
             {
                 _isRunning = false;
             }
 
-            public void UpdateMove(PlayerEntity inSelf, MoveParam inParam)
+            private void updateMove(PlayerEntity inSelf, MoveParam inParam)
             {
                 if (this != null && _isRunning == true && inSelf != null)
                 {
                     //inSelf.OnMoveAndBroadcast(inSelf.dir, UPDATE_TIME * 0.001f);
                     inSelf.OnMove(inParam);
-                    JobTimer.Instance.Push(() => { UpdateMove(inSelf, inParam); }, UPDATE_TIME);
+                    JobTimer.Instance.Push(() => { updateMove(inSelf, inParam); }, UPDATE_TIME);
                 }
             }
         }
 
-        public class UseSkillState : IState<PlayerEntity>
+        public class UseSkillState : IState<PlayerEntity, UseSkillParam>
         {
-
-            public void Enter<P>(PlayerEntity inSelf, in P inParam = default) where P : struct, IStateParam
+            public void Enter(PlayerEntity inSelf, in UseSkillParam inParam = default)
             {
-                
+
             }
 
-            public void Exit<P>(PlayerEntity inSelf, in P inParam = default) where P : struct, IStateParam
+            public void Exit(PlayerEntity inSelf, in UseSkillParam inParam = default)
             {
-                
+
             }
 
-            public void Update<P>(PlayerEntity inSelf, in P inParam = default) where P : struct, IStateParam
+            public void Update(PlayerEntity inSelf, in UseSkillParam inParam = default)
             {
-                
+
             }
         }
 
-        public class DeadState : IState<PlayerEntity>
+        public class DeadState : IState<PlayerEntity, DeadParam>
         {
-            public void Enter<P>(PlayerEntity inSelf, in P inParam = default) where P : struct, IStateParam
+            public void Enter(PlayerEntity inSelf, in DeadParam inParam = default)
             {
                 inSelf.OnSendRespawn();
             }
 
-            public void Exit<P>(PlayerEntity inSelf, in P inParam = default) where P : struct, IStateParam
+            public void Exit(PlayerEntity inSelf, in DeadParam inParam = default)
             {
+
             }
 
-            public void Update<P>(PlayerEntity inSelf, in P inParam = default) where P : struct, IStateParam
+            public void Update(PlayerEntity inSelf, in DeadParam inParam = default)
             {
 
             }

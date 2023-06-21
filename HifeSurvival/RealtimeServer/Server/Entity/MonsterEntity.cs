@@ -24,15 +24,14 @@ namespace Server
 
         public MonsterEntity()
         {
-            _stateMachine = new StateMachine<MonsterEntity>(
-                new Dictionary<EStatus, IState<MonsterEntity>>()
-                {
-                    { EStatus.IDLE, new IdleState()},
-                    { EStatus.FOLLOW_TARGET, new FollowTargetState()},
-                    { EStatus.ATTACK, new AttackState()},
-                    { EStatus.BACK_TO_SPAWN, new BackToSpawnState()},
-                    { EStatus.DEAD, new DeadState()}
-                });
+            var smdic = new Dictionary<EStatus, IState<MonsterEntity, IStateParam>>();
+            smdic[EStatus.IDLE] = (IState<MonsterEntity, IStateParam>)new IdleState();
+            smdic[EStatus.FOLLOW_TARGET] = (IState<MonsterEntity, IStateParam>)new FollowTargetState();
+            smdic[EStatus.ATTACK] = (IState<MonsterEntity, IStateParam>)new AttackState();
+            smdic[EStatus.BACK_TO_SPAWN] = (IState<MonsterEntity, IStateParam>)new BackToSpawnState();
+            smdic[EStatus.DEAD] = (IState<MonsterEntity, IStateParam>)new DeadState();
+
+            _stateMachine = new StateMachine<MonsterEntity>(smdic);
         }
 
 
@@ -93,29 +92,29 @@ namespace Server
 
     public partial class MonsterEntity
     {
-        public class IdleState : IState<MonsterEntity>
+        public class IdleState : IState<MonsterEntity, IdleParam>
         {
-            public void Enter<U>(MonsterEntity inSelf, in U inParam = default) where U : struct, IStateParam
+            public void Enter(MonsterEntity inSelf, in IdleParam inParam = default)
             {
-
+                
             }
 
-            public void Exit<U>(MonsterEntity inSelf, in U inParam = default) where U : struct, IStateParam
+            public void Exit(MonsterEntity inSelf, in IdleParam inParam = default)
             {
-
+                
             }
 
-            public void Update<U>(MonsterEntity inSelf, in U inParam = default) where U : struct, IStateParam
+            public void Update(MonsterEntity inSelf, in IdleParam inParam = default)
             {
-
+                
             }
         }
 
-        public class AttackState : IState<MonsterEntity>
+        public class AttackState : IState<MonsterEntity, AttackParam>
         {
             private bool _isRunning = false;
 
-            public void Enter<U>(MonsterEntity inSelf, in U inParam = default) where U : struct, IStateParam
+            public void Enter(MonsterEntity inSelf, in AttackParam inParam = default)
             {
                 if (inParam is AttackParam attack)
                 {
@@ -123,29 +122,27 @@ namespace Server
 
                     _isRunning = true;
 
-                    UpdateAttack(inSelf, player);
+                    updateAttack(inSelf, player);
                 }
             }
 
-
-            public void Exit<U>(MonsterEntity inSelf, in U inParam = default) where U : struct, IStateParam
+            public void Exit(MonsterEntity inSelf, in AttackParam inParam = default)
             {
                 _isRunning = false;
             }
 
 
-            public void Update<U>(MonsterEntity inSelf, in U inParam = default) where U : struct, IStateParam
+            public void Update(MonsterEntity inSelf, in AttackParam inParam = default)
             {
-
+                updateAttack(inSelf, (PlayerEntity)inParam.target);
             }
 
-
-            public void UpdateAttack(MonsterEntity inSelf, PlayerEntity inOther)
+            private void updateAttack(MonsterEntity inSelf, PlayerEntity inOther)
             {
                 if (this != null && _isRunning == true && inSelf != null)
                 {
                     // 상대방이 이미 죽었다면..?
-                    if(inOther.Status == EStatus.DEAD)
+                    if (inOther.Status == EStatus.DEAD)
                     {
                         // 자리로 다시 돌아간다.
                         inSelf.OnBackToSpawn();
@@ -170,11 +167,11 @@ namespace Server
                                 respawnTime = 15,
                             };
 
-                             inOther.OnDead();
-                             inSelf.broadcaster.Broadcast(deadPacket);
+                            inOther.OnDead();
+                            inSelf.broadcaster.Broadcast(deadPacket);
 
-                             // 다시 자리로 돌아간다.
-                             inSelf.OnBackToSpawn();
+                            // 다시 자리로 돌아간다.
+                            inSelf.OnBackToSpawn();
                         }
                         else
                         {
@@ -189,7 +186,7 @@ namespace Server
 
                             inSelf.broadcaster.Broadcast(attackPacket);
 
-                            JobTimer.Instance.Push(() => { UpdateAttack(inSelf, inOther); }, (int)(inOther.stat.attackSpeed * 1000));
+                            JobTimer.Instance.Push(() => { updateAttack(inSelf, inOther); }, (int)(inOther.stat.attackSpeed * 1000));
                         }
 
                     }
@@ -206,33 +203,31 @@ namespace Server
             }
         }
 
-        public class FollowTargetState : IState<MonsterEntity>
+        public class FollowTargetState : IState<MonsterEntity, FollowTargetParam>
         {
             private bool _isRunning = false;
             private const int UPDATE_TIME = 125;
 
-            public void Enter<U>(MonsterEntity inSelf, in U inParam = default) where U : struct, IStateParam
+            public void Enter(MonsterEntity inSelf, in FollowTargetParam inParam = default)
             {
                 if (inParam is FollowTargetParam follow)
                 {
                     _isRunning = true;
-                    UpdateFollow(inSelf, follow.target as PlayerEntity);
+                    updateFollow(inSelf, follow.target as PlayerEntity);
                 }
             }
 
-            public void Exit<U>(MonsterEntity inSelf, in U inParam = default) where U : struct, IStateParam
+            public void Update(MonsterEntity inSelf, in FollowTargetParam inParam = default)
             {
-                _isRunning = false;
-
+               
             }
 
-            public void Update<U>(MonsterEntity inSelf, in U inParam = default) where U : struct, IStateParam
+            public void Exit(MonsterEntity inSelf, in FollowTargetParam inParam = default)
             {
-
+                 _isRunning = false;
             }
 
-
-            public void UpdateFollow(MonsterEntity inSelf, PlayerEntity inOther)
+            private void updateFollow(MonsterEntity inSelf, PlayerEntity inOther)
             {
                 if (this != null && _isRunning == true && inSelf != null)
                 {
@@ -243,7 +238,7 @@ namespace Server
                     }
 
                     // 공격이 가능하다면?
-                    else if (inSelf.CanAttack(inOther.pos) == true)
+                    else if (inSelf.CanAttack(inOther.currentPos) == true)
                     {
                         inSelf.OnAttack(new AttackParam()
                         {
@@ -255,16 +250,16 @@ namespace Server
                     else
                     {
                         // 이동방향을 구한다.
-                        var newDir = inOther.pos.SubtractPVec3(inSelf.pos).NormalizePVec3();
+                        var newDir = inOther.currentPos.SubtractPVec3(inSelf.pos).NormalizePVec3();
 
                         inSelf.OnMoveAndBroadcast(newDir, UPDATE_TIME * 0.001f);
-                        JobTimer.Instance.Push(() => { UpdateFollow(inSelf, inOther); }, UPDATE_TIME);
+                        JobTimer.Instance.Push(() => { updateFollow(inSelf, inOther); }, UPDATE_TIME);
                     }
                 }
             }
         }
 
-        public class BackToSpawnState : IState<MonsterEntity>
+        public class BackToSpawnState : IState<MonsterEntity, BackToSpawnParam>
         {
             private const int UPDATE_TIME = 125;
 
@@ -273,27 +268,27 @@ namespace Server
             private float _totalDist;
             private PVec3 _startPos;
 
-            public void Enter<P>(MonsterEntity inSelf, in P inParam = default) where P : struct, IStateParam
+            public void Enter(MonsterEntity inSelf, in BackToSpawnParam inParam = default)
             {
                 _isRunning = true;
                 _startPos = inSelf.pos;
                 _currDist = 0;
                 _totalDist = _startPos.DistanceTo(inSelf.spawnPos);
 
-                UpdateBackToSpawn(inSelf);
+                updateBackToSpawn(inSelf);
             }
 
-            public void Exit<P>(MonsterEntity inSelf, in P inParam = default) where P : struct, IStateParam
+            public void Exit(MonsterEntity inSelf, in BackToSpawnParam inParam = default)
             {
                 _isRunning = false;
             }
 
-            public void Update<P>(MonsterEntity inSelf, in P inParam = default) where P : struct, IStateParam
+            public void Update(MonsterEntity inSelf, in BackToSpawnParam inParam = default)
             {
-
+                
             }
 
-            public void UpdateBackToSpawn(MonsterEntity inSelf)
+            private void updateBackToSpawn(MonsterEntity inSelf)
             {
                 if (this != null && _isRunning == true && inSelf != null)
                 {
@@ -303,7 +298,7 @@ namespace Server
                     if (ratio < 1)
                     {
                         inSelf.OnMoveLerpAndBroadcast(_startPos, inSelf.spawnPos, ratio);
-                        JobTimer.Instance.Push(() => { UpdateBackToSpawn(inSelf); }, UPDATE_TIME);
+                        JobTimer.Instance.Push(() => { updateBackToSpawn(inSelf); }, UPDATE_TIME);
                     }
                     else
                     {
@@ -313,19 +308,19 @@ namespace Server
             }
         }
 
-        public class DeadState : IState<MonsterEntity>
+        public class DeadState : IState<MonsterEntity, DeadParam>
         {
-            public void Enter<P>(MonsterEntity inSelf, in P inParam = default) where P : struct, IStateParam
+            public void Enter(MonsterEntity inSelf, in DeadParam inParam = default)
             {
                 inSelf.OnRespawnCallback?.Invoke();
             }
 
-            public void Exit<P>(MonsterEntity inSelf, in P inParam = default) where P : struct, IStateParam
+            public void Exit(MonsterEntity inSelf, in DeadParam inParam = default)
             {
 
             }
 
-            public void Update<P>(MonsterEntity inSelf, in P inParam = default) where P : struct, IStateParam
+            public void Update(MonsterEntity inSelf, in DeadParam inParam = default)
             {
 
             }

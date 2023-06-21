@@ -23,6 +23,8 @@ public abstract class PacketHandler
 	public abstract void C_PickRewardHandler(PacketSession session, IPacket packet);
 	public abstract void S_GetItemHandler(PacketSession session, IPacket packet);
 	public abstract void S_GetGoldHandler(PacketSession session, IPacket packet);
+	public abstract void MoveRequestHandler(PacketSession session, IPacket packet);
+	public abstract void PlayerUpdateBroadcastHandler(PacketSession session, IPacket packet);
 
 }
 
@@ -62,6 +64,8 @@ public class PacketManager
 		_handler.Add((ushort)PacketID.C_PickReward, handler.C_PickRewardHandler);
 		_handler.Add((ushort)PacketID.S_GetItem, handler.S_GetItemHandler);
 		_handler.Add((ushort)PacketID.S_GetGold, handler.S_GetGoldHandler);
+		_handler.Add((ushort)PacketID.MoveRequest, handler.MoveRequestHandler);
+		_handler.Add((ushort)PacketID.PlayerUpdateBroadcast, handler.PlayerUpdateBroadcastHandler);
 
 	}
 
@@ -85,6 +89,8 @@ public class PacketManager
 		_makeFunc.Add((ushort)PacketID.C_PickReward, MakePacket<C_PickReward>);
 		_makeFunc.Add((ushort)PacketID.S_GetItem, MakePacket<S_GetItem>);
 		_makeFunc.Add((ushort)PacketID.S_GetGold, MakePacket<S_GetGold>);
+		_makeFunc.Add((ushort)PacketID.MoveRequest, MakePacket<MoveRequest>);
+		_makeFunc.Add((ushort)PacketID.PlayerUpdateBroadcast, MakePacket<PlayerUpdateBroadcast>);
 
 	}
 

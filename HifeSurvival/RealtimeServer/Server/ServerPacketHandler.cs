@@ -121,5 +121,16 @@ namespace Server
         {
             throw new NotImplementedException();
         }
+
+        public override void MoveRequestHandler(PacketSession session, IPacket packet)
+        {
+            MoveRequest move = packet as MoveRequest;
+            Push(session, room => room?.Mode.OnRecvMove(move));
+        }
+
+        public override void PlayerUpdateBroadcastHandler(PacketSession session, IPacket packet)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -106,4 +106,14 @@ public class ClientPacketHandler : PacketHandler
     {
         throw new NotImplementedException();
     }
+
+    public override void MoveRequestHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void PlayerUpdateBroadcastHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
 }

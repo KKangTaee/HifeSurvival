@@ -21,6 +21,6 @@ public class LobbyMain : MonoBehaviour
         // TopHUD.Instance.Show();
 
         // 개인 프로필 업데이트
-        await _lobbyUI.SetProfile();
+        await _lobbyUI.Init();
     }
 }

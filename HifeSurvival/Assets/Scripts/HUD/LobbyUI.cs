@@ -32,6 +32,13 @@ public class LobbyUI : MonoBehaviour
             PopupManager.Instance.Show<PopupInputIPAddress>();
         }
     }
+
+    public async UniTask Init()
+    {
+        await SetProfile();
+
+        SetChapter();
+    }
     
 
     public async UniTask SetProfile()

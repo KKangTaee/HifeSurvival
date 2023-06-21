@@ -1,6 +1,8 @@
 ::패킷 생성
 START ..\..\PacketGenerator\bin\PacketGenerator.exe ..\..\PacketGenerator\PDL.xml
 
+timeout /t 1
+
 ::ServerCore 프로젝트에 생성된 패킷 복사
 XCOPY /Y /C GenPackets.cs "..\..\ServerCore"
 XCOPY /Y /C PacketManager.cs "..\..\ServerCore"

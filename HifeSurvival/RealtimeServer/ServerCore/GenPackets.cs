@@ -4,6 +4,8 @@ using System.Text;
 using System.Net;
 using ServerCore;
 
+
+
 public enum PacketID
 {
 	C_JoinToGame = 1,
@@ -24,6 +26,8 @@ public enum PacketID
 	C_PickReward = 16,
 	S_GetItem = 17,
 	S_GetGold = 18,
+	MoveRequest = 19,
+	PlayerUpdateBroadcast = 20,
 	
 }
 
@@ -946,6 +950,122 @@ public class S_GetGold : IPacket
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.gold);
 		count += sizeof(int);
+		success &= BitConverter.TryWriteBytes(s, count);
+		if (success == false)
+			return null;
+		return SendBufferHelper.Close(count);
+	}
+}
+
+public class MoveRequest : IPacket
+{
+	public int targetId;
+	public bool isPlayer;
+	public PVec3 currentPos;
+	public PVec3 targetPos;
+	public float speed;
+	public long timestamp;
+
+	public ushort Protocol { get { return (ushort)PacketID.MoveRequest; } }
+
+	public void Read(ArraySegment<byte> segment)
+	{
+		ushort count = 0;
+
+		ReadOnlySpan<byte> s = new ReadOnlySpan<byte>(segment.Array, segment.Offset, segment.Count);
+		count += sizeof(ushort);
+		count += sizeof(ushort);
+		this.targetId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+		count += sizeof(int);
+		this.isPlayer = BitConverter.ToBoolean(s.Slice(count, s.Length - count));
+		count += sizeof(bool);
+		currentPos.Read(s, ref count);
+		targetPos.Read(s, ref count);
+		this.speed = BitConverter.ToSingle(s.Slice(count, s.Length - count));
+		count += sizeof(float);
+		this.timestamp = BitConverter.ToInt64(s.Slice(count, s.Length - count));
+		count += sizeof(long);
+	}
+
+	public ArraySegment<byte> Write()
+	{
+		ArraySegment<byte> segment = SendBufferHelper.Open(4096);
+		ushort count = 0;
+		bool success = true;
+
+		Span<byte> s = new Span<byte>(segment.Array, segment.Offset, segment.Count);
+
+		count += sizeof(ushort);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.MoveRequest);
+		count += sizeof(ushort);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.targetId);
+		count += sizeof(int);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.isPlayer);
+		count += sizeof(bool);
+		success &= currentPos.Write(s,ref count);
+		success &= targetPos.Write(s,ref count);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.speed);
+		count += sizeof(float);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.timestamp);
+		count += sizeof(long);
+		success &= BitConverter.TryWriteBytes(s, count);
+		if (success == false)
+			return null;
+		return SendBufferHelper.Close(count);
+	}
+}
+
+public class PlayerUpdateBroadcast : IPacket
+{
+	public int targetId;
+	public bool isPlayer;
+	public PVec3 currentPos;
+	public PVec3 targetPos;
+	public float speed;
+	public long timestamp;
+
+	public ushort Protocol { get { return (ushort)PacketID.PlayerUpdateBroadcast; } }
+
+	public void Read(ArraySegment<byte> segment)
+	{
+		ushort count = 0;
+
+		ReadOnlySpan<byte> s = new ReadOnlySpan<byte>(segment.Array, segment.Offset, segment.Count);
+		count += sizeof(ushort);
+		count += sizeof(ushort);
+		this.targetId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+		count += sizeof(int);
+		this.isPlayer = BitConverter.ToBoolean(s.Slice(count, s.Length - count));
+		count += sizeof(bool);
+		currentPos.Read(s, ref count);
+		targetPos.Read(s, ref count);
+		this.speed = BitConverter.ToSingle(s.Slice(count, s.Length - count));
+		count += sizeof(float);
+		this.timestamp = BitConverter.ToInt64(s.Slice(count, s.Length - count));
+		count += sizeof(long);
+	}
+
+	public ArraySegment<byte> Write()
+	{
+		ArraySegment<byte> segment = SendBufferHelper.Open(4096);
+		ushort count = 0;
+		bool success = true;
+
+		Span<byte> s = new Span<byte>(segment.Array, segment.Offset, segment.Count);
+
+		count += sizeof(ushort);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.PlayerUpdateBroadcast);
+		count += sizeof(ushort);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.targetId);
+		count += sizeof(int);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.isPlayer);
+		count += sizeof(bool);
+		success &= currentPos.Write(s,ref count);
+		success &= targetPos.Write(s,ref count);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.speed);
+		count += sizeof(float);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.timestamp);
+		count += sizeof(long);
 		success &= BitConverter.TryWriteBytes(s, count);
 		if (success == false)
 			return null;

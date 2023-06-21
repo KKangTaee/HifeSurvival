@@ -114,6 +114,23 @@
     <int name ="gold"/>
   </packet>
 
+	<packet name ="MoveRequest">
+		<int name ="targetId"/>
+		<struct_PVec3 name ="currentPos"/>
+		<struct_PVec3 name ="targetPos"/>
+		<float name ="speed"/>
+		<long name ="timestamp"/>
+	</packet>
+
+	<packet name ="PlayerUpdateBroadcast">
+		<int name ="targetId"/>
+		<bool name ="isPlayer"/>
+		<struct_PVec3 name ="currentPos"/>
+		<struct_PVec3 name ="targetPos"/>
+		<float name ="speed"/>
+		<long name ="timestamp"/>
+	</packet>
+
   <struct name="PVec3">
     <float name ="x"/>
     <float name ="y"/>

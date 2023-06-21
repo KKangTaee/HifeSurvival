@@ -36,8 +36,8 @@ namespace ServerCore
 				buffer = new ArraySegment<byte>(buffer.Array, buffer.Offset + dataSize, buffer.Count - dataSize);
 			}
 
-			if (packetCount > 1)
-                Logger.GetInstance().Debug($"패킷 모아보내기 : {packetCount}");
+			//if (packetCount > 1)
+   //             Logger.GetInstance().Debug($"패킷 모아보내기 : {packetCount}");
 
 			return processLen;
 		}
@@ -140,7 +140,7 @@ namespace ServerCore
 			}
 			catch (Exception e)
 			{
-                Logger.GetInstance().Error($"Exception : {e}");
+                //Logger.GetInstance().Error($"Exception : {e}");
 			}
 		}
 
@@ -162,7 +162,7 @@ namespace ServerCore
 					}
 					catch (Exception e)
 					{
-                        Logger.GetInstance().Error($"Exception : {e}");
+                        //Logger.GetInstance().Error($"Exception : {e}");
 					}
 				}
 				else
@@ -189,7 +189,7 @@ namespace ServerCore
 			}
 			catch (Exception e)
 			{
-                Logger.GetInstance().Error($"Exception : {e}");
+                //Logger.GetInstance().Error($"Exception : {e}");
 			}
 		}
 
@@ -225,7 +225,7 @@ namespace ServerCore
 				}
 				catch (Exception e)
 				{
-                    Logger.GetInstance().Error($"Exception : {e}");
+                    //Logger.GetInstance().Error($"Exception : {e}");
 				}
 			}
 			else

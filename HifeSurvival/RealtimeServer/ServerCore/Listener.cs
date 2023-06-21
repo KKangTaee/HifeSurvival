@@ -16,8 +16,6 @@ namespace ServerCore
 			_listenSocket = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 			_sessionFactory += sessionFactory;
 
-            Logger.GetInstance().Warn("호출합니까?");
-
             // 문지기 교육
             _listenSocket.Bind(endPoint);
 

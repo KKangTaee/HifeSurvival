@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ServerCore
 {
-    class HTimer
+    public class HTimer
     {
         public static long GetCurrentTimestamp()
         {

@@ -8,6 +8,13 @@ namespace Server.Helper
 {
     public static class PacketExtensionHelper
     {
+        public static bool IsSame(this PVec3 inSelf, in PVec3 inOther)
+        {
+            var sbv = inSelf.SubtractPVec3(inOther);
+            var gap = Math.Abs(sbv.x) + Math.Abs(sbv.y) + Math.Abs(sbv.z);
+            return gap < 0.000001f;     //해당 값보다 작으면, 같다고 상정한다.
+        }
+
         public static PVec3 AddPVec3(this PVec3 inSelf, in PVec3 inOther)
         {
             return new PVec3()

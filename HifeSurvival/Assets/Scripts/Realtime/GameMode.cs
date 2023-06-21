@@ -390,6 +390,7 @@ public class GameMode
         return monsterEntity;
     }
 
+    [Obsolete]
     public void OnRecvMove(CS_Move inPacket)
     {
         if (inPacket.isPlayer == true)

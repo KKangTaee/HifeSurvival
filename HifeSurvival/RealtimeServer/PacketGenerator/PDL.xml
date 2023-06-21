@@ -125,6 +125,7 @@
 	<packet name ="PlayerUpdateBroadcast">
 		<int name ="targetId"/>
 		<bool name ="isPlayer"/>
+		<int name ="status"/>
 		<struct_PVec3 name ="currentPos"/>
 		<struct_PVec3 name ="targetPos"/>
 		<float name ="speed"/>

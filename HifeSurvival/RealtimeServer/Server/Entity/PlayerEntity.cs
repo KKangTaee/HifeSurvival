@@ -150,7 +150,16 @@ namespace Server
             public void Enter<P>(PlayerEntity inSelf, in P inParam = default) where P : struct, IStateParam
             {
                 _isRunning = true;
-                UpdateMove(inSelf);
+
+                var temp = new MoveParam()
+                {
+                    currentPos = inSelf.currentPos,
+                    targetPos = inSelf.currentPos,
+                    speed = inSelf.stat.moveSpeed,
+                    timestamp = HTimer.GetCurrentTimestamp(),
+                };
+
+                UpdateMove(inSelf, temp);
             }
 
             public void Update<P>(PlayerEntity inSelf, in P inParam = default) where P : struct, IStateParam
@@ -163,12 +172,13 @@ namespace Server
                 _isRunning = false;
             }
 
-            public void UpdateMove(PlayerEntity inSelf)
+            public void UpdateMove(PlayerEntity inSelf, MoveParam inParam)
             {
                 if (this != null && _isRunning == true && inSelf != null)
                 {
-                    inSelf.OnMoveAndBroadcast(inSelf.dir, UPDATE_TIME * 0.001f);
-                    JobTimer.Instance.Push(() => { UpdateMove(inSelf); }, UPDATE_TIME);
+                    //inSelf.OnMoveAndBroadcast(inSelf.dir, UPDATE_TIME * 0.001f);
+                    inSelf.OnMove(inParam);
+                    JobTimer.Instance.Push(() => { UpdateMove(inSelf, inParam); }, UPDATE_TIME);
                 }
             }
         }

@@ -125,7 +125,7 @@ namespace Server
         public override void MoveRequestHandler(PacketSession session, IPacket packet)
         {
             MoveRequest move = packet as MoveRequest;
-            Push(session, room => room?.Mode.OnRecvMove(move));
+            Push(session, room => room?.Mode.OnRecvMoveRequest(move));
         }
 
         public override void PlayerUpdateBroadcastHandler(PacketSession session, IPacket packet)

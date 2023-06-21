@@ -4,8 +4,6 @@ using System.Text;
 using System.Net;
 using ServerCore;
 
-
-
 public enum PacketID
 {
 	C_JoinToGame = 1,

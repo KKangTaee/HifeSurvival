@@ -4,8 +4,6 @@ using System.Text;
 using System.Net;
 using ServerCore;
 
-
-
 public enum PacketID
 {
 	C_JoinToGame = 1,
@@ -463,8 +461,8 @@ public class CS_Attack : IPacket
 	public bool fromIsPlayer;
 	public int toId;
 	public int fromId;
-	public Vec3 fromPos;
-	public Vec3 fromDir;
+	public PVec3 fromPos;
+	public PVec3 fromDir;
 	public int attackValue;
 
 	public ushort Protocol { get { return (ushort)PacketID.CS_Attack; } }
@@ -524,8 +522,8 @@ public class CS_Move : IPacket
 {
 	public int targetId;
 	public bool isPlayer;
-	public Vec3 pos;
-	public Vec3 dir;
+	public PVec3 pos;
+	public PVec3 dir;
 	public float speed;
 
 	public ushort Protocol { get { return (ushort)PacketID.CS_Move; } }
@@ -577,8 +575,8 @@ public class CS_StopMove : IPacket
 {
 	public int targetId;
 	public bool isPlayer;
-	public Vec3 pos;
-	public Vec3 dir;
+	public PVec3 pos;
+	public PVec3 dir;
 
 	public ushort Protocol { get { return (ushort)PacketID.CS_StopMove; } }
 
@@ -682,7 +680,7 @@ public class S_Respawn : IPacket
 {
 	public int targetId;
 	public bool isPlayer;
-	public Vec3 pos;
+	public PVec3 pos;
 	public Stat stat;
 
 	public ushort Protocol { get { return (ushort)PacketID.S_Respawn; } }
@@ -775,7 +773,7 @@ public class S_DropReward : IPacket
 {
 	public int worldId;
 	public int rewardType;
-	public Vec3 pos;
+	public PVec3 pos;
 
 	public ushort Protocol { get { return (ushort)PacketID.S_DropReward; } }
 
@@ -954,7 +952,7 @@ public class S_GetGold : IPacket
 		return SendBufferHelper.Close(count);
 	}
 }
-public struct Vec3
+public struct PVec3
 {
 	public float x;
 	public float y;
@@ -1072,7 +1070,7 @@ public struct Vec3
 {
 	public int targetId;
 	public int herosKey;
-	public Vec3 pos;
+	public PVec3 pos;
 
 	public void Read(ReadOnlySpan<byte> s, ref ushort count)
 	{
@@ -1100,7 +1098,7 @@ public struct Vec3
 	public int monstersKey;
 	public int groupId;
 	public int grade;
-	public Vec3 pos;
+	public PVec3 pos;
 
 	public void Read(ReadOnlySpan<byte> s, ref ushort count)
 	{

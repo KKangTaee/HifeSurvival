@@ -16,7 +16,8 @@ namespace ServerCore
 
         public static Logger GetInstance()
         {
-            ins ??= new Logger();
+            if(ins == null)
+                ins = new Logger();
             return ins;
         }
 

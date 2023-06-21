@@ -12,6 +12,8 @@ public class LobbyUI : MonoBehaviour
     [SerializeField] Button BTN_gameStart;
     // [SerializeField] Image IMG_profile;
     [SerializeField] TMP_Text TMP_userName;
+    [SerializeField] TMP_Text TMP_chapterName;
+    [SerializeField] TMP_Text TMP_chapterNum;
 
 
     private void Awake()
@@ -62,6 +64,14 @@ public class LobbyUI : MonoBehaviour
         // {
         //     //TODO@taeho.kang 디폴트 프로필 이미지로 처리하기.
         // }
+    }
+
+    public void SetChapter()
+    {
+        var staticData = StaticData.Instance.ChapaterDataDict["1"];
+
+        TMP_chapterName.text = staticData.name;
+        TMP_chapterNum.text  = $"Chapter {1}";
     }
 
     public void SaveTexture2DToLocal(Texture2D texture, string inFileName)

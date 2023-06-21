@@ -14481,3 +14481,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BTN_gameStart: {fileID: 8693068589903411463}
   TMP_userName: {fileID: 1945179114728487007}
+  TMP_chapterName: {fileID: 3972535047174842462}
+  TMP_chapterNum: {fileID: 7959495893091387006}

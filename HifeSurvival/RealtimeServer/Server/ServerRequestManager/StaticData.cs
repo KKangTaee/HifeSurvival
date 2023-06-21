@@ -308,6 +308,7 @@ namespace Server
         public class ChapterData
         {
             public int key;
+            public string name;
             public string mapData;
             public string phase1;
             public string phase2;

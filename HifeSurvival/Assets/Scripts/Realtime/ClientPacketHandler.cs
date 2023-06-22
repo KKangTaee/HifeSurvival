@@ -109,11 +109,11 @@ public class ClientPacketHandler : PacketHandler
 
     public override void MoveRequestHandler(PacketSession session, IPacket packet)
     {
-        throw new NotImplementedException();
+        //TODO 좌표 기준 이동 리뉴얼
     }
 
-    public override void PlayerUpdateBroadcastHandler(PacketSession session, IPacket packet)
+    public override void UpdateLocationBroadcastHandler(PacketSession session, IPacket packet)
     {
-        throw new NotImplementedException();
+        //TODO 좌표 기준 이동 리뉴얼
     }
 }

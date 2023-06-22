@@ -19,7 +19,7 @@ namespace Server
         }
 
 
-        public void ChangeState(Entity.EStatus inStatue, T inEntity, IStateParam inParam)
+        public void OnChangeState(Entity.EStatus inStatue, T inEntity, IStateParam inParam)
         {
             if (_status == inStatue)
             {

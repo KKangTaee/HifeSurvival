@@ -30,6 +30,10 @@ namespace Server
             smdic[EStatus.USE_SKILL] = new UseSkillState();
             smdic[EStatus.DEAD] = new DeadState();
 
+            //임시 코드.. Follow_target, Back_to_spawn은 유니크한 상태가 아님. 
+            smdic[EStatus.FOLLOW_TARGET] = new FollowTargetState();
+            smdic[EStatus.BACK_TO_SPAWN] = new BackToSpawnState();
+
             _stateMachine = new StateMachine<PlayerEntity>(smdic);
         }
 
@@ -53,7 +57,7 @@ namespace Server
         {
             base.ChangeState(inStatue, inParam);
             Logger.GetInstance().Debug($"state : {inStatue}");
-            _stateMachine.ChangeState(inStatue, this, inParam);
+            _stateMachine.OnChangeState(inStatue, this, inParam);
         }
 
 
@@ -66,7 +70,7 @@ namespace Server
             JobTimer.Instance.Push(() =>
             {
                 stat.AddCurrHp(stat.hp);
-                OnIdle();
+                Idle();
 
                 S_Respawn respawn = new S_Respawn()
                 {
@@ -79,6 +83,13 @@ namespace Server
             }, 15000);
         }
 
+        public override void OnDamaged(in Entity entity)
+        {
+            if(entity.IsPlayer == false)
+            {
+                //do something
+            }
+        }
     }
 
 
@@ -94,7 +105,19 @@ namespace Server
         {
             public void Enter(PlayerEntity inSelf, in IStateParam inParam = default)
             {
+                if(inParam is IdleParam idleParam)
+                {
+                    UpdateLocationBroadcast broadcast = new UpdateLocationBroadcast()
+                    {
+                        targetId = inSelf.targetId,
+                        isPlayer = inSelf.IsPlayer,
+                        status = (int)EStatus.IDLE,
+                        currentPos = idleParam.currentPos,
+                        timestamp = idleParam.timestamp,
+                    };
 
+                    inSelf.broadcaster.Broadcast(broadcast);
+                }
             }
 
             public void Exit(PlayerEntity inSelf, in IStateParam inParam = default)
@@ -110,22 +133,22 @@ namespace Server
         {
             public void Enter(PlayerEntity inSelf, in IStateParam inParam = default)
             {
-                if (inParam is AttackParam attack)
+                if (inParam is AttackParam attackParam)
                 {
-                    // 플레이어 -> 몬스터 공격
-                    if (attack.target is MonsterEntity monster)
+                    var target = attackParam.target;
+                    if(target == null)
                     {
-                        // 몬스터는 공격을 당했음으로, 플레이어를 공격한다.
-                        // monster.OnAttack();
-
-                        monster.OnDamaged(inSelf);
-
-                        // 여기서 함수가 필요한데.. 타겟이 맞았으면, 그 맞은 타겟의 몬스터들이 모두
-                        // 플레이어를 공격해야함.
-
+                        Logger.GetInstance().Warn($"Target is null");
+                        return;
                     }
 
-                    // 플레이어 - 플레이어일 경우에는 그대로 대기
+                    // 몬스터는 공격을 당했음으로, 플레이어를 공격한다.
+                    // monster.OnAttack();
+
+                    target.OnDamaged(inSelf);
+
+                    // 여기서 함수가 필요한데.. 타겟이 맞았으면, 그 맞은 타겟의 몬스터들이 모두
+                    // 플레이어를 공격해야함.
                 }
                 else
                 {
@@ -172,7 +195,7 @@ namespace Server
 
             private void updateMove(PlayerEntity inSelf, MoveParam inParam)
             {
-                PlayerUpdateBroadcast move = new PlayerUpdateBroadcast()
+                UpdateLocationBroadcast move = new UpdateLocationBroadcast()
                 {
                     targetId = inSelf.targetId,
                     isPlayer = inSelf.IsPlayer,
@@ -210,6 +233,44 @@ namespace Server
             public void Enter(PlayerEntity inSelf, in IStateParam inParam = default)
             {
                 inSelf.OnSendRespawn();
+            }
+
+            public void Exit(PlayerEntity inSelf, in IStateParam inParam = default)
+            {
+
+            }
+
+            public void Update(PlayerEntity inSelf, in IStateParam inParam = default)
+            {
+
+            }
+        }
+
+        [Obsolete]
+        public class FollowTargetState : IState<PlayerEntity, IStateParam>
+        {
+            public void Enter(PlayerEntity inSelf, in IStateParam inParam = default)
+            {
+
+            }
+
+            public void Exit(PlayerEntity inSelf, in IStateParam inParam = default)
+            {
+
+            }
+
+            public void Update(PlayerEntity inSelf, in IStateParam inParam = default)
+            {
+
+            }
+        }
+
+        [Obsolete]
+        public class BackToSpawnState : IState<PlayerEntity, IStateParam>
+        {
+            public void Enter(PlayerEntity inSelf, in IStateParam inParam = default)
+            {
+
             }
 
             public void Exit(PlayerEntity inSelf, in IStateParam inParam = default)

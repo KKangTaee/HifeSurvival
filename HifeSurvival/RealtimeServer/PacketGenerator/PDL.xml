@@ -122,7 +122,7 @@
 		<long name ="timestamp"/>
 	</packet>
 
-	<packet name ="PlayerUpdateBroadcast">
+	<packet name ="UpdateLocationBroadcast">
 		<int name ="targetId"/>
 		<bool name ="isPlayer"/>
 		<int name ="status"/>

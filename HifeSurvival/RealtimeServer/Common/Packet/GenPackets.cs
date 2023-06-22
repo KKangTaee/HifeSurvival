@@ -27,7 +27,7 @@ public enum PacketID
 	S_GetItem = 17,
 	S_GetGold = 18,
 	MoveRequest = 19,
-	PlayerUpdateBroadcast = 20,
+	UpdateLocationBroadcast = 20,
 	
 }
 
@@ -1010,7 +1010,7 @@ public class MoveRequest : IPacket
 	}
 }
 
-public class PlayerUpdateBroadcast : IPacket
+public class UpdateLocationBroadcast : IPacket
 {
 	public int targetId;
 	public bool isPlayer;
@@ -1020,7 +1020,7 @@ public class PlayerUpdateBroadcast : IPacket
 	public float speed;
 	public long timestamp;
 
-	public ushort Protocol { get { return (ushort)PacketID.PlayerUpdateBroadcast; } }
+	public ushort Protocol { get { return (ushort)PacketID.UpdateLocationBroadcast; } }
 
 	public void Read(ArraySegment<byte> segment)
 	{
@@ -1052,7 +1052,7 @@ public class PlayerUpdateBroadcast : IPacket
 		Span<byte> s = new Span<byte>(segment.Array, segment.Offset, segment.Count);
 
 		count += sizeof(ushort);
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.PlayerUpdateBroadcast);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.UpdateLocationBroadcast);
 		count += sizeof(ushort);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.targetId);
 		count += sizeof(int);

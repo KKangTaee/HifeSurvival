@@ -128,7 +128,7 @@ namespace Server
             Push(session, room => room?.Mode.OnRecvMoveRequest(move));
         }
 
-        public override void PlayerUpdateBroadcastHandler(PacketSession session, IPacket packet)
+        public override void UpdateLocationBroadcastHandler(PacketSession session, IPacket packet)
         {
             throw new NotImplementedException();
         }

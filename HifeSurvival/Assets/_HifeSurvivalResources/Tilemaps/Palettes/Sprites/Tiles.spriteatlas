@@ -51,23 +51,15 @@ SpriteAtlas:
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 21300000, guid: c454cd40415d94bf482137b05a1ec211, type: 3}
-  - {fileID: 21300000, guid: 180f0131a98824a57a8a986773566d2d, type: 3}
-  - {fileID: 21300000, guid: 6bc6eec26312143d38cdbf291e1d8183, type: 3}
-  - {fileID: 21300000, guid: 4e87a6e3370e146c39fb8518bb64267d, type: 3}
   - {fileID: 21300000, guid: 21357474cbac04dc8994fc0aec1efc07, type: 3}
   - {fileID: 21300000, guid: 9e7e6496701644f77b2181908366b0e3, type: 3}
-  - {fileID: 21300000, guid: a0abf5770233b431c85fc3c6f1970cba, type: 3}
   - {fileID: 21300000, guid: f9847c6b567e545e7bad00b5e874f4f9, type: 3}
   - {fileID: 21300000, guid: b3ab2f0ecc7be44d89f2577803b11306, type: 3}
   - {fileID: 21300000, guid: 0fbb94ff3d0fa448a8367c48a049ef76, type: 3}
   m_PackedSpriteNamesToIndex:
   - ZISO_Tile_Collider
-  - ISO_Tile_Dirt_01_GrassPatch_02
-  - ISO_Tile_Dirt_01_GrassPatch_01
-  - ISO_Tile_Dirt_01_Grass_01
   - ISO_Overlay_Water_02
   - ISO_Tile_Brick_Stone_01_02
-  - ISO_Tile_Dirt_01_GrassPatch_03
   - ISO_Overlay_Water_01
   - ISO_Tile_Brick_Stone_01
   - ISO_Tile_Water_01

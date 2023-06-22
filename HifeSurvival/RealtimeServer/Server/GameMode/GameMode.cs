@@ -210,7 +210,7 @@ namespace Server
         }
 
 
-        public void OnSendStartGame()
+        public void SendStartGame()
         {
             // TODO@taeho.kang 후에 나중에
             if (StaticData.Instance.ChapaterDataDict.TryGetValue("1", out var chapterData) == false)
@@ -274,7 +274,7 @@ namespace Server
             Status = EStatus.COUNTDOWN;
 
             // N초 후 자동으로 호출
-            JobTimer.Instance.Push(OnSendStartGame, CONUTDOWN_SEC * 1000);
+            JobTimer.Instance.Push(SendStartGame, CONUTDOWN_SEC * 1000);
         }
 
 
@@ -370,25 +370,21 @@ namespace Server
             player.pos = inPacket.pos;
             player.dir = inPacket.dir;
 
-            player.OnMove();
+            player.Move();
         }
 
         public void OnRecvMoveRequest(MoveRequest inPacket)
         {
             var player = GetPlayerEntity(inPacket.targetId);
-
             if (player == null)
                 return;
-
-            player.pos = inPacket.currentPos;
-            player.dir = inPacket.targetPos;
 
             player.currentPos = inPacket.currentPos;
             player.targetPos = inPacket.targetPos;
 
             if(player.currentPos.IsSame(player.targetPos))
             {
-                player.OnMoveStop(new IdleParam()
+                player.MoveStop(new IdleParam()
                 {
                     currentPos = inPacket.currentPos,
                     timestamp = inPacket.timestamp
@@ -396,7 +392,7 @@ namespace Server
             }
             else
             {
-                player.OnMove(new MoveParam()
+                player.Move(new MoveParam()
                 {
                     currentPos = inPacket.currentPos,
                     targetPos = inPacket.targetPos,
@@ -417,7 +413,7 @@ namespace Server
             player.pos = inPacket.pos;
             player.dir = inPacket.dir;
 
-            player.OnIdle();
+            player.Idle();
 
             _broadcaster.Broadcast(inPacket);
         }
@@ -456,8 +452,8 @@ namespace Server
                     respawnTime = 15,
                 };
 
-                toEntity.OnDead();
-                fromPlayer.OnIdle();
+                toEntity.Dead();
+                fromPlayer.Idle();
 
                 _broadcaster.Broadcast(dead);
 
@@ -488,7 +484,7 @@ namespace Server
                     target = toEntity,
                 };
 
-                fromPlayer.OnAttack(attackParam);
+                fromPlayer.Attack(attackParam);
                 _broadcaster.Broadcast(inPacket);
             }
         }

@@ -49,64 +49,49 @@ namespace Server
             Status = inStatue;
         }
 
-        public virtual void OnAttack(AttackParam inParam)
+
+        #region Action(State)
+        public virtual void Attack(AttackParam inParam)
         {
             ChangeState(EStatus.ATTACK, inParam);
         }
 
-        public virtual void OnFollowTarget(in FollowTargetParam inParam = default)
+        public virtual void FollowTarget(in FollowTargetParam inParam = default)
         {
             ChangeState(EStatus.FOLLOW_TARGET, inParam);
         }
 
-        public virtual void OnIdle(in IdleParam inParam = default)
+        public virtual void Idle(in IdleParam inParam = default)
         {
             ChangeState(EStatus.IDLE, inParam);
         }
 
-        public virtual void OnMoveStop(in IdleParam inParam = default)
+        public virtual void MoveStop(in IdleParam inParam = default)
         {
             ChangeState(EStatus.IDLE, inParam);
-
-            PlayerUpdateBroadcast move = new PlayerUpdateBroadcast()
-            {
-                targetId = this.targetId,
-                isPlayer = this.IsPlayer,
-                status = (int)EStatus.IDLE,
-                currentPos = inParam.currentPos,
-                timestamp = inParam.timestamp,
-            };
-
-            broadcaster.Broadcast(move);
         }
 
-        public virtual void OnMove(in MoveParam inParam = default)
+        public virtual void Move(in MoveParam inParam = default)
         {
             ChangeState(EStatus.MOVE, inParam);
-
-            PlayerUpdateBroadcast move = new PlayerUpdateBroadcast()
-            {
-                targetId = this.targetId,
-                isPlayer = this.IsPlayer,
-                status = (int)EStatus.MOVE,
-                currentPos = inParam.currentPos,
-                targetPos = inParam.targetPos,
-                speed = inParam.speed,
-                timestamp = inParam.timestamp,
-            };
-
-            broadcaster.Broadcast(move);
         }
 
-        public virtual void OnDead(in DeadParam inParam = default)
+        public virtual void Dead(in DeadParam inParam = default)
         {
             ChangeState(EStatus.DEAD, inParam);
         }
 
-        public virtual void OnBackToSpawn(in BackToSpawnParam inParam = default)
+        public virtual void BackToSpawn(in BackToSpawnParam inParam = default)
         {
             ChangeState(EStatus.BACK_TO_SPAWN, inParam);
         }
+        #endregion
+
+
+        #region CallbackEvent
+        public abstract void OnDamaged(in Entity entity);
+        #endregion
+
 
         public virtual int GetAttackValue()
         {
@@ -116,6 +101,12 @@ namespace Server
         public virtual int GetDamagedValue(int inAttackValue)
         {
             return (int)(inAttackValue - stat.def * 0.1f);
+        }
+
+
+        public virtual void ReduceHP(int hpValue)
+        {
+            stat.AddCurrHp(-hpValue);
         }
 
         [Obsolete]

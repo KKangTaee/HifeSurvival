@@ -31,6 +31,11 @@ namespace Server
             smdic[EStatus.BACK_TO_SPAWN] = new BackToSpawnState();
             smdic[EStatus.DEAD] = new DeadState();
 
+            //임시 코드.. Follow_target, Back_to_spawn은 유니크한 상태가 아님. 
+            smdic[EStatus.MOVE] = new MoveState();
+            smdic[EStatus.USE_SKILL] = new UseSkillState();
+
+
             _stateMachine = new StateMachine<MonsterEntity>(smdic);
         }
 
@@ -43,7 +48,7 @@ namespace Server
         {
             base.ChangeState(inStatue, inParam);
 
-            _stateMachine.ChangeState(inStatue, this, inParam);
+            _stateMachine.OnChangeState(inStatue, this, inParam);
         }
 
 
@@ -61,15 +66,18 @@ namespace Server
             return pos.DistanceTo(spawnPos) > 10;
         }
 
-        public void OnDamaged(Entity inEntity)
+        public override void OnDamaged(in Entity inEntity)
         {
-            var attackParam = new AttackParam()
+            if (inEntity.IsPlayer)
             {
-                target = inEntity
-            };
+                var attackParam = new AttackParam()
+                {
+                    target = inEntity
+                };
 
-            OnAttack(attackParam);
-            OnAttackHandler?.Invoke(attackParam);
+                Attack(attackParam);
+                OnAttackHandler?.Invoke(attackParam);
+            }
         }
 
         public void NotifyAttack(AttackParam inParam)
@@ -80,7 +88,7 @@ namespace Server
 
             // NOTE@taeho.kang 현재 몬스터가 공격을 하고 있지 않는 상황에만 어그로를 끈다.
             if (Status != EStatus.ATTACK)
-                OnAttack(inParam);
+                Attack(inParam);
         }
     }
 
@@ -134,7 +142,7 @@ namespace Server
 
             public void Update(MonsterEntity inSelf, in IStateParam inParam = default)
             {
-                updateAttack(inSelf, (PlayerEntity)((AttackParam)inParam).target);
+                //updateAttack(inSelf, (PlayerEntity)((AttackParam)inParam).target);
             }
 
             private void updateAttack(MonsterEntity inSelf, PlayerEntity inOther)
@@ -145,15 +153,15 @@ namespace Server
                     if (inOther.Status == EStatus.DEAD)
                     {
                         // 자리로 다시 돌아간다.
-                        inSelf.OnBackToSpawn();
+                        inSelf.BackToSpawn();
                     }
                     // 공격이 가능하다면
-                    else if (inSelf.CanAttack(inOther.pos) == true)
+                    else if (inSelf.CanAttack(inOther.currentPos) == true)
                     {
                         var attackVal = inSelf.GetAttackValue();
                         var damagedVal = inOther.GetDamagedValue(attackVal);
 
-                        inOther.stat.AddCurrHp(-damagedVal);
+                        inOther.ReduceHP(damagedVal);
 
                         // 공격하던 플레이어가 사망했다면..?
                         if (inOther.stat.currHp <= 0)
@@ -167,11 +175,11 @@ namespace Server
                                 respawnTime = 15,
                             };
 
-                            inOther.OnDead();
+                            inOther.Dead();
                             inSelf.broadcaster.Broadcast(deadPacket);
 
                             // 다시 자리로 돌아간다.
-                            inSelf.OnBackToSpawn();
+                            inSelf.BackToSpawn();
                         }
                         else
                         {
@@ -194,7 +202,7 @@ namespace Server
                     // 공격을 못한다면 다시추격
                     else
                     {
-                        inSelf.OnFollowTarget(new FollowTargetParam()
+                        inSelf.FollowTarget(new FollowTargetParam()
                         {
                             target = inOther,
                         });
@@ -203,6 +211,7 @@ namespace Server
             }
         }
 
+        [Obsolete]
         public class FollowTargetState : IState<MonsterEntity, IStateParam>
         {
             private bool _isRunning = false;
@@ -234,13 +243,13 @@ namespace Server
                     // 공격범위를 벗어났다면..?
                     if (inSelf.OutOfSpawnRange() == true)
                     {
-                        inSelf.OnBackToSpawn();
+                        inSelf.BackToSpawn();
                     }
 
                     // 공격이 가능하다면?
                     else if (inSelf.CanAttack(inOther.currentPos) == true)
                     {
-                        inSelf.OnAttack(new AttackParam()
+                        inSelf.Attack(new AttackParam()
                         {
                             target = inOther,
                         });
@@ -249,62 +258,42 @@ namespace Server
                     // 그것도 아니라면..? 이동해라
                     else
                     {
-                        // 이동방향을 구한다.
-                        var newDir = inOther.currentPos.SubtractPVec3(inSelf.pos).NormalizePVec3();
+                        inSelf.Move(new MoveParam()
+                        {
+                            currentPos = inSelf.currentPos,
+                            targetPos = inOther.targetPos,
+                            speed = inSelf.stat.moveSpeed,
+                            timestamp = HTimer.GetCurrentTimestamp(),
+                        });
 
-                        inSelf.OnMoveAndBroadcast(newDir, UPDATE_TIME * 0.001f);
                         JobTimer.Instance.Push(() => { updateFollow(inSelf, inOther); }, UPDATE_TIME);
                     }
                 }
             }
         }
 
+        [Obsolete]
         public class BackToSpawnState : IState<MonsterEntity, IStateParam>
         {
-            private const int UPDATE_TIME = 125;
-
-            private bool _isRunning;
-            private float _currDist;
-            private float _totalDist;
-            private PVec3 _startPos;
-
             public void Enter(MonsterEntity inSelf, in IStateParam inParam = default)
             {
-                _isRunning = true;
-                _startPos = inSelf.pos;
-                _currDist = 0;
-                _totalDist = _startPos.DistanceTo(inSelf.spawnPos);
-
-                updateBackToSpawn(inSelf);
+                inSelf.Move(new MoveParam()
+                {
+                    currentPos = inSelf.currentPos,
+                    targetPos = inSelf.spawnPos,
+                    speed = inSelf.stat.moveSpeed,
+                    timestamp = HTimer.GetCurrentTimestamp(),
+                });
             }
 
             public void Exit(MonsterEntity inSelf, in IStateParam inParam = default)
             {
-                _isRunning = false;
+
             }
 
             public void Update(MonsterEntity inSelf, in IStateParam inParam = default)
             {
                 
-            }
-
-            private void updateBackToSpawn(MonsterEntity inSelf)
-            {
-                if (this != null && _isRunning == true && inSelf != null)
-                {
-                    _currDist += UPDATE_TIME * 0.001f * inSelf.stat.moveSpeed;
-                    float ratio = _currDist / _totalDist;
-
-                    if (ratio < 1)
-                    {
-                        inSelf.OnMoveLerpAndBroadcast(_startPos, inSelf.spawnPos, ratio);
-                        JobTimer.Instance.Push(() => { updateBackToSpawn(inSelf); }, UPDATE_TIME);
-                    }
-                    else
-                    {
-                        inSelf.OnIdle();
-                    }
-                }
             }
         }
 
@@ -313,6 +302,64 @@ namespace Server
             public void Enter(MonsterEntity inSelf, in IStateParam inParam = default)
             {
                 inSelf.OnRespawnCallback?.Invoke();
+            }
+
+            public void Exit(MonsterEntity inSelf, in IStateParam inParam = default)
+            {
+
+            }
+
+            public void Update(MonsterEntity inSelf, in IStateParam inParam = default)
+            {
+
+            }
+        }
+
+        public class MoveState : IState<MonsterEntity, IStateParam>
+        {
+            public void Enter(MonsterEntity inSelf, in IStateParam inParam = default)
+            {
+                var param = (MoveParam)inParam;
+                Logger.GetInstance().Info($"<Monster id {inSelf.targetId}> Move current : {param.currentPos.PrintPVec3()}, target : {param.targetPos.PrintPVec3()}");
+
+                updateMove(inSelf, param);
+            }
+
+            public void Update(MonsterEntity inSelf, in IStateParam inParam = default)
+            {
+                var param = (MoveParam)inParam;
+                Logger.GetInstance().Info($"<Monster id {inSelf.targetId}> Move current : {param.currentPos.PrintPVec3()}, target : {param.targetPos.PrintPVec3()}");
+
+                updateMove(inSelf, param);
+            }
+
+            public void Exit(MonsterEntity inSelf, in IStateParam inParam = default)
+            {
+
+            }
+
+            private void updateMove(MonsterEntity inSelf, MoveParam inParam)
+            {
+                UpdateLocationBroadcast move = new UpdateLocationBroadcast()
+                {
+                    targetId = inSelf.targetId,
+                    isPlayer = inSelf.IsPlayer,
+                    status = (int)EStatus.MOVE,
+                    currentPos = inParam.currentPos,
+                    targetPos = inParam.targetPos,
+                    speed = inParam.speed,
+                    timestamp = inParam.timestamp,
+                };
+
+                inSelf.broadcaster.Broadcast(move);
+            }
+        }
+
+        public class UseSkillState : IState<MonsterEntity, IStateParam>
+        {
+            public void Enter(MonsterEntity inSelf, in IStateParam inParam = default)
+            {
+
             }
 
             public void Exit(MonsterEntity inSelf, in IStateParam inParam = default)
@@ -415,7 +462,7 @@ namespace Server
             {
                 foreach (var entity in _monstersDict.Values)
                 {
-                    entity.OnIdle();
+                    entity.Idle();
                     entity.stat.AddCurrHp(entity.stat.hp);
 
                     S_Respawn respawn = new S_Respawn()

@@ -73,6 +73,11 @@ namespace Server.Helper
             return (float)Math.Sqrt(dx * dx + dy * dy + dz * dz);
         }
 
+        public static string PrintPVec3(this PVec3 pVec)
+        {
+            return $"[{pVec.x}, {pVec.y}, {pVec.z}]";
+        }
+
         private static Random rand = new Random();
 
         public static IList<T> Shuffle<T>(this IList<T> list)

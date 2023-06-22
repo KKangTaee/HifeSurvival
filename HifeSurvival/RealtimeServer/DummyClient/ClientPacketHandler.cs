@@ -102,7 +102,7 @@ public class ClientPacketHandler : PacketHandler
         throw new NotImplementedException();
     }
 
-    public override void PlayerUpdateBroadcastHandler(PacketSession session, IPacket packet)
+    public override void UpdateLocationBroadcastHandler(PacketSession session, IPacket packet)
     {
         throw new NotImplementedException();
     }

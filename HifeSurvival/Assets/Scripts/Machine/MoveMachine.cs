@@ -113,6 +113,8 @@ public class MoveMachine : MonoBehaviour
         float currTick = 0;
         float totalTick = (_timeStamp + 250) - DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
+        Debug.Log($"{totalTick}, {_destPos}");
+
         CurrDir = Vector3.Normalize(_currPos - _destPos);
 
         while(currTick < totalTick)

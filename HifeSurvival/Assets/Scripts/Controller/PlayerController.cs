@@ -103,7 +103,7 @@ public sealed class PlayerController : EntityObjectController<Player>
         if (Self.Status == EntityObject.EStatus.DEAD)
             return;
 
-        _gameMode.OnSendStopMove(Self.GetPos(), Self.GetDir());
+        _gameMode.OnSendMoveRequest(Self.GetPos(), Self.GetPos());
 
         SetIdleState(Self,
                      Self.GetPos(),

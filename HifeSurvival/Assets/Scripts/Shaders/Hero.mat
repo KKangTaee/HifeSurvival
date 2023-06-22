@@ -8,9 +8,10 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Hero
-  m_Shader: {fileID: 4800000, guid: b06d40d8c5f9c4228b4d0542a0f53225, type: 3}
+  m_Shader: {fileID: 4800000, guid: bf6bffc89f23965418a432dc7b07c1c0, type: 3}
   m_ValidKeywords: []
-  m_InvalidKeywords: []
+  m_InvalidKeywords:
+  - _STATUS_SPAWN
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -52,9 +53,14 @@ Material:
     m_Floats:
     - _DstBlend: 0
     - _EnableExternalAlpha: 0
+    - _Spawn_Val: 2
     - _SrcBlend: 1
+    - _Status: 1
+    - _TwistUvAmount: 1
+    - _TwistUvRadius: 0.75
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Spawn_LightColor: {r: 0.9528302, g: 0.8462573, b: 0.5438323, a: 1}
   m_BuildTextureStacks: []

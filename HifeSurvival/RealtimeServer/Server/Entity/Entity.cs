@@ -83,19 +83,6 @@ namespace Server
         public virtual void OnMove(in MoveParam inParam = default)
         {
             ChangeState(EStatus.MOVE, inParam);
-
-            PlayerUpdateBroadcast move = new PlayerUpdateBroadcast()
-            {
-                targetId = this.targetId,
-                isPlayer = this.IsPlayer,
-                status = (int)EStatus.MOVE,
-                currentPos = inParam.currentPos,
-                targetPos = inParam.targetPos,
-                speed = inParam.speed,
-                timestamp = inParam.timestamp,
-            };
-
-            broadcaster.Broadcast(move);
         }
 
         public virtual void OnDead(in DeadParam inParam = default)

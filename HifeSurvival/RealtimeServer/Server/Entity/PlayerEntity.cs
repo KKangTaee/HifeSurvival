@@ -52,7 +52,7 @@ namespace Server
         protected override void ChangeState<P>(EStatus inStatue, P inParam)
         {
             base.ChangeState(inStatue, inParam);
-
+            Logger.GetInstance().Debug($"state : {inStatue}");
             _stateMachine.ChangeState(inStatue, this, inParam);
         }
 
@@ -148,33 +148,42 @@ namespace Server
         {
             private const int UPDATE_TIME = 125;
 
-            private bool _isRunning = false;
 
             public void Enter(PlayerEntity inSelf, in IStateParam inParam = default)
             {
-                _isRunning = true;
+                var param = (MoveParam)inParam;
+                Logger.GetInstance().Debug($"Move current : {param.currentPos.PrintPVec3()}, target : {param.targetPos.PrintPVec3()}");
 
-                updateMove(inSelf, (MoveParam)inParam);
+                updateMove(inSelf, param);
             }
 
             public void Update(PlayerEntity inSelf, in IStateParam inParam = default)
             {
-                updateMove(inSelf, (MoveParam)inParam);
+                var param = (MoveParam)inParam;
+                Logger.GetInstance().Debug($"Move current : {param.currentPos.PrintPVec3()}, target : {param.targetPos.PrintPVec3()}");
+
+                updateMove(inSelf, param);
             }
 
             public void Exit(PlayerEntity inSelf, in IStateParam inParam = default)
             {
-                _isRunning = false;
+                Logger.GetInstance().Debug("Move Exit");
             }
 
             private void updateMove(PlayerEntity inSelf, MoveParam inParam)
             {
-                if (this != null && _isRunning == true && inSelf != null)
+                PlayerUpdateBroadcast move = new PlayerUpdateBroadcast()
                 {
-                    //inSelf.OnMoveAndBroadcast(inSelf.dir, UPDATE_TIME * 0.001f);
-                    inSelf.OnMove(inParam);
-                    JobTimer.Instance.Push(() => { updateMove(inSelf, inParam); }, UPDATE_TIME);
-                }
+                    targetId = inSelf.targetId,
+                    isPlayer = inSelf.IsPlayer,
+                    status = (int)EStatus.MOVE,
+                    currentPos = inParam.currentPos,
+                    targetPos = inParam.targetPos,
+                    speed = inParam.speed,
+                    timestamp = inParam.timestamp,
+                };
+
+                inSelf.broadcaster.Broadcast(move);
             }
         }
 

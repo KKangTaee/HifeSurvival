@@ -205,16 +205,21 @@ public partial class Player : EntityObject
     }
 
 
-    public void OnMoveLerp(Vector3 inEndPos, Vector3 inDir, Action doneCallback)
+    
+    public void OnMoveLerp(in Vector3 inCurrPos, in Vector3 inDestPos, float inSpeed, long inTimeStamp)
     {
-        SetPoint(inEndPos, Vector3.zero);
+        SetPoint(inDestPos, Vector3.zero);
 
-        _anim.OnWalk(inDir);
+        var dir = inDestPos - inCurrPos;
 
-        MoveLerpEntity(() => inEndPos,
-                       dir => { },
-                       null,
-                       doneCallback);
+        _anim.OnWalk(dir);
+
+        MoveLerpExpect(inCurrPos, inDestPos, inSpeed, inTimeStamp);
+    }
+
+    public void OnMoveLerpV2(in Vector3 inCurrPos, in Vector3 inDestPos, float inSpeed, long inTimeStamp)
+    {
+
     }
 
 
@@ -230,14 +235,10 @@ public partial class Player : EntityObject
 
     public void OnFollowTarget(EntityObject inTarget, Action<Vector3> dirCallback, Action doneCallback)
     {
-        MoveLerpEntity(() => inTarget.GetPos(),
-                       dir =>
-                       {
-                           _anim.OnWalk(dir);
-                           dirCallback?.Invoke(dir);
-                       },
-                       () => CanAttack(inTarget.GetPos())
-                       , doneCallback);
+        MoveLerpTarget(inTarget,
+                       inTarget.TargetEntity.stat.moveSpeed,
+                      ()=> CanAttack(inTarget.GetPos()),
+                      doneCallback);
     }
 
 
@@ -388,21 +389,7 @@ public partial class Player
             EntityObject inTo = inParam.target;
 
             // 내 클라의 전송값과 서버의 위치값이 크게 다르다면..?
-            if (Vector3.Distance(inFrom.GetPos(), inParam.target.GetPos()) > 1f)
-            {
-                // 이동보간 후 처리
-                inFrom.MoveLerpEntity(() => inParam.fromPos,
-                                        null,
-                                        null,
-                                        () =>
-                                        {
-                                            Attack(inParam, inFrom, inTo);
-                                        });
-            }
-            else
-            {
-                Attack(inParam, inFrom, inTo);
-            }
+            Attack(inParam, inFrom, inTo);
         }
 
         #region  Local Func
@@ -446,10 +433,13 @@ public partial class Player
             if (inParam is IdleParam idleParam)
             {
                 if (inSelf.IsSelf == false)
-                    inSelf.OnMoveLerp(idleParam.pos, idleParam.dir, () => inSelf.OnIdle(idleParam.pos));
-
+                {
+                    // TOOD@taeho.kang 여기 끝!
+                }
                 else
+                {
                     inSelf.OnIdle(idleParam.pos);
+                }
             }
         }
 
@@ -466,17 +456,23 @@ public partial class Player
 
     public class MoveState : IState<Player>
     {
-        public void Enter<P>(Player inSelf, in P inParam) where P : struct
+        public void Enter<P>(Player inTarget, in P inParam) where P : struct
         {
-            if (inParam is MoveParam move)
-                Move(move, inSelf);
+            // if (inParam is MoveParam move)
+            //     Move(move, inSelf);
+
+            if(inParam is MoveParam move)
+                Move(move, inTarget);
         }
 
 
-        public void Update<P>(Player inSelf, in P inParam) where P : struct
+        public void Update<P>(Player inTarget, in P inParam) where P : struct
         {
-            if (inParam is MoveParam move)
-                Move(move, inSelf);
+            // if (inParam is MoveParam move)
+            //     Move(move, inSelf);
+
+            if(inParam is MoveParam move)
+                Move(move, inTarget);
         }
 
 
@@ -488,7 +484,10 @@ public partial class Player
         public void Move(MoveParam inMoveParam, Player inPlayer)
         {
             if (inPlayer.IsSelf == false)
-                inPlayer.OnMoveLerp(inMoveParam.pos, inMoveParam.dir, () => inPlayer.OnMove(inMoveParam.dir));
+                inPlayer.OnMoveLerp(inMoveParam.currPos,
+                                    inMoveParam.destPos,
+                                    inMoveParam.speed,
+                                    inMoveParam.timeStamp);
 
             else
                 inPlayer.OnMove(inMoveParam.dir);

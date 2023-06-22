@@ -77,7 +77,10 @@ public class Monster : EntityObject
         public void Enter<P>(Monster inSelf, in P inParam) where P : struct
         {
             if (inParam is MoveParam move)
-                inSelf.OnMoveLerp(move.pos, () => inSelf.OnMove(move.dir));
+                inSelf.OnMoveLerp(move.currPos,
+                                  move.destPos,
+                                  move.speed,
+                                  move.timeStamp);
         }
 
         public void Exit()
@@ -88,7 +91,10 @@ public class Monster : EntityObject
         public void Update<P>(Monster inSelf, in P inParam) where P : struct
         {
             if (inParam is MoveParam move)
-                inSelf.OnMoveLerp(move.pos, () => inSelf.OnMove(move.dir));
+                inSelf.OnMoveLerp(move.currPos,
+                                  move.destPos,
+                                  move.speed,
+                                  move.timeStamp);
         }
     }
 
@@ -129,17 +135,12 @@ public class Monster : EntityObject
         _stateMachine.ChangeState(inStatus, this, inParam);
     }
 
-    public void OnMoveLerp(Vector3 inEndPos, Action doneCallback)
+    public void OnMoveLerp(in Vector3 inCurrPos, in Vector3 inDestPos, float inSpeed, long inTimeStamp)
     {
-        var currDir = Vector3.Normalize(inEndPos - GetPos());
+        var currDir = Vector3.Normalize(inDestPos - GetPos());
         _anim.SetDir(currDir.x);
-        MoveLerpEntity(() => inEndPos,
-                       dir =>
-                       {
-                           
-                       },
-                       null,
-                       doneCallback);
+        
+        MoveLerpExpect(inCurrPos, inDestPos, inSpeed, inTimeStamp);
     }
 
     public void OnMove(in Vector3 inDir)

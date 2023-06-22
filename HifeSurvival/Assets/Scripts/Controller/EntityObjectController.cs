@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public abstract class EntityObjectController<T> : ControllerBase where T : EntityObject
 {
@@ -17,11 +18,12 @@ public abstract class EntityObjectController<T> : ControllerBase where T : Entit
     {
         _gameMode = GameMode.Instance;
 
-        _gameMode.OnRecvMoveHandler      += OnRecvMove;
         _gameMode.OnRecvStopMoveHandler  += OnRecvStopMove;
         _gameMode.OnRecvDeadHandler      += OnRecvDead;
         _gameMode.OnRecvAttackHandler    += OnRecvAttack;
         _gameMode.OnRecvRespawnHandler   += OnRecvRespawn;
+
+        _gameMode.OnUpdateLocationHandler += OnUpdateLocation;
     }
 
 
@@ -29,18 +31,21 @@ public abstract class EntityObjectController<T> : ControllerBase where T : Entit
     // virtaul
     //----------------
 
-    public virtual void OnRecvMove(Entity inEntity)
+    public virtual void OnUpdateLocation(UpdateLocationBroadcast inPacket)
     {
-        if(ContainEntity(inEntity.targetId) == false)
-           return;
+        if(ContainEntity(inPacket.targetId) == false)
+            return;
 
-        var entityObj = GetEntityObject(inEntity.targetId);
+         var entityObj = GetEntityObject(inPacket.targetId);
 
-        SetMoveState(entityObj,
-                     inEntity.pos.ConvertUnityVector3(),
-                     inEntity.dir.ConvertUnityVector3(),
-                     inEntity.stat.moveSpeed);
+         SetMoveState(entityObj,
+                      default,
+                      inPacket.currentPos.ConvertUnityVector3(),
+                      inPacket.targetPos.ConvertUnityVector3(),
+                      inPacket.speed,
+                      inPacket.timestamp);
     }
+
 
     public virtual void OnRecvStopMove(Entity inEntity)
     {
@@ -111,18 +116,19 @@ public abstract class EntityObjectController<T> : ControllerBase where T : Entit
     }
 
 
-    public void SetMoveState(T inTarget, in Vector3 inPos, in Vector3 inDir, float speed)
+    public void SetMoveState(T inTarget, in Vector3 inDir, in Vector3 inCurrPos, in Vector3 inDestPos, float speed, long inTimestamp)
     {
         var moveParam = new MoveParam()
         {
-            pos = inPos,
+            currPos = inCurrPos,
+            destPos = inDestPos,
+            timeStamp = inTimestamp,
             dir = inDir,
             speed = speed,
         };
 
         inTarget.ChangeState(EntityObject.EStatus.MOVE, moveParam);
     }
-
 
     public void SetIdleState(T inTarget, in Vector3 inPos, in Vector3 inDir, float inSpeed)
     {

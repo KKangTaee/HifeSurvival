@@ -50,7 +50,7 @@ public class ClientPacketHandler : PacketHandler
     public override void CS_MoveHandler(PacketSession session, IPacket packet)
     {
         CS_Move move = packet as CS_Move;
-        GameMode.Instance.OnRecvMove(move);
+        // GameMode.Instance.OnRecvMove(move);
     }
 
     public override void CS_StopMoveHandler(PacketSession session, IPacket packet)
@@ -107,6 +107,7 @@ public class ClientPacketHandler : PacketHandler
         throw new NotImplementedException();
     }
 
+
     public override void MoveRequestHandler(PacketSession session, IPacket packet)
     {
         //TODO 좌표 기준 이동 리뉴얼
@@ -115,5 +116,7 @@ public class ClientPacketHandler : PacketHandler
     public override void UpdateLocationBroadcastHandler(PacketSession session, IPacket packet)
     {
         //TODO 좌표 기준 이동 리뉴얼
+        UpdateLocationBroadcast locationBroadcast = packet as UpdateLocationBroadcast;
+        GameMode.Instance.OnUpdateLocation(locationBroadcast);
     }
 }

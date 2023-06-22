@@ -9,12 +9,13 @@ public sealed class PlayerController : EntityObjectController<Player>
 {
     [SerializeField] private Player _playerPrefab;
 
-    private CameraController    _cameraController;
-    private JoystickController  _joystickController;
-    private IDisposable         _attackDelay;
+    private CameraController _cameraController;
+    private JoystickController _joystickController;
+    private IDisposable _attackDelay;
 
     public Player Self { get; private set; }
 
+    private DateTime _nextSendTime;
 
     //-----------------
     // override
@@ -24,11 +25,11 @@ public sealed class PlayerController : EntityObjectController<Player>
     {
         base.Init();
 
-        _cameraController   = ControllerManager.Instance.GetController<CameraController>();
+        _cameraController = ControllerManager.Instance.GetController<CameraController>();
         _joystickController = ControllerManager.Instance.GetController<JoystickController>();
 
         _gameMode.OnRecvUpdateStatHandler += OnRecvUpdateStat;
-        _gameMode.OnRecvGetItemHandler    += OnRecvGetItem;
+        _gameMode.OnRecvGetItemHandler += OnRecvGetItem;
 
         LoadPlayer();
     }
@@ -75,26 +76,32 @@ public sealed class PlayerController : EntityObjectController<Player>
     {
         OnStopAttackSelf();
 
-        float angle = Vector3.Angle(Self.GetDir(), inDir);
-
-        // 조이스틱의 방향전환이 이루어졌다면..?
-        if (angle > 1f)
-        {
-            // 서버에 전송한다.
-            _gameMode.OnSendMove(Self.GetPos(), inDir);
-        }
+        SendMove(inDir);
 
         SetMoveState(Self,
+                    inDir,
                      Self.GetPos(),
-                     inDir,
-                     Self.TargetEntity.stat.moveSpeed);
+                     default,
+                     Self.TargetEntity.stat.moveSpeed,
+                     0);
     }
 
+    public void SendMove(in Vector3 inDir)
+    {
+        if (_nextSendTime < DateTime.Now)
+        {
+            float deltaTime = 0.25f;
+
+            Vector3 destPos = Self.GetPos() + inDir * deltaTime * Self.TargetEntity.stat.moveSpeed;
+            _gameMode.OnSendMoveRequest(Self.GetPos(), destPos);
+            _nextSendTime = DateTime.Now.AddMilliseconds(deltaTime*1000);
+        }
+    }
 
     public void OnStopMoveSelf()
     {
-        if(Self.Status == EntityObject.EStatus.DEAD)
-           return;
+        if (Self.Status == EntityObject.EStatus.DEAD)
+            return;
 
         _gameMode.OnSendStopMove(Self.GetPos(), Self.GetDir());
 
@@ -134,8 +141,7 @@ public sealed class PlayerController : EntityObjectController<Player>
 
             followDirCallback = (dir) =>
             {
-                // 추격시 서버에 전송한다.
-                _gameMode.OnSendMove(Self.GetPos(), dir);
+                SendMove(dir);
             },
 
             followDoneCallback = () =>
@@ -156,22 +162,22 @@ public sealed class PlayerController : EntityObjectController<Player>
 
         SetAttackState(inTarget, Self, Self.GetPos(), Self.GetDir(), damagedVal);
 
-        _gameMode.OnSendAttack(Self.GetPos(), 
-                               Self.GetDir(), 
-                               inTarget.IsPlayer, 
-                               inTarget.TargetId, 
+        _gameMode.OnSendAttack(Self.GetPos(),
+                               Self.GetDir(),
+                               inTarget.IsPlayer,
+                               inTarget.TargetId,
                                damagedVal);
 
         _attackDelay = Observable.Timer(TimeSpan.FromSeconds(Self.TargetEntity.stat.attackSpeed))
                                         .Subscribe(_ =>
-        {        
+        {
             // 이미 내가 죽은 상태라면..?
-            if(Self.Status == EntityObject.EStatus.DEAD)
+            if (Self.Status == EntityObject.EStatus.DEAD)
             {
                 OnStopAttackSelf();
                 return;
             }
-            
+
             // 이미 상대가 죽었다면
             if (inTarget.Status == EntityObject.EStatus.DEAD)
             {
@@ -231,6 +237,15 @@ public sealed class PlayerController : EntityObjectController<Player>
         }
     }
 
+    public override void OnUpdateLocation(UpdateLocationBroadcast inPacket)
+    {
+        // 타겟 그 자신이라면 리턴
+        if(Self.TargetId == inPacket.targetId)
+           return;
+
+        base.OnUpdateLocation(inPacket);
+    }
+
 
     public void OnRecvUpdateStat(PlayerEntity inEntity)
     {
@@ -244,4 +259,7 @@ public sealed class PlayerController : EntityObjectController<Player>
         var player = GetEntityObject(inEntity.targetId);
         player.UpdateItemSlot();
     }
+
+
+
 }

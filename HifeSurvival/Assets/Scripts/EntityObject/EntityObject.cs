@@ -78,30 +78,32 @@ public abstract class EntityObject : MonoBehaviour
 
     public void MoveEntity(in Vector3 inDir)
     {
-        _moveMachine.Move(inDir, TargetEntity.stat.moveSpeed);
+        _moveMachine.MoveSelf(inDir, TargetEntity.stat.moveSpeed);
     }
 
-    public void MoveLerpEntity(Func<Vector3> inEndFunc, Action<Vector3> inDirCallback, Func<bool> inForceStopFunc, Action inDoneCallback)
+    public void MoveLerpExpect(in Vector3 inCurrPos, in Vector3 inDestPos, float inSpeed, long inTimeStamp)
     {
-        _moveMachine.MoveLerpV2(inSpeed: TargetEntity.stat.moveSpeed,
-                                inEndPosFunc: inEndFunc,
-                                inUpdateRatio: 0.25f,
-                                updateCallback: inDirCallback,
-                                forceStopFunc: inForceStopFunc,
-                                doneCallback: inDoneCallback);
+        _moveMachine.StartMoveLerpExpect(inCurrPos, inDestPos, inSpeed, inTimeStamp);
     }
+
+    public void MoveLerpTarget(EntityObject inTarget, float inSpeed, Func<bool> inStopFunc, Action doneCallback)
+    {
+        _moveMachine.StartMoveLerpTarget(inTarget, inSpeed, inStopFunc, doneCallback);
+    }
+
 
     public void StopMoveEntity(in Vector3 inPos)
     {
-        _moveMachine.MoveStop(inPos);
+        _moveMachine.MoveStopSelf(inPos);
     }
+
 }
 
 public interface IState<T> where T : EntityObject
 {
-    void Enter<P>(T inSelf, in P inParam) where P : struct;
+    void Enter<P>(T inTarget, in P inParam) where P : struct;
 
-    void Update<P>(T inSelf, in P inParam) where P : struct;
+    void Update<P>(T inTarget, in P inParam) where P : struct;
 
     void Exit();
 }

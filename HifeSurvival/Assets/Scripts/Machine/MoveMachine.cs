@@ -5,24 +5,17 @@ using System;
 
 public class MoveMachine : MonoBehaviour
 {
-    private const float MOVE_REACHING_OFFSET = 1.2f;
-
-    private Vector3 _currPos;
     private Vector3 _inputDirection;
-
-    private Func<MoveMachine, Vector3>   _dirFunc;
-    private Func<MoveMachine, bool>      _exitLoopFunc;
-    private Func<Vector3>                _endPosFunc;
-    private Func<bool>                  _forceStopFunc;
-
-    private Action<Vector3>   _updateCallback;
-    private Action          _doneCallback;
-
+    private Vector3 _currPos;
+    private Vector3 _destPos;
     private float   _currSpeed;
-    private float   _updateRatio;
-    private bool    _isRunningLerp;
+    private long    _timeStamp;
+    private EntityObject _target;
+    
 
-    private AStar _astar;
+    private Action _doneCallback;
+    private Action<Vector3> _updateDirCallback;
+    private Func<bool> _stopFunc;
 
     public Vector3 CurrDir { get; private set; }
 
@@ -41,64 +34,40 @@ public class MoveMachine : MonoBehaviour
     // functions
     //-----------------
 
-    public bool IsReaching(Vector3 inPos)
-    {
-        return Mathf.Abs(transform.position.x - inPos.x) < MOVE_REACHING_OFFSET &&
-               Mathf.Abs(transform.position.y - inPos.y) < MOVE_REACHING_OFFSET;
-    }
-
-
     public Vector3 GetDir(Vector3 inPos)
     {
         return Vector3.Normalize(inPos - transform.position);
     }
 
-
-    public void Move(in Vector3 inDir, float inSpeed)
+    public void MoveSelf(in Vector3 inDir, float inSpeed)
     {
-        StopMoveLerp();
-
         _inputDirection = inDir;
         _currSpeed = inSpeed;
     }
 
-
-    public void MoveLerp(float inSpeed, Func<MoveMachine, Vector3> inDirFunc, Func<MoveMachine, bool> inExitLoop, Action doneCallback)
+    public void MoveStopSelf(in Vector2 inPos)
     {
         _inputDirection = Vector2.zero;
+    }
+
+    public void StartMoveLerpExpect(in Vector3 inCurrPos, in Vector3 inDestPos, float inSpeed, long inTimeStamp)
+    {
+        _currPos = inCurrPos;
+        _destPos = inDestPos;
         _currSpeed = inSpeed;
-
-        _dirFunc = inDirFunc;
-        _exitLoopFunc = inExitLoop;
-        _doneCallback = doneCallback;
-
-        StartMoveLerp();
+        _timeStamp = inTimeStamp;
+    
+        StartCoroutine(nameof(Co_MoveLerpExpect));
     }
 
-
-    public void MoveLerpV2(float inSpeed, Func<Vector3> inEndPosFunc,  float inUpdateRatio, Action<Vector3> updateCallback, Func<bool> forceStopFunc,  Action doneCallback)
+    public void StartMoveLerpTarget(EntityObject inTarget, float inSpeed, Func<bool> inStopFunc, Action doneCallback)
     {
-        StopCoroutine(nameof(Co_MoveLerpV2));
+        _target = inTarget;
+        _currSpeed = inSpeed;
+        _stopFunc = inStopFunc;
 
-        _inputDirection     = Vector2.zero;
-        _currSpeed          = inSpeed;
-        _doneCallback       = doneCallback;
-        _endPosFunc         = inEndPosFunc;
-        _updateCallback     = updateCallback;
-        _updateRatio        = inUpdateRatio;
-        _forceStopFunc      = forceStopFunc;
-
-        StartCoroutine(nameof(Co_MoveLerpV2));
+        StartCoroutine(nameof(Co_MoveLerpTarget));
     }
-
-
-    public void MoveStop(in Vector2 inPos)
-    {
-        _inputDirection = Vector2.zero;
-
-       StopMoveLerp();
-    }
-
 
     private void UpdateMove()
     {
@@ -109,108 +78,49 @@ public class MoveMachine : MonoBehaviour
         }
     }
 
-
-    public void StartMoveLerp()
+    public void StopMoveLerpExpect()
     {
-        if(_isRunningLerp == false)
-        {
-            _isRunningLerp = true;
-            StartCoroutine(nameof(Co_MoveLerp));
-        }
+        StopCoroutine(nameof(Co_MoveLerpExpect));
     }
 
 
-    public void StopMoveLerp()
+    public void StopMoveLerpTarget()
     {
-        if(_isRunningLerp == true)
-        {
-            StopCoroutine(nameof(Co_MoveLerp));
-
-            _isRunningLerp = false;
-
-            _dirFunc = null;
-            _doneCallback = null;
-        }
-
-        StopCoroutine(nameof(Co_MoveLerpV2));
+        StopCoroutine(nameof(Co_MoveLerpTarget));
     }
 
 
-    //----------------
-    // coroutines
-    //----------------
+    //------------------
+    // coroutine
+    //-------------------
 
-    IEnumerator Co_MoveLerp()
+
+    IEnumerator Co_MoveLerpTarget()
     {
-        while (_exitLoopFunc?.Invoke(this) == false)
+        while(_stopFunc?.Invoke() == false)
         {
-            CurrDir = _dirFunc?.Invoke(this) ?? Vector3.zero;
+            var dir = GetDir(_target.transform.position);
+            transform.position += (dir * _currSpeed * Time.deltaTime);
 
-            transform.position += CurrDir * _currSpeed * Time.deltaTime;
-            
             yield return null;
         }
-
         _doneCallback?.Invoke();
-        _isRunningLerp = false;
     }
 
 
-    IEnumerator Co_MoveLerpV2()
+    IEnumerator Co_MoveLerpExpect()
     {
-        float lerpValue     = default;
-        float updateRatio   = default;
-        float distance      = default;
+        float currTick = 0;
+        float totalTick = (_timeStamp + 250) - DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
-        Vector3 currPos     = default;
-        Vector3 endPos      = default;
+        CurrDir = Vector3.Normalize(_currPos - _destPos);
 
-        if (Reset(out lerpValue, out updateRatio, out distance, out currPos, out endPos) == false)
-            yield break;
-
-
-        while(lerpValue / distance <= 1)
+        while(currTick < totalTick)
         {
-            if (_forceStopFunc?.Invoke() ?? false)
-                break;
-
-          
-            if(endPos != _endPosFunc?.Invoke())
-            {
-                if (Reset(out lerpValue, out updateRatio, out distance, out currPos, out endPos) == false)
-                    yield break;
-            }
-
-            lerpValue += (_currSpeed * Time.deltaTime);
-            float ratio = lerpValue / distance;
-
-            CurrDir = GetDir(endPos);
-            transform.position = Vector3.Lerp(currPos, endPos,  ratio);
-
-            if (updateRatio < ratio)
-            {
-                _updateCallback?.Invoke(CurrDir);
-                updateRatio += _updateRatio;
-            }
-            
+            currTick += Time.deltaTime;
+            transform.position = Vector3.Lerp(_currPos, _destPos, currTick/totalTick);
             yield return null;
         }
-
-        _doneCallback?.Invoke();
-
-        #region Local Func
-        bool Reset(out float inLerpVal, out float inUpdateRatio, out float inDistance, out Vector3 inCurrPos, out Vector3 inEndPos)
-        {
-            inLerpVal = 0;
-            inUpdateRatio = _updateRatio;
-
-            inCurrPos = transform.position;
-            inEndPos = _endPosFunc?.Invoke() ?? inCurrPos;
-
-            inDistance = Vector3.Distance(inCurrPos, inEndPos);
-
-            return inCurrPos != inEndPos || inDistance < 0.1f;
-        }
-        #endregion
     }
+
 }

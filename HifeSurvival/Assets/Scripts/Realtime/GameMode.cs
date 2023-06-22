@@ -51,6 +51,8 @@ public class GameMode
     public event Action<S_GetItem> OnRecvGetItemHandler;
     public event Action<S_GetGold> OnRecvGetGoldHandler;
 
+    public event Action<UpdateLocationBroadcast> OnUpdateLocationHandler;
+
 
     public int RoomId { get; private set; }
     public EStatus Status { get; private set; } = EStatus.NOT_JOIN;
@@ -119,14 +121,25 @@ public class GameMode
     }
 
 
-    public PlayerEntity GetPlayerEntity(int inPlayerId)
+    public PlayerEntity GetPlayerEntity(int inTargetId)
     {
-        if (PlayerEntitysDict.TryGetValue(inPlayerId, out var player) && player != null)
+        if (PlayerEntitysDict.TryGetValue(inTargetId, out var player) && player != null)
         {
             return player;
         }
 
         Debug.LogError($"[{nameof(GetPlayerEntity)}] playerEntity is null or empty!");
+        return null;
+    }
+
+    public MonsterEntity GetMonsterEntity(int inTargetId)
+    {
+         if (MonsterEntityDict.TryGetValue(inTargetId, out var monster) && monster != null)
+        {
+            return monster;
+        }
+
+        Debug.LogError($"[{nameof(GetMonsterEntity)}] playerEntity is null or empty!");
         return null;
     }
 
@@ -165,18 +178,19 @@ public class GameMode
     // Send
     //-----------------
 
-    public void OnSendMove(in Vector3 inPos, in Vector3 inDir)
+
+    public void OnSendMoveRequest(in Vector3 inCurrPos, in Vector3 inDestPos)
     {
-        CS_Move move = new CS_Move()
+        MoveRequest moveRequest = new MoveRequest()
         {
-            dir = inDir.ConvertPVec3(),
-            pos = inPos.ConvertPVec3(),
-            isPlayer = true,
-            speed = EntitySelf.stat.moveSpeed,
             targetId = EntitySelf.targetId,
+            currentPos = inCurrPos.ConvertPVec3(),
+            targetPos  = inDestPos.ConvertPVec3(),
+            speed = EntitySelf.stat.moveSpeed,
+            timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
         };
 
-        NetworkManager.Instance.Send(move);
+        NetworkManager.Instance.Send(moveRequest);
     }
 
 
@@ -416,6 +430,17 @@ public class GameMode
         }
     }
 
+    public void OnUpdateLocation(UpdateLocationBroadcast inPacket)
+    {
+        Entity entity = inPacket.isPlayer == true ? GetPlayerEntity(inPacket.targetId)
+                                                  : GetMonsterEntity(inPacket.targetId);
+
+        entity.pos = inPacket.currentPos;
+
+        Debug.Log("호출중..?");
+
+        OnUpdateLocationHandler.Invoke(inPacket);
+    }
 
     public void OnRecvStopMove(CS_StopMove inPacket)
     {

@@ -38,9 +38,11 @@ public class StateMachine<T> where T : EntityObject
 
 public struct MoveParam
 {
-    public float speed;
-    public Vector3 pos;
     public Vector3 dir;
+    public Vector3 currPos; // 현재 위치
+    public Vector3 destPos; // 목적지 Pos
+    public long timeStamp;
+    public float speed;
 }
 
 

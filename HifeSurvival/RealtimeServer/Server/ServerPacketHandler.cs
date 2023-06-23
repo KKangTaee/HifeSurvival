@@ -7,10 +7,19 @@ namespace Server
 {
     public class ServerPacketHandler : PacketHandler
     {
+        private void push(PacketSession session, Action<GameRoom> job)
+        {
+            var client = session as ClientSession;
+            if (client == null || client.Room == null)
+                return;
+
+            client.Room.Push(() => job?.Invoke(client.Room));
+        }
+
         public override void CS_SelectHeroHandler(PacketSession session, IPacket packet) 
         {
             CS_SelectHero selectHero = packet as CS_SelectHero;
-            Push(session, room => { room?.Mode.OnRecvSelect(selectHero); });
+            push(session, room => { room?.Mode.OnRecvSelect(selectHero); });
         }
 
         public override void C_JoinToGameHandler(PacketSession session, IPacket packet)
@@ -29,42 +38,31 @@ namespace Server
         public override void CS_AttackHandler(PacketSession session, IPacket packet)
         {
             CS_Attack attack = packet as CS_Attack;
-            Push(session, room => room?.Mode.OnRecvAttack(attack));
+            push(session, room => room?.Mode.OnRecvAttack(attack));
         }
 
         public override void CS_MoveHandler(PacketSession session, IPacket packet)
         {
             CS_Move move = packet as CS_Move;
-            Push(session, room => room?.Mode.OnRecvMove(move));
+            push(session, room => room?.Mode.OnRecvMove(move));
         }
 
         public override void CS_StopMoveHandler(PacketSession session, IPacket packet)
         {
             CS_StopMove stopMove = packet as CS_StopMove;
-            Push(session, room => room?.Mode.OnRecvStopMove(stopMove));
+            push(session, room => room?.Mode.OnRecvStopMove(stopMove));
         }
 
         public override void CS_ReadyToGameHandler(PacketSession session, IPacket packet)
         {
             CS_ReadyToGame readyToGame = packet as CS_ReadyToGame;
-            Push(session, room => room?.Mode.OnRecvReady(readyToGame));
+            push(session, room => room?.Mode.OnRecvReady(readyToGame));
         }
 
         public override void CS_UpdateStatHandler(PacketSession session, IPacket packet)
         {
             CS_UpdateStat updateStat = packet as CS_UpdateStat;
-            Push(session, room => room?.Mode.OnRecvUpdateStat(updateStat));
-        }
-
-        public static void Push(PacketSession session, Action<GameRoom> job)
-        {
-            ClientSession client = session as ClientSession;
-
-            if (client.Room == null)
-                return;
-
-            GameRoom room = client.Room;
-            room?.Push(() => job?.Invoke(room));
+            push(session, room => room?.Mode.OnRecvUpdateStat(updateStat));
         }
 
         public override void S_JoinToGameHandler(PacketSession session, IPacket packet)
@@ -125,7 +123,7 @@ namespace Server
         public override void MoveRequestHandler(PacketSession session, IPacket packet)
         {
             MoveRequest move = packet as MoveRequest;
-            Push(session, room => room?.Mode.OnRecvMoveRequest(move));
+            push(session, room => room?.Mode.OnRecvMoveRequest(move));
         }
 
         public override void UpdateLocationBroadcastHandler(PacketSession session, IPacket packet)

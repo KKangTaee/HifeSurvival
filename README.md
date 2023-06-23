@@ -10,5 +10,6 @@
 - [Meeting / TODO (Notion Docs)](https://kangtae.notion.site/HifeSurvival-baf65c31cf59469a978eec74437163d5?pvs=4)
 
 
-## Data Sheet
-- [Google Sheet](https://docs.google.com/spreadsheets/d/104ZnnXWWorMZOAhuY0o1o1xIL2H41opJlrJLsSEk_C4/edit#gid=0)
+## Data
+- [Game Data](https://docs.google.com/spreadsheets/d/104ZnnXWWorMZOAhuY0o1o1xIL2H41opJlrJLsSEk_C4/edit#gid=0)
+- [User Data](https://console.firebase.google.com/u/0/project/planar-hangout-385012/overview?hl=ko)

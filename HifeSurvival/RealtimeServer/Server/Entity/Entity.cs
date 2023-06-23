@@ -13,13 +13,9 @@ namespace Server
         {
             IDLE,
 
-            FOLLOW_TARGET,
-
             ATTACK,
 
             DEAD,
-
-            BACK_TO_SPAWN,
 
             USE_SKILL,
 
@@ -44,65 +40,78 @@ namespace Server
 
         public abstract bool IsPlayer { get; }
 
-        protected virtual void ChangeState<P>(Entity.EStatus inStatue, P inParam) where P : struct, IStateParam
-        {
-            Status = inStatue;
-        }
-
-
-        #region Action(State)
+        #region StatusAction
+        protected abstract void ChangeState<P>(Entity.EStatus inStatue, P inParam) where P : struct, IStateParam;
         public virtual void Attack(AttackParam inParam)
         {
+            Status = EStatus.ATTACK;
             ChangeState(EStatus.ATTACK, inParam);
-        }
-
-        public virtual void FollowTarget(in FollowTargetParam inParam = default)
-        {
-            ChangeState(EStatus.FOLLOW_TARGET, inParam);
         }
 
         public virtual void Idle(in IdleParam inParam = default)
         {
+            Status = EStatus.IDLE;
             ChangeState(EStatus.IDLE, inParam);
         }
 
         public virtual void MoveStop(in IdleParam inParam = default)
         {
+            Status = EStatus.IDLE;
             ChangeState(EStatus.IDLE, inParam);
         }
 
         public virtual void Move(in MoveParam inParam = default)
         {
+            Status = EStatus.MOVE;
             ChangeState(EStatus.MOVE, inParam);
         }
 
         public virtual void Dead(in DeadParam inParam = default)
         {
+            Status = EStatus.DEAD;
             ChangeState(EStatus.DEAD, inParam);
         }
 
-        public virtual void BackToSpawn(in BackToSpawnParam inParam = default)
-        {
-            ChangeState(EStatus.BACK_TO_SPAWN, inParam);
-        }
         #endregion
 
 
-        #region CallbackEvent
+        #region Callback Event
         public abstract void OnDamaged(in Entity entity);
         #endregion
 
+        public virtual void MoveToRespawn()
+        {
+            Move(new MoveParam()
+            {
+                currentPos = currentPos,
+                targetPos = spawnPos,
+                speed = stat.moveSpeed,
+                timestamp = HTimer.GetCurrentTimestamp()
+            }) ;
+        }
 
+        public virtual void MoveToTarget(in PVec3 targetPos)
+        {
+            Move(new MoveParam()
+            {
+                currentPos = currentPos,
+                targetPos = targetPos,
+                speed = stat.moveSpeed,
+                timestamp = HTimer.GetCurrentTimestamp()
+            });
+        }
+
+        //Battle
         public virtual int GetAttackValue()
         {
             return new Random().Next(stat.str - 15, (int)(stat.str * 1.2f));
         }
 
+        //Battle
         public virtual int GetDamagedValue(int inAttackValue)
         {
             return (int)(inAttackValue - stat.def * 0.1f);
         }
-
 
         public virtual void ReduceHP(int hpValue)
         {

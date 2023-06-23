@@ -69,7 +69,19 @@ namespace Server
                         {
                             PVec3 pos = pivotIter.Current;
 
-                            MonsterEntity entity = new MonsterEntity()
+                            MonsterGroup monsterGroup = null;
+
+                            if (_monsterGroupDict.TryGetValue(group.groupId, out var mg) == true)
+                            {
+                                monsterGroup = mg;
+                            }
+                            else
+                            {
+                                monsterGroup = new MonsterGroup(group.groupId, group.respawnTime);
+                                _monsterGroupDict.Add(group.groupId, monsterGroup);
+                            }
+
+                            MonsterEntity entity = new MonsterEntity(monsterGroup)
                             {
                                 targetId = _mId++,
                                 groupId = group.groupId,
@@ -81,18 +93,6 @@ namespace Server
                                 stat = new EntityStat(data),
                                 rewardDatas = data.rewardIds,
                             };
-
-                            MonsterGroup monsterGroup = null;
-
-                            if (_monsterGroupDict.TryGetValue(entity.groupId, out var mg) == true)
-                            {
-                                monsterGroup = mg;
-                            }
-                            else
-                            {
-                                monsterGroup = new MonsterGroup(entity.groupId, group.respawnTime);
-                                _monsterGroupDict.Add(entity.groupId, monsterGroup);
-                            }
 
                             monsterGroup.Add(entity);
 
@@ -106,7 +106,6 @@ namespace Server
                             };
 
                             monsterList.Add(mData);
-
                         }
                     }
                 }

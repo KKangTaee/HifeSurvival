@@ -47,16 +47,6 @@ public class ClientPacketHandler : PacketHandler
         throw new NotImplementedException();
     }
 
-    public override void CS_MoveHandler(PacketSession session, IPacket packet)
-    {
-        throw new NotImplementedException();
-    }
-
-    public override void CS_StopMoveHandler(PacketSession session, IPacket packet)
-    {
-        throw new NotImplementedException();
-    }
-
     public override void S_DeadHandler(PacketSession session, IPacket packet)
     {
         throw new NotImplementedException();

@@ -42,8 +42,15 @@ namespace Server
         // 월드맵에 스폰된 아이템
         public Dictionary<int, WorldItemData> ItemDict { get; private set; } = new Dictionary<int, WorldItemData>();
 
-        private int _mHashCode = 0;
+        private object _dropLock = new object();
+        private int _dropID = 0;
 
+        private IBroadcaster _broadcaster = null;
+
+        public WorldMap(IBroadcaster broadcaster)
+        {
+            _broadcaster = broadcaster;
+        }
 
         public void ParseJson(string inMapData)
         {
@@ -98,37 +105,54 @@ namespace Server
             ParseJson(inMapData);
         }
 
-        public WorldItemData DropItem(string inRewardData)
+        public void DropItem(string inRewardData, PVec3 dropPos)
         {
             var itemDataStr = PacketExtensionHelper.FilterRewardIdsByRandomProbability(inRewardData);
 
             if (itemDataStr == null)
-                return null;
+                return;
 
             var itemData = RewardData.Parse(itemDataStr).FirstOrDefault();
 
-            WorldItemData worldItem = new WorldItemData()
+            WorldItemData worldItem = null;
+            lock (_dropLock)
             {
-                worldId  = _mHashCode++,
-                itemData = itemData,
+                worldItem = new WorldItemData()
+                {
+                    worldId = _dropID++,
+                    itemData = itemData,
+                };
+
+                ItemDict.Add(worldItem.worldId, worldItem);
+            }
+
+            S_DropReward dropItem = new S_DropReward()
+            {
+                worldId = worldItem.worldId,
+                rewardType = worldItem.itemData.rewardType,
+                pos = dropPos,
             };
 
-            ItemDict.Add(worldItem.worldId, worldItem);
+            _broadcaster.Broadcast(dropItem);
 
-            return worldItem;
+            return;
         }
 
 
         public RewardData PickReward(int inWorldId)
         {
-            if(ItemDict.TryGetValue(inWorldId, out var worldItem) == false)
+            lock (_dropLock)
             {
-                Logger.GetInstance().Error($"[{nameof(PickReward)}] worldId is wrong : {inWorldId}");
-                return default;
-            }
+                if (ItemDict.TryGetValue(inWorldId, out var worldItem) == false)
+                {
+                    Logger.GetInstance().Error($"[{nameof(PickReward)}] worldId is wrong : {inWorldId}");
+                    return default;
+                }
 
-            ItemDict.Remove(inWorldId);
-            return worldItem.itemData;
+                ItemDict.Remove(inWorldId);
+                return worldItem.itemData;
+            }
         }
+
     }
 }

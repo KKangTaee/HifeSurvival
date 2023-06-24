@@ -60,8 +60,10 @@ namespace Server
         // functions
         //-----------------
 
-        public void OnSendRespawn()
+        public void RegistRespawnTimer()
         {
+            //중복해서 들어오는 것을 막아야함. 
+            //TODO : Timer 클래스로 모두 빼야함. (취소 가능 기능 필요)
             JobTimer.Instance.Push(() =>
             {
                 stat.AddCurrHp(stat.hp);
@@ -78,11 +80,16 @@ namespace Server
             }, 15000);
         }
 
-        public override void OnDamaged(in Entity entity)
+        public override void OnDamaged(in Entity attacker)
         {
-            if(entity.IsPlayer == false)
+            if (IsDead())
             {
-                //do something
+                Dead(new DeadParam()
+                {
+                  killerTarget = attacker,
+                });
+
+                return;
             }
         }
     }
@@ -129,27 +136,41 @@ namespace Server
         {
             public void Enter(PlayerEntity inSelf, in IStateParam inParam = default)
             {
-                if (inParam is AttackParam attackParam)
+                if(inParam is AttackParam attackParam)
                 {
                     var target = attackParam.target;
-                    if(target == null)
+                    if (target == null)
                     {
                         Logger.GetInstance().Warn($"Target is null");
                         return;
                     }
 
-                    // 몬스터는 공격을 당했음으로, 플레이어를 공격한다.
-                    // monster.OnAttack();
+                    //TODO : 서버 또한, 공격 가능한지 체크해야 함. 
+                    var damagedVal = target.GetDamagedValue(inSelf.GetAttackValue());
 
+                    target.ReduceHP(damagedVal);
                     target.OnDamaged(inSelf);
+                }
+            }
 
-                    // 여기서 함수가 필요한데.. 타겟이 맞았으면, 그 맞은 타겟의 몬스터들이 모두
-                    // 플레이어를 공격해야함.
-                }
-                else
+            public void Update(PlayerEntity inSelf, in IStateParam inParam = default)
+            {
+                if (inParam is AttackParam attackParam)
                 {
-                    Logger.GetInstance().Warn("AttackState has invalid param");
+                    var target = attackParam.target;
+                    if (target == null)
+                    {
+                        Logger.GetInstance().Warn($"Target is null");
+                        return;
+                    }
+
+                    //TODO : 서버 또한, 공격 가능한지 체크해야 함. 
+                    var damagedVal = target.GetDamagedValue(inSelf.GetAttackValue());
+
+                    target.ReduceHP(damagedVal);
+                    target.OnDamaged(inSelf);
                 }
+
             }
 
             public void Exit(PlayerEntity inSelf, in IStateParam inParam = default)
@@ -157,10 +178,6 @@ namespace Server
                 
             }
 
-            public void Update(PlayerEntity inSelf, in IStateParam inParam = default)
-            {
-                
-            }
         }
 
         public class MoveState : IState<PlayerEntity, IStateParam>
@@ -227,7 +244,20 @@ namespace Server
         {
             public void Enter(PlayerEntity inSelf, in IStateParam inParam = default)
             {
-                inSelf.OnSendRespawn();
+                if(inParam is DeadParam deadParam)
+                {
+                    S_Dead deadPacket = new S_Dead()
+                    {
+                        toIsPlayer = true,
+                        toId = inSelf.targetId,
+                        fromIsPlayer = false,
+                        fromId = deadParam.killerTarget.targetId,
+                        respawnTime = 15,
+                    };
+                    inSelf.broadcaster.Broadcast(deadPacket);
+
+                    inSelf.RegistRespawnTimer();
+                }
             }
 
             public void Exit(PlayerEntity inSelf, in IStateParam inParam = default)

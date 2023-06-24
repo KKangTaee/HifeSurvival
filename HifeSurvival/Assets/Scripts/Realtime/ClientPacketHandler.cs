@@ -47,18 +47,6 @@ public class ClientPacketHandler : PacketHandler
         GameMode.Instance.OnRecvAttack(attack);
     }
 
-    public override void CS_MoveHandler(PacketSession session, IPacket packet)
-    {
-        CS_Move move = packet as CS_Move;
-        // GameMode.Instance.OnRecvMove(move);
-    }
-
-    public override void CS_StopMoveHandler(PacketSession session, IPacket packet)
-    {
-         CS_StopMove stopMove = packet as CS_StopMove;
-         GameMode.Instance.OnRecvStopMove(stopMove);
-    }
-
     public override void S_DeadHandler(PacketSession session, IPacket packet)
     {
         S_Dead dead = packet as S_Dead;

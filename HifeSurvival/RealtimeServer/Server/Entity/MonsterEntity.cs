@@ -11,21 +11,19 @@ namespace Server
         public int monsterId;
         public int groupId;
         public int grade;
+        public string rewardDatas;
 
         StateMachine<MonsterEntity> _stateMachine;
 
         public override bool IsPlayer => false;
 
-        public event Action<AttackParam> OnAttackHandler;
-
-        public string rewardDatas;
-
-
-        private Stack<int/*Id*/> aggroStack = new Stack<int>();
+        
+        private MonsterAIController AIController { get; set; }
+        private event Action<string, PVec3> dropItemDelegate;
         private MonsterGroup group;
+        
 
-
-        public MonsterEntity(MonsterGroup group)
+        public MonsterEntity(MonsterGroup group, Action<string, PVec3> dropItem)
         {
             var smdic = new Dictionary<EStatus, IState<MonsterEntity, IStateParam>>();
             smdic[EStatus.IDLE] = new IdleState();
@@ -40,6 +38,9 @@ namespace Server
             {
                 this.group = group;
             }
+
+            AIController = new MonsterAIController(this);
+            dropItemDelegate += dropItem;
         }
 
 
@@ -52,19 +53,28 @@ namespace Server
             _stateMachine.OnChangeState(inStatue, this, inParam);
         }
 
-        public override void OnDamaged(in Entity inEntity)
+        public override void OnDamaged(in Entity attacker)
         {
-            if (inEntity.IsPlayer)
+            if(IsDead())
             {
-                var attackParam = new AttackParam()
+                Dead(new DeadParam()
                 {
-                    target = inEntity
-                };
+                    killerTarget = attacker,
+                });
 
-                Attack(attackParam);
-                OnAttackHandler?.Invoke(attackParam);
+                return;
+            }
+
+            if (attacker.IsPlayer)
+            {
+                AIController.AddAggro(attacker);
+                Attack(new AttackParam()
+                {
+                    target = attacker,
+                });
             }
         }
+
 
         //-----------------
         // functions
@@ -72,30 +82,15 @@ namespace Server
 
 
         //battle
-        public bool CanAttack(in PVec3 inPos)
+        public bool CanAttack(in Entity target)
         {
-            return pos.DistanceTo(inPos) < stat.attackRange;
+            return currentPos.DistanceTo(target.currentPos) < stat.attackRange;
         }
 
         //battle
         public bool OutOfSpawnRange()
         {
-            return pos.DistanceTo(spawnPos) > 10;
-        }
-
-        public void AddAggro(int id)
-        {
-            aggroStack.Push(id);
-        }
-
-        public void ClearAggro()
-        {
-            aggroStack.Clear();
-        }
-
-        public int PopBackAggroID()
-        {
-            return aggroStack.Pop();
+            return currentPos.DistanceTo(spawnPos) > 10;
         }
 
         public bool IsGroupAllDead()
@@ -108,15 +103,14 @@ namespace Server
             group.SendRespawnGroup();
         }
 
-        public void NotifyAttack(AttackParam inParam)
+        public void DropItem()
         {
-            // NOTE@taeho.kang 죽은상태에서는 어그로 노티파이가 되어선 안됨.
-            if(Status == EStatus.DEAD)
-               return;
+            if (dropItemDelegate == null)
+                return;
 
-            // NOTE@taeho.kang 현재 몬스터가 공격을 하고 있지 않는 상황에만 어그로를 끈다.
-            if (Status != EStatus.ATTACK)
-                Attack(inParam);
+            dropItemDelegate(rewardDatas, currentPos);
+            dropItemDelegate = null;
+            return;
         }
     }
 
@@ -152,7 +146,6 @@ namespace Server
             {
                 if (inParam is AttackParam attack)
                 {
-                    inSelf.AddAggro(attack.target.targetId);
                     updateAttack(inSelf, (PlayerEntity)attack.target);
                 }
             }
@@ -165,7 +158,10 @@ namespace Server
 
             public void Update(MonsterEntity inSelf, in IStateParam inParam = default)
             {
-                //updateAttack(inSelf, (PlayerEntity)((AttackParam)inParam).target);
+                if (inParam is AttackParam attack)
+                {
+                    updateAttack(inSelf, (PlayerEntity)attack.target);
+                }
             }
 
             private void updateAttack(MonsterEntity inSelf, PlayerEntity inOther)
@@ -173,60 +169,25 @@ namespace Server
                 if (this == null || inSelf == null)
                     return;
 
-                if (inOther.Status == EStatus.DEAD)
+                if(inSelf.AIController.ExecuteAttack(inOther, out int damageValue))
                 {
-                    inSelf.ClearAggro();
-                    inSelf.MoveToRespawn();
-                }
-                else if (inSelf.CanAttack(inOther.currentPos))
-                {
-                    var attackVal = inSelf.GetAttackValue();
-                    var damagedVal = inOther.GetDamagedValue(attackVal);
-
-                    inOther.ReduceHP(damagedVal);
-
-                    // 공격하던 플레이어가 사망했다면..?
-                    if (inOther.stat.currHp <= 0)
+                    CS_Attack attackPacket = new CS_Attack()
                     {
-                        inSelf.ClearAggro(); 
+                        toIsPlayer = true,
+                        toId = inOther.targetId,
+                        fromIsPlayer = false,
+                        fromId = inSelf.targetId,
+                        attackValue = damageValue,
+                    };
+                    inSelf.broadcaster.Broadcast(attackPacket);
+                }
 
-                        S_Dead deadPacket = new S_Dead()
-                        {
-                            toIsPlayer = true,
-                            toId = inOther.targetId,
-                            fromIsPlayer = false,
-                            fromId = inSelf.targetId,
-                            respawnTime = 15,
-                        };
-
-                        inOther.Dead();
-                        inSelf.broadcaster.Broadcast(deadPacket);
-
-                        // 다시 자리로 돌아간다.
-                        inSelf.MoveToRespawn();
-                    }
-                    else
+                JobTimer.Instance.Push(() => {
+                    inSelf.Attack(new AttackParam()
                     {
-                        CS_Attack attackPacket = new CS_Attack()
-                        {
-                            toIsPlayer = true,
-                            toId = inOther.targetId,
-                            fromIsPlayer = false,
-                            fromId = inSelf.targetId,
-                            attackValue = damagedVal,
-                        };
-
-                        inSelf.broadcaster.Broadcast(attackPacket);
-
-                        JobTimer.Instance.Push(() => { updateAttack(inSelf, inOther); }, (int)(inOther.stat.attackSpeed * 1000));
-                    }
-
-                }
-                // 공격을 못한다면 다시추격
-                else
-                {
-                    inSelf.MoveToTarget(inOther.currentPos);
-                }
+                        target = inOther,
+                    });
+                }, (int)(inOther.stat.attackSpeed * 1000));
             }
         }
 
@@ -234,6 +195,7 @@ namespace Server
         {
             public void Enter(MonsterEntity inSelf, in IStateParam inParam = default)
             {
+                inSelf.DropItem();
                 inSelf.StartRespawning();
             }
 
@@ -328,39 +290,9 @@ namespace Server
         public void Add(MonsterEntity inEntity)
         {
             _monstersDict.Add(inEntity.targetId, inEntity);
-
-            RegisterAttackHandler(inEntity);
         }
 
-        public void Remove(MonsterEntity inEntity)
-        {
-            _monstersDict.Remove(inEntity.targetId);
 
-            UnRegisterAttackHandler(inEntity);
-        }
-
-        private void RegisterAttackHandler(MonsterEntity inEntity)
-        {
-            foreach (var otherEntity in _monstersDict.Values)
-            {
-                if (inEntity == otherEntity)
-                    continue;
-
-                inEntity.OnAttackHandler += otherEntity.NotifyAttack;
-                otherEntity.OnAttackHandler += inEntity.NotifyAttack; // Assuming bi-directional attack
-            }
-        }
-
-        private void UnRegisterAttackHandler(MonsterEntity inEntity)
-        {
-            foreach (var fromEntity in _monstersDict.Values)
-            {
-                if (fromEntity == inEntity)
-                    continue;
-
-                fromEntity.OnAttackHandler -= inEntity.NotifyAttack;
-            }
-        }
 
         public MonsterEntity GetMonsterEntity(int inTargetId)
         {

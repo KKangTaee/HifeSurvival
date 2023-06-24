@@ -108,6 +108,7 @@ namespace Server
                         isPlayer = inSelf.IsPlayer,
                         currentPos = idleParam.currentPos,
                         targetPos = idleParam.currentPos,
+                        speed =  inSelf.stat.moveSpeed,
                         timestamp = idleParam.timestamp,
                     };
 

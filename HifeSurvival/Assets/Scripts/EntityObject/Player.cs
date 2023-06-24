@@ -216,7 +216,7 @@ public partial class Player : EntityObject
 
         MoveLerpExpect(inCurrPos, inDestPos, inSpeed, inTimeStamp);
     }
-    
+
     public void OnIdle(in Vector3 inPos, in Vector3 inDir = default)
     {
         _anim.OnIdle();
@@ -301,6 +301,11 @@ public partial class Player : EntityObject
         }
 
         return result;
+    }
+
+    public void OnRespawn()
+    {
+        _anim.OnRespawn();
     }
 
 

@@ -36,6 +36,8 @@ Shader "Heros"
             Name "Universal Forward"
             // Tags { "LightMode" = "UniversalForward"}
 
+            Cull Off
+
             HLSLPROGRAM
 
             #pragma prefer_hlslcc gles

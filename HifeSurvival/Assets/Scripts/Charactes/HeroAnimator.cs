@@ -19,13 +19,16 @@ public class HeroAnimator : MonoBehaviour
         public const string KEY_DEAD = "Dead";
         public const string KEY_ATTACK = "Attack";
         public const string KEY_DAMANGED = "Damanged";
+
+        public const string KEY_RESPAWN = "Respawn";
     }
 
-    public  class ParamKey
+    public class ParamKey
     {
-        public const string KEY_IS_WALK     = "isWalk";
-        public const string KEY_DIR         = "dir";
-        public const string KEY_IS_DAMAGED  = "isDamaged";
+        public const string KEY_IS_WALK = "isWalk";
+        public const string KEY_DIR = "dir";
+        public const string KEY_IS_DAMAGED = "isDamaged";
+        public const string KEY_IS_RESPAWN = "isRespawn";
     }
 
     public void SetAnimatorController(int inIndex)
@@ -34,7 +37,7 @@ public class HeroAnimator : MonoBehaviour
             return;
 
         _anim.runtimeAnimatorController = _heroAnimSetArr[inIndex];
-        
+
         OnIdle();
     }
 
@@ -61,17 +64,17 @@ public class HeroAnimator : MonoBehaviour
     public void SetDir(float inDir)
     {
         var scaleX = inDir > 0 ? -1 : 1;
-         transform.localScale = new Vector3(scaleX, 1,1);
+        transform.localScale = new Vector3(scaleX, 1, 1);
     }
 
     public void OnDead()
-    {   
+    {
         _anim.Play(AnimKey.KEY_DEAD);
     }
- 
+
     public void OnIdle(in Vector2 inDir = default)
     {
-        if(inDir != default)
+        if (inDir != default)
             _anim.SetFloat(ParamKey.KEY_DIR, inDir.y);
 
         _anim.SetBool(ParamKey.KEY_IS_WALK, false);
@@ -81,5 +84,10 @@ public class HeroAnimator : MonoBehaviour
     public void OnDamaged()
     {
         _anim.SetTrigger(ParamKey.KEY_IS_DAMAGED);
+    }
+
+    public void OnRespawn()
+    {
+        _anim.SetTrigger(ParamKey.KEY_IS_RESPAWN);
     }
 }

@@ -18,25 +18,28 @@ namespace Server
 
         public event Action<AttackParam> OnAttackHandler;
 
-        public Action OnRespawnCallback;
-
         public string rewardDatas;
 
-        public MonsterEntity()
+
+        private Stack<int/*Id*/> aggroStack = new Stack<int>();
+        private MonsterGroup group;
+
+
+        public MonsterEntity(MonsterGroup group)
         {
             var smdic = new Dictionary<EStatus, IState<MonsterEntity, IStateParam>>();
             smdic[EStatus.IDLE] = new IdleState();
-            smdic[EStatus.FOLLOW_TARGET] = new FollowTargetState();
             smdic[EStatus.ATTACK] = new AttackState();
-            smdic[EStatus.BACK_TO_SPAWN] = new BackToSpawnState();
-            smdic[EStatus.DEAD] = new DeadState();
-
-            //임시 코드.. Follow_target, Back_to_spawn은 유니크한 상태가 아님. 
             smdic[EStatus.MOVE] = new MoveState();
             smdic[EStatus.USE_SKILL] = new UseSkillState();
-
+            smdic[EStatus.DEAD] = new DeadState();
 
             _stateMachine = new StateMachine<MonsterEntity>(smdic);
+
+            if(group != null)
+            {
+                this.group = group;
+            }
         }
 
 
@@ -46,24 +49,7 @@ namespace Server
 
         protected override void ChangeState<P>(EStatus inStatue, P inParam)
         {
-            base.ChangeState(inStatue, inParam);
-
             _stateMachine.OnChangeState(inStatue, this, inParam);
-        }
-
-
-        //-----------------
-        // functions
-        //-----------------
-
-        public bool CanAttack(in PVec3 inPos)
-        {
-            return pos.DistanceTo(inPos) < stat.attackRange;
-        }
-
-        public bool OutOfSpawnRange()
-        {
-            return pos.DistanceTo(spawnPos) > 10;
         }
 
         public override void OnDamaged(in Entity inEntity)
@@ -78,6 +64,48 @@ namespace Server
                 Attack(attackParam);
                 OnAttackHandler?.Invoke(attackParam);
             }
+        }
+
+        //-----------------
+        // functions
+        //-----------------
+
+
+        //battle
+        public bool CanAttack(in PVec3 inPos)
+        {
+            return pos.DistanceTo(inPos) < stat.attackRange;
+        }
+
+        //battle
+        public bool OutOfSpawnRange()
+        {
+            return pos.DistanceTo(spawnPos) > 10;
+        }
+
+        public void AddAggro(int id)
+        {
+            aggroStack.Push(id);
+        }
+
+        public void ClearAggro()
+        {
+            aggroStack.Clear();
+        }
+
+        public int PopBackAggroID()
+        {
+            return aggroStack.Pop();
+        }
+
+        public bool IsGroupAllDead()
+        {
+            return group.IsAllDead();
+        }
+
+        public void StartRespawning()
+        {
+            group.SendRespawnGroup();
         }
 
         public void NotifyAttack(AttackParam inParam)
@@ -120,23 +148,18 @@ namespace Server
 
         public class AttackState : IState<MonsterEntity, IStateParam>
         {
-            private bool _isRunning = false;
-
             public void Enter(MonsterEntity inSelf, in IStateParam inParam = default)
             {
                 if (inParam is AttackParam attack)
                 {
-                    var player = attack.target as PlayerEntity;
-
-                    _isRunning = true;
-
-                    updateAttack(inSelf, player);
+                    inSelf.AddAggro(attack.target.targetId);
+                    updateAttack(inSelf, (PlayerEntity)attack.target);
                 }
             }
 
             public void Exit(MonsterEntity inSelf, in IStateParam inParam = default)
             {
-                _isRunning = false;
+
             }
 
 
@@ -147,153 +170,63 @@ namespace Server
 
             private void updateAttack(MonsterEntity inSelf, PlayerEntity inOther)
             {
-                if (this != null && _isRunning == true && inSelf != null)
+                if (this == null || inSelf == null)
+                    return;
+
+                if (inOther.Status == EStatus.DEAD)
                 {
-                    // 상대방이 이미 죽었다면..?
-                    if (inOther.Status == EStatus.DEAD)
+                    inSelf.ClearAggro();
+                    inSelf.MoveToRespawn();
+                }
+                else if (inSelf.CanAttack(inOther.currentPos))
+                {
+                    var attackVal = inSelf.GetAttackValue();
+                    var damagedVal = inOther.GetDamagedValue(attackVal);
+
+                    inOther.ReduceHP(damagedVal);
+
+                    // 공격하던 플레이어가 사망했다면..?
+                    if (inOther.stat.currHp <= 0)
                     {
-                        // 자리로 다시 돌아간다.
-                        inSelf.BackToSpawn();
-                    }
-                    // 공격이 가능하다면
-                    else if (inSelf.CanAttack(inOther.currentPos) == true)
-                    {
-                        var attackVal = inSelf.GetAttackValue();
-                        var damagedVal = inOther.GetDamagedValue(attackVal);
+                        inSelf.ClearAggro(); 
 
-                        inOther.ReduceHP(damagedVal);
-
-                        // 공격하던 플레이어가 사망했다면..?
-                        if (inOther.stat.currHp <= 0)
+                        S_Dead deadPacket = new S_Dead()
                         {
-                            S_Dead deadPacket = new S_Dead()
-                            {
-                                toIsPlayer = true,
-                                toId = inOther.targetId,
-                                fromIsPlayer = false,
-                                fromId = inSelf.targetId,
-                                respawnTime = 15,
-                            };
+                            toIsPlayer = true,
+                            toId = inOther.targetId,
+                            fromIsPlayer = false,
+                            fromId = inSelf.targetId,
+                            respawnTime = 15,
+                        };
 
-                            inOther.Dead();
-                            inSelf.broadcaster.Broadcast(deadPacket);
+                        inOther.Dead();
+                        inSelf.broadcaster.Broadcast(deadPacket);
 
-                            // 다시 자리로 돌아간다.
-                            inSelf.BackToSpawn();
-                        }
-                        else
-                        {
-                            CS_Attack attackPacket = new CS_Attack()
-                            {
-                                toIsPlayer = true,
-                                toId = inOther.targetId,
-                                fromIsPlayer = false,
-                                fromId = inSelf.targetId,
-                                attackValue = damagedVal,
-                            };
-
-                            inSelf.broadcaster.Broadcast(attackPacket);
-
-                            JobTimer.Instance.Push(() => { updateAttack(inSelf, inOther); }, (int)(inOther.stat.attackSpeed * 1000));
-                        }
-
+                        // 다시 자리로 돌아간다.
+                        inSelf.MoveToRespawn();
                     }
-
-                    // 공격을 못한다면 다시추격
                     else
                     {
-                        inSelf.FollowTarget(new FollowTargetParam()
+                        CS_Attack attackPacket = new CS_Attack()
                         {
-                            target = inOther,
-                        });
+                            toIsPlayer = true,
+                            toId = inOther.targetId,
+                            fromIsPlayer = false,
+                            fromId = inSelf.targetId,
+                            attackValue = damagedVal,
+                        };
+
+                        inSelf.broadcaster.Broadcast(attackPacket);
+
+                        JobTimer.Instance.Push(() => { updateAttack(inSelf, inOther); }, (int)(inOther.stat.attackSpeed * 1000));
                     }
+
                 }
-            }
-        }
-
-        [Obsolete]
-        public class FollowTargetState : IState<MonsterEntity, IStateParam>
-        {
-            private bool _isRunning = false;
-            private const int UPDATE_TIME = 125;
-
-            public void Enter(MonsterEntity inSelf, in IStateParam inParam = default)
-            {
-                if (inParam is FollowTargetParam follow)
+                // 공격을 못한다면 다시추격
+                else
                 {
-                    _isRunning = true;
-                    updateFollow(inSelf, follow.target as PlayerEntity);
+                    inSelf.MoveToTarget(inOther.currentPos);
                 }
-            }
-
-            public void Update(MonsterEntity inSelf, in IStateParam inParam = default)
-            {
-               
-            }
-
-            public void Exit(MonsterEntity inSelf, in IStateParam inParam = default)
-            {
-                 _isRunning = false;
-            }
-
-            private void updateFollow(MonsterEntity inSelf, PlayerEntity inOther)
-            {
-                if (this != null && _isRunning == true && inSelf != null)
-                {
-                    // 공격범위를 벗어났다면..?
-                    if (inSelf.OutOfSpawnRange() == true)
-                    {
-                        inSelf.BackToSpawn();
-                    }
-
-                    // 공격이 가능하다면?
-                    else if (inSelf.CanAttack(inOther.currentPos) == true)
-                    {
-                        inSelf.Attack(new AttackParam()
-                        {
-                            target = inOther,
-                        });
-                    }
-
-                    // 그것도 아니라면..? 이동해라
-                    else
-                    {
-                        inSelf.Move(new MoveParam()
-                        {
-                            currentPos = inSelf.currentPos,
-                            targetPos = inOther.targetPos,
-                            speed = inSelf.stat.moveSpeed,
-                            timestamp = HTimer.GetCurrentTimestamp(),
-                        });
-
-                        JobTimer.Instance.Push(() => { updateFollow(inSelf, inOther); }, UPDATE_TIME);
-                    }
-                }
-            }
-        }
-
-        [Obsolete]
-        public class BackToSpawnState : IState<MonsterEntity, IStateParam>
-        {
-            public void Enter(MonsterEntity inSelf, in IStateParam inParam = default)
-            {
-                inSelf.Move(new MoveParam()
-                {
-                    currentPos = inSelf.currentPos,
-                    targetPos = inSelf.spawnPos,
-                    speed = inSelf.stat.moveSpeed,
-                    timestamp = HTimer.GetCurrentTimestamp(),
-                });
-            }
-
-            public void Exit(MonsterEntity inSelf, in IStateParam inParam = default)
-            {
-
-            }
-
-            public void Update(MonsterEntity inSelf, in IStateParam inParam = default)
-            {
-                
             }
         }
 
@@ -301,7 +234,7 @@ namespace Server
         {
             public void Enter(MonsterEntity inSelf, in IStateParam inParam = default)
             {
-                inSelf.OnRespawnCallback?.Invoke();
+                inSelf.StartRespawning();
             }
 
             public void Exit(MonsterEntity inSelf, in IStateParam inParam = default)
@@ -397,7 +330,6 @@ namespace Server
         {
             _monstersDict.Add(inEntity.targetId, inEntity);
 
-            inEntity.OnRespawnCallback = OnSendRespawnGroup;
             RegisterAttackHandler(inEntity);
         }
 
@@ -405,7 +337,6 @@ namespace Server
         {
             _monstersDict.Remove(inEntity.targetId);
 
-            inEntity.OnRespawnCallback = null;
             UnRegisterAttackHandler(inEntity);
         }
 
@@ -453,11 +384,8 @@ namespace Server
             return _monstersDict.Values.All(x => x.Status == Entity.EStatus.DEAD);
         }
 
-        private void OnSendRespawnGroup()
+        public void SendRespawnGroup()
         {
-            if (IsAllDead() == false)
-                return;
-
             JobTimer.Instance.Push(() =>
             {
                 foreach (var entity in _monstersDict.Values)

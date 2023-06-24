@@ -30,10 +30,6 @@ namespace Server
             smdic[EStatus.USE_SKILL] = new UseSkillState();
             smdic[EStatus.DEAD] = new DeadState();
 
-            //임시 코드.. Follow_target, Back_to_spawn은 유니크한 상태가 아님. 
-            smdic[EStatus.FOLLOW_TARGET] = new FollowTargetState();
-            smdic[EStatus.BACK_TO_SPAWN] = new BackToSpawnState();
-
             _stateMachine = new StateMachine<PlayerEntity>(smdic);
         }
 
@@ -55,7 +51,6 @@ namespace Server
 
         protected override void ChangeState<P>(EStatus inStatue, P inParam)
         {
-            base.ChangeState(inStatue, inParam);
             Logger.GetInstance().Debug($"state : {inStatue}");
             _stateMachine.OnChangeState(inStatue, this, inParam);
         }
@@ -233,44 +228,6 @@ namespace Server
             public void Enter(PlayerEntity inSelf, in IStateParam inParam = default)
             {
                 inSelf.OnSendRespawn();
-            }
-
-            public void Exit(PlayerEntity inSelf, in IStateParam inParam = default)
-            {
-
-            }
-
-            public void Update(PlayerEntity inSelf, in IStateParam inParam = default)
-            {
-
-            }
-        }
-
-        [Obsolete]
-        public class FollowTargetState : IState<PlayerEntity, IStateParam>
-        {
-            public void Enter(PlayerEntity inSelf, in IStateParam inParam = default)
-            {
-
-            }
-
-            public void Exit(PlayerEntity inSelf, in IStateParam inParam = default)
-            {
-
-            }
-
-            public void Update(PlayerEntity inSelf, in IStateParam inParam = default)
-            {
-
-            }
-        }
-
-        [Obsolete]
-        public class BackToSpawnState : IState<PlayerEntity, IStateParam>
-        {
-            public void Enter(PlayerEntity inSelf, in IStateParam inParam = default)
-            {
-
             }
 
             public void Exit(PlayerEntity inSelf, in IStateParam inParam = default)

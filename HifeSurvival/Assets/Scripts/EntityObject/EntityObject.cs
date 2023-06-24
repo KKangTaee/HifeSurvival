@@ -81,9 +81,9 @@ public abstract class EntityObject : MonoBehaviour
         _moveMachine.MoveSelf(inDir, TargetEntity.stat.moveSpeed);
     }
 
-    public void MoveLerpExpect(in Vector3 inCurrPos, in Vector3 inDestPos, float inSpeed, long inTimeStamp)
+    public void MoveLerpExpect(in Vector3 inCurrPos, in Vector3 inDestPos, float inSpeed, long inTimeStamp, Action doneCallback = null)
     {
-        _moveMachine.StartMoveLerpExpect(inCurrPos, inDestPos, inSpeed, inTimeStamp);
+        _moveMachine.StartMoveLerpExpect(inCurrPos, inDestPos, inSpeed, inTimeStamp, doneCallback);
     }
 
     public void MoveLerpTarget(EntityObject inTarget, float inSpeed, Func<bool> inStopFunc, Action doneCallback)

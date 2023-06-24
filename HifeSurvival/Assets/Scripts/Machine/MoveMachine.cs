@@ -19,6 +19,7 @@ public class MoveMachine : MonoBehaviour
 
     public Vector3 CurrDir { get; private set; }
 
+    public const int EXPECT_LERP_MILLISECONDS = 250;
     
     //-----------------
     // unity events
@@ -50,12 +51,13 @@ public class MoveMachine : MonoBehaviour
         _inputDirection = Vector2.zero;
     }
 
-    public void StartMoveLerpExpect(in Vector3 inCurrPos, in Vector3 inDestPos, float inSpeed, long inTimeStamp)
+    public void StartMoveLerpExpect(in Vector3 inCurrPos, in Vector3 inDestPos, float inSpeed, long inTimeStamp, Action doneCallback = null)
     {
         _currPos = inCurrPos;
         _destPos = inDestPos;
         _currSpeed = inSpeed;
         _timeStamp = inTimeStamp;
+        _doneCallback = doneCallback;
     
         StartCoroutine(nameof(Co_MoveLerpExpect));
     }
@@ -110,20 +112,40 @@ public class MoveMachine : MonoBehaviour
 
     IEnumerator Co_MoveLerpExpect()
     {
-        float currTick = 0;
-        float totalTick = (_timeStamp + 250) - DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        //------------
+        // 보간방식
+        //------------
 
-        Debug.Log($"{totalTick}, {_destPos}");
+        // long utcNow = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        // long expectMilliseocnds = _timeStamp + EXPECT_LERP_MILLISECONDS;
 
-        CurrDir = Vector3.Normalize(_currPos - _destPos);
+        // float currTick = 0;
+        // float totalTick = expectMilliseocnds - utcNow;
 
-        do
+        // CurrDir = Vector3.Normalize(_currPos - _destPos);
+
+        // do
+        // {
+        //     currTick += Time.deltaTime;
+        //     transform.position = Vector3.Lerp(_currPos, _destPos, currTick/totalTick);
+        //     yield return null;
+        // }
+        // while(currTick < totalTick);
+
+        CurrDir = GetDir(_destPos);
+
+        // NOTE@taeho.kang 임시처리 : 서버에서의 시작점으로 하면 안됨 (순간이동생김)
+        _currPos = transform.position;
+
+        float currDist = 0;
+        float totalDist = Vector3.Distance(transform.position, _destPos);
+
+        while(currDist < totalDist)
         {
-            currTick += Time.deltaTime;
-            transform.position = Vector3.Lerp(_currPos, _destPos, currTick/totalTick);
+            currDist += _currSpeed * Time.deltaTime;
+            transform.position = Vector3.Lerp(_currPos, _destPos, currDist/totalDist);
+
             yield return null;
         }
-        while(currTick < totalTick);
     }
-
 }

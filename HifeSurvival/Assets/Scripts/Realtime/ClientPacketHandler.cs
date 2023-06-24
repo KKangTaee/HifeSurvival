@@ -84,7 +84,7 @@ public class ClientPacketHandler : PacketHandler
 
     public override void S_SpawnMonsterHandler(PacketSession session, IPacket packet)
     {
-        throw new NotImplementedException();
+        // throw new NotImplementedException();
     }
 
     public override void S_DropRewardHandler(PacketSession session, IPacket packet)

@@ -38,12 +38,23 @@ public abstract class EntityObjectController<T> : ControllerBase where T : Entit
 
          var entityObj = GetEntityObject(inPacket.targetId);
 
-         SetMoveState(entityObj,
+        // 값이 동등한 경우. : 정지상태
+        if(inPacket.currentPos.NearlyEqual(inPacket.targetPos))
+        {
+            SetIdleState(entityObj, 
+                         inPacket.currentPos.ConvertUnityVector3(),
+                         default,
+                         inPacket.speed);
+        }
+        else
+        {
+          SetMoveState(entityObj,
                       default,
                       inPacket.currentPos.ConvertUnityVector3(),
                       inPacket.targetPos.ConvertUnityVector3(),
                       inPacket.speed,
                       inPacket.timestamp);
+        }       
     }
 
 
@@ -130,11 +141,11 @@ public abstract class EntityObjectController<T> : ControllerBase where T : Entit
         inTarget.ChangeState(EntityObject.EStatus.MOVE, moveParam);
     }
 
-    public void SetIdleState(T inTarget, in Vector3 inPos, in Vector3 inDir, float inSpeed)
+    public void SetIdleState(T inTarget, in Vector3 inCurrPos, in Vector3 inDir, float inSpeed)
     {
         var idleParam = new IdleParam()
         {
-            pos = inPos,
+            pos = inCurrPos,
             dir = inDir,
             speed = inSpeed,
         };

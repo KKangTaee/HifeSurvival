@@ -428,17 +428,34 @@ public partial class Player
 
     public class IdleState : IState<Player>
     {
+        const float DISTANCE_DIFF = 2f;
+
         public void Enter<P>(Player inSelf, in P inParam) where P : struct
         {
             if (inParam is IdleParam idleParam)
             {
                 if (inSelf.IsSelf == false)
                 {
-                    // TOOD@taeho.kang 여기 끝!
+
                 }
                 else
                 {
-                    inSelf.OnIdle(idleParam.pos);
+                    // 현재 서버좌표의 절대위치와 클라 동기화 위치의 간격이 꽤나 차이가 심하다면, 보간 후 정지 시킨다.
+                    if(Vector3.Distance(inSelf.GetPos(), idleParam.pos) > DISTANCE_DIFF)
+                    {
+                        inSelf.MoveLerpExpect(inSelf.GetPos(), 
+                                          idleParam.pos, 
+                                          idleParam.speed, 
+                                          0,
+                                          ()=>
+                                          {
+                                                inSelf.OnIdle(idleParam.pos);
+                                          });
+                    }
+                    else
+                    {
+                        inSelf.OnIdle(idleParam.pos);
+                    }
                 }
             }
         }
@@ -458,9 +475,6 @@ public partial class Player
     {
         public void Enter<P>(Player inTarget, in P inParam) where P : struct
         {
-            // if (inParam is MoveParam move)
-            //     Move(move, inSelf);
-
             if(inParam is MoveParam move)
                 Move(move, inTarget);
         }
@@ -468,9 +482,6 @@ public partial class Player
 
         public void Update<P>(Player inTarget, in P inParam) where P : struct
         {
-            // if (inParam is MoveParam move)
-            //     Move(move, inSelf);
-
             if(inParam is MoveParam move)
                 Move(move, inTarget);
         }

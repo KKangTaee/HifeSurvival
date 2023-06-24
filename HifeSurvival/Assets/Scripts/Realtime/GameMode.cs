@@ -193,21 +193,6 @@ public class GameMode
         NetworkManager.Instance.Send(moveRequest);
     }
 
-
-    public void OnSendStopMove(in Vector3 inPos, in Vector3 inDir)
-    {
-        CS_StopMove stopMove = new CS_StopMove()
-        {
-            pos = inPos.ConvertPVec3(),
-            dir = inDir.ConvertPVec3(),
-            isPlayer = true,
-            targetId = EntitySelf.targetId,
-        };
-
-        NetworkManager.Instance.Send(stopMove);
-    }
-
-
     public void OnSendAttack(in Vector3 inPos, in Vector3 inDir, bool toIsPlayer, int toId, int damageValue)
     {
         CS_Attack attack = new CS_Attack()
@@ -437,9 +422,8 @@ public class GameMode
 
         entity.pos = inPacket.currentPos;
 
-        Debug.Log("호출중..?");
-
         OnUpdateLocationHandler.Invoke(inPacket);
+        
     }
 
     public void OnRecvStopMove(CS_StopMove inPacket)

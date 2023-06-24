@@ -198,4 +198,5 @@ public class SimpleTaskCompletionSource<T>
     {
         _source.SetResult(inSignal);
     }
+
 }

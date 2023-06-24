@@ -195,8 +195,21 @@ namespace Server
         {
             public void Enter(MonsterEntity inSelf, in IStateParam inParam = default)
             {
-                inSelf.DropItem();
-                inSelf.StartRespawning();
+                if (inParam is DeadParam deadParam)
+                {
+                    S_Dead deadPacket = new S_Dead()
+                    {
+                        toIsPlayer = true,
+                        toId = inSelf.targetId,
+                        fromIsPlayer = false,
+                        fromId = deadParam.killerTarget.targetId,
+                        respawnTime = 15,
+                    };
+                    inSelf.broadcaster.Broadcast(deadPacket);
+
+                    inSelf.DropItem();
+                    inSelf.StartRespawning();
+                }
             }
 
             public void Exit(MonsterEntity inSelf, in IStateParam inParam = default)
@@ -215,16 +228,12 @@ namespace Server
             public void Enter(MonsterEntity inSelf, in IStateParam inParam = default)
             {
                 var param = (MoveParam)inParam;
-                Logger.GetInstance().Info($"<Monster id {inSelf.targetId}> Move current : {param.currentPos.PrintPVec3()}, target : {param.targetPos.PrintPVec3()}");
-
                 updateMove(inSelf, param);
             }
 
             public void Update(MonsterEntity inSelf, in IStateParam inParam = default)
             {
                 var param = (MoveParam)inParam;
-                Logger.GetInstance().Info($"<Monster id {inSelf.targetId}> Move current : {param.currentPos.PrintPVec3()}, target : {param.targetPos.PrintPVec3()}");
-
                 updateMove(inSelf, param);
             }
 

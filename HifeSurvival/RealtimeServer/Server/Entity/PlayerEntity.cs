@@ -188,16 +188,12 @@ namespace Server
             public void Enter(PlayerEntity inSelf, in IStateParam inParam = default)
             {
                 var param = (MoveParam)inParam;
-                Logger.GetInstance().Debug($"Move current : {param.currentPos.PrintPVec3()}, target : {param.targetPos.PrintPVec3()}");
-
                 updateMove(inSelf, param);
             }
 
             public void Update(PlayerEntity inSelf, in IStateParam inParam = default)
             {
                 var param = (MoveParam)inParam;
-                Logger.GetInstance().Debug($"Move current : {param.currentPos.PrintPVec3()}, target : {param.targetPos.PrintPVec3()}");
-
                 updateMove(inSelf, param);
             }
 

@@ -52,7 +52,6 @@ namespace Server
 
     public struct AttackParam : IStateParam
     {
-        public int attackValue;
         public Entity target;
     }
 
@@ -80,8 +79,7 @@ namespace Server
 
     public struct DeadParam : IStateParam
     {
-        public int    respawnTime;
-        public Action respawnCallback;
+        public Entity killerTarget;
     }
 
     public struct UseSkillParam : IStateParam

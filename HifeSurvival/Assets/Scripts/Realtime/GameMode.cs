@@ -389,32 +389,6 @@ public class GameMode
         return monsterEntity;
     }
 
-    [Obsolete]
-    public void OnRecvMove(CS_Move inPacket)
-    {
-        if (inPacket.isPlayer == true)
-        {
-            if (PlayerEntitysDict.TryGetValue(inPacket.targetId, out var player) == true)
-            {
-                player.dir = inPacket.dir;
-                player.pos = inPacket.pos;
-
-                if (IsSelf(inPacket.targetId) == false)
-                    OnRecvMoveHandler?.Invoke(player);
-            }
-        }
-        else
-        {
-            if (MonsterEntityDict.TryGetValue(inPacket.targetId, out var monster) == true)
-            {
-                monster.dir = inPacket.dir;
-                monster.pos = inPacket.pos;
-
-                OnRecvMoveHandler?.Invoke(monster);
-            }
-        }
-    }
-
     public void OnUpdateLocation(UpdateLocationBroadcast inPacket)
     {
         Entity entity = inPacket.isPlayer == true ? GetPlayerEntity(inPacket.targetId)
@@ -426,31 +400,6 @@ public class GameMode
 
         OnUpdateLocationHandler.Invoke(inPacket);
         
-    }
-
-    public void OnRecvStopMove(CS_StopMove inPacket)
-    {
-        if (inPacket.isPlayer == true)
-        {
-            if (PlayerEntitysDict.TryGetValue(inPacket.targetId, out var player) == true)
-            {
-                player.pos = inPacket.pos;
-                player.dir = inPacket.dir;
-
-                if (IsSelf(inPacket.targetId) == false)
-                    OnRecvStopMoveHandler?.Invoke(player);
-            }
-        }
-        else
-        {
-            if (MonsterEntityDict.TryGetValue(inPacket.targetId, out var monster) == true)
-            {
-                monster.pos = inPacket.pos;
-                monster.dir = inPacket.dir;
-
-                OnRecvStopMoveHandler?.Invoke(monster);
-            }
-        }
     }
 
     public void OnRecvAttack(CS_Attack inPacket)

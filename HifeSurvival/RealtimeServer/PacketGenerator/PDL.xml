@@ -53,20 +53,13 @@
     <struct_PVec3 name ="fromDir"/>
     <int name ="attackValue"/>
   </packet>
-
-  <packet name ="CS_Move">
+  
+  <packet name ="MoveRequest">
     <int name ="targetId"/>
-    <bool name ="isPlayer"/>
-    <struct_PVec3 name ="pos"/>
-    <struct_PVec3 name ="dir"/>
+    <struct_PVec3 name ="currentPos"/>
+    <struct_PVec3 name ="targetPos"/>
     <float name ="speed"/>
-  </packet>
-
-  <packet name ="CS_StopMove">
-    <int name ="targetId"/>
-    <bool name ="isPlayer"/>
-    <struct_PVec3 name ="pos"/>
-    <struct_PVec3 name ="dir"/>
+    <long name ="timestamp"/>
   </packet>
 
   <packet name ="S_Dead">
@@ -114,22 +107,14 @@
     <int name ="gold"/>
   </packet>
 
-	<packet name ="MoveRequest">
-		<int name ="targetId"/>
-		<struct_PVec3 name ="currentPos"/>
-		<struct_PVec3 name ="targetPos"/>
-		<float name ="speed"/>
-		<long name ="timestamp"/>
-	</packet>
-
-	<packet name ="UpdateLocationBroadcast">
-		<int name ="targetId"/>
-		<bool name ="isPlayer"/>
-		<struct_PVec3 name ="currentPos"/>
-		<struct_PVec3 name ="targetPos"/>
-		<float name ="speed"/>
-		<long name ="timestamp"/>
-	</packet>
+  <packet name ="UpdateLocationBroadcast">
+    <int name ="targetId"/>
+    <bool name ="isPlayer"/>
+    <struct_PVec3 name ="currentPos"/>
+    <struct_PVec3 name ="targetPos"/>
+    <float name ="speed"/>
+    <long name ="timestamp"/>
+  </packet>
 
   <struct name="PVec3">
     <float name ="x"/>

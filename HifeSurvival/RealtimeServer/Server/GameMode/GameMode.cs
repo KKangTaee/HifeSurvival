@@ -30,7 +30,7 @@ namespace Server
         private Dictionary<int, MonsterGroup> _monsterGroupDict = new Dictionary<int, MonsterGroup>();
 
         private IBroadcaster _broadcaster = null;
-        private WorldMap _worldMap = new WorldMap();
+        private WorldMap _worldMap;
         private int _mId = 10000;
 
         public EStatus Status { get; private set; } = EStatus.NONE;
@@ -38,6 +38,7 @@ namespace Server
         public GameMode(GameRoom inRoom)
         {
             _broadcaster = new RoomBroadcaster(inRoom);
+            _worldMap = new WorldMap(_broadcaster);
         }
 
 
@@ -81,12 +82,13 @@ namespace Server
                                 _monsterGroupDict.Add(group.groupId, monsterGroup);
                             }
 
-                            MonsterEntity entity = new MonsterEntity(monsterGroup)
+                            MonsterEntity entity = new MonsterEntity(monsterGroup, _worldMap.DropItem)
                             {
                                 targetId = _mId++,
                                 groupId = group.groupId,
                                 monsterId = int.Parse(id),
-                                pos = pos,
+                                currentPos = pos,
+                                targetPos = pos,
                                 spawnPos = pos,
                                 grade = data.grade,
                                 broadcaster = _broadcaster,
@@ -358,20 +360,6 @@ namespace Server
             _broadcaster.Broadcast(inPacket);
         }
 
-        [Obsolete]
-        public void OnRecvMove(CS_Move inPacket)
-        {
-            var player = GetPlayerEntity(inPacket.targetId);
-
-            if (player == null)
-                return;
-
-            player.pos = inPacket.pos;
-            player.dir = inPacket.dir;
-
-            player.Move();
-        }
-
         public void OnRecvMoveRequest(MoveRequest inPacket)
         {
             var player = GetPlayerEntity(inPacket.targetId);
@@ -401,91 +389,26 @@ namespace Server
             }
         }
 
-        [Obsolete]
-        public void OnRecvStopMove(CS_StopMove inPacket)
-        {
-            var player = GetPlayerEntity(inPacket.targetId);
-
-            if (player == null)
-                return;
-
-            player.pos = inPacket.pos;
-            player.dir = inPacket.dir;
-
-            player.Idle();
-
-            _broadcaster.Broadcast(inPacket);
-        }
 
         public void OnRecvAttack(CS_Attack inPacket)
         {
             var fromPlayer = GetPlayerEntity(inPacket.fromId);
-
             if (fromPlayer == null)
                 return;
 
-            fromPlayer.pos = inPacket.fromPos;
-            fromPlayer.dir = inPacket.fromDir;
-
             Entity toEntity = null;
-
-            if (inPacket.toIsPlayer == true)
+            if (inPacket.toIsPlayer)
                 toEntity = GetPlayerEntity(inPacket.toId);
-
             else
                 toEntity = GetMonsterEntity(inPacket.toId);
 
             if (toEntity == null)
                 return;
 
-            toEntity.stat.AddCurrHp(-inPacket.attackValue);
-
-            if (toEntity.stat.currHp <= 0)
+            fromPlayer.Attack(new AttackParam()
             {
-                S_Dead dead = new S_Dead()
-                {
-                    toIsPlayer = toEntity.IsPlayer,
-                    toId = inPacket.toId,
-                    fromIsPlayer = true,
-                    fromId = inPacket.fromId,
-                    respawnTime = 15,
-                };
-
-                toEntity.Dead();
-                fromPlayer.Idle();
-
-                _broadcaster.Broadcast(dead);
-
-                // 죽은 대상이 몬스터라면
-                if (inPacket.toIsPlayer == false)
-                {
-                    var monsterEntity = toEntity as MonsterEntity;
-                    var worldItem = _worldMap.DropItem(monsterEntity.rewardDatas);
-
-                    // worldItem이 null이라는 것은 확률결과 드랍을 못한것
-                    if (worldItem == null)
-                        return;
-
-                    S_DropReward dropItem = new S_DropReward()
-                    {
-                        worldId = worldItem.worldId,
-                        rewardType = worldItem.itemData.rewardType,
-                        pos = monsterEntity.pos,
-                    };
-
-                    _broadcaster.Broadcast(dropItem);
-                }
-            }
-            else
-            {
-                var attackParam = new AttackParam()
-                {
-                    target = toEntity,
-                };
-
-                fromPlayer.Attack(attackParam);
-                _broadcaster.Broadcast(inPacket);
-            }
+                target = toEntity,
+            });
         }
 
 

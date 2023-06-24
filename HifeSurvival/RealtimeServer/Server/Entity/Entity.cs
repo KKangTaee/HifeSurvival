@@ -26,9 +26,6 @@ namespace Server
 
         public int targetId;
 
-
-        [Obsolete] public PVec3 pos;
-        [Obsolete] public PVec3 dir;
         public PVec3 spawnPos;
 
         public PVec3 currentPos;
@@ -76,7 +73,7 @@ namespace Server
 
 
         #region Callback Event
-        public abstract void OnDamaged(in Entity entity);
+        public abstract void OnDamaged(in Entity attacker);
         #endregion
 
         public virtual void MoveToRespawn()
@@ -118,39 +115,9 @@ namespace Server
             stat.AddCurrHp(-hpValue);
         }
 
-        [Obsolete]
-        public void OnMoveAndBroadcast(in PVec3 inDir, float deltaTime)
+        public virtual bool IsDead()
         {
-            var addSpeed = inDir.MulitflyPVec3(stat.moveSpeed * deltaTime);
-            pos = pos.AddPVec3(addSpeed);
-
-            CS_Move move = new CS_Move()
-            {
-                pos = this.pos,
-                dir = this.dir,
-                targetId = this.targetId,
-                isPlayer = IsPlayer,
-                speed = this.stat.moveSpeed,
-            };
-
-            broadcaster.Broadcast(move);
-        }
-
-        [Obsolete]
-        public void OnMoveLerpAndBroadcast(in PVec3 inStartPos, in PVec3 inEndPos, float inRaio)
-        {
-            pos = PacketExtensionHelper.Lerp(inStartPos, inEndPos, inRaio);
-
-            CS_Move move = new CS_Move()
-            {
-                pos = this.pos,
-                dir = this.dir,
-                targetId = this.targetId,
-                isPlayer = IsPlayer,
-                speed = this.stat.moveSpeed,
-            };
-
-            broadcaster.Broadcast(move);
+            return stat.currHp < 0 || Status == EStatus.DEAD;
         }
     }
 

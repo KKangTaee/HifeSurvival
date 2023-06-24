@@ -41,18 +41,6 @@ namespace Server
             push(session, room => room?.Mode.OnRecvAttack(attack));
         }
 
-        public override void CS_MoveHandler(PacketSession session, IPacket packet)
-        {
-            CS_Move move = packet as CS_Move;
-            push(session, room => room?.Mode.OnRecvMove(move));
-        }
-
-        public override void CS_StopMoveHandler(PacketSession session, IPacket packet)
-        {
-            CS_StopMove stopMove = packet as CS_StopMove;
-            push(session, room => room?.Mode.OnRecvStopMove(stopMove));
-        }
-
         public override void CS_ReadyToGameHandler(PacketSession session, IPacket packet)
         {
             CS_ReadyToGame readyToGame = packet as CS_ReadyToGame;

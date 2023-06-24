@@ -434,28 +434,21 @@ public partial class Player
         {
             if (inParam is IdleParam idleParam)
             {
-                if (inSelf.IsSelf == false)
+                 // 현재 서버좌표의 절대위치와 클라 동기화 위치의 간격이 꽤나 차이가 심하다면, 보간 후 정지 시킨다.
+                if(inSelf.IsSelf == false && Vector3.Distance(inSelf.GetPos(), idleParam.pos) > DISTANCE_DIFF)
                 {
-
+                    inSelf.MoveLerpExpect(inSelf.GetPos(), 
+                                        idleParam.pos, 
+                                        idleParam.speed, 
+                                        0,
+                                        ()=>
+                                        {
+                                            inSelf.OnIdle(idleParam.pos);
+                                        });
                 }
                 else
                 {
-                    // 현재 서버좌표의 절대위치와 클라 동기화 위치의 간격이 꽤나 차이가 심하다면, 보간 후 정지 시킨다.
-                    if(Vector3.Distance(inSelf.GetPos(), idleParam.pos) > DISTANCE_DIFF)
-                    {
-                        inSelf.MoveLerpExpect(inSelf.GetPos(), 
-                                          idleParam.pos, 
-                                          idleParam.speed, 
-                                          0,
-                                          ()=>
-                                          {
-                                                inSelf.OnIdle(idleParam.pos);
-                                          });
-                    }
-                    else
-                    {
-                        inSelf.OnIdle(idleParam.pos);
-                    }
+                    inSelf.OnIdle(idleParam.pos);
                 }
             }
         }

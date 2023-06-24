@@ -117,12 +117,13 @@ public class MoveMachine : MonoBehaviour
 
         CurrDir = Vector3.Normalize(_currPos - _destPos);
 
-        while(currTick < totalTick)
+        do
         {
             currTick += Time.deltaTime;
             transform.position = Vector3.Lerp(_currPos, _destPos, currTick/totalTick);
             yield return null;
         }
+        while(currTick < totalTick);
     }
 
 }

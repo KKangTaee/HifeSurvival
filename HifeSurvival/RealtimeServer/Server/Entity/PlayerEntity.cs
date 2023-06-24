@@ -106,8 +106,8 @@ namespace Server
                     {
                         targetId = inSelf.targetId,
                         isPlayer = inSelf.IsPlayer,
-                        status = (int)EStatus.IDLE,
                         currentPos = idleParam.currentPos,
+                        targetPos = idleParam.currentPos,
                         timestamp = idleParam.timestamp,
                     };
 
@@ -194,7 +194,6 @@ namespace Server
                 {
                     targetId = inSelf.targetId,
                     isPlayer = inSelf.IsPlayer,
-                    status = (int)EStatus.MOVE,
                     currentPos = inParam.currentPos,
                     targetPos = inParam.targetPos,
                     speed = inParam.speed,

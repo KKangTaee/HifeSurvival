@@ -1014,7 +1014,6 @@ public class UpdateLocationBroadcast : IPacket
 {
 	public int targetId;
 	public bool isPlayer;
-	public int status;
 	public PVec3 currentPos;
 	public PVec3 targetPos;
 	public float speed;
@@ -1033,8 +1032,6 @@ public class UpdateLocationBroadcast : IPacket
 		count += sizeof(int);
 		this.isPlayer = BitConverter.ToBoolean(s.Slice(count, s.Length - count));
 		count += sizeof(bool);
-		this.status = BitConverter.ToInt32(s.Slice(count, s.Length - count));
-		count += sizeof(int);
 		currentPos.Read(s, ref count);
 		targetPos.Read(s, ref count);
 		this.speed = BitConverter.ToSingle(s.Slice(count, s.Length - count));
@@ -1058,8 +1055,6 @@ public class UpdateLocationBroadcast : IPacket
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.isPlayer);
 		count += sizeof(bool);
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.status);
-		count += sizeof(int);
 		success &= currentPos.Write(s,ref count);
 		success &= targetPos.Write(s,ref count);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.speed);

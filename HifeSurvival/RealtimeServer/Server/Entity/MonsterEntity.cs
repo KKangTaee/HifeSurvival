@@ -277,7 +277,6 @@ namespace Server
                 {
                     targetId = inSelf.targetId,
                     isPlayer = inSelf.IsPlayer,
-                    status = (int)EStatus.MOVE,
                     currentPos = inParam.currentPos,
                     targetPos = inParam.targetPos,
                     speed = inParam.speed,

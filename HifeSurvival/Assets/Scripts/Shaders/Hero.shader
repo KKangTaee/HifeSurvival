@@ -2,7 +2,7 @@ Shader "Heros"
 {
     Properties
     {
-        [MainTexture] _MainTex("MainTex", 2D) = "white" {}
+        _MainTex("MainTex", 2D) = "white" {}
         [KeywordEnum(Twist, Spawn)] _Status("Status", int) = 0
 
         //--------------
@@ -51,7 +51,7 @@ Shader "Heros"
 
             CBUFFER_START(UnityPerMaterial)
 
-            float4 _MainTex_ST; // tiling ¹× offset Á¶Àý
+            float4 _MainTex_ST; // tiling ï¿½ï¿½ offset ï¿½ï¿½ï¿½ï¿½
             Texture2D _MainTex;
             SamplerState sampler_MainTex;
             int _Status;
@@ -119,7 +119,6 @@ Shader "Heros"
 
                     col = lerp(_Spawn_LightColor, col, lerpVal);
                     col.a = alpha;
-
 
                     return col;
                 }

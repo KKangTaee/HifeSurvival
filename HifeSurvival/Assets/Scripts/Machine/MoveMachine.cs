@@ -53,6 +53,8 @@ public class MoveMachine : MonoBehaviour
 
     public void StartMoveLerpExpect(in Vector3 inCurrPos, in Vector3 inDestPos, float inSpeed, long inTimeStamp, Action doneCallback = null)
     {
+        StopMoveLerpExpect();
+
         _currPos = inCurrPos;
         _destPos = inDestPos;
         _currSpeed = inSpeed;
@@ -135,15 +137,21 @@ public class MoveMachine : MonoBehaviour
         CurrDir = GetDir(_destPos);
 
         // NOTE@taeho.kang 임시처리 : 서버에서의 시작점으로 하면 안됨 (순간이동생김)
-        _currPos = transform.position;
+
+        Vector3 startPos = transform.position;
+        Vector3 nowPos = startPos;
 
         float currDist = 0;
-        float totalDist = Vector3.Distance(transform.position, _destPos);
+        float totalDist = Vector3.Distance(startPos, _destPos);
+
+        Debug.Log($"{_currSpeed}");
 
         while(currDist < totalDist)
         {
-            currDist += _currSpeed * Time.deltaTime;
-            transform.position = Vector3.Lerp(_currPos, _destPos, currDist/totalDist);
+            nowPos += _currSpeed * Time.deltaTime * CurrDir;
+
+            currDist = Vector3.Distance(startPos, nowPos);
+            transform.position = Vector3.Lerp(startPos, _destPos, currDist/totalDist);
 
             yield return null;
         }

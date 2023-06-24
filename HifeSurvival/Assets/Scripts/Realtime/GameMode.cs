@@ -420,6 +420,8 @@ public class GameMode
         Entity entity = inPacket.isPlayer == true ? GetPlayerEntity(inPacket.targetId)
                                                   : GetMonsterEntity(inPacket.targetId);
 
+        Debug.Log($"currPos : {inPacket.currentPos.ConvertUnityVector3()}, targetPos : {inPacket.targetPos.ConvertUnityVector3()}");
+
         entity.pos = inPacket.currentPos;
 
         OnUpdateLocationHandler.Invoke(inPacket);

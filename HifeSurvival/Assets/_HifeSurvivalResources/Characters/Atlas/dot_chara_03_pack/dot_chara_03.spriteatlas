@@ -1,0 +1,116 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: dot_chara_03
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings: []
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 1
+      enableTightPacking: 1
+      enableAlphaDilation: 0
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 102900000, guid: 51742785355984d9fbf5dc123b3eda1d, type: 3}
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: 6f8933005885647e98595064d4a5f796, type: 3}
+  - {fileID: 21300000, guid: fa367f7071e84469b9855a49728321e1, type: 3}
+  - {fileID: 21300000, guid: 474bda011f8d6443e99ce5482a170711, type: 3}
+  - {fileID: 21300000, guid: d8ab4fe1a126940c1aa48045519f8ab8, type: 3}
+  - {fileID: 21300000, guid: f715f0636389a41fcb1d28ef9adba6db, type: 3}
+  - {fileID: 21300000, guid: 60d1f745ba10845e4a023368c8fa690b, type: 3}
+  - {fileID: 21300000, guid: 5f0c7a45ed397436fbff907283cc56b8, type: 3}
+  - {fileID: 21300000, guid: da379a651b84c41d79e257ad65cc7f1c, type: 3}
+  - {fileID: 21300000, guid: 0b7a0626f465d4eb3946902503f01d97, type: 3}
+  - {fileID: 21300000, guid: 6b349b5725fce4a69a3b1ddd52dbf99d, type: 3}
+  - {fileID: 21300000, guid: 47ff9577b42324e68a404fa8d689e50c, type: 3}
+  - {fileID: 21300000, guid: 8d7502c7819bd472ebaf8fe71e794c4c, type: 3}
+  - {fileID: 21300000, guid: df1949f747afa4994987b9b4c606279b, type: 3}
+  - {fileID: 21300000, guid: 8ac41a08cb3264daf9c2b8c383d5d6e9, type: 3}
+  - {fileID: 21300000, guid: 8700c578d55a74b96abb1dbe6ad24d95, type: 3}
+  - {fileID: 21300000, guid: e491a4a80199f48a393827c7743de4c1, type: 3}
+  - {fileID: 21300000, guid: 467379e80223545f3977ab3adac685ab, type: 3}
+  - {fileID: 21300000, guid: 0d996049eed5d427ba9179e22c00a83a, type: 3}
+  - {fileID: 21300000, guid: 1e8c9b99d169f47139986ad018e13455, type: 3}
+  - {fileID: 21300000, guid: bf6661e9e8f0c40efa75e5128a630b9d, type: 3}
+  - {fileID: 21300000, guid: d95ae58a3f82c4322925d9f9953fca42, type: 3}
+  - {fileID: 21300000, guid: 8b07e88a192164c949cf8ba05ef99e0c, type: 3}
+  - {fileID: 21300000, guid: c1e74baaa4faf47e3bcda358b1c02c8d, type: 3}
+  - {fileID: 21300000, guid: bbbe593b786b448248800f4f2c524340, type: 3}
+  - {fileID: 21300000, guid: be9ff54bc19ad431c9dce99c4fe17a20, type: 3}
+  - {fileID: 21300000, guid: bb6efe4b534b04a9282d963101f51bdd, type: 3}
+  - {fileID: 21300000, guid: 20410a9bed2a9424f856b26d818f22ea, type: 3}
+  - {fileID: 21300000, guid: 5dbe69ab5451142f0ac4ab2898d63f4e, type: 3}
+  - {fileID: 21300000, guid: 8719e3fb02ab241acb1bc20a2163e457, type: 3}
+  - {fileID: 21300000, guid: 805da12cea3164a8b8fdbd771cacf3e9, type: 3}
+  - {fileID: 21300000, guid: a3faa3cc445b640658d1441f7e7b606d, type: 3}
+  - {fileID: 21300000, guid: 536a3e3d674054975b70d29ac18bee5f, type: 3}
+  - {fileID: 21300000, guid: 6dd70d8dd60e84dbaaddfdc4c6ef0caf, type: 3}
+  - {fileID: 21300000, guid: 2a5728ee58e824caa83753430e0bace7, type: 3}
+  - {fileID: 21300000, guid: 2b22243f1923b43dd9d089a172136fee, type: 3}
+  - {fileID: 21300000, guid: 2791457fa040c4193a81c391db61d23a, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - dot_chara_03_33
+  - dot_chara_03_14
+  - dot_chara_03_17
+  - dot_chara_03_3
+  - dot_chara_03_1
+  - dot_chara_03_0
+  - dot_chara_03_26
+  - dot_chara_03_9
+  - dot_chara_03_25
+  - dot_chara_03_27
+  - dot_chara_03_30
+  - dot_chara_03_5
+  - dot_chara_03_13
+  - dot_chara_03_10
+  - dot_chara_03_35
+  - dot_chara_03_8
+  - dot_chara_03_11
+  - dot_chara_03_20
+  - dot_chara_03_4
+  - dot_chara_03_6
+  - dot_chara_03_15
+  - dot_chara_03_21
+  - dot_chara_03_29
+  - dot_chara_03_32
+  - dot_chara_03_16
+  - dot_chara_03_31
+  - dot_chara_03_22
+  - dot_chara_03_23
+  - dot_chara_03_12
+  - dot_chara_03_7
+  - dot_chara_03_2
+  - dot_chara_03_18
+  - dot_chara_03_19
+  - dot_chara_03_24
+  - dot_chara_03_28
+  - dot_chara_03_34
+  m_RenderDataMap: {}
+  m_Tag: dot_chara_03
+  m_IsVariant: 0

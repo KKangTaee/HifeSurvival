@@ -1,0 +1,102 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: dot_enemy_01_1
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings: []
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 1
+      enableTightPacking: 1
+      enableAlphaDilation: 0
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 102900000, guid: 2458116389d434cd6b6470ab1d0d0e54, type: 3}
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: d5584bc0de52948cf9fb6833ea609522, type: 3}
+  - {fileID: 21300000, guid: 074a0ee0f1b184e72968a915b5320eb2, type: 3}
+  - {fileID: 21300000, guid: 67ebdc210f5a24ee8bf1767fe2023066, type: 3}
+  - {fileID: 21300000, guid: 2d1fd641919004ac1951f600dd259c76, type: 3}
+  - {fileID: 21300000, guid: 3a1fdc22339e94a9ebc5cbdc1353b129, type: 3}
+  - {fileID: 21300000, guid: 6fdea532e43914465b2e81e1b4a5eae6, type: 3}
+  - {fileID: 21300000, guid: 4203f0c2912a5463c90b735695225ca9, type: 3}
+  - {fileID: 21300000, guid: 945253032a3ec4692b0a9ce85eb9f592, type: 3}
+  - {fileID: 21300000, guid: 203af1432ba0d4756aa43f9f6fbb51a3, type: 3}
+  - {fileID: 21300000, guid: 417be4b380a0f4e31bc1d4eda13107d4, type: 3}
+  - {fileID: 21300000, guid: 23d826545f6274670888dff429e35488, type: 3}
+  - {fileID: 21300000, guid: 270c0b950816444e5b1100d2b466dec6, type: 3}
+  - {fileID: 21300000, guid: af8144c53c4944700b89815c944ad4b6, type: 3}
+  - {fileID: 21300000, guid: c88496e5c00c04c81bde166dfa6dc40e, type: 3}
+  - {fileID: 21300000, guid: eab9b956ca4cb43e685324c415cfd1c1, type: 3}
+  - {fileID: 21300000, guid: 1d64daa6a7973416ea38bce6ee19bfff, type: 3}
+  - {fileID: 21300000, guid: 215bee071288b427191cb62b84e797d2, type: 3}
+  - {fileID: 21300000, guid: dff19f5873fe340c59ef0050dd6494e1, type: 3}
+  - {fileID: 21300000, guid: 973358a890534421d86d6af06090017e, type: 3}
+  - {fileID: 21300000, guid: ff16e42951ab04023855f4acd9d3059d, type: 3}
+  - {fileID: 21300000, guid: 6601f70a862594f31acd0ddce1c36c8f, type: 3}
+  - {fileID: 21300000, guid: 7f47548a5c303408f938e11f81ac1246, type: 3}
+  - {fileID: 21300000, guid: e03bf42c6ce434a6787b13ad3da7468e, type: 3}
+  - {fileID: 21300000, guid: 14ff1e8c6bd8c4a17acbf525df40c73f, type: 3}
+  - {fileID: 21300000, guid: e1940bbd27fcf4d40a9ff8a9ef95f5d6, type: 3}
+  - {fileID: 21300000, guid: 5d85f8cd8415f43068a6354cd3ffc28b, type: 3}
+  - {fileID: 21300000, guid: f847b01ed2cb54b28894d07de2c3b1a0, type: 3}
+  - {fileID: 21300000, guid: 55de6a3f324a94ceab5ec5efc51dfb76, type: 3}
+  - {fileID: 21300000, guid: 7da96e3f95de544199a9af9fb6c81e3a, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - dot_enemy_01_1_1
+  - dot_enemy_01_1_18
+  - dot_enemy_01_1_15
+  - dot_enemy_01_1_24
+  - dot_enemy_01_1_2
+  - dot_enemy_01_1_6
+  - dot_enemy_01_1_28
+  - dot_enemy_01_1_21
+  - dot_enemy_01_1_27
+  - dot_enemy_01_1_3
+  - dot_enemy_01_1_16
+  - dot_enemy_01_1_19
+  - dot_enemy_01_1_26
+  - dot_enemy_01_1_12
+  - dot_enemy_01_1_20
+  - dot_enemy_01_1_23
+  - dot_enemy_01_1_11
+  - dot_enemy_01_1_25
+  - dot_enemy_01_1_0
+  - dot_enemy_01_1_10
+  - dot_enemy_01_1_22
+  - dot_enemy_01_1_8
+  - dot_enemy_01_1_5
+  - dot_enemy_01_1_17
+  - dot_enemy_01_1_13
+  - dot_enemy_01_1_14
+  - dot_enemy_01_1_9
+  - dot_enemy_01_1_4
+  - dot_enemy_01_1_7
+  m_RenderDataMap: {}
+  m_Tag: dot_enemy_01_1
+  m_IsVariant: 0

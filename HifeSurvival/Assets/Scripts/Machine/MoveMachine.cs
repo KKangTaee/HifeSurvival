@@ -145,8 +145,6 @@ public class MoveMachine : MonoBehaviour
         float currDist = 0;
         float totalDist = Vector3.Distance(startPos, _destPos);
 
-        Debug.Log($"{_currSpeed}");
-
         while(currDist < totalDist)
         {
             nowPos += _currSpeed * Time.deltaTime * CurrDir;

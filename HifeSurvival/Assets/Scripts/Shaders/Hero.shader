@@ -25,7 +25,7 @@ Shader "Heros"
         {
             "RenderPipeline" = "UniversalPipeline"
             "RenderType" = "Transparent"
-            "Queue" = "Geometry"
+            "Queue" = "Transparent"
         }
 
         Blend SrcAlpha OneMinusSrcAlpha

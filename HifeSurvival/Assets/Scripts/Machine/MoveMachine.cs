@@ -69,6 +69,7 @@ public class MoveMachine : MonoBehaviour
         _target = inTarget;
         _currSpeed = inSpeed;
         _stopFunc = inStopFunc;
+        _doneCallback = doneCallback;
 
         StartCoroutine(nameof(Co_MoveLerpTarget));
     }

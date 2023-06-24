@@ -216,13 +216,7 @@ public partial class Player : EntityObject
 
         MoveLerpExpect(inCurrPos, inDestPos, inSpeed, inTimeStamp);
     }
-
-    public void OnMoveLerpV2(in Vector3 inCurrPos, in Vector3 inDestPos, float inSpeed, long inTimeStamp)
-    {
-
-    }
-
-
+    
     public void OnIdle(in Vector3 inPos, in Vector3 inDir = default)
     {
         _anim.OnIdle();

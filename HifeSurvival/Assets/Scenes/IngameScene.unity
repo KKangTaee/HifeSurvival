@@ -300,6 +300,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: WorldMap_Chapter01
       objectReference: {fileID: 0}
+    - target: {fileID: 7152113060072492465, guid: 48d4f02b0c5f5439c8413ea5178fae5e, type: 3}
+      propertyPath: _wall
+      value: 
+      objectReference: {fileID: 669524598}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 48d4f02b0c5f5439c8413ea5178fae5e, type: 3}
 --- !u!114 &669524597 stripped
@@ -313,6 +317,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad5a9a4208157ef47b078ba11e6376f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1839735485 &669524598 stripped
+Tilemap:
+  m_CorrespondingSourceObject: {fileID: 8535022799047356549, guid: 48d4f02b0c5f5439c8413ea5178fae5e, type: 3}
+  m_PrefabInstance: {fileID: 669524596}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &940067107
 GameObject:
   m_ObjectHideFlags: 0

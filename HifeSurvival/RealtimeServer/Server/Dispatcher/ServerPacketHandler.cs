@@ -16,7 +16,7 @@ namespace Server
             client.Room.Push(() => job?.Invoke(client.Room));
         }
 
-        public override void CS_SelectHeroHandler(PacketSession session, IPacket packet) 
+        public override void CS_SelectHeroHandler(PacketSession session, IPacket packet)
         {
             CS_SelectHero selectHero = packet as CS_SelectHero;
             push(session, room => { room?.Mode.OnRecvSelect(selectHero); });

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Server.Helper;
+using Server.GameData;
 using ServerCore;
 
 namespace Server
@@ -136,7 +136,7 @@ namespace Server
         public float attackSpeed { get; private set; }
 
 
-        public EntityStat(StaticData.Heros heros)
+        public EntityStat(GameDataLoader.Heros heros)
         {
             str = heros.str;
             def = heros.def;
@@ -147,7 +147,7 @@ namespace Server
             attackSpeed = heros.attackSpeed;
         }
 
-        public EntityStat(StaticData.Monsters monsters)
+        public EntityStat(GameDataLoader.Monsters monsters)
         {
             str = monsters.str;
             def = monsters.def;

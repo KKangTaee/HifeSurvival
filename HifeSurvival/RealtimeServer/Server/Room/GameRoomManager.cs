@@ -14,16 +14,16 @@ namespace Server
         private Dictionary<int, GameRoom> _gameRoomDict = new Dictionary<int, GameRoom>();
 
         private JobQueue _jobQueue = new JobQueue();
-        
+
         private int _nextRoomNum = 1;
 
         public void EnterRoom(ClientSession session)
         {
-            Push(()=> 
+            Push(() =>
             {
-                var canJoinRoom = _gameRoomDict.Values.FirstOrDefault(x=>x.CanJoinRoom());
-            
-                if(canJoinRoom != null)
+                var canJoinRoom = _gameRoomDict.Values.FirstOrDefault(x => x.CanJoinRoom());
+
+                if (canJoinRoom != null)
                 {
                     canJoinRoom.Enter(session);
                 }
@@ -31,22 +31,22 @@ namespace Server
                 {
                     var newRoom = new GameRoom(_nextRoomNum++);
                     newRoom.Enter(session);
-                    _gameRoomDict.Add(newRoom.RoomId, newRoom);   
-                     
+                    _gameRoomDict.Add(newRoom.RoomId, newRoom);
+
                 }
             });
         }
 
         public void LeaveRoom(ClientSession session)
         {
-            Push(()=>
+            Push(() =>
             {
                 SessionManager.Instance.Remove(session);
-                
-                if(session.Room != null)
+
+                if (session.Room != null)
                 {
                     GameRoom room = session.Room;
-				    room.Push(() => room.Leave(session));
+                    room.Push(() => room.Leave(session));
                 }
             });
         }

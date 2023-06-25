@@ -9,7 +9,7 @@ using System.Net;
 
 namespace Server
 {
-	public class ClientSession : PacketSession
+    public class ClientSession : PacketSession
 	{
 		public int SessionId { get; set; }
 		public GameRoom Room { get; set; }

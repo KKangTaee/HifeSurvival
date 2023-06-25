@@ -1,4 +1,4 @@
-using Server.Helper;
+using Server.GameData;
 using ServerCore;
 using System;
 using System.Collections.Generic;
@@ -48,7 +48,7 @@ namespace Server
 
             foreach (var groupKey in inGroupKeyArr)
             {
-                if (StaticData.Instance.MonstersGroupDict.TryGetValue(groupKey, out var group) == true)
+                if (GameDataLoader.Instance.MonstersGroupDict.TryGetValue(groupKey, out var group) == true)
                 {
                     var monsterKey = group.monsterGroups.Split(':');
                     var spawnData = _worldMap.SpawnList.FirstOrDefault(x => x.spawnType == (int)WorldMap.ESpawnType.MONSTER &&
@@ -65,7 +65,7 @@ namespace Server
 
                     foreach (var id in monsterKey)
                     {
-                        if (StaticData.Instance.MonstersDict.TryGetValue(id, out var data) == true &&
+                        if (GameDataLoader.Instance.MonstersDict.TryGetValue(id, out var data) == true &&
                             pivotIter.MoveNext() == true)
                         {
                             PVec3 pos = pivotIter.Current;
@@ -214,7 +214,7 @@ namespace Server
         public void SendStartGame()
         {
             // TODO@taeho.kang 후에 나중에
-            if (StaticData.Instance.ChapaterDataDict.TryGetValue("1", out var chapterData) == false)
+            if (GameDataLoader.Instance.ChapaterDataDict.TryGetValue("1", out var chapterData) == false)
             {
                 Logger.GetInstance().Error("chapterdata is not found");
                 return;
@@ -238,9 +238,9 @@ namespace Server
             // TODO@taeho.kang 나중에 더 좋은 방법이 있으면 수정
             // 몬스터 스폰
             // SpawnMonsterTimer(chapterData.phase1, 0);
-            SpawnMonsterTimer(chapterData.phase2, 60);
-            SpawnMonsterTimer(chapterData.phase3, 120);
-            SpawnMonsterTimer(chapterData.phase4, 300);
+            //SpawnMonsterTimer(chapterData.phase2, 60);
+            //SpawnMonsterTimer(chapterData.phase3, 120);
+            //SpawnMonsterTimer(chapterData.phase4, 300);
 
             // 게임종료 타이머도 추가해야함.
 
@@ -303,7 +303,7 @@ namespace Server
 
         public void OnRecvJoin(C_JoinToGame inPacket, int inSessionId)
         {
-            var data = StaticData.Instance.HerosDict.Values.FirstOrDefault();
+            var data = GameDataLoader.Instance.HerosDict.Values.FirstOrDefault();
 
             if (data == null)
                 return;

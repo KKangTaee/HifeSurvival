@@ -1,5 +1,4 @@
-﻿using Server.Helper;
-using ServerCore;
+﻿using ServerCore;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -103,7 +102,8 @@ namespace Server
                 }
             }
 
-            JobTimer.Instance.Push(() => {
+            JobTimer.Instance.Push(() =>
+            {
                 AttackRoutine();
             }, 250);
         }
@@ -121,12 +121,12 @@ namespace Server
 
         public void MoveRoutine()
         {
-            if(lastMoveInfo == null)
+            if (lastMoveInfo == null)
             {
                 return;
             }
 
-            if(lastMovetime > lastMoveInfo.Value.timestamp)
+            if (lastMovetime > lastMoveInfo.Value.timestamp)
             {
                 return;
             }
@@ -150,7 +150,8 @@ namespace Server
             }
             else
             {
-                JobTimer.Instance.Push(() => {
+                JobTimer.Instance.Push(() =>
+                {
                     MoveRoutine();
                 }, 250);
             }

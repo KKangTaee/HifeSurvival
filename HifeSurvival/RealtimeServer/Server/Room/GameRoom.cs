@@ -29,12 +29,12 @@ namespace Server
     public class GameRoom : IJobQueue
     {
 
-        private JobQueue _jobQueue  = new JobQueue();
-        private List<ClientSession>      _sessions    = new List<ClientSession>();
+        private JobQueue _jobQueue = new JobQueue();
+        private List<ClientSession> _sessions = new List<ClientSession>();
         private List<ArraySegment<byte>> _pendingList = new List<ArraySegment<byte>>();
 
         private GameMode _gameMode;
-        private bool     _isRunningFlush;
+        private bool _isRunningFlush;
 
         public int RoomId { get; private set; }
 
@@ -74,7 +74,7 @@ namespace Server
             _sessions.Add(session);
             session.Room = this;
 
-            if(_sessions.Count > 0)
+            if (_sessions.Count > 0)
             {
                 _isRunningFlush = true;
                 FlushRoom();

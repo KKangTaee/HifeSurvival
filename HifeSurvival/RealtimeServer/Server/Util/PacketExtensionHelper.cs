@@ -4,7 +4,7 @@ using System.Text;
 using ServerCore;
 using System.Linq;
 
-namespace Server.Helper
+namespace Server
 {
     public static class PacketExtensionHelper
     {

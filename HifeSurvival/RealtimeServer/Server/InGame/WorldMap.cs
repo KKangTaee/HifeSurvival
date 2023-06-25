@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ServerCore;
-using Server.Helper;
 
 namespace Server
 {
@@ -61,10 +60,10 @@ namespace Server
                 return;
             }
 
-            var N = SimpleJSON.JSON.Parse(inMapData);
+            var N = JSON.Parse(inMapData);
 
             CanGoTiles = new HashSet<PVec3>();
-            foreach (SimpleJSON.JSONNode node in N["can_go_tile"].AsArray)
+            foreach (JSONNode node in N["can_go_tile"].AsArray)
             {
                 string[] parts = node.Value.Split(',');
                 PVec3 tile = new PVec3()
@@ -78,14 +77,14 @@ namespace Server
 
             // Parse spawn list
             SpawnList = new List<WorldSpawnData>();
-            foreach (SimpleJSON.JSONNode node in N["spawn_list"].AsArray)
+            foreach (JSONNode node in N["spawn_list"].AsArray)
             {
                 var spawnData = new WorldSpawnData();
                 spawnData.spawnType = node["spawn_type"].AsInt;
                 spawnData.groupId = node["group_id"].AsInt;
 
                 spawnData.pivotList = new List<PVec3>();
-                foreach (SimpleJSON.JSONNode pivotNode in node["pivot_list"].AsArray)
+                foreach (JSONNode pivotNode in node["pivot_list"].AsArray)
                 {
                     string[] parts = pivotNode.Value.Split(',');
                     PVec3 pivot = new PVec3()

@@ -49,7 +49,7 @@ using System.Collections;
 using System.Text;
 
 
-namespace SimpleJSON
+namespace Server
 {
     public enum JSONBinaryTag
     {
@@ -184,7 +184,7 @@ namespace SimpleJSON
             }
             set
             {
-                Value = (value) ? "true" : "false";
+                Value = value ? "true" : "false";
             }
         }
         public virtual JSONArray AsArray
@@ -240,13 +240,13 @@ namespace SimpleJSON
         }
         public static implicit operator string(JSONNode d)
         {
-            return (d == null) ? null : d.Value;
+            return d == null ? null : d.Value;
         }
         public static bool operator ==(JSONNode a, object b)
         {
             if (b == null && a is JSONLazyCreator)
                 return true;
-            return System.Object.ReferenceEquals(a, b);
+            return ReferenceEquals(a, b);
         }
 
         public static bool operator !=(JSONNode a, object b)
@@ -255,7 +255,7 @@ namespace SimpleJSON
         }
         public override bool Equals(object obj)
         {
-            return System.Object.ReferenceEquals(this, obj);
+            return ReferenceEquals(this, obj);
         }
         public override int GetHashCode()
         {
@@ -268,15 +268,15 @@ namespace SimpleJSON
         public T GetData<T>(string inKey)
         {
             string result = string.Empty;
-            if (this == null || !this.ContainsKey(inKey))
+            if (this == null || !ContainsKey(inKey))
             {
-                return default(T);
+                return default;
             }
             else
             {
                 result = this[inKey];
             }
-            return (T)System.Convert.ChangeType(result, typeof(T));
+            return (T)Convert.ChangeType(result, typeof(T));
         }
 
         internal static string Escape(string aText, bool asString = false)
@@ -566,7 +566,7 @@ namespace SimpleJSON
             {
                 SaveToStream(stream);
                 stream.Position = 0;
-                return System.Convert.ToBase64String(stream.ToArray());
+                return Convert.ToBase64String(stream.ToArray());
             }
         }
         public static JSONNode Deserialize(System.IO.BinaryReader aReader)
@@ -681,7 +681,7 @@ namespace SimpleJSON
         }
         public static JSONNode LoadFromBase64(string aBase64)
         {
-            var tmp = System.Convert.FromBase64String(aBase64);
+            var tmp = Convert.FromBase64String(aBase64);
             var stream = new System.IO.MemoryStream(tmp);
             stream.Position = 0;
             return LoadFromStream(stream);
@@ -978,21 +978,21 @@ namespace SimpleJSON
             var tmp = new JSONData("");
 
             tmp.AsInt = AsInt;
-            if (tmp.m_Data == this.m_Data)
+            if (tmp.m_Data == m_Data)
             {
                 aWriter.Write((byte)JSONBinaryTag.IntValue);
                 aWriter.Write(AsInt);
                 return;
             }
             tmp.AsFloat = AsFloat;
-            if (tmp.m_Data == this.m_Data)
+            if (tmp.m_Data == m_Data)
             {
                 aWriter.Write((byte)JSONBinaryTag.FloatValue);
                 aWriter.Write(AsFloat);
                 return;
             }
             tmp.AsDouble = AsDouble;
-            if (tmp.m_Data == this.m_Data)
+            if (tmp.m_Data == m_Data)
             {
                 aWriter.Write((byte)JSONBinaryTag.DoubleValue);
                 aWriter.Write(AsDouble);
@@ -1000,7 +1000,7 @@ namespace SimpleJSON
             }
 
             tmp.AsBool = AsBool;
-            if (tmp.m_Data == this.m_Data)
+            if (tmp.m_Data == m_Data)
             {
                 aWriter.Write((byte)JSONBinaryTag.BoolValue);
                 aWriter.Write(AsBool);
@@ -1118,7 +1118,7 @@ namespace SimpleJSON
         {
             if (b == null)
                 return true;
-            return System.Object.ReferenceEquals(a, b);
+            return ReferenceEquals(a, b);
         }
 
         public static bool operator !=(JSONLazyCreator a, object b)
@@ -1129,7 +1129,7 @@ namespace SimpleJSON
         {
             if (obj == null)
                 return true;
-            return System.Object.ReferenceEquals(this, obj);
+            return ReferenceEquals(this, obj);
         }
         public override int GetHashCode()
         {
@@ -1243,19 +1243,19 @@ namespace SimpleJSON
         public StringWalker(string s)
         {
             _s = s;
-            this.Index = -1;
+            Index = -1;
         }
 
         public bool MoveNext()
         {
-            if (this.Index == _s.Length - 1)
+            if (Index == _s.Length - 1)
                 return false;
 
             if (IsEscaped == false)
                 IsEscaped = CurrentChar == '\\';
             else
                 IsEscaped = false;
-            this.Index++;
+            Index++;
             CurrentChar = _s[Index];
             return true;
         }
@@ -1318,78 +1318,78 @@ namespace SimpleJSON
         {
             while (MoveNextChar())
             {
-                if (this._quoted == false && this.IsOpenBracket())
+                if (_quoted == false && IsOpenBracket())
                 {
-                    this.WriteCurrentLine();
-                    this.AddCharToLine();
-                    this.WriteCurrentLine();
+                    WriteCurrentLine();
+                    AddCharToLine();
+                    WriteCurrentLine();
                     _writer.Indent();
                 }
-                else if (this._quoted == false && this.IsCloseBracket())
+                else if (_quoted == false && IsCloseBracket())
                 {
-                    this.WriteCurrentLine();
+                    WriteCurrentLine();
                     _writer.UnIndent();
-                    this.AddCharToLine();
+                    AddCharToLine();
                 }
-                else if (this._quoted == false && this.IsColon())
+                else if (_quoted == false && IsColon())
                 {
-                    this.AddCharToLine();
-                    this.WriteCurrentLine();
+                    AddCharToLine();
+                    WriteCurrentLine();
                 }
                 else
                 {
                     AddCharToLine();
                 }
             }
-            this.WriteCurrentLine();
+            WriteCurrentLine();
             return _writer.ToString();
         }
 
         private bool MoveNextChar()
         {
             bool success = _walker.MoveNext();
-            if (this.IsApostrophe())
+            if (IsApostrophe())
             {
-                this._quoted = !_quoted;
+                _quoted = !_quoted;
             }
             return success;
         }
 
         public bool IsApostrophe()
         {
-            return this._walker.CurrentChar == '"' && this._walker.IsEscaped == false;
+            return _walker.CurrentChar == '"' && _walker.IsEscaped == false;
         }
 
         public bool IsOpenBracket()
         {
-            return this._walker.CurrentChar == '{'
-                || this._walker.CurrentChar == '[';
+            return _walker.CurrentChar == '{'
+                || _walker.CurrentChar == '[';
         }
 
         public bool IsCloseBracket()
         {
-            return this._walker.CurrentChar == '}'
-                || this._walker.CurrentChar == ']';
+            return _walker.CurrentChar == '}'
+                || _walker.CurrentChar == ']';
         }
 
         public bool IsColon()
         {
-            return this._walker.CurrentChar == ',';
+            return _walker.CurrentChar == ',';
         }
 
         private void AddCharToLine()
         {
-            this._currentLine.Append(_walker.CurrentChar);
+            _currentLine.Append(_walker.CurrentChar);
         }
 
         private void WriteCurrentLine()
         {
-            string line = this._currentLine.ToString().Trim();
+            string line = _currentLine.ToString().Trim();
             if (line.Length > 0)
             {
                 _writer.WriteLine(line);
             }
-            this.ResetLine();
+            ResetLine();
         }
     };
 }

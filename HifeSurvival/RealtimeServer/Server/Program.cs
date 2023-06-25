@@ -7,10 +7,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using ServerCore;
 using System.Linq;
+using Server.GameData;
 
 namespace Server
 {
-	class Program
+    class Program
 	{
 		static Listener _listener = new Listener();
 		
@@ -21,7 +22,7 @@ namespace Server
 			// IPHostEntry ipHost = Dns.GetHostEntry(host);
 			// IPAddress ipAddr = ipHost.AddressList.First(ip => ip.AddressFamily == AddressFamily.InterNetwork);
 			
-			await StaticData.Instance.Init();
+			await GameDataLoader.Instance.Init();
 
 			IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 7777);
             // endPoint = new IPEndPoint(IPAddress.Parse("192.168.0.3"), 7777);

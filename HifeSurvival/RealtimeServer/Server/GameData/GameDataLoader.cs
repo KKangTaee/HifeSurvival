@@ -1,22 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
-using SimpleJSON;
 using System;
 using System.Threading.Tasks;
 using System.Linq;
 
-namespace Server
+namespace Server.GameData
 {
-    public class StaticData
+    public class GameDataLoader
     {
-        private static StaticData _instance;
+        private static GameDataLoader _instance;
 
-        public static StaticData Instance
+        public static GameDataLoader Instance
         {
             get
             {
                 if (_instance == null)
-                    _instance = new StaticData();
+                    _instance = new GameDataLoader();
 
                 return _instance;
             }
@@ -78,7 +77,7 @@ namespace Server
                 {
                     JSONNode batchDataJson = JSONNode.Parse(jsonStr);
 
-                    System.Console.WriteLine(jsonStr);
+                    Console.WriteLine(jsonStr);
 
                     foreach (JSONNode node in batchDataJson["valueRanges"].AsArray)
                     {
@@ -106,7 +105,7 @@ namespace Server
                         {
                             ItemDict = JsonToDictionaryGeneric.ParseJsonToDictionary<Item>(node.ToString());
                         }
-                        else if(rangeValue.Equals("chapter_data"))
+                        else if (rangeValue.Equals("chapter_data"))
                         {
                             ChapaterDataDict = JsonToDictionaryGeneric.ParseJsonToDictionary<ChapterData>(node.ToString());
                         }
@@ -125,7 +124,7 @@ namespace Server
         {
             public string json;
 
-            [System.Serializable]
+            [Serializable]
             public class SheetData
             {
                 public string range;
@@ -240,14 +239,14 @@ namespace Server
         }
 
 
-        [System.Serializable]
+        [Serializable]
         public class Systems
         {
             public string key;
             public string value;
         }
 
-        [System.Serializable]
+        [Serializable]
         public class Heros
         {
             public int key;

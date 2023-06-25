@@ -463,7 +463,7 @@ public class GameMode
     }
 
 
-    public void OnRecvDropItem(S_DropReward inPacket)
+    public void OnRecvDropReward(S_DropReward inPacket)
     {
         OnRecvDropRewardHandler?.Invoke(inPacket);
     }

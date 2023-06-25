@@ -73,7 +73,7 @@ namespace Server.Helper
             return (float)Math.Sqrt(dx * dx + dy * dy + dz * dz);
         }
 
-        public static string PrintPVec3(this PVec3 pVec)
+        public static string Print(this PVec3 pVec)
         {
             return $"[{pVec.x}, {pVec.y}, {pVec.z}]";
         }

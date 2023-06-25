@@ -51,7 +51,6 @@ namespace Server
 
         protected override void ChangeState<P>(EStatus inStatue, P inParam)
         {
-            Logger.GetInstance().Debug($"state : {inStatue}");
             _stateMachine.OnChangeState(inStatue, this, inParam);
         }
 

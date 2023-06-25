@@ -29,14 +29,15 @@ namespace Server
             PacketManager.Instance.BindHandler(new ServerPacketHandler());
             _listener.Init(endPoint, () => { return SessionManager.Instance.Generate(); });
 
-            Logger.GetInstance().Debug("Listening...");
+            Logger.GetInstance().Debug($"Listening... ServerTime {HTimer.GetCurrentTimestamp()}");
 
 			while (true)
 			{
 				JobTimer.Instance.Flush();
 			}
 		}
-	}
+
+    }
 }
 
 // 어드레스 리스트

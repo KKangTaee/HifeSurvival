@@ -112,6 +112,7 @@ namespace Server
             dropItemDelegate = null;
             return;
         }
+
     }
 
 
@@ -158,10 +159,6 @@ namespace Server
 
             public void Update(MonsterEntity inSelf, in IStateParam inParam = default)
             {
-                if (inParam is AttackParam attack)
-                {
-                    updateAttack(inSelf, (PlayerEntity)attack.target);
-                }
             }
 
             private void updateAttack(MonsterEntity inSelf, PlayerEntity inOther)
@@ -169,25 +166,7 @@ namespace Server
                 if (this == null || inSelf == null)
                     return;
 
-                if(inSelf.AIController.ExecuteAttack(inOther, out int damageValue))
-                {
-                    CS_Attack attackPacket = new CS_Attack()
-                    {
-                        toIsPlayer = true,
-                        toId = inOther.targetId,
-                        fromIsPlayer = false,
-                        fromId = inSelf.targetId,
-                        attackValue = damageValue,
-                    };
-                    inSelf.broadcaster.Broadcast(attackPacket);
-                }
-
-                JobTimer.Instance.Push(() => {
-                    inSelf.Attack(new AttackParam()
-                    {
-                        target = inOther,
-                    });
-                }, (int)(inOther.stat.attackSpeed * 1000));
+                inSelf.AIController.ExecuteAttack();
             }
         }
 
@@ -197,6 +176,8 @@ namespace Server
             {
                 if (inParam is DeadParam deadParam)
                 {
+                    inSelf.AIController.OnMonsterDead();
+
                     S_Dead deadPacket = new S_Dead()
                     {
                         toIsPlayer = true,
@@ -208,7 +189,11 @@ namespace Server
                     inSelf.broadcaster.Broadcast(deadPacket);
 
                     inSelf.DropItem();
-                    inSelf.StartRespawning();
+
+                    if(inSelf.IsGroupAllDead())
+                    {
+                        inSelf.StartRespawning();
+                    }
                 }
             }
 
@@ -239,11 +224,16 @@ namespace Server
 
             public void Exit(MonsterEntity inSelf, in IStateParam inParam = default)
             {
-
+                
             }
 
             private void updateMove(MonsterEntity inSelf, MoveParam inParam)
             {
+                Logger.GetInstance().Debug("UpdateMove");
+                    
+                inSelf.AIController.UpdateNextMove(inParam);
+                inSelf.AIController.SyncMove();
+
                 UpdateLocationBroadcast move = new UpdateLocationBroadcast()
                 {
                     targetId = inSelf.targetId,

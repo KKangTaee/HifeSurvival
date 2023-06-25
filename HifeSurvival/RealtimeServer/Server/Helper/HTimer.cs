@@ -8,8 +8,7 @@ namespace ServerCore
     {
         public static long GetCurrentTimestamp()
         {
-            var dto = new DateTimeOffset();
-            return dto.ToUnixTimeMilliseconds();
+            return DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         }
     }
 }

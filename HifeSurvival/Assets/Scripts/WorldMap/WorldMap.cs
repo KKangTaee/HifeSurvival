@@ -117,7 +117,9 @@ public class WorldMap : MonoBehaviour
 
     public void AddWorldObject<T>(T inObj) where T : WorldObjectBase
     {
-        if(_worldObjDict.TryGetValue(typeof(T), out var list) == true)
+        var type = inObj.GetType();
+
+        if(_worldObjDict.TryGetValue(type, out var list) == true)
         {
             list.Add(inObj);
         }
@@ -126,7 +128,7 @@ public class WorldMap : MonoBehaviour
             var objList = new List<WorldObjectBase>();
             objList.Add(inObj);
 
-            _worldObjDict.Add(typeof(T), objList);
+            _worldObjDict.Add(type, objList);
         }
     }
 

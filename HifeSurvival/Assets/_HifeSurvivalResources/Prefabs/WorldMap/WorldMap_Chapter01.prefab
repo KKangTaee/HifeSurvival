@@ -49,8 +49,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 095fe32999793994eaa61a91dfc65944, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spawnType: 0
-  _groupId: 0
+  _spawnType: 1
+  _groupId: 303
   _pivotArr:
   - {fileID: 5012924746347010565}
   - {fileID: 1724589064457588503}
@@ -136,12 +136,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 095fe32999793994eaa61a91dfc65944, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spawnType: 0
-  _groupId: 0
+  _spawnType: 1
+  _groupId: 108
   _pivotArr:
   - {fileID: 2565553172622479992}
   - {fileID: 265914603622067248}
   - {fileID: 3899933595452553454}
+  - {fileID: 3283293278872083523}
   - {fileID: 3283293278872083523}
 --- !u!1 &252994616746494608
 GameObject:
@@ -316,8 +317,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 095fe32999793994eaa61a91dfc65944, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spawnType: 0
-  _groupId: 0
+  _spawnType: 1
+  _groupId: 205
   _pivotArr:
   - {fileID: 7979347957055733587}
   - {fileID: 4637107184049659413}
@@ -403,12 +404,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 095fe32999793994eaa61a91dfc65944, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spawnType: 0
-  _groupId: 0
+  _spawnType: 1
+  _groupId: 107
   _pivotArr:
   - {fileID: 1152909592268505756}
   - {fileID: 6028338408541345756}
   - {fileID: 1949862022884271143}
+  - {fileID: 218227533217983250}
   - {fileID: 218227533217983250}
 --- !u!1 &690820285496700079
 GameObject:
@@ -490,12 +492,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 095fe32999793994eaa61a91dfc65944, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spawnType: 0
-  _groupId: 0
+  _spawnType: 1
+  _groupId: 110
   _pivotArr:
   - {fileID: 4024566569320476060}
   - {fileID: 4633766095536315054}
   - {fileID: 5623527641370398301}
+  - {fileID: 6414407750844906310}
   - {fileID: 6414407750844906310}
 --- !u!1 &1035983681146014620
 GameObject:
@@ -639,8 +642,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 095fe32999793994eaa61a91dfc65944, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spawnType: 0
-  _groupId: 0
+  _spawnType: 1
+  _groupId: 201
   _pivotArr:
   - {fileID: 1657995908985189744}
   - {fileID: 6380339882546519109}
@@ -695,12 +698,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 095fe32999793994eaa61a91dfc65944, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spawnType: 0
-  _groupId: 0
+  _spawnType: 1
+  _groupId: 103
   _pivotArr:
   - {fileID: 6857072438964551718}
   - {fileID: 8853114310027161666}
   - {fileID: 1946540957280876845}
+  - {fileID: 8513950466929971183}
   - {fileID: 8513950466929971183}
 --- !u!1 &1490516106052360979
 GameObject:
@@ -813,12 +817,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 095fe32999793994eaa61a91dfc65944, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spawnType: 0
-  _groupId: 0
+  _spawnType: 1
+  _groupId: 104
   _pivotArr:
   - {fileID: 3585860251017138220}
   - {fileID: 1141658518961904953}
   - {fileID: 136431151784643192}
+  - {fileID: 5839408443371132761}
   - {fileID: 5839408443371132761}
 --- !u!1 &1789152696849126532
 GameObject:
@@ -1241,8 +1246,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 095fe32999793994eaa61a91dfc65944, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spawnType: 0
-  _groupId: 0
+  _spawnType: 1
+  _groupId: 302
   _pivotArr:
   - {fileID: 1667373193193379119}
   - {fileID: 4575982376501016776}
@@ -1514,13 +1519,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 095fe32999793994eaa61a91dfc65944, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spawnType: 0
-  _groupId: 0
+  _spawnType: 1
+  _groupId: 101
   _pivotArr:
   - {fileID: 1210820189030566677}
   - {fileID: 4889449924270484161}
   - {fileID: 5545686273923457781}
   - {fileID: 2097169476371828187}
+  - {fileID: 7070186004009533627}
 --- !u!1 &2665167751691902939
 GameObject:
   m_ObjectHideFlags: 0
@@ -1725,8 +1731,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 095fe32999793994eaa61a91dfc65944, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spawnType: 0
-  _groupId: 0
+  _spawnType: 1
+  _groupId: 204
   _pivotArr:
   - {fileID: 278976840284147258}
   - {fileID: 6620160047823523426}
@@ -1998,8 +2004,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 095fe32999793994eaa61a91dfc65944, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spawnType: 0
-  _groupId: 0
+  _spawnType: 1
+  _groupId: 207
   _pivotArr:
   - {fileID: 3678510086458216267}
   - {fileID: 5138372607831676892}
@@ -2178,7 +2184,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _spawnType: 0
-  _groupId: 0
+  _groupId: 1
   _pivotArr:
   - {fileID: 477078852737961103}
   - {fileID: 8935626303186440935}
@@ -2200,7 +2206,7 @@ GameObject:
   - component: {fileID: 6859113487094642080}
   m_Layer: 0
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: WorldMap_Collider
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -7430,7 +7436,7 @@ Tilemap:
     m_Data: {r: 1, g: 1, b: 1, a: 1}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_Origin: {x: -27, y: -28, z: 0}
   m_Size: {x: 52, y: 52, z: 1}
   m_TileAnchor: {x: 0.5, y: 0.5, z: 0}
@@ -7509,7 +7515,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4263333815622227395}
-  m_BodyType: 0
+  m_BodyType: 2
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -15565,8 +15571,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 095fe32999793994eaa61a91dfc65944, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spawnType: 0
-  _groupId: 0
+  _spawnType: 1
+  _groupId: 208
   _pivotArr:
   - {fileID: 8120333725190778926}
   - {fileID: 2443879382937889994}
@@ -15838,13 +15844,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 095fe32999793994eaa61a91dfc65944, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spawnType: 0
-  _groupId: 0
+  _spawnType: 1
+  _groupId: 102
   _pivotArr:
   - {fileID: 8337820590020328526}
   - {fileID: 8954775923623737736}
   - {fileID: 2351465121205548276}
   - {fileID: 4707220000761524652}
+  - {fileID: 3513098721851986761}
 --- !u!1 &4787474635234973319
 GameObject:
   m_ObjectHideFlags: 0
@@ -47001,12 +47008,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 095fe32999793994eaa61a91dfc65944, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spawnType: 0
-  _groupId: 0
+  _spawnType: 1
+  _groupId: 109
   _pivotArr:
   - {fileID: 8528312621175233169}
   - {fileID: 1096627749899577220}
   - {fileID: 9171808269742371564}
+  - {fileID: 2344857042961854817}
   - {fileID: 2344857042961854817}
 --- !u!1 &5706826732483501802
 GameObject:
@@ -47088,12 +47096,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 095fe32999793994eaa61a91dfc65944, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spawnType: 0
-  _groupId: 0
+  _spawnType: 1
+  _groupId: 105
   _pivotArr:
   - {fileID: 6603147168547280832}
   - {fileID: 5859584164985060413}
   - {fileID: 4483020549580890463}
+  - {fileID: 8302555593205767219}
   - {fileID: 8302555593205767219}
 --- !u!1 &5845471880413641348
 GameObject:
@@ -47297,7 +47306,7 @@ GameObject:
   - component: {fileID: 4969685494683340758}
   m_Layer: 0
   m_Name: Wall
-  m_TagString: Untagged
+  m_TagString: WorldMap_Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -59763,8 +59772,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _ground: {fileID: 4869044857899627041}
-  _wall: {fileID: 0}
-  _collider: {fileID: 0}
+  _wall: {fileID: 8535022799047356549}
+  _collider: {fileID: 3812265820523500546}
   _objectRoot: {fileID: 1515615819248696219}
 --- !u!1 &6462653215847999248
 GameObject:
@@ -59846,8 +59855,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 095fe32999793994eaa61a91dfc65944, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spawnType: 0
-  _groupId: 0
+  _spawnType: 1
+  _groupId: 206
   _pivotArr:
   - {fileID: 2989319999413490223}
   - {fileID: 6506961006223867267}
@@ -60464,8 +60473,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 095fe32999793994eaa61a91dfc65944, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spawnType: 0
-  _groupId: 0
+  _spawnType: 1
+  _groupId: 202
   _pivotArr:
   - {fileID: 8065790007902259925}
   - {fileID: 8353397064210114709}
@@ -60551,12 +60560,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 095fe32999793994eaa61a91dfc65944, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spawnType: 0
-  _groupId: 0
+  _spawnType: 1
+  _groupId: 111
   _pivotArr:
   - {fileID: 4196272733888228346}
   - {fileID: 5470410682915942516}
   - {fileID: 3585383129542277097}
+  - {fileID: 147268454602139830}
   - {fileID: 147268454602139830}
 --- !u!1 &7515607237836519816
 GameObject:
@@ -60646,8 +60656,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 095fe32999793994eaa61a91dfc65944, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spawnType: 0
-  _groupId: 0
+  _spawnType: 1
+  _groupId: 304
   _pivotArr:
   - {fileID: 7937899147780176660}
   - {fileID: 6926668143460837489}
@@ -60702,12 +60712,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 095fe32999793994eaa61a91dfc65944, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spawnType: 0
-  _groupId: 0
+  _spawnType: 1
+  _groupId: 106
   _pivotArr:
   - {fileID: 6215252972152748416}
   - {fileID: 6587605043708476406}
   - {fileID: 1633903054708329475}
+  - {fileID: 7056633902336429007}
   - {fileID: 7056633902336429007}
 --- !u!1 &7621327685328345145
 GameObject:
@@ -60851,8 +60862,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 095fe32999793994eaa61a91dfc65944, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spawnType: 0
-  _groupId: 0
+  _spawnType: 1
+  _groupId: 203
   _pivotArr:
   - {fileID: 6131883400976544902}
   - {fileID: 200386404812789893}
@@ -61031,8 +61042,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 095fe32999793994eaa61a91dfc65944, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spawnType: 0
-  _groupId: 0
+  _spawnType: 1
+  _groupId: 301
   _pivotArr:
   - {fileID: 3986508986851247232}
   - {fileID: 5803299057397900523}

@@ -35,4 +35,4 @@ MonoBehaviour:
   m_Flags: 1
   m_ColliderType: 1
   _coord: {x: 0, y: 0, z: 0}
-  _isBlock: 0
+  _isBlock: 1

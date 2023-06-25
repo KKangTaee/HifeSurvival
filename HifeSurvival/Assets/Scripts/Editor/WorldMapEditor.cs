@@ -40,6 +40,7 @@ public class WorldMapEditor : Editor
             canGoTile = wm.GetBackgroundCanGoTileList();
 
             wm.SetupToWorldObject();
+
             spawnList = wm.GetWorldObjEnumerable<WorldSpawn>().Select(x => x.GetSpawnData()).ToList();
         }
 

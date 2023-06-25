@@ -21,7 +21,7 @@ namespace Server
             this.monster = monster;
         }
 
-        public void ExecuteAttack()
+        public void AttackRoutine()
         {
             if (monster.IsDead())
             {
@@ -104,7 +104,7 @@ namespace Server
             }
 
             JobTimer.Instance.Push(() => {
-                ExecuteAttack();
+                AttackRoutine();
             }, 250);
         }
 
@@ -119,7 +119,7 @@ namespace Server
             return null;
         }
 
-        public void SyncMove()
+        public void MoveRoutine()
         {
             if(lastMoveInfo == null)
             {
@@ -151,7 +151,7 @@ namespace Server
             else
             {
                 JobTimer.Instance.Push(() => {
-                    SyncMove();
+                    MoveRoutine();
                 }, 250);
             }
         }

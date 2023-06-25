@@ -130,7 +130,7 @@ namespace Server
         {
             public void Enter(MonsterEntity inSelf, in IStateParam inParam = default)
             {
-                
+                inSelf.AIController.UpdateNextMove(null);
             }
 
             public void Exit(MonsterEntity inSelf, in IStateParam inParam = default)
@@ -148,10 +148,7 @@ namespace Server
         {
             public void Enter(MonsterEntity inSelf, in IStateParam inParam = default)
             {
-                if (inParam is AttackParam attack)
-                {
-                    updateAttack(inSelf, (PlayerEntity)attack.target);
-                }
+                inSelf.AIController.AttackRoutine();
             }
 
             public void Exit(MonsterEntity inSelf, in IStateParam inParam = default)
@@ -162,14 +159,6 @@ namespace Server
 
             public void Update(MonsterEntity inSelf, in IStateParam inParam = default)
             {
-            }
-
-            private void updateAttack(MonsterEntity inSelf, PlayerEntity inOther)
-            {
-                if (this == null || inSelf == null)
-                    return;
-
-                inSelf.AIController.ExecuteAttack();
             }
         }
 
@@ -235,7 +224,7 @@ namespace Server
                 Logger.GetInstance().Debug("UpdateMove");
                     
                 inSelf.AIController.UpdateNextMove(inParam);
-                inSelf.AIController.SyncMove();
+                inSelf.AIController.MoveRoutine();
 
                 UpdateLocationBroadcast move = new UpdateLocationBroadcast()
                 {

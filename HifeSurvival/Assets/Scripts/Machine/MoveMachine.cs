@@ -14,7 +14,7 @@ public class MoveMachine : MonoBehaviour
     
 
     private Action _doneCallback;
-    private Action<Vector3> _updateDirCallback;
+    private Action<Vector3> _dirCallback;
     private Func<bool> _stopFunc;
 
     public Vector3 CurrDir { get; private set; }
@@ -64,12 +64,13 @@ public class MoveMachine : MonoBehaviour
         StartCoroutine(nameof(Co_MoveLerpExpect));
     }
 
-    public void StartMoveLerpTarget(EntityObject inTarget, float inSpeed, Func<bool> inStopFunc, Action doneCallback)
+    public void StartMoveLerpTarget(EntityObject inTarget, float inSpeed, Func<bool> inStopFunc, Action<Vector3> dirCallback, Action doneCallback)
     {
         _target = inTarget;
         _currSpeed = inSpeed;
         _stopFunc = inStopFunc;
         _doneCallback = doneCallback;
+        _dirCallback = dirCallback;
 
         StartCoroutine(nameof(Co_MoveLerpTarget));
     }
@@ -105,6 +106,9 @@ public class MoveMachine : MonoBehaviour
         while(_stopFunc?.Invoke() == false)
         {
             var dir = GetDir(_target.transform.position);
+            
+            _dirCallback?.Invoke(dir);
+            
             transform.position += (dir * _currSpeed * Time.deltaTime);
 
             yield return null;

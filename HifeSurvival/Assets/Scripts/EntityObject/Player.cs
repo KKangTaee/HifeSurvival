@@ -232,6 +232,7 @@ public partial class Player : EntityObject
         MoveLerpTarget(inTarget,
                        inTarget.TargetEntity.stat.moveSpeed,
                       ()=> CanAttack(inTarget.GetPos()),
+                      (dir) => _anim.OnWalk(dir),
                       doneCallback);
     }
 

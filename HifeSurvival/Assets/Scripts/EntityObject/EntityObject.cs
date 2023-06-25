@@ -86,9 +86,9 @@ public abstract class EntityObject : MonoBehaviour
         _moveMachine.StartMoveLerpExpect(inCurrPos, inDestPos, inSpeed, inTimeStamp, doneCallback);
     }
 
-    public void MoveLerpTarget(EntityObject inTarget, float inSpeed, Func<bool> inStopFunc, Action doneCallback)
+    public void MoveLerpTarget(EntityObject inTarget, float inSpeed, Func<bool> inStopFunc, Action<Vector3> dirCallback, Action doneCallback)
     {
-        _moveMachine.StartMoveLerpTarget(inTarget, inSpeed, inStopFunc, doneCallback);
+        _moveMachine.StartMoveLerpTarget(inTarget, inSpeed, inStopFunc, dirCallback, doneCallback);
     }
 
 

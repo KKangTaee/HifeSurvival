@@ -6,18 +6,6 @@ using ServerCore;
 
 namespace Server
 {
-    public class EntityItem
-    {
-        public int itemSlotId;
-        public int itemKey_Static;
-        public int level;
-        public int str;
-        public int def;
-        public int hp;
-        public int cooltime;
-        public bool canUse;
-    }
-
     public struct RewardData
     {
 

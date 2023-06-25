@@ -91,24 +91,4 @@ namespace Server
             }
         }
     }
-
-
-
-    //-----------------------
-    // Player StateMachine
-    //-----------------------
-
-    public class PlayerItem
-    {
-        public int itemType;
-        public int level;
-
-        public int str;
-        public int def;
-        public int hp;
-
-        public int cooltime;
-
-        public bool canUse;
-    }
 }

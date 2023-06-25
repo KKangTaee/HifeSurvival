@@ -67,11 +67,15 @@ namespace Server
 
             if (attacker.IsPlayer)
             {
-                AIController.AddAggro(attacker);
-                Attack(new AttackParam()
+                foreach (var monster in group.GetMonsterGroupIter())
                 {
-                    target = attacker,
-                });
+                    monster.Value.AIController.AddAggro(attacker);
+
+                    monster.Value.Attack(new AttackParam()
+                    {
+                        target = attacker,
+                    });
+                }
             }
         }
 
@@ -112,7 +116,6 @@ namespace Server
             dropItemDelegate = null;
             return;
         }
-
     }
 
 
@@ -291,8 +294,13 @@ namespace Server
             _monstersDict.Add(inEntity.targetId, inEntity);
         }
 
-
-
+        public IEnumerable<KeyValuePair<int, MonsterEntity>> GetMonsterGroupIter()
+        {
+            foreach (KeyValuePair<int, MonsterEntity> kvp in _monstersDict)
+            {
+                yield return kvp;
+            }
+        }
         public MonsterEntity GetMonsterEntity(int inTargetId)
         {
             if (_monstersDict.TryGetValue(inTargetId, out var monster) == true && monster != null)

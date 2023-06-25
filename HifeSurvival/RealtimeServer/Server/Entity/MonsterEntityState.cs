@@ -85,12 +85,14 @@ namespace Server
         {
             public void Enter(MonsterEntity inSelf, in IStateParam inParam = default)
             {
+                Logger.GetInstance().Debug("UpdateMove");
                 var param = (MoveParam)inParam;
                 updateMove(inSelf, param);
             }
 
             public void Update(MonsterEntity inSelf, in IStateParam inParam = default)
             {
+                Logger.GetInstance().Debug("UpdateMove");
                 var param = (MoveParam)inParam;
                 updateMove(inSelf, param);
             }

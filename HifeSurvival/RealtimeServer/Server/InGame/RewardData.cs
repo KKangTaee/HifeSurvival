@@ -8,11 +8,6 @@ namespace Server
 {
     public struct RewardData
     {
-
-        //--------------
-        // enums
-        //--------------
-
         public enum ERewardType
         {
             GOLD = 1,

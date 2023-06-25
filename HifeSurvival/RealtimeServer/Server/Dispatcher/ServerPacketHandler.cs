@@ -95,7 +95,7 @@ namespace Server
 
         public override void C_PickRewardHandler(PacketSession session, IPacket packet)
         {
-            throw new NotImplementedException();
+            
         }
 
         public override void S_GetItemHandler(PacketSession session, IPacket packet)

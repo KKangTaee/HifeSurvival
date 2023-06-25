@@ -50,6 +50,7 @@ namespace Server
             }
             else if (monster.CanAttack(currentTarget))
             {
+                StopMove();
                 var elapseTime = HTimer.GetCurrentTimestamp() - lastAttackTime;
                 if (elapseTime >= monster.stat.attackSpeed * 1000)
                 {

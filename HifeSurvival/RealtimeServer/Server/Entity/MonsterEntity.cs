@@ -34,9 +34,7 @@ namespace Server
             _stateMachine = new StateMachine<MonsterEntity>(smdic);
 
             if(group != null)
-            {
                 this.group = group;
-            }
 
             AIController = new MonsterAIController(this);
             dropItemDelegate += dropItem;

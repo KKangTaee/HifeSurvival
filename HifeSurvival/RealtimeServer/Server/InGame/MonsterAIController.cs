@@ -34,20 +34,14 @@ namespace Server
                     if (SelectTarget())
                     {
                         if (AttackRoutine())
-                        {
                             ClearLastMove();
-                        }
                         else
-                        {
                             monster.MoveToTarget(CurrentTarget().currentPos);
-                        }
                     }
                     else
                     {
                         if (monster.currentPos.IsSame(monster.spawnPos) == false)
-                        {
                             ReturnToRespawnArea();
-                        }
                     }
                 }
 
@@ -129,14 +123,10 @@ namespace Server
         private void MoveRoutine()
         {
             if (lastMoveInfo == null)
-            {
                 return;
-            }
 
             if (lastMovetime > lastMoveInfo.Value.timestamp)
-            {
                 return;
-            }
 
             lastMovetime = lastMoveInfo.Value.timestamp;
 

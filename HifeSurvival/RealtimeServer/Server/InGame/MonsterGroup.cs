@@ -26,7 +26,7 @@ namespace Server
 
         public IEnumerable<KeyValuePair<int, MonsterEntity>> GetMonsterGroupIter()
         {
-            foreach (KeyValuePair<int, MonsterEntity> kvp in _monstersDict)
+            foreach (var kvp in _monstersDict)
             {
                 yield return kvp;
             }

@@ -55,13 +55,6 @@ namespace Server
         public Entity target;
     }
 
-
-    public struct FollowTargetParam : IStateParam
-    {
-        public Entity target;
-    }
-
-
     public struct IdleParam : IStateParam
     {
         public PVec3 currentPos;
@@ -83,11 +76,6 @@ namespace Server
     }
 
     public struct UseSkillParam : IStateParam
-    {
-
-    }
-
-    public struct BackToSpawnParam :IStateParam
     {
 
     }

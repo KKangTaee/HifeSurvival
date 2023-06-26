@@ -11,7 +11,20 @@ namespace Server
         {
             public void Enter(MonsterEntity inSelf, in IStateParam inParam = default)
             {
-                inSelf.AIController.UpdateNextMove(null);
+                if(inParam is IdleParam idleParam)
+                {
+                    UpdateLocationBroadcast move = new UpdateLocationBroadcast()
+                    {
+                        targetId = inSelf.targetId,
+                        isPlayer = inSelf.IsPlayer,
+                        currentPos = idleParam.currentPos,
+                        targetPos = idleParam.currentPos,
+                        speed = inSelf.stat.moveSpeed,
+                        timestamp = idleParam.timestamp,
+                    };
+
+                    inSelf.broadcaster.Broadcast(move);
+                }
             }
 
             public void Exit(MonsterEntity inSelf, in IStateParam inParam = default)
@@ -29,17 +42,20 @@ namespace Server
         {
             public void Enter(MonsterEntity inSelf, in IStateParam inParam = default)
             {
-                inSelf.AIController.AttackRoutine();
+                if(inParam is AttackParam attackParam)
+                {
+                    inSelf.AIController.UpdateAggro(attackParam.target);
+                }
+            }
+
+            public void Update(MonsterEntity inSelf, in IStateParam inParam = default)
+            {
+
             }
 
             public void Exit(MonsterEntity inSelf, in IStateParam inParam = default)
             {
 
-            }
-
-
-            public void Update(MonsterEntity inSelf, in IStateParam inParam = default)
-            {
             }
         }
 
@@ -49,13 +65,13 @@ namespace Server
             {
                 if (inParam is DeadParam deadParam)
                 {
-                    inSelf.AIController.OnMonsterDead();
+                    inSelf.AIController.Clear();
 
                     S_Dead deadPacket = new S_Dead()
                     {
-                        toIsPlayer = true,
+                        toIsPlayer = false,
                         toId = inSelf.targetId,
-                        fromIsPlayer = false,
+                        fromIsPlayer = true,
                         fromId = deadParam.killerTarget.targetId,
                         respawnTime = 15,
                     };
@@ -85,16 +101,18 @@ namespace Server
         {
             public void Enter(MonsterEntity inSelf, in IStateParam inParam = default)
             {
-                Logger.GetInstance().Debug("UpdateMove");
-                var param = (MoveParam)inParam;
-                updateMove(inSelf, param);
+                if(inParam is MoveParam moveParam)
+                {
+                    updateMove(inSelf, moveParam);
+                }
             }
 
             public void Update(MonsterEntity inSelf, in IStateParam inParam = default)
             {
-                Logger.GetInstance().Debug("UpdateMove");
-                var param = (MoveParam)inParam;
-                updateMove(inSelf, param);
+                if (inParam is MoveParam moveParam)
+                {
+                    updateMove(inSelf, moveParam);
+                }
             }
 
             public void Exit(MonsterEntity inSelf, in IStateParam inParam = default)
@@ -105,7 +123,6 @@ namespace Server
             private void updateMove(MonsterEntity inSelf, MoveParam inParam)
             {
                 inSelf.AIController.UpdateNextMove(inParam);
-                inSelf.AIController.MoveRoutine();
 
                 UpdateLocationBroadcast move = new UpdateLocationBroadcast()
                 {

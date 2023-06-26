@@ -187,6 +187,23 @@ namespace Server
             return Status == EStatus.READY && _playersDict.Count < PLAYER_MAX_COUNT;
         }
 
+        private void OnModeStatusChange()
+        {
+            switch(Status)
+            {
+                case EStatus.GAME_START:
+                    {
+                        _monsterGroupDict.AsParallel().ForAll(mg => {
+                            foreach (var monster in mg.Value.GetMonsterGroupIter())
+                                monster.Value.ExecuteAI();
+                        });
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
 
         //---------------
         // Send
@@ -245,6 +262,7 @@ namespace Server
             // 게임종료 타이머도 추가해야함.
 
             Status = EStatus.GAME_START;
+            OnModeStatusChange();
         }
 
         public void SpawnMonsterTimer(string inPhase, int inSec)

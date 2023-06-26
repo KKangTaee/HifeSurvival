@@ -43,10 +43,6 @@ namespace Server
         }
 
 
-        //----------------
-        // overrides
-        //----------------
-
         protected override void ChangeState<P>(EStatus inStatue, P inParam)
         {
             _stateMachine.OnChangeState(inStatue, this, inParam);
@@ -54,6 +50,7 @@ namespace Server
 
         public override void OnDamaged(in Entity attacker)
         {
+            Logger.GetInstance().Debug($"Monster OnDamaged !  id{targetId}, dead? {IsDead()}");
             if(IsDead())
             {
                 Dead(new DeadParam()
@@ -66,9 +63,18 @@ namespace Server
 
             if (attacker.IsPlayer)
             {
+                Attack(new AttackParam()
+                {
+                    target = attacker,
+                });
+
                 foreach (var monster in group.GetMonsterGroupIter())
                 {
-                    monster.Value.AIController.AddAggro(attacker);
+                    if(monster.Value.targetId == targetId)
+                        continue;
+
+                    if (monster.Value.AIController.ExistAggro())
+                        continue;
 
                     monster.Value.Attack(new AttackParam()
                     {
@@ -76,6 +82,11 @@ namespace Server
                     });
                 }
             }
+        }
+
+        public void ExecuteAI()
+        {
+            AIController.StartAIRoutine();
         }
 
         //battle
@@ -88,6 +99,20 @@ namespace Server
         public bool OutOfSpawnRange()
         {
             return currentPos.DistanceTo(spawnPos) > 10;
+        }
+
+        public void OnAttackSuccess(in Entity target, int damageValue)
+        {
+            CS_Attack attackPacket = new CS_Attack()
+            {
+                toIsPlayer = true,
+                toId = target.targetId,
+                fromIsPlayer = false,
+                fromId = this.targetId,
+                attackValue = damageValue,
+            };
+
+            broadcaster.Broadcast(attackPacket);
         }
 
         public bool IsGroupAllDead()

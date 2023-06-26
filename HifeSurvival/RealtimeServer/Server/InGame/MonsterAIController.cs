@@ -8,119 +8,125 @@ namespace Server
 {
     public class MonsterAIController
     {
-        private Stack<Entity> aggroStack = new Stack<Entity>();
-        private Entity currentTarget = null;
+        private const int AI_CHECK_MS = 50;
+
+        private MonsterEntity monster = null;
+
+        private List<Entity> aggroStack = new List<Entity>();
+        private long lastAttackTime = 0;
+
         private MoveParam? lastMoveInfo = null;
         private long lastMovetime = 0;
-        private long lastAttackTime = 0;
-        private MonsterEntity monster = null;
+        private bool isReturningToRespawnArea = false;
 
         public MonsterAIController(MonsterEntity monster)
         {
             this.monster = monster;
         }
 
-        public void AttackRoutine()
+        //NOTE: Timer 클래스에 등록하게 될 예정.
+        public void StartAIRoutine()
         {
-            if (monster.IsDead())
+            if (!monster.IsDead())
             {
-                return;
-            }
-
-            if (monster.OutOfSpawnRange())
-            {
-                ClearAggro();
-                monster.MoveToRespawn();
-                return;
-            }
-
-            if (currentTarget == null)
-            {
-                currentTarget = GetNextTarget();
-                if (currentTarget == null)
+                if(!isReturningToRespawnArea)
                 {
-                    return;
-                }
-            }
-
-            bool isTargetDead = false;
-            if (currentTarget.IsDead())
-            {
-                isTargetDead = true;
-            }
-            else if (monster.CanAttack(currentTarget))
-            {
-                StopMove();
-                var elapseTime = HTimer.GetCurrentTimestamp() - lastAttackTime;
-                if (elapseTime >= monster.stat.attackSpeed * 1000)
-                {
-                    var damageValue = currentTarget.GetDamagedValue(monster.GetAttackValue());
-
-                    currentTarget.ReduceHP(damageValue);
-                    currentTarget.OnDamaged(monster);
-                    lastAttackTime = HTimer.GetCurrentTimestamp();
-
-                    if (currentTarget.IsDead())
+                    if (SelectTarget())
                     {
-                        isTargetDead = true;
+                        if (AttackRoutine())
+                        {
+                            ClearLastMove();
+                        }
+                        else
+                        {
+                            monster.MoveToTarget(CurrentTarget().currentPos);
+                        }
                     }
-
-                    CS_Attack attackPacket = new CS_Attack()
+                    else
                     {
-                        toIsPlayer = true,
-                        toId = currentTarget.targetId,
-                        fromIsPlayer = false,
-                        fromId = monster.targetId,
-                        attackValue = damageValue,
-                    };
+                        if (monster.currentPos.IsSame(monster.spawnPos) == false)
+                        {
+                            ReturnToRespawnArea();
+                        }
+                    }
+                }
 
-                    monster.broadcaster.Broadcast(attackPacket);
-                }
-                else
-                {
-                    Logger.GetInstance().Debug($"Attack elapseTime {elapseTime}");
-                }
-            }
-            else
-            {
-                monster.MoveToTarget(currentTarget.currentPos);
+                MoveRoutine();
             }
 
-
-            if (isTargetDead)
-            {
-                var nextTarget = GetNextTarget();
-                if (nextTarget != null)
-                {
-                    monster.Attack(new AttackParam()
-                    {
-                        target = nextTarget,
-                    });
-                }
-                else
-                {
-                    monster.MoveToRespawn();
-                }
-            }
 
             JobTimer.Instance.Push(() =>
             {
-                AttackRoutine();
-            }, 250);
+                StartAIRoutine();
+            }, AI_CHECK_MS);
         }
 
-        public Entity GetNextTarget()
+        public void ReturnToRespawnArea()
         {
-            if (ExistAggro())
+            isReturningToRespawnArea = true;
+            monster.MoveToRespawn();
+            Logger.GetInstance().Debug("ReturnToRespawnArea");
+        }
+
+        private bool SelectTarget()
+        {
+            if (monster.OutOfSpawnRange())
             {
-                currentTarget = PopBackAggroTarget();
-                return currentTarget;
+                ClearAggro();
+                return false;
             }
 
-            return null;
+            var currentTarget = CurrentTarget();
+            if (currentTarget != null && !currentTarget.IsDead())
+            {
+                return true;
+            }
+            else
+            {
+                while (ExistAggro())
+                {
+                    currentTarget = GetNextTarget();
+                    if (currentTarget != null && !currentTarget.IsDead())
+                        return true;
+                }
+            }
+
+            return false;
         }
 
-        public void MoveRoutine()
+        public void UpdateAggro(Entity target)
+        {
+            Logger.GetInstance().Debug($"aggroid : {target.targetId}, self : {monster.targetId}");
+            aggroStack.Add(target);
+        }
+
+        public void UpdateNextMove(MoveParam? moveParam)
+        {
+            lastMoveInfo = moveParam;
+        }
+
+        private bool AttackRoutine()
+        {
+            var currentTarget = CurrentTarget();
+            var bAttackSuccess = monster.CanAttack(currentTarget)
+                && HTimer.GetCurrentTimestamp() - lastAttackTime >= monster.stat.attackSpeed * 1000;
+
+            if (bAttackSuccess)
+            {
+                var damageValue = currentTarget.GetDamagedValue(monster.GetAttackValue());
+
+                currentTarget.ReduceHP(damageValue);
+                currentTarget.OnDamaged(monster);
+                lastAttackTime = HTimer.GetCurrentTimestamp();
+
+                monster.OnAttackSuccess(currentTarget, damageValue);
+            }
+
+            return bAttackSuccess;
+        }
+
+
+        private void MoveRoutine()
         {
             if (lastMoveInfo == null)
             {
@@ -136,53 +142,41 @@ namespace Server
 
             var currentPos = monster.currentPos;
             var targetPos = lastMoveInfo.Value.targetPos;
-            var totalDist = monster.currentPos.DistanceTo(targetPos);
 
-            float dirX = (targetPos.x - currentPos.x) / totalDist;
-            float dirY = (targetPos.y - currentPos.y) / totalDist;
-            float ratio = monster.stat.moveSpeed * 250 * 0.001f;
+            var normalizedVec = targetPos.SubtractPVec3(currentPos).NormalizePVec3();
+            float ratio = monster.stat.moveSpeed * AI_CHECK_MS * 0.001f;
 
-            monster.currentPos.x = currentPos.x + dirX * ratio;
-            monster.currentPos.y = currentPos.y + dirY * ratio;
+            monster.currentPos.x = currentPos.x + normalizedVec.x * ratio;
+            monster.currentPos.y = currentPos.y + normalizedVec.y * ratio;
 
             if (monster.currentPos.IsSame(targetPos))
             {
-                StopMove();
-            }
-            else
-            {
-                JobTimer.Instance.Push(() =>
+                Logger.GetInstance().Debug($"Arrived !! id : {monster.targetId}");
+
+                if (isReturningToRespawnArea)
                 {
-                    MoveRoutine();
-                }, 250);
+                    isReturningToRespawnArea = false;
+                    ClearAggro();
+                }
+
+                ClearLastMove();
             }
         }
 
-        public void UpdateNextMove(MoveParam? moveParam)
+        public void ClearLastMove()
         {
-            lastMoveInfo = moveParam;
+            lastMoveInfo = null;
+
+            monster.MoveStop(new IdleParam()
+            {
+                currentPos = monster.currentPos,
+                timestamp = HTimer.GetCurrentTimestamp()
+            });
         }
 
-        public void StopMove()
-        {
-            UpdateNextMove(null);
-        }
-
-        public void AddAggro(Entity target)
-        {
-            aggroStack.Push(target);
-            currentTarget = target;
-        }
-
-        public void ClearAggro()
+        private void ClearAggro()
         {
             aggroStack.Clear();
-            currentTarget = null;
-        }
-
-        public Entity PopBackAggroTarget()
-        {
-            return aggroStack.Pop();
         }
 
         public bool ExistAggro()
@@ -190,11 +184,32 @@ namespace Server
             return aggroStack.Count > 0;
         }
 
+        private Entity CurrentTarget()
+        {
+            if(ExistAggro())
+                return aggroStack[aggroStack.Count - 1];
 
-        public void OnMonsterDead()
+            return null;
+        }
+
+        private Entity GetNextTarget()
+        {
+            if (ExistAggro())
+            {
+                aggroStack.RemoveAt(aggroStack.Count - 1);
+
+                if(ExistAggro())
+                    return aggroStack[aggroStack.Count - 1];
+            }
+
+            return null;
+        }
+
+
+        public void Clear()
         {
             ClearAggro();
-            lastMoveInfo = null;
+            ClearLastMove();
         }
     }
 }

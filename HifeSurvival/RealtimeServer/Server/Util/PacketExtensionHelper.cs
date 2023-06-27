@@ -63,6 +63,11 @@ namespace Server
             }
         }
 
+        public static PVec3 NormalizeToTargetPVec3(this PVec3 inSelf, in PVec3 targetPos)
+        {
+            return targetPos.SubtractPVec3(inSelf).NormalizePVec3();
+        }
+
         public static float DistanceTo(this PVec3 inSelf, in PVec3 inOther)
         {
             float dx = inOther.x - inSelf.x;

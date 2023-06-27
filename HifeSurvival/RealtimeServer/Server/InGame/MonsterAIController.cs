@@ -102,10 +102,10 @@ namespace Server
         private bool AttackRoutine()
         {
             var currentTarget = CurrentTarget();
-            var bAttackSuccess = monster.CanAttack(currentTarget)
+            bool isAttackable = monster.CanAttack(currentTarget)
                 && HTimer.GetCurrentTimestamp() - lastAttackTime >= monster.stat.attackSpeed * 1000;
 
-            if (bAttackSuccess)
+            if (isAttackable)
             {
                 var damageValue = currentTarget.GetDamagedValue(monster.GetAttackValue());
 
@@ -116,7 +116,7 @@ namespace Server
                 monster.OnAttackSuccess(currentTarget, damageValue);
             }
 
-            return bAttackSuccess;
+            return isAttackable;
         }
 
 
@@ -133,7 +133,7 @@ namespace Server
             var currentPos = monster.currentPos;
             var targetPos = lastMoveInfo.Value.targetPos;
 
-            var normalizedVec = targetPos.SubtractPVec3(currentPos).NormalizePVec3();
+            var normalizedVec = currentPos.NormalizeToTargetPVec3(targetPos);
             float ratio = monster.stat.moveSpeed * AI_CHECK_MS * 0.001f;
 
             monster.currentPos.x = currentPos.x + normalizedVec.x * ratio;

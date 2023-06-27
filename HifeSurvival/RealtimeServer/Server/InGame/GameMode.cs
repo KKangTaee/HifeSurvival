@@ -170,15 +170,10 @@ namespace Server
 
         private void OnModeStatusChange()
         {
-            switch(Status)
+            switch (Status)
             {
                 case GameModeStatus.GameStart:
-                    {
-                        _monsterGroupDict.AsParallel().ForAll(mg => {
-                            foreach (var monster in mg.Value.GetMonsterGroupIter())
-                                monster.Value.ExecuteAI();
-                        });
-                    }
+                    _monsterGroupDict.AsParallel().ForAll(mg => { mg.Value.ExecuteGroupAI(); });
                     break;
                 default:
                     break;

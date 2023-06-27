@@ -12,14 +12,12 @@ static class DEFINE
     //Server
     public const int SEND_TICK_MS = 125;
 
-
     //Player
     public const int PLAYER_RESPAWN_MS = 15000;
 
     //Monster
     public const int AI_CHECK_MS = 50;
     public const int MONSTER_RESPAWN_SEC = 15;
-
 
     //Game
     public const int PLAYER_MAX_COUNT = 4;

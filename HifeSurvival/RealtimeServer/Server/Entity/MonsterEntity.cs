@@ -20,7 +20,6 @@ namespace Server
         private MonsterAIController AIController { get; set; }
         private event Action<string, PVec3> dropItemDelegate;
         private MonsterGroup group;
-        
 
         public MonsterEntity(MonsterGroup group, Action<string, PVec3> dropItem)
         {
@@ -66,19 +65,7 @@ namespace Server
                     target = attacker,
                 });
 
-                foreach (var monster in group.GetMonsterGroupIter())
-                {
-                    if(monster.Value.targetId == targetId)
-                        continue;
-
-                    if (monster.Value.AIController.ExistAggro())
-                        continue;
-
-                    monster.Value.Attack(new AttackParam()
-                    {
-                        target = attacker,
-                    });
-                }
+                group.OnAttack(targetId, attacker);
             }
         }
 
@@ -132,5 +119,7 @@ namespace Server
             dropItemDelegate = null;
             return;
         }
+
+        public bool ExistAggro() => AIController.ExistAggro();
     }
 }

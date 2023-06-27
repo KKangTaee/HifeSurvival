@@ -24,16 +24,24 @@ namespace Server
             _monstersDict.Add(inEntity.targetId, inEntity);
         }
 
-        public IEnumerable<KeyValuePair<int, MonsterEntity>> GetMonsterGroupIter()
+        public void ExecuteGroupAI()
         {
-            foreach (var kvp in _monstersDict)
-            {
-                yield return kvp;
-            }
+            foreach(var m in _monstersDict)
+                m.Value.ExecuteAI();
         }
+
+        public void OnAttack(int damagedTargetId, Entity attacker)
+        {
+            foreach (var m in _monstersDict.AsQueryable().Where(m => m.Value.targetId != damagedTargetId && !m.Value.ExistAggro()))
+                m.Value.Attack(new AttackParam() 
+                { 
+                    target = attacker, 
+                });
+        }
+
         public MonsterEntity GetMonsterEntity(int inTargetId)
         {
-            if (_monstersDict.TryGetValue(inTargetId, out var monster) == true && monster != null)
+            if (_monstersDict.TryGetValue(inTargetId, out var monster) && monster != null)
             {
                 return monster;
             }
@@ -68,7 +76,7 @@ namespace Server
                         stat = entity.stat.ConvertStat(),
                     };
                 }
-            }, RespawnTime * 1000);
+            }, RespawnTime * DEFINE.SEC_TO_MS);
         }
     }
 }

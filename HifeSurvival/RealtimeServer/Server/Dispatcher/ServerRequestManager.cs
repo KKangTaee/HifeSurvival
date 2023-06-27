@@ -66,11 +66,9 @@ namespace Server
                 }
 
                 var requestData = _requestQueue.Dequeue();
-
                 try
                 {
                     var response = await _client.GetAsync(requestData.URL, _cts.Token);
-
                     if (!response.IsSuccessStatusCode)
                     {
                         Logger.GetInstance().Error($"status code : {response.StatusCode}");

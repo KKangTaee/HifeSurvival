@@ -7,7 +7,7 @@ using DG.Tweening;
 public class MonsterUI : MonoBehaviour
 {
 
-    [SerializeField] Image IMG_hpBar;
+    [SerializeField] Slider SLD_hpBar;
 
     private int _maxHP;
     private int _currHP;
@@ -45,7 +45,7 @@ public class MonsterUI : MonoBehaviour
     public void UpdateHpBar()
     {
         // 바로 감소시키는 hpBar
-        IMG_hpBar.fillAmount = (float)_currHP / _maxHP;
+        SLD_hpBar.value = (float)_currHP / _maxHP;
     }
 
     public void DecreaseHP(int damageValue)

@@ -4,7 +4,7 @@ using System;
 using System.Threading.Tasks;
 using System.Linq;
 
-namespace Server.GameData
+namespace Server
 {
     public class GameDataLoader
     {

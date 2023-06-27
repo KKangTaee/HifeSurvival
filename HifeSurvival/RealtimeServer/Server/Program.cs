@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using ServerCore;
 using System.Linq;
-using Server.GameData;
 
 namespace Server
 {

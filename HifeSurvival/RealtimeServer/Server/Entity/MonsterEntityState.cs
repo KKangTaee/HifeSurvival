@@ -73,7 +73,7 @@ namespace Server
                         toId = inSelf.targetId,
                         fromIsPlayer = true,
                         fromId = deadParam.killerTarget.targetId,
-                        respawnTime = 15,
+                        respawnTime = DEFINE.MONSTER_RESPAWN_SEC,
                     };
                     inSelf.broadcaster.Broadcast(deadPacket);
 

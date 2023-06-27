@@ -8,8 +8,6 @@ namespace Server
 {
     public class MonsterAIController
     {
-        private const int AI_CHECK_MS = 50;
-
         private MonsterEntity monster = null;
 
         private List<Entity> aggroStack = new List<Entity>();
@@ -52,7 +50,7 @@ namespace Server
             JobTimer.Instance.Push(() =>
             {
                 StartAIRoutine();
-            }, AI_CHECK_MS);
+            }, DEFINE.AI_CHECK_MS);
         }
 
         public void ReturnToRespawnArea()
@@ -103,7 +101,7 @@ namespace Server
         {
             var currentTarget = CurrentTarget();
             bool isAttackable = monster.CanAttack(currentTarget)
-                && HTimer.GetCurrentTimestamp() - lastAttackTime >= monster.stat.attackSpeed * 1000;
+                && HTimer.GetCurrentTimestamp() - lastAttackTime >= monster.stat.attackSpeed * DEFINE.SEC_TO_MS;
 
             if (isAttackable)
             {
@@ -134,7 +132,7 @@ namespace Server
             var targetPos = lastMoveInfo.Value.targetPos;
 
             var normalizedVec = currentPos.NormalizeToTargetPVec3(targetPos);
-            float ratio = monster.stat.moveSpeed * AI_CHECK_MS * 0.001f;
+            float ratio = monster.stat.moveSpeed * DEFINE.AI_CHECK_MS * DEFINE.MS_TO_SEC;
 
             monster.currentPos.x = currentPos.x + normalizedVec.x * ratio;
             monster.currentPos.y = currentPos.y + normalizedVec.y * ratio;

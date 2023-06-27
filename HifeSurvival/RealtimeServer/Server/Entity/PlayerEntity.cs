@@ -75,7 +75,7 @@ namespace Server
                 };
 
                 broadcaster.Broadcast(respawn);
-            }, 15000);
+            }, DEFINE.PLAYER_RESPAWN_MS);
         }
 
         public override void OnDamaged(in Entity attacker)

@@ -97,7 +97,7 @@ namespace Server
             if (this != null && _isRunningFlush == true)
             {
                 Push(() => Flush());
-                JobTimer.Instance.Push(FlushRoom, 125);
+                JobTimer.Instance.Push(FlushRoom, DEFINE.SEND_TICK_MS);
             }
         }
 

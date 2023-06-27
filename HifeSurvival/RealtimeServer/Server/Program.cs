@@ -24,6 +24,7 @@ namespace Server
 			
 			await GameDataLoader.Instance.Init();
 
+			//TODO : 포트 번호 Config로 관리하기. 
 			IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 7777);
             // endPoint = new IPEndPoint(IPAddress.Parse("192.168.0.3"), 7777);
 

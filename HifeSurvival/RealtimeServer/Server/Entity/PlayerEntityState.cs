@@ -86,9 +86,6 @@ namespace Server
 
         public class MoveState : IState<PlayerEntity, IStateParam>
         {
-            private const int UPDATE_TIME = 125;
-
-
             public void Enter(PlayerEntity inSelf, in IStateParam inParam = default)
             {
                 var param = (MoveParam)inParam;
@@ -152,7 +149,7 @@ namespace Server
                         toId = inSelf.targetId,
                         fromIsPlayer = false,
                         fromId = deadParam.killerTarget.targetId,
-                        respawnTime = 15,
+                        respawnTime = DEFINE.MONSTER_RESPAWN_SEC,
                     };
                     inSelf.broadcaster.Broadcast(deadPacket);
 

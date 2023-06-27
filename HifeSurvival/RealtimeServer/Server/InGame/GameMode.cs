@@ -23,9 +23,6 @@ namespace Server
             NONE,
         }
 
-        private const int PLAYER_MAX_COUNT = 4;
-        private const int CONUTDOWN_SEC = 10;
-
         private Dictionary<int, PlayerEntity> _playersDict = new Dictionary<int, PlayerEntity>();
         private Dictionary<int, MonsterGroup> _monsterGroupDict = new Dictionary<int, MonsterGroup>();
 
@@ -184,7 +181,7 @@ namespace Server
 
         public bool CanJoinRoom()
         {
-            return Status == EStatus.READY && _playersDict.Count < PLAYER_MAX_COUNT;
+            return Status == EStatus.READY && _playersDict.Count < DEFINE.PLAYER_MAX_COUNT;
         }
 
         private void OnModeStatusChange()
@@ -278,22 +275,21 @@ namespace Server
                 };
 
                 _broadcaster.Broadcast(spawnMoster);
-            }, inSec * 1000);
+            }, inSec * DEFINE.SEC_TO_MS);
         }
 
         public void OnSendCountDown()
         {
             S_Countdown countdown = new S_Countdown()
             {
-                countdownSec = CONUTDOWN_SEC
+                countdownSec = DEFINE.START_COUNTDOWN_SEC
             };
 
             _broadcaster.Broadcast(countdown);
 
             Status = EStatus.COUNTDOWN;
 
-            // N초 후 자동으로 호출
-            JobTimer.Instance.Push(SendStartGame, CONUTDOWN_SEC * 1000);
+            JobTimer.Instance.Push(SendStartGame, DEFINE.START_COUNTDOWN_SEC * DEFINE.SEC_TO_MS);
         }
 
 

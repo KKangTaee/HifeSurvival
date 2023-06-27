@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ServerCore
+namespace Server
 {
-    public class HTimer
+    public class ServerTime
     {
         public static long GetCurrentTimestamp()
         {

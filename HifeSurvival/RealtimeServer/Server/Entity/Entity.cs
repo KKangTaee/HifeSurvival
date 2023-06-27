@@ -66,7 +66,7 @@ namespace Server
                 currentPos = currentPos,
                 targetPos = spawnPos,
                 speed = stat.moveSpeed,
-                timestamp = HTimer.GetCurrentTimestamp()
+                timestamp = ServerTime.GetCurrentTimestamp()
             });
         }
 
@@ -77,7 +77,7 @@ namespace Server
                 currentPos = currentPos,
                 targetPos = targetPos,
                 speed = stat.moveSpeed,
-                timestamp = HTimer.GetCurrentTimestamp()
+                timestamp = ServerTime.GetCurrentTimestamp()
             });
         }
 

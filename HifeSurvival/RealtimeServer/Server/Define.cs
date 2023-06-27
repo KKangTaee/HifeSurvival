@@ -9,8 +9,9 @@ static class DEFINE
     public const float MS_TO_SEC = 0.001f;
     public const int SEC_TO_MS = 1000;
 
-    //Server
+    //System
     public const int SEND_TICK_MS = 125;
+    public const int TIMER_SEQ_MAX_PER_GAME = 300;
 
     //Player
     public const int PLAYER_RESPAWN_MS = 15000;

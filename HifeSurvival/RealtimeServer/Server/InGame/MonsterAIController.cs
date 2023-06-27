@@ -62,13 +62,13 @@ namespace Server
         {
             var currentTarget = CurrentTarget();
 
-            if (HTimer.GetCurrentTimestamp() - lastAttackTime >= monster.stat.attackSpeed * DEFINE.SEC_TO_MS)
+            if (ServerTime.GetCurrentTimestamp() - lastAttackTime >= monster.stat.attackSpeed * DEFINE.SEC_TO_MS)
             {
                 var damagedVal = BattleCalculator.ComputeDamagedValue(monster.stat, currentTarget.stat);
 
                 currentTarget.ReduceHP(damagedVal);
                 currentTarget.OnDamaged(monster);
-                lastAttackTime = HTimer.GetCurrentTimestamp();
+                lastAttackTime = ServerTime.GetCurrentTimestamp();
 
                 monster.OnAttackSuccess(currentTarget, damagedVal);
             }
@@ -210,7 +210,7 @@ namespace Server
             monster.MoveStop(new IdleParam()
             {
                 currentPos = monster.currentPos,
-                timestamp = HTimer.GetCurrentTimestamp()
+                timestamp = ServerTime.GetCurrentTimestamp()
             });
         }
     }

@@ -58,7 +58,6 @@ namespace ServerCore
         public void Log(string verbose, string message, string manualMethodName = "")
         {
             var stackFrame = new StackFrame(2, true);
-
             var methodName = manualMethodName == "" ? stackFrame.GetMethod().Name : manualMethodName;
 
             string logMsg = $"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")}   {verbose}   {methodName} - {message}";

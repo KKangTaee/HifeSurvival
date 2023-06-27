@@ -53,13 +53,11 @@ namespace Server
             Status = EntityStatus.Dead;
             ChangeState(EntityStatus.Dead, inParam);
         }
-
         #endregion
 
 
-        #region Callback Event
         public abstract void OnDamaged(in Entity attacker);
-        #endregion
+
 
         public virtual void MoveToRespawn()
         {

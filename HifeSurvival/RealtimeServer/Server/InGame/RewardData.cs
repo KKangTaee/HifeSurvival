@@ -8,13 +8,6 @@ namespace Server
 {
     public struct RewardData
     {
-        public enum ERewardType
-        {
-            GOLD = 1,
-
-            ITEM = 2,
-        }
-
         public int rewardType;
         public int subType;
         public int count;
@@ -22,13 +15,11 @@ namespace Server
         public static RewardData[] Parse(string inItemIds)
         {
             var itemIdsSet = inItemIds.Split(',');
-
             var itemDataArr = new RewardData[itemIdsSet.Length];
 
             for (int i = 0; i < itemIdsSet.Length; i++)
             {
                 var split = itemIdsSet[i].Split(':');
-
                 if (split?.Length != 3)
                 {
                     Logger.GetInstance().Error($"itemData is wrong! : {itemIdsSet[i]}");

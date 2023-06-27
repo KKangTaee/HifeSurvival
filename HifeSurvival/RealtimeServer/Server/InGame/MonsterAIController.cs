@@ -105,7 +105,6 @@ namespace Server
             }
         }
 
-
         private bool SelectTarget()
         {
             if (BattleCalculator.IsOutOfSpawnArea(monster))
@@ -144,7 +143,6 @@ namespace Server
             Logger.GetInstance().Debug("ReturnToRespawnArea");
         }
 
-
         public void UpdateAggro(Entity target)
         {
             Logger.GetInstance().Debug($"aggroid : {target.targetId}, self : {monster.targetId}");
@@ -176,7 +174,6 @@ namespace Server
 
             return null;
         }
-
 
         public void Clear()
         {

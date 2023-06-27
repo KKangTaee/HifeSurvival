@@ -17,7 +17,6 @@ namespace Server
         public float moveSpeed { get; private set; }
         public float attackSpeed { get; private set; }
 
-
         public EntityStat(GameDataLoader.Heros heros)
         {
             str = heros.str;

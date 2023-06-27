@@ -32,7 +32,7 @@ namespace Server
                 if (GameDataLoader.Instance.MonstersGroupDict.TryGetValue(groupKey, out var group) == true)
                 {
                     var monsterKey = group.monsterGroups.Split(':');
-                    var spawnData = _worldMap.SpawnList.FirstOrDefault(x => x.spawnType == (int)WorldMap.ESpawnType.MONSTER &&
+                    var spawnData = _worldMap.SpawnList.FirstOrDefault(x => x.spawnType == (int)WorldMapSpawnType.Monster &&
                                                                          x.groupId == group.groupId);
 
                     if (spawnData == null)
@@ -100,9 +100,7 @@ namespace Server
         public List<PlayerSpawn> SpawnPlayer()
         {
             var playerList = new List<PlayerSpawn>();
-
-            var playerSpawn = _worldMap.SpawnList.FirstOrDefault(x => x.spawnType == (int)WorldMap.ESpawnType.PLAYER);
-
+            var playerSpawn = _worldMap.SpawnList.FirstOrDefault(x => x.spawnType == (int)WorldMapSpawnType.Player);
             if (playerSpawn == null)
             {
                 Logger.GetInstance().Error("player spawn null or empty!");
@@ -110,7 +108,6 @@ namespace Server
             }
 
             var pivotIter = playerSpawn.pivotList.Shuffle().GetEnumerator();
-
             foreach (var info in _playersDict.Values)
             {
                 if (pivotIter.MoveNext() == true)
@@ -147,7 +144,6 @@ namespace Server
         public MonsterEntity GetMonsterEntity(int inId)
         {
             var group = _monsterGroupDict.Values.FirstOrDefault(x => x.HaveEntityInGroup(inId));
-
             if (group == null)
             {
                 Logger.GetInstance().Error("MonsterEntity is null or Empty");
@@ -275,7 +271,6 @@ namespace Server
         public void OnSendRespawn(int inPlayerId)
         {
             var player = GetPlayerEntity(inPlayerId);
-
             if (player == null)
                 return;
 
@@ -297,7 +292,6 @@ namespace Server
         public void OnRecvJoin(C_JoinToGame inPacket, int inSessionId)
         {
             var data = GameDataLoader.Instance.HerosDict.Values.FirstOrDefault();
-
             if (data == null)
                 return;
 
@@ -328,7 +322,6 @@ namespace Server
         public void OnRecvReady(CS_ReadyToGame inPacket)
         {
             var player = GetPlayerEntity(inPacket.targetId);
-
             if (player == null)
                 return;
 
@@ -344,7 +337,6 @@ namespace Server
         public void OnRecvSelect(CS_SelectHero inPacket)
         {
             var player = GetPlayerEntity(inPacket.targetId);
-
             if (player == null)
                 return;
 
@@ -408,7 +400,6 @@ namespace Server
         public void OnRecvUpdateStat(CS_UpdateStat inPacket)
         {
             var player = GetPlayerEntity(inPacket.targetId);
-
             if (player == null)
                 return;
 
@@ -429,43 +420,41 @@ namespace Server
         public void OnRecvPickReward(C_PickReward inPacket)
         {
             var player = GetPlayerEntity(inPacket.targetId);
-
             if (player == null)
                 return;
 
-            var rewardData = _worldMap.PickReward(inPacket.worldId);
-
             IPacket packet = null;
-
-            switch ((RewardData.ERewardType)rewardData.rewardType)
+            var rewardData = _worldMap.PickReward(inPacket.worldId);
+            switch ((RewardType)rewardData.rewardType)
             {
-                case RewardData.ERewardType.GOLD:
-
-                    packet = new S_GetGold()
+                case RewardType.Gold:
                     {
-                        targetId = inPacket.targetId,
-                        worldId = inPacket.worldId,
-                        gold = rewardData.count,
-                    };
-
-                    break;
-
-                case RewardData.ERewardType.ITEM:
-
-                    packet = new S_GetItem()
-                    {
-                        targetId = inPacket.targetId,
-                        worldId = inPacket.worldId,
-                        // itemSlotId = 1,
-                        item = new Item()
+                        packet = new S_GetGold()
                         {
+                            targetId = inPacket.targetId,
+                            worldId = inPacket.worldId,
+                            gold = rewardData.count,
+                        };
+                        break;
+                    }
+                case RewardType.Item:
+                    {
+                        packet = new S_GetItem()
+                        {
+                            targetId = inPacket.targetId,
+                            worldId = inPacket.worldId,
+                            // itemSlotId = 1,
+                            item = new Item()
+                            {
 
-                        }
-                    };
+                            }
+                        };
 
+                        break;
+                    }
+                default:
                     break;
             }
-
 
             _broadcaster.Broadcast(packet);
         }

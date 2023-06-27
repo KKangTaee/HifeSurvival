@@ -21,18 +21,6 @@ namespace Server
             public RewardData itemData;
         }
 
-        public enum ESpawnType
-        {
-            PLAYER,
-
-            MONSTER,
-
-            ITEM,
-
-            NONE,
-        }
-
-
         public HashSet<PVec3> CanGoTiles { get; private set; }
 
         // 몬스터 혹은 플레이어의 스폰 위치정보
@@ -136,7 +124,6 @@ namespace Server
 
             return;
         }
-
 
         public RewardData PickReward(int inWorldId)
         {

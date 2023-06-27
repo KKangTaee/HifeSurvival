@@ -105,7 +105,7 @@ namespace Server
             {
                 str = inSelf.str,
                 def = inSelf.def,
-                hp = inSelf.hp,
+                hp = inSelf.maxHp,
                 attackSpeed = inSelf.attackSpeed,
                 moveSpeed = inSelf.moveSpeed,
             };

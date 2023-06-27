@@ -44,3 +44,17 @@ public enum EntityStatus
     UseSkill,
     Dead,
 }
+
+public enum WorldMapSpawnType
+{
+    None,
+    Player,
+    Monster,
+    Item,
+}
+
+public enum RewardType
+{
+    Gold = 1,
+    Item = 2,
+}

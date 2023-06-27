@@ -16,7 +16,6 @@ namespace Server
 
         public override bool IsPlayer => false;
 
-        
         private MonsterAIController AIController { get; set; }
         private event Action<string, PVec3> dropItemDelegate;
         private MonsterGroup group;

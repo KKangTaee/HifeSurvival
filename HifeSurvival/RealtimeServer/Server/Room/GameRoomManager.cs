@@ -22,7 +22,6 @@ namespace Server
             Push(() =>
             {
                 var canJoinRoom = _gameRoomDict.Values.FirstOrDefault(x => x.CanJoinRoom());
-
                 if (canJoinRoom != null)
                 {
                     canJoinRoom.Enter(session);
@@ -42,7 +41,6 @@ namespace Server
             Push(() =>
             {
                 SessionManager.Instance.Remove(session);
-
                 if (session.Room != null)
                 {
                     GameRoom room = session.Room;

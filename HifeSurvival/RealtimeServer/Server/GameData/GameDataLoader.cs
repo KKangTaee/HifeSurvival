@@ -115,7 +115,6 @@ namespace Server
                 }
             });
 
-
             await waiter.Wait();
         }
 
@@ -131,7 +130,6 @@ namespace Server
                 public string majorDimension;
                 public List<List<string>> values;
             }
-
 
             public static Dictionary<string, T> ParseJsonToDictionary<T>(string jsonString) where T : class, new()
             {

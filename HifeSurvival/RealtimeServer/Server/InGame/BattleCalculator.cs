@@ -16,7 +16,6 @@ namespace Server
             return (int)(ComputeAttackValue(atkStat) - defStat.def * 0.1f);
         }
 
-
         public static bool CanAttackTarget(in Entity self , in Entity target)
         {
             return self.currentPos.DistanceTo(target.currentPos) < self.stat.attackRange;

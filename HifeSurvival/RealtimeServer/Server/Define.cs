@@ -53,7 +53,6 @@ public enum AIMode
 
 public enum WorldMapSpawnType
 {
-    None,
     Player,
     Monster,
     Item,

@@ -624,6 +624,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 8085514045717947921}
     m_Modifications:
+    - target: {fileID: 1423470163212545532, guid: d1064c9ceb15d7846a6f45db33c17870, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1423470163212545534, guid: d1064c9ceb15d7846a6f45db33c17870, type: 3}
       propertyPath: m_Name
       value: BullyRooster
@@ -773,6 +777,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8316402779051580186, guid: 602614b1478c4d84e9be0e55d47f6816, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 602614b1478c4d84e9be0e55d47f6816, type: 3}
 --- !u!4 &5697684911786344727 stripped
@@ -798,6 +806,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7523548046653115225}
     m_Modifications:
+    - target: {fileID: 1423470163212545532, guid: ec02b7cd956d5f742bcdee8e851dc580, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1423470163212545534, guid: ec02b7cd956d5f742bcdee8e851dc580, type: 3}
       propertyPath: m_Name
       value: Goose
@@ -894,6 +906,14 @@ PrefabInstance:
     - target: {fileID: 1435861174473381358, guid: e3c010a6adce34da8bc126b398189642, type: 3}
       propertyPath: m_SizeDelta.y
       value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 3162168578990357867, guid: e3c010a6adce34da8bc126b398189642, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4454385661143328296, guid: e3c010a6adce34da8bc126b398189642, type: 3}
+      propertyPath: m_PresetInfoIsWorld
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8154166297509617220, guid: e3c010a6adce34da8bc126b398189642, type: 3}
       propertyPath: m_Pivot.x
@@ -1004,6 +1024,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5215301183592613518}
     m_Modifications:
+    - target: {fileID: 1423470163212545532, guid: f79cf179388609c4cb9eda26e18803d3, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1423470163212545534, guid: f79cf179388609c4cb9eda26e18803d3, type: 3}
       propertyPath: m_Name
       value: AdvancedHen
@@ -1153,6 +1177,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5348429189093309385, guid: 194feaacb5a009e4aaee5237665a3dfb, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 194feaacb5a009e4aaee5237665a3dfb, type: 3}
 --- !u!114 &6479572285619856288 stripped
@@ -1178,6 +1206,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 8108833608443072698}
     m_Modifications:
+    - target: {fileID: 1423470163212545532, guid: 028d7e906bfe57b4a83e6d7373880785, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1423470163212545534, guid: 028d7e906bfe57b4a83e6d7373880785, type: 3}
       propertyPath: m_Name
       value: Porky
@@ -1263,6 +1295,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1184802314952028136}
     m_Modifications:
+    - target: {fileID: 1211699911956097999, guid: 2473815fed4abc44582e86f2af87f4e7, type: 3}
+      propertyPath: SortingGroup
+      value: 
+      objectReference: {fileID: 7142602498660069776}
+    - target: {fileID: 1423470163212545532, guid: 2473815fed4abc44582e86f2af87f4e7, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1423470163212545534, guid: 2473815fed4abc44582e86f2af87f4e7, type: 3}
       propertyPath: m_Name
       value: Turkey
@@ -1327,7 +1367,8 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1423470163212545532, guid: 2473815fed4abc44582e86f2af87f4e7, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 2473815fed4abc44582e86f2af87f4e7, type: 3}
 --- !u!4 &5134112001904829134 stripped
 Transform:
@@ -1339,9 +1380,25 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1423470163212545530, guid: 2473815fed4abc44582e86f2af87f4e7, type: 3}
   m_PrefabInstance: {fileID: 7473055364564564449}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 8391489033008845855}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 62b9a7e211ea2074c83a96a2ab1e590f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &8391489033008845855 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1423470163212545534, guid: 2473815fed4abc44582e86f2af87f4e7, type: 3}
+  m_PrefabInstance: {fileID: 7473055364564564449}
+  m_PrefabAsset: {fileID: 0}
+--- !u!210 &7142602498660069776
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8391489033008845855}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 1

@@ -37,7 +37,7 @@ namespace Assets.FantasyMonsters.Scripts
                 }
             }
 
-            GetComponent<LayerManager>().SetSortingGroupOrder((int)-transform.localPosition.y);
+            // GetComponent<LayerManager>().SetSortingGroupOrder((int)-transform.localPosition.y);
 
             var stateHandler = Animator.GetBehaviours<StateHandler>().SingleOrDefault(i => i.Name == "Death");
 

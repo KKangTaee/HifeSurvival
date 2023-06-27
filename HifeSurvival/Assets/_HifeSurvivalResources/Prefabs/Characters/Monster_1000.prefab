@@ -399,7 +399,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3552185903014906308}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.8, z: 0}
+  m_LocalPosition: {x: 0, y: 2.084, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -696,6 +696,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6781992547309488536, guid: bb53af76b39682941931e3d95dbae2c2, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8364271249298629789, guid: bb53af76b39682941931e3d95dbae2c2, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -725,6 +729,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1236363014170005829}
     m_Modifications:
+    - target: {fileID: 1423470163212545532, guid: bd9363e1e97cb2e499e18d39f56fd156, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1423470163212545534, guid: bd9363e1e97cb2e499e18d39f56fd156, type: 3}
       propertyPath: m_Name
       value: Piggy
@@ -854,6 +862,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5348429189093309385, guid: b8ed0a5acd3620a4880797b9941d64b6, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b8ed0a5acd3620a4880797b9941d64b6, type: 3}
 --- !u!114 &3747820258253200470 stripped
@@ -879,6 +891,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5257484376071219862}
     m_Modifications:
+    - target: {fileID: 1423470163212545532, guid: 99e071b4b80df204999471650ea2b760, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1423470163212545534, guid: 99e071b4b80df204999471650ea2b760, type: 3}
       propertyPath: m_Name
       value: Drake
@@ -1020,6 +1036,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6781992547309488536, guid: b9d32bdf7741c4e4f89c1b22a0e1077d, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8364271249298629789, guid: b9d32bdf7741c4e4f89c1b22a0e1077d, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -1049,6 +1069,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 451286762679124523}
     m_Modifications:
+    - target: {fileID: 1423470163212545532, guid: a840026ad20d41440818b895b39707ff, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1423470163212545534, guid: a840026ad20d41440818b895b39707ff, type: 3}
       propertyPath: m_Name
       value: Duck
@@ -1138,6 +1162,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6699223315057765106}
     m_Modifications:
+    - target: {fileID: 1423470163212545532, guid: e3e7eae90968cc846a9f7890ee022d0a, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1423470163212545534, guid: e3e7eae90968cc846a9f7890ee022d0a, type: 3}
       propertyPath: m_Name
       value: Pig

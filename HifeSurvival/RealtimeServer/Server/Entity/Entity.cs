@@ -83,18 +83,6 @@ namespace Server
             });
         }
 
-        //Battle
-        public virtual int GetAttackValue()
-        {
-            return new Random().Next(stat.str - 15, (int)(stat.str * 1.2f));
-        }
-
-        //Battle
-        public virtual int GetDamagedValue(int inAttackValue)
-        {
-            return (int)(inAttackValue - stat.def * 0.1f);
-        }
-
         public virtual void ReduceHP(int hpValue)
         {
             stat.AddCurrHp(-hpValue);

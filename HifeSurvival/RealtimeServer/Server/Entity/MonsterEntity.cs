@@ -69,23 +69,6 @@ namespace Server
             }
         }
 
-        public void ExecuteAI()
-        {
-            AIController.StartAIRoutine();
-        }
-
-        //battle
-        public bool CanAttack(in Entity target)
-        {
-            return currentPos.DistanceTo(target.currentPos) < stat.attackRange;
-        }
-
-        //battle
-        public bool OutOfSpawnRange()
-        {
-            return currentPos.DistanceTo(spawnPos) > 10;
-        }
-
         public void OnAttackSuccess(in Entity target, int damageValue)
         {
             CS_Attack attackPacket = new CS_Attack()
@@ -99,6 +82,15 @@ namespace Server
 
             broadcaster.Broadcast(attackPacket);
         }
+
+        public void ExecuteAI()
+        {
+            AIController.StartAIRoutine();
+        }
+
+        public bool ExistAggro() => AIController.ExistAggro();
+
+
 
         public bool IsGroupAllDead()
         {
@@ -120,6 +112,6 @@ namespace Server
             return;
         }
 
-        public bool ExistAggro() => AIController.ExistAggro();
+
     }
 }

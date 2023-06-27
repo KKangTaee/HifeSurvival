@@ -18,6 +18,7 @@ static class DEFINE
     //Monster
     public const int AI_CHECK_MS = 50;
     public const int MONSTER_RESPAWN_SEC = 15;
+    public const int MONSTER_RESPAWN_AREA_RANGE = 10;
 
     //Game
     public const int PLAYER_MAX_COUNT = 4;

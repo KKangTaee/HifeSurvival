@@ -50,7 +50,7 @@ namespace Server
                     }
 
                     //TODO : 서버 또한, 공격 가능한지 체크해야 함. 
-                    var damagedVal = target.GetDamagedValue(inSelf.GetAttackValue());
+                    var damagedVal = BattleCalculator.ComputeDamagedValue(inSelf.stat, target.stat); 
 
                     target.ReduceHP(damagedVal);
                     target.OnDamaged(inSelf);
@@ -68,13 +68,11 @@ namespace Server
                         return;
                     }
 
-                    //TODO : 서버 또한, 공격 가능한지 체크해야 함. 
-                    var damagedVal = target.GetDamagedValue(inSelf.GetAttackValue());
+                    var damagedVal = BattleCalculator.ComputeDamagedValue(inSelf.stat, target.stat);
 
                     target.ReduceHP(damagedVal);
                     target.OnDamaged(inSelf);
                 }
-
             }
 
             public void Exit(PlayerEntity inSelf, in IStateParam inParam = default)

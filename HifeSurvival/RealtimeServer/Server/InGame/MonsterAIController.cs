@@ -62,7 +62,7 @@ namespace Server
 
         private bool SelectTarget()
         {
-            if (monster.OutOfSpawnRange())
+            if(BattleCalculator.IsOutOfSpawnArea(monster))
             {
                 ClearAggro();
                 return false;
@@ -100,18 +100,18 @@ namespace Server
         private bool AttackRoutine()
         {
             var currentTarget = CurrentTarget();
-            bool isAttackable = monster.CanAttack(currentTarget)
+            bool isAttackable = BattleCalculator.CanAttackTarget(monster, currentTarget)
                 && HTimer.GetCurrentTimestamp() - lastAttackTime >= monster.stat.attackSpeed * DEFINE.SEC_TO_MS;
 
             if (isAttackable)
             {
-                var damageValue = currentTarget.GetDamagedValue(monster.GetAttackValue());
+                var damagedVal = BattleCalculator.ComputeDamagedValue(monster.stat, currentTarget.stat);
 
-                currentTarget.ReduceHP(damageValue);
+                currentTarget.ReduceHP(damagedVal);
                 currentTarget.OnDamaged(monster);
                 lastAttackTime = HTimer.GetCurrentTimestamp();
 
-                monster.OnAttackSuccess(currentTarget, damageValue);
+                monster.OnAttackSuccess(currentTarget, damagedVal);
             }
 
             return isAttackable;

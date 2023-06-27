@@ -9,8 +9,8 @@ namespace Server
         public int str { get; private set; }
         public int def { get; private set; }
 
-        public int hp { get; private set; }
-        public int currHp { get; private set; }
+        public int maxHp { get; private set; }
+        public int curHp { get; private set; }
 
         public float detectRange { get; private set; }
         public float attackRange { get; private set; }
@@ -22,7 +22,7 @@ namespace Server
         {
             str = heros.str;
             def = heros.def;
-            currHp = hp = heros.hp;
+            curHp = maxHp = heros.hp;
             detectRange = heros.detectRange;
             attackRange = heros.attackRange;
             moveSpeed = heros.moveSpeed;
@@ -33,7 +33,7 @@ namespace Server
         {
             str = monsters.str;
             def = monsters.def;
-            currHp = hp = monsters.hp;
+            curHp = maxHp = monsters.hp;
             detectRange = monsters.detectRange;
             attackRange = monsters.attackRange;
             moveSpeed = monsters.moveSpeed;
@@ -47,9 +47,9 @@ namespace Server
             def += inDef;
 
         public void AddMaxHp(int inHp) =>
-            hp += inHp;
+            maxHp += inHp;
 
         public void AddCurrHp(int inHp) =>
-            currHp += inHp;
+            curHp += inHp;
     }
 }

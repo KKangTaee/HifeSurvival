@@ -67,7 +67,7 @@ namespace Server
                 foreach (var entity in _monstersDict.Values)
                 {
                     entity.Idle();
-                    entity.stat.AddCurrHp(entity.stat.hp);
+                    entity.stat.AddCurrHp(entity.stat.maxHp);
 
                     S_Respawn respawn = new S_Respawn()
                     {

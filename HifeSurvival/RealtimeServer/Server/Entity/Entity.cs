@@ -102,7 +102,7 @@ namespace Server
 
         public virtual bool IsDead()
         {
-            return stat.currHp < 0 || Status == EntityStatus.Dead;
+            return stat.curHp < 0 || Status == EntityStatus.Dead;
         }
     }
 }

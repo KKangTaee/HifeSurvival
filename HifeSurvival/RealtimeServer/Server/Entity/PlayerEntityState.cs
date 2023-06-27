@@ -27,59 +27,15 @@ namespace Server
                 }
             }
 
-            public void Exit(PlayerEntity inSelf, in IStateParam inParam = default)
-            {
-            }
-
             public void Update(PlayerEntity inSelf, in IStateParam inParam = default)
             {
-            }
-        }
 
-        public class AttackState : IState<PlayerEntity, IStateParam>
-        {
-            public void Enter(PlayerEntity inSelf, in IStateParam inParam = default)
-            {
-                if (inParam is AttackParam attackParam)
-                {
-                    var target = attackParam.target;
-                    if (target == null)
-                    {
-                        Logger.GetInstance().Warn($"Target is null");
-                        return;
-                    }
-
-                    //TODO : 서버 또한, 공격 가능한지 체크해야 함. 
-                    var damagedVal = BattleCalculator.ComputeDamagedValue(inSelf.stat, target.stat); 
-
-                    target.ReduceHP(damagedVal);
-                    target.OnDamaged(inSelf);
-                }
-            }
-
-            public void Update(PlayerEntity inSelf, in IStateParam inParam = default)
-            {
-                if (inParam is AttackParam attackParam)
-                {
-                    var target = attackParam.target;
-                    if (target == null)
-                    {
-                        Logger.GetInstance().Warn($"Target is null");
-                        return;
-                    }
-
-                    var damagedVal = BattleCalculator.ComputeDamagedValue(inSelf.stat, target.stat);
-
-                    target.ReduceHP(damagedVal);
-                    target.OnDamaged(inSelf);
-                }
             }
 
             public void Exit(PlayerEntity inSelf, in IStateParam inParam = default)
             {
 
             }
-
         }
 
         public class MoveState : IState<PlayerEntity, IStateParam>
@@ -117,6 +73,48 @@ namespace Server
             }
         }
 
+        public class AttackState : IState<PlayerEntity, IStateParam>
+        {
+            public void Enter(PlayerEntity inSelf, in IStateParam inParam = default)
+            {
+                if (inParam is AttackParam attackParam)
+                {
+                    var target = attackParam.target;
+                    if (target == null)
+                    {
+                        Logger.GetInstance().Warn($"Target is null");
+                        return;
+                    }
+
+                    var damagedVal = BattleCalculator.ComputeDamagedValue(inSelf.stat, target.stat); 
+                    target.ReduceHP(damagedVal);
+                    target.OnDamaged(inSelf);
+                }
+            }
+
+            public void Update(PlayerEntity inSelf, in IStateParam inParam = default)
+            {
+                if (inParam is AttackParam attackParam)
+                {
+                    var target = attackParam.target;
+                    if (target == null)
+                    {
+                        Logger.GetInstance().Warn($"Target is null");
+                        return;
+                    }
+
+                    var damagedVal = BattleCalculator.ComputeDamagedValue(inSelf.stat, target.stat);
+                    target.ReduceHP(damagedVal);
+                    target.OnDamaged(inSelf);
+                }
+            }
+
+            public void Exit(PlayerEntity inSelf, in IStateParam inParam = default)
+            {
+
+            }
+        }
+
         public class UseSkillState : IState<PlayerEntity, IStateParam>
         {
             public void Enter(PlayerEntity inSelf, in IStateParam inParam = default)
@@ -124,12 +122,12 @@ namespace Server
 
             }
 
-            public void Exit(PlayerEntity inSelf, in IStateParam inParam = default)
+            public void Update(PlayerEntity inSelf, in IStateParam inParam = default)
             {
 
             }
 
-            public void Update(PlayerEntity inSelf, in IStateParam inParam = default)
+            public void Exit(PlayerEntity inSelf, in IStateParam inParam = default)
             {
 
             }
@@ -155,15 +153,15 @@ namespace Server
                 }
             }
 
+            public void Update(PlayerEntity inSelf, in IStateParam inParam = default)
+            {
+
+            }
             public void Exit(PlayerEntity inSelf, in IStateParam inParam = default)
             {
 
             }
 
-            public void Update(PlayerEntity inSelf, in IStateParam inParam = default)
-            {
-
-            }
         }
     }
 }

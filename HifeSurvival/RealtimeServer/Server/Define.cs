@@ -39,8 +39,8 @@ public enum GameModeStatus
 public enum EntityStatus
 {
     Idle,
+    Move,
     Attack,
-    Dead,
     UseSkill,
-    Move
+    Dead,
 }

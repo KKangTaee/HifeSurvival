@@ -30,12 +30,11 @@ namespace Server
             smdic[EntityStatus.UseSkill] = new UseSkillState();
             smdic[EntityStatus.Dead] = new DeadState();
 
+            this.group = group;
+
             _stateMachine = new StateMachine<MonsterEntity>(smdic);
-
-            if(group != null)
-                this.group = group;
-
             AIController = new MonsterAIController(this);
+            
             dropItemDelegate += dropItem;
         }
 
@@ -45,27 +44,27 @@ namespace Server
             _stateMachine.OnChangeState(inStatue, this, inParam);
         }
 
+
         public override void OnDamaged(in Entity attacker)
         {
-            Logger.GetInstance().Debug($"Monster OnDamaged !  id{targetId}, dead? {IsDead()}");
             if(IsDead())
             {
                 Dead(new DeadParam()
                 {
                     killerTarget = attacker,
                 });
-
-                return;
             }
-
-            if (attacker.IsPlayer)
+            else
             {
-                Attack(new AttackParam()
+                if (attacker.IsPlayer)
                 {
-                    target = attacker,
-                });
+                    Attack(new AttackParam()
+                    {
+                        target = attacker,
+                    });
 
-                group.OnAttack(targetId, attacker);
+                    group.OnAttack(targetId, attacker);
+                }
             }
         }
 
@@ -83,24 +82,13 @@ namespace Server
             broadcaster.Broadcast(attackPacket);
         }
 
+
         public void ExecuteAI()
         {
             AIController.StartAIRoutine();
         }
 
         public bool ExistAggro() => AIController.ExistAggro();
-
-
-
-        public bool IsGroupAllDead()
-        {
-            return group.IsAllDead();
-        }
-
-        public void StartRespawning()
-        {
-            group.SendRespawnGroup();
-        }
 
         public void DropItem()
         {
@@ -113,5 +101,8 @@ namespace Server
         }
 
 
+        public bool IsGroupAllDead() => group.IsAllDead();
+
+        public void StartRespawning() => group.SendRespawnGroup();
     }
 }

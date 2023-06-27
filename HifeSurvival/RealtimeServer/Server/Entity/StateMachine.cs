@@ -34,7 +34,6 @@ namespace Server
         }
     }
 
-
     public interface IState<T, P> where T : Entity where P : notnull,  IStateParam
     {
         void Enter(T inSelf, in P inParam = default) ;
@@ -45,21 +44,13 @@ namespace Server
     }
 
 
-
     public interface IStateParam { }
-
-
-    public struct AttackParam : IStateParam
-    {
-        public Entity target;
-    }
 
     public struct IdleParam : IStateParam
     {
         public PVec3 currentPos;
         public long timestamp;
     }
-
 
     public struct MoveParam : IStateParam
     {
@@ -69,13 +60,18 @@ namespace Server
         public long timestamp;
     }
 
-    public struct DeadParam : IStateParam
+    public struct AttackParam : IStateParam
     {
-        public Entity killerTarget;
+        public Entity target;
     }
 
     public struct UseSkillParam : IStateParam
     {
 
+    }
+
+    public struct DeadParam : IStateParam
+    {
+        public Entity killerTarget;
     }
 }

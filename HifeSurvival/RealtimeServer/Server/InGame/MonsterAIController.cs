@@ -46,55 +46,10 @@ namespace Server
                 MoveRoutine();
             }
 
-
             JobTimer.Instance.Push(() =>
             {
                 StartAIRoutine();
             }, DEFINE.AI_CHECK_MS);
-        }
-
-        public void ReturnToRespawnArea()
-        {
-            isReturningToRespawnArea = true;
-            monster.MoveToRespawn();
-            Logger.GetInstance().Debug("ReturnToRespawnArea");
-        }
-
-        private bool SelectTarget()
-        {
-            if(BattleCalculator.IsOutOfSpawnArea(monster))
-            {
-                ClearAggro();
-                return false;
-            }
-
-            var currentTarget = CurrentTarget();
-            if (currentTarget != null && !currentTarget.IsDead())
-            {
-                return true;
-            }
-            else
-            {
-                while (ExistAggro())
-                {
-                    currentTarget = GetNextTarget();
-                    if (currentTarget != null && !currentTarget.IsDead())
-                        return true;
-                }
-            }
-
-            return false;
-        }
-
-        public void UpdateAggro(Entity target)
-        {
-            Logger.GetInstance().Debug($"aggroid : {target.targetId}, self : {monster.targetId}");
-            aggroStack.Add(target);
-        }
-
-        public void UpdateNextMove(MoveParam? moveParam)
-        {
-            lastMoveInfo = moveParam;
         }
 
         private bool AttackRoutine()
@@ -116,7 +71,6 @@ namespace Server
 
             return isAttackable;
         }
-
 
         private void MoveRoutine()
         {
@@ -151,20 +105,50 @@ namespace Server
             }
         }
 
-        public void ClearLastMove()
-        {
-            lastMoveInfo = null;
 
-            monster.MoveStop(new IdleParam()
+        private bool SelectTarget()
+        {
+            if (BattleCalculator.IsOutOfSpawnArea(monster))
             {
-                currentPos = monster.currentPos,
-                timestamp = HTimer.GetCurrentTimestamp()
-            });
+                ClearAggro();
+                return false;
+            }
+
+            var currentTarget = CurrentTarget();
+            if (currentTarget != null && !currentTarget.IsDead())
+            {
+                return true;
+            }
+            else
+            {
+                while (ExistAggro())
+                {
+                    currentTarget = GetNextTarget();
+                    if (currentTarget != null && !currentTarget.IsDead())
+                        return true;
+                }
+            }
+
+            return false;
         }
 
-        private void ClearAggro()
+        public void UpdateNextMove(MoveParam? moveParam)
         {
-            aggroStack.Clear();
+            lastMoveInfo = moveParam;
+        }
+
+        public void ReturnToRespawnArea()
+        {
+            isReturningToRespawnArea = true;
+            monster.MoveToRespawn();
+            Logger.GetInstance().Debug("ReturnToRespawnArea");
+        }
+
+
+        public void UpdateAggro(Entity target)
+        {
+            Logger.GetInstance().Debug($"aggroid : {target.targetId}, self : {monster.targetId}");
+            aggroStack.Add(target);
         }
 
         public bool ExistAggro()
@@ -198,6 +182,22 @@ namespace Server
         {
             ClearAggro();
             ClearLastMove();
+        }
+
+        private void ClearAggro()
+        {
+            aggroStack.Clear();
+        }
+
+        public void ClearLastMove()
+        {
+            lastMoveInfo = null;
+
+            monster.MoveStop(new IdleParam()
+            {
+                currentPos = monster.currentPos,
+                timestamp = HTimer.GetCurrentTimestamp()
+            });
         }
     }
 }

@@ -44,19 +44,25 @@ namespace Server
         }
 
 
-        //----------------
-        // overrides
-        //----------------
-
         protected override void ChangeState<P>(EntityStatus inStatue, P inParam)
         {
             _stateMachine.OnChangeState(inStatue, this, inParam);
         }
 
 
-        //-----------------
-        // functions
-        //-----------------
+        public override void OnDamaged(in Entity attacker)
+        {
+            if (IsDead())
+            {
+                Dead(new DeadParam()
+                {
+                    killerTarget = attacker,
+                });
+
+                return;
+            }
+        }
+
 
         public void RegistRespawnTimer()
         {
@@ -76,19 +82,6 @@ namespace Server
 
                 broadcaster.Broadcast(respawn);
             }, DEFINE.PLAYER_RESPAWN_MS);
-        }
-
-        public override void OnDamaged(in Entity attacker)
-        {
-            if (IsDead())
-            {
-                Dead(new DeadParam()
-                {
-                  killerTarget = attacker,
-                });
-
-                return;
-            }
         }
     }
 }

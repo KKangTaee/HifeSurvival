@@ -27,14 +27,55 @@ namespace Server
                 }
             }
 
+            public void Update(MonsterEntity inSelf, in IStateParam inParam = default)
+            {
+
+            }
+
+            public void Exit(MonsterEntity inSelf, in IStateParam inParam = default)
+            {
+
+            }
+        }
+
+        public class MoveState : IState<MonsterEntity, IStateParam>
+        {
+            public void Enter(MonsterEntity inSelf, in IStateParam inParam = default)
+            {
+                if (inParam is MoveParam moveParam)
+                {
+                    updateMove(inSelf, moveParam);
+                }
+            }
+
+            public void Update(MonsterEntity inSelf, in IStateParam inParam = default)
+            {
+                if (inParam is MoveParam moveParam)
+                {
+                    updateMove(inSelf, moveParam);
+                }
+            }
+
             public void Exit(MonsterEntity inSelf, in IStateParam inParam = default)
             {
 
             }
 
-            public void Update(MonsterEntity inSelf, in IStateParam inParam = default)
+            private void updateMove(MonsterEntity inSelf, MoveParam inParam)
             {
+                inSelf.AIController.UpdateNextMove(inParam);
 
+                UpdateLocationBroadcast move = new UpdateLocationBroadcast()
+                {
+                    targetId = inSelf.targetId,
+                    isPlayer = inSelf.IsPlayer,
+                    currentPos = inParam.currentPos,
+                    targetPos = inParam.targetPos,
+                    speed = inParam.speed,
+                    timestamp = inParam.timestamp,
+                };
+
+                inSelf.broadcaster.Broadcast(move);
             }
         }
 
@@ -46,6 +87,24 @@ namespace Server
                 {
                     inSelf.AIController.UpdateAggro(attackParam.target);
                 }
+            }
+
+            public void Update(MonsterEntity inSelf, in IStateParam inParam = default)
+            {
+
+            }
+
+            public void Exit(MonsterEntity inSelf, in IStateParam inParam = default)
+            {
+
+            }
+        }
+
+        public class UseSkillState : IState<MonsterEntity, IStateParam>
+        {
+            public void Enter(MonsterEntity inSelf, in IStateParam inParam = default)
+            {
+
             }
 
             public void Update(MonsterEntity inSelf, in IStateParam inParam = default)
@@ -86,71 +145,12 @@ namespace Server
                 }
             }
 
-            public void Exit(MonsterEntity inSelf, in IStateParam inParam = default)
-            {
-
-            }
-
             public void Update(MonsterEntity inSelf, in IStateParam inParam = default)
-            {
-
-            }
-        }
-
-        public class MoveState : IState<MonsterEntity, IStateParam>
-        {
-            public void Enter(MonsterEntity inSelf, in IStateParam inParam = default)
-            {
-                if(inParam is MoveParam moveParam)
-                {
-                    updateMove(inSelf, moveParam);
-                }
-            }
-
-            public void Update(MonsterEntity inSelf, in IStateParam inParam = default)
-            {
-                if (inParam is MoveParam moveParam)
-                {
-                    updateMove(inSelf, moveParam);
-                }
-            }
-
-            public void Exit(MonsterEntity inSelf, in IStateParam inParam = default)
-            {
-
-            }
-
-            private void updateMove(MonsterEntity inSelf, MoveParam inParam)
-            {
-                inSelf.AIController.UpdateNextMove(inParam);
-
-                UpdateLocationBroadcast move = new UpdateLocationBroadcast()
-                {
-                    targetId = inSelf.targetId,
-                    isPlayer = inSelf.IsPlayer,
-                    currentPos = inParam.currentPos,
-                    targetPos = inParam.targetPos,
-                    speed = inParam.speed,
-                    timestamp = inParam.timestamp,
-                };
-
-                inSelf.broadcaster.Broadcast(move);
-            }
-        }
-
-        public class UseSkillState : IState<MonsterEntity, IStateParam>
-        {
-            public void Enter(MonsterEntity inSelf, in IStateParam inParam = default)
             {
 
             }
 
             public void Exit(MonsterEntity inSelf, in IStateParam inParam = default)
-            {
-
-            }
-
-            public void Update(MonsterEntity inSelf, in IStateParam inParam = default)
             {
 
             }

@@ -15,7 +15,8 @@ namespace Server
 
         private MoveParam? lastMoveInfo = null;
         private long lastMovetime = 0;
-        private bool isReturningToRespawnArea = false;
+
+        private AIMode aiMode = AIMode.Free;
 
         public MonsterAIController(MonsterEntity monster)
         {
@@ -25,26 +26,26 @@ namespace Server
         //NOTE: Timer 클래스에 등록하게 될 예정.
         public void StartAIRoutine()
         {
-            if (!monster.IsDead())
-            {
-                if(!isReturningToRespawnArea)
-                {
-                    if (SelectTarget())
-                    {
-                        if (AttackRoutine())
-                            ClearLastMove();
-                        else
-                            monster.MoveToTarget(CurrentTarget().currentPos);
-                    }
-                    else
-                    {
-                        if (monster.currentPos.IsSame(monster.spawnPos) == false)
-                            ReturnToRespawnArea();
-                    }
-                }
+            if (monster.IsDead())
+                return;
 
-                MoveRoutine();
+            if (aiMode == AIMode.Free)
+            {
+                if (SelectTarget())
+                {
+                    if (AttackRoutine())
+                        ClearLastMove();
+                    else
+                        monster.MoveToTarget(CurrentTarget().currentPos);
+                }
+                else
+                {
+                    if (monster.currentPos.IsSame(monster.spawnPos) == false)
+                        ReturnToRespawnArea();
+                }
             }
+
+            MoveRoutine();
 
             JobTimer.Instance.Push(() =>
             {
@@ -95,9 +96,9 @@ namespace Server
             {
                 Logger.GetInstance().Debug($"Arrived !! id : {monster.targetId}");
 
-                if (isReturningToRespawnArea)
+                if (aiMode == AIMode.ReturnToRespawnArea)
                 {
-                    isReturningToRespawnArea = false;
+                    aiMode = AIMode.Free;
                     ClearAggro();
                 }
 
@@ -138,7 +139,7 @@ namespace Server
 
         public void ReturnToRespawnArea()
         {
-            isReturningToRespawnArea = true;
+            aiMode = AIMode.ReturnToRespawnArea;
             monster.MoveToRespawn();
             Logger.GetInstance().Debug("ReturnToRespawnArea");
         }
@@ -146,6 +147,14 @@ namespace Server
         public void UpdateAggro(Entity target)
         {
             Logger.GetInstance().Debug($"aggroid : {target.targetId}, self : {monster.targetId}");
+            if (ExistAggro())
+            {
+                if (CurrentTarget().targetId == target.targetId)
+                    return;
+
+                aggroStack.Remove(target);
+            }
+
             aggroStack.Add(target);
         }
 

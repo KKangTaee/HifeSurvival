@@ -45,6 +45,12 @@ public enum EntityStatus
     Dead,
 }
 
+public enum AIMode
+{
+    Free,
+    ReturnToRespawnArea,
+}
+
 public enum WorldMapSpawnType
 {
     None,

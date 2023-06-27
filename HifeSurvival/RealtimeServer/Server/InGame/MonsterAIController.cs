@@ -33,10 +33,15 @@ namespace Server
             {
                 if (SelectTarget())
                 {
-                    if (AttackRoutine())
-                        ClearLastMove();
+                    if(CheckAttackRange())
+                    {
+                        ClearLastMove(); 
+                        AttackRoutine();
+                    }
                     else
+                    {
                         monster.MoveToTarget(CurrentTarget().currentPos);
+                    }
                 }
                 else
                 {
@@ -53,13 +58,11 @@ namespace Server
             }, DEFINE.AI_CHECK_MS);
         }
 
-        private bool AttackRoutine()
+        private void AttackRoutine()
         {
             var currentTarget = CurrentTarget();
-            bool isAttackable = BattleCalculator.CanAttackTarget(monster, currentTarget)
-                && HTimer.GetCurrentTimestamp() - lastAttackTime >= monster.stat.attackSpeed * DEFINE.SEC_TO_MS;
 
-            if (isAttackable)
+            if (HTimer.GetCurrentTimestamp() - lastAttackTime >= monster.stat.attackSpeed * DEFINE.SEC_TO_MS)
             {
                 var damagedVal = BattleCalculator.ComputeDamagedValue(monster.stat, currentTarget.stat);
 
@@ -70,7 +73,7 @@ namespace Server
                 monster.OnAttackSuccess(currentTarget, damagedVal);
             }
 
-            return isAttackable;
+            return;
         }
 
         private void MoveRoutine()
@@ -104,6 +107,11 @@ namespace Server
 
                 ClearLastMove();
             }
+        }
+
+        private bool CheckAttackRange()
+        {
+            return BattleCalculator.CanAttackTarget(monster, CurrentTarget());
         }
 
         private bool SelectTarget()

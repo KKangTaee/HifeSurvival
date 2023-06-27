@@ -8,21 +8,6 @@ namespace Server
 {
     public class GameMode
     {
-        public enum EStatus
-        {
-            READY,
-
-            COUNTDOWN,
-
-            GAME_START,
-
-            RUNIING_GAME,
-
-            FINISH_GAME,
-
-            NONE,
-        }
-
         private Dictionary<int, PlayerEntity> _playersDict = new Dictionary<int, PlayerEntity>();
         private Dictionary<int, MonsterGroup> _monsterGroupDict = new Dictionary<int, MonsterGroup>();
 
@@ -30,7 +15,7 @@ namespace Server
         private WorldMap _worldMap;
         private int _mId = 10000;
 
-        public EStatus Status { get; private set; } = EStatus.NONE;
+        public GameModeStatus Status { get; private set; } = GameModeStatus.None;
 
         public GameMode(GameRoom inRoom)
         {
@@ -181,14 +166,14 @@ namespace Server
 
         public bool CanJoinRoom()
         {
-            return Status == EStatus.READY && _playersDict.Count < DEFINE.PLAYER_MAX_COUNT;
+            return Status == GameModeStatus.Ready && _playersDict.Count < DEFINE.PLAYER_MAX_COUNT;
         }
 
         private void OnModeStatusChange()
         {
             switch(Status)
             {
-                case EStatus.GAME_START:
+                case GameModeStatus.GameStart:
                     {
                         _monsterGroupDict.AsParallel().ForAll(mg => {
                             foreach (var monster in mg.Value.GetMonsterGroupIter())
@@ -258,7 +243,7 @@ namespace Server
 
             // 게임종료 타이머도 추가해야함.
 
-            Status = EStatus.GAME_START;
+            Status = GameModeStatus.GameStart;
             OnModeStatusChange();
         }
 
@@ -287,7 +272,7 @@ namespace Server
 
             _broadcaster.Broadcast(countdown);
 
-            Status = EStatus.COUNTDOWN;
+            Status = GameModeStatus.Countdown;
 
             JobTimer.Instance.Push(SendStartGame, DEFINE.START_COUNTDOWN_SEC * DEFINE.SEC_TO_MS);
         }
@@ -342,7 +327,7 @@ namespace Server
 
             _broadcaster.Broadcast(packet);
 
-            Status = EStatus.READY;
+            Status = GameModeStatus.Ready;
         }
 
 

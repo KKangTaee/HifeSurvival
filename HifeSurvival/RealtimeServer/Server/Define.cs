@@ -25,3 +25,23 @@ static class DEFINE
     public const int PLAYER_MAX_COUNT = 4;
     public const int START_COUNTDOWN_SEC = 10;
 }
+
+
+public enum GameModeStatus
+{
+    None,
+    Ready,
+    Countdown,
+    GameStart,
+    RunningGame,
+    FinishGame,
+}
+
+public enum EntityStatus
+{
+    Idle,
+    Attack,
+    Dead,
+    UseSkill,
+    Move
+}

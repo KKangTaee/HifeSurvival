@@ -49,7 +49,7 @@ namespace Server
 
         public bool IsAllDead()
         {
-            return _monstersDict.Values.All(x => x.Status == Entity.EStatus.DEAD);
+            return _monstersDict.Values.All(x => x.IsDead());
         }
 
         public void SendRespawnGroup()

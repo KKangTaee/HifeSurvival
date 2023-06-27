@@ -24,12 +24,12 @@ namespace Server
 
         public MonsterEntity(MonsterGroup group, Action<string, PVec3> dropItem)
         {
-            var smdic = new Dictionary<EStatus, IState<MonsterEntity, IStateParam>>();
-            smdic[EStatus.IDLE] = new IdleState();
-            smdic[EStatus.ATTACK] = new AttackState();
-            smdic[EStatus.MOVE] = new MoveState();
-            smdic[EStatus.USE_SKILL] = new UseSkillState();
-            smdic[EStatus.DEAD] = new DeadState();
+            var smdic = new Dictionary<EntityStatus, IState<MonsterEntity, IStateParam>>();
+            smdic[EntityStatus.Idle] = new IdleState();
+            smdic[EntityStatus.Attack] = new AttackState();
+            smdic[EntityStatus.Move] = new MoveState();
+            smdic[EntityStatus.UseSkill] = new UseSkillState();
+            smdic[EntityStatus.Dead] = new DeadState();
 
             _stateMachine = new StateMachine<MonsterEntity>(smdic);
 
@@ -41,7 +41,7 @@ namespace Server
         }
 
 
-        protected override void ChangeState<P>(EStatus inStatue, P inParam)
+        protected override void ChangeState<P>(EntityStatus inStatue, P inParam)
         {
             _stateMachine.OnChangeState(inStatue, this, inParam);
         }

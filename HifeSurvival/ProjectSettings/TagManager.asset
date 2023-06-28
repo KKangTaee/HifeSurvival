@@ -11,6 +11,7 @@ TagManager:
   - Detect_Self
   - Monster
   - Drop_Item
+  - WorldMap_Touch
   layers:
   - Default
   - TransparentFX
@@ -37,7 +38,7 @@ TagManager:
   - Player_Self
   - Detect_Self
   - Drop_Item
-  - 
+  - WorldMap_Wall
   - 
   - 
   - 

@@ -29,7 +29,7 @@ public sealed class PlayerController : EntityObjectController<Player>
         _joystickController = ControllerManager.Instance.GetController<JoystickController>();
 
         _gameMode.OnRecvUpdateStatHandler += OnRecvUpdateStat;
-        _gameMode.OnRecvGetItemHandler += OnRecvGetItem;
+        _gameMode.OnRecvPickRewardHandler += OnRecvPickReward;
 
         LoadPlayer();
     }
@@ -257,11 +257,9 @@ public sealed class PlayerController : EntityObjectController<Player>
     }
 
 
-    public void OnRecvGetItem(S_GetItem inEntity)
+    public void OnRecvPickReward(PickRewardResponse inEntity)
     {
         var player = GetEntityObject(inEntity.id);
         player.UpdateItemSlot();
     }
-
-
 }

@@ -32,10 +32,7 @@ public class WorldMap : MonoBehaviour
 
         _objectPoolController = ControllerManager.Instance.GetController<ObjectPoolController>();
 
-        GameMode.Instance.OnRecvDropRewardHandler   += OnRecvDropReward;
-        GameMode.Instance.OnRecvGetItemHandler      += OnRecvGetItem;
-        GameMode.Instance.OnRecvGetGoldHandler      += OnRecvGetGold;
-
+        GameMode.Instance.OnRecvUpdateRewardHandler   += OnRecvUpdateReward;
     }
 
 
@@ -230,32 +227,31 @@ public class WorldMap : MonoBehaviour
     // Server
     //-------------
 
-    public void OnRecvDropReward(S_DropReward inPacket)
+    public void OnRecvUpdateReward(UpdateRewardBroadcast inPacket)
     {
-        var itemObj = _objectPoolController.SpawnFromPool<WorldItem>();
-
-        if(itemObj == null)
+        // 아이템 드랍시
+        if(inPacket.status == (int)EUpdateRewardStatus.DROP_REWARD)
         {
-            Debug.LogError($"[{nameof(OnRecvDropReward)}] itemObj is null or empty!");
-            return;
+        
+            var itemObj = _objectPoolController.SpawnFromPool<WorldItem>();
+
+            if(itemObj == null)
+            {
+                Debug.LogError($"[{nameof(OnRecvUpdateReward)}] itemObj is null or empty!");
+                return;
+            }
+
+            itemObj.SetInfo(inPacket.worldId, inPacket.pos.ConvertUnityVector3(), inPacket.rewardType);
+            itemObj.PlayDropItem();
+
+            AddWorldObject(itemObj);
+        
         }
-
-        itemObj.SetInfo(inPacket.worldId, inPacket.pos.ConvertUnityVector3(), inPacket.rewardType);
-        itemObj.PlayDropItem();
-
-        AddWorldObject(itemObj);
+        else if(inPacket.status == (int)EUpdateRewardStatus.PICK_REWARD)
+        {
+             PickReward(inPacket.worldId);
+        }
     }
-
-    public void OnRecvGetItem(S_GetItem inPacket)
-    {
-        PickReward(inPacket.worldId);
-    }
-
-    public void OnRecvGetGold(S_GetGold inPacket)
-    {
-        PickReward(inPacket.worldId);
-    }
-
 
     #region Unity Editor 관련
 #if UNITY_EDITOR

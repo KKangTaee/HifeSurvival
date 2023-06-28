@@ -47,9 +47,8 @@ public class GameMode
     public event Action<CS_Attack> OnRecvAttackHandler;
     public event Action<Entity> OnRecvRespawnHandler;
     public event Action<PlayerEntity> OnRecvUpdateStatHandler;
-    public event Action<S_DropReward> OnRecvDropRewardHandler;
-    public event Action<S_GetItem> OnRecvGetItemHandler;
-    public event Action<S_GetGold> OnRecvGetGoldHandler;
+    public event Action<UpdateRewardBroadcast> OnRecvUpdateRewardHandler;
+    public event Action<PickRewardResponse>    OnRecvPickRewardHandler;
 
     public event Action<UpdateLocationBroadcast> OnUpdateLocationHandler;
 
@@ -256,7 +255,7 @@ public class GameMode
 
     public void OnSendPickReward(int inWorldId)
     {
-        C_PickReward getItem = new C_PickReward()
+        PickRewardRequest getItem = new PickRewardRequest()
         {
             id = EntitySelf.id,
             worldId = inWorldId,
@@ -475,28 +474,25 @@ public class GameMode
     }
 
 
-    public void OnRecvDropReward(S_DropReward inPacket)
+    public void OnRecvUpdateRewad(UpdateRewardBroadcast inPacket)
     {
-        OnRecvDropRewardHandler?.Invoke(inPacket);
+        // 아이템 드랍 및 월드맵 오브젝트 제거
+        OnRecvUpdateRewardHandler?.Invoke(inPacket);
     }
 
-
-    public void OnRecvGetItem(S_GetItem inPacket)
+    public void OnRecvGetItem(PickRewardResponse inPacket)
     {
         var player = GetPlayerEntity(inPacket.id);
+        
+        if(inPacket.gold == 0)
+        {
+            player.itemSlot[inPacket.itemSlotId] = new EntityItem(inPacket.item);
+        }
+        else
+        {
+            player.AddGold(inPacket.gold);
+        }
 
-        player.itemSlot[inPacket.itemSlotId] = new EntityItem(inPacket.item);
-
-        OnRecvGetItemHandler?.Invoke(inPacket);
-    }
-
-
-    public void OnRecvGetGold(S_GetGold inPacket)
-    {
-        var player = GetPlayerEntity(inPacket.id);
-
-        player.AddGold(inPacket.gold);
-
-        OnRecvGetGoldHandler?.Invoke(inPacket);
+        OnRecvPickRewardHandler?.Invoke(inPacket);
     }
 }

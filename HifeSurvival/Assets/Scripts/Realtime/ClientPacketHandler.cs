@@ -69,32 +69,32 @@ public class ClientPacketHandler : PacketHandler
         // throw new NotImplementedException();
     }
 
-    public override void S_DropRewardHandler(PacketSession session, IPacket packet)
-    {
-        // throw new NotImplementedException();
-        S_DropReward dropReward = packet as S_DropReward;
-        GameMode.Instance.OnRecvDropReward(dropReward);
+    // public override void S_DropRewardHandler(PacketSession session, IPacket packet)
+    // {
+    //     // throw new NotImplementedException();
+    //     S_DropReward dropReward = packet as S_DropReward;
+    //     GameMode.Instance.OnRecvDropReward(dropReward);
     
-    }
+    // }
 
-    public override void C_PickRewardHandler(PacketSession session, IPacket packet)
-    {
-        throw new NotImplementedException();
-    }
+    // public override void C_PickRewardHandler(PacketSession session, IPacket packet)
+    // {
+    //     throw new NotImplementedException();
+    // }
 
-    public override void S_GetItemHandler(PacketSession session, IPacket packet)
-    {
-        // throw new NotImplementedException();
-        S_GetItem item = packet as S_GetItem;
-        GameMode.Instance.OnRecvGetItem(item);
-    }
+    // public override void S_GetItemHandler(PacketSession session, IPacket packet)
+    // {
+    //     // throw new NotImplementedException();
+    //     S_GetItem item = packet as S_GetItem;
+    //     GameMode.Instance.OnRecvGetItem(item);
+    // }
 
-    public override void S_GetGoldHandler(PacketSession session, IPacket packet)
-    {
-        // hrow new NotImplementedException();
-        S_GetGold gold = packet as S_GetGold;
-        GameMode.Instance.OnRecvGetGold(gold);
-    }
+    // public override void S_GetGoldHandler(PacketSession session, IPacket packet)
+    // {
+    //     // hrow new NotImplementedException();
+    //     S_GetGold gold = packet as S_GetGold;
+    //     GameMode.Instance.OnRecvGetGold(gold);
+    // }
 
 
     public override void MoveRequestHandler(PacketSession session, IPacket packet)
@@ -126,6 +126,28 @@ public class ClientPacketHandler : PacketHandler
     }
 
     public override void UpdateStatBroadcastHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void PickRewardRequestHandler(PacketSession session, IPacket packet)
+    {
+        
+    }
+
+    public override void PickRewardResponseHandler(PacketSession session, IPacket packet)
+    {
+        PickRewardResponse pickReward = packet as PickRewardResponse;
+        GameMode.Instance.OnRecvGetItem(pickReward);
+    }
+
+    public override void UpdateRewardBroadcastHandler(PacketSession session, IPacket packet)
+    {
+        UpdateRewardBroadcast updateReward = packet as UpdateRewardBroadcast;
+
+    }
+
+    public override void UpdatePlayerCurrencyHandler(PacketSession session, IPacket packet)
     {
         throw new NotImplementedException();
     }

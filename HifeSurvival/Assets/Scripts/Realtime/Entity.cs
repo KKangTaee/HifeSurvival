@@ -159,7 +159,7 @@ public class EntityStat
     public void AddCurrHp(int inHp) =>
         currHP += inHp;
 
-    public void IncreaseStat(Stat inStat)
+    public void IncreaseStat(PStat inStat)
     {
         str += inStat.str;
         def += inStat.def;
@@ -181,7 +181,7 @@ public class EntityItem
     public int cooltime;
     public bool canUse;
 
-    public EntityItem(Item inItem)
+    public EntityItem(PItem inItem)
     {
         itemKey_static = inItem.itemKey;
         level = inItem.level;

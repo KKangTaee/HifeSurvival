@@ -35,9 +35,9 @@ public class IngameUI : MonoBehaviour
     {
         GetComponent<Canvas>().worldCamera = ControllerManager.Instance.GetController<CameraController>().MainCamera;
 
-        GameMode.Instance.OnRecvDeadHandler    += OnRecvDead;
-        GameMode.Instance.OnRecvRespawnHandler += OnRecvRespawn;
-        GameMode.Instance.OnRecvGetItemHandler += OnRecvGetItem;
+        GameMode.Instance.OnRecvDeadHandler       += OnRecvDead;
+        GameMode.Instance.OnRecvRespawnHandler    += OnRecvRespawn;
+        GameMode.Instance.OnRecvPickRewardHandler += OnRecvPickReward;
 
         SetKDView();
     }
@@ -140,12 +140,7 @@ public class IngameUI : MonoBehaviour
         HideRespawnTimer();
     }
 
-    public void OnRecvGetItem(S_GetItem inEntity)
-    {
-
-    }
-
-    public void OnRecvGetGold(S_GetGold inPacket)
+    public void OnRecvPickReward(PickRewardResponse inEntity)
     {
 
     }

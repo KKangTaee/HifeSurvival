@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using ServerCore;
 
 namespace Server
 {
@@ -14,11 +13,12 @@ namespace Server
         public bool isReady;
 
         
-        public EntityStat itemStat;
-        public EntityStat upgradeStat;
+        public EntityStat itemStat = new EntityStat();
+        public EntityStat upgradeStat = new EntityStat();
 
         public int  gold;
-        public PlayerItem[] itemSlot = new PlayerItem[4];
+        
+        public PlayerInventory inven = new PlayerInventory();
 
         StateMachine<PlayerEntity> _stateMachine;
 
@@ -68,9 +68,10 @@ namespace Server
         {
             bool bChanged = true;   //변화 감지가 필요함. 일단 생략. 
 
+            UpdateItem();
+
             stat = new EntityStat();
             stat += defaultStat;
-
             stat += upgradeStat;
             stat += itemStat;
 
@@ -82,10 +83,29 @@ namespace Server
 
         public override void GetStat(out EntityStat defaultStat, out EntityStat additionalStat)
         {
-            defaultStat = this.stat;
+            defaultStat = this.defaultStat;
             additionalStat = (this.upgradeStat + this.itemStat);
         }
 
+        public void UpdateItem()
+        {
+            itemStat = inven.TotalItemStat();
+        }
+
+        public int EquipItem(in PItem item)
+        {
+            int slot = inven.EquipItem(item);
+            if (slot > 0)
+            {
+                UpdateItem();
+            }
+            else
+            {
+                Logger.GetInstance().Warn($"Equip Failed! ");
+            }
+
+            return slot;
+        }
 
         public void RegistRespawnTimer()
         {

@@ -47304,7 +47304,7 @@ GameObject:
   - component: {fileID: 5676966774690807293}
   - component: {fileID: 3527428863840556386}
   - component: {fileID: 4969685494683340758}
-  m_Layer: 0
+  m_Layer: 25
   m_Name: Wall
   m_TagString: WorldMap_Wall
   m_Icon: {fileID: 0}

@@ -841,6 +841,7 @@ public class PickRewardResponse : IPacket
 {
 	public int id;
 	public int worldId;
+	public int rewardType;
 	public int gold;
 	public int itemSlotId;
 	public PItem item;
@@ -857,6 +858,8 @@ public class PickRewardResponse : IPacket
 		this.id = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
 		this.worldId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+		count += sizeof(int);
+		this.rewardType = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
 		this.gold = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
@@ -879,6 +882,8 @@ public class PickRewardResponse : IPacket
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.id);
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.worldId);
+		count += sizeof(int);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.rewardType);
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.gold);
 		count += sizeof(int);

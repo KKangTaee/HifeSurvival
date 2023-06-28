@@ -98,7 +98,8 @@
   <packet name ="PickRewardResponse">
     <int name ="id"/>
     <int name ="worldId"/>
-	 <int name ="gold"/>
+    <int name="rewardType"/>
+	  <int name ="gold"/>
     <int name ="itemSlotId"/>
     <struct_PItem name="item"/>
   </packet>

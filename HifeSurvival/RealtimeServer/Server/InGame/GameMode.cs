@@ -496,6 +496,7 @@ namespace Server
                 broadcast.worldId = worldId;
                 broadcast.status = (int)RewardState.Pick;
                 broadcast.rewardType = rewardData.rewardType;
+                res.rewardType = rewardData.rewardType;
 
                 switch ((RewardType)rewardData.rewardType)
                 {

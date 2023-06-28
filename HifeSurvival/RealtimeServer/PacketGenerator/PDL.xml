@@ -71,7 +71,7 @@
   <packet name ="S_Respawn">
     <int name ="id"/>
     <struct_PVec3 name ="pos"/>
-    <struct_Stat name ="stat"/>
+    <struct_PStat name ="stat"/>
   </packet>
 
 	<packet name = "IncreaseStatRequest">
@@ -85,8 +85,8 @@
 		<int name ="type"/>
 		<int name ="increase"/>
 		<int name ="usedGold"/>
-		<struct_Stat name ="originStat"/>
-		<struct_Stat name ="addStat"/>
+		<struct_PStat name ="originStat"/>
+		<struct_PStat name ="addStat"/>
 		<int name="result"/>
 	</packet>
 
@@ -100,7 +100,7 @@
     <int name ="worldId"/>
 	 <int name ="gold"/>
     <int name ="itemSlotId"/>
-    <struct_Item name="item"/>
+    <struct_PItem name="item"/>
   </packet>
 
 	<packet name ="UpdateRewardBroadcast">
@@ -108,7 +108,7 @@
 		<int name ="status"/>
 		<int name="rewardType"/>
 		<int name ="gold"/>
-		<struct_Item name="item"/>
+		<struct_PItem name="item"/>
 		<struct_PVec3 name ="pos"/>
 	</packet>
 
@@ -122,9 +122,14 @@
 
   <packet name ="UpdateStatBroadcast">
 	  <int name ="id"/>
-	  <struct_Stat name ="originStat"/>
-	  <struct_Stat name ="addStat"/>
+	  <struct_PStat name ="originStat"/>
+	  <struct_PStat name ="addStat"/>
   </packet>
+
+	<packet name ="UpdatePlayerCurrency">
+		<int name ="id"/>
+		<struct_PCurrency_list name ="currency"/>
+	</packet>
 
 	<struct name="PVec3">
     <float name ="x"/>
@@ -132,7 +137,7 @@
     <float name ="z"/>
   </struct>
 
-  <struct name ="Stat">
+  <struct name ="PStat">
     <int name ="str"/>
     <int name ="def"/>
     <int name ="hp"/>
@@ -140,7 +145,7 @@
     <float name = "attackSpeed"/>
   </struct>
 
-  <struct name = "Item">
+  <struct name = "PItem">
     <int name ="itemKey"/>
     <int name ="level"/>
     <int name ="str"/>
@@ -149,6 +154,11 @@
     <int name ="cooltime"/>
     <bool name ="canUse"/>
   </struct>
+
+	<struct name ="PCurrency">
+		<int name ="currencyType"/>
+		<int name ="count"/>
+	</struct>
 
   <class name ="PlayerSpawn">
     <int name="id"/>

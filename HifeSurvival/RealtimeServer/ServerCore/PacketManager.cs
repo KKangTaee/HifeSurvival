@@ -25,6 +25,7 @@ public abstract class PacketHandler
 	public abstract void UpdateRewardBroadcastHandler(PacketSession session, IPacket packet);
 	public abstract void UpdateLocationBroadcastHandler(PacketSession session, IPacket packet);
 	public abstract void UpdateStatBroadcastHandler(PacketSession session, IPacket packet);
+	public abstract void UpdatePlayerCurrencyHandler(PacketSession session, IPacket packet);
 
 }
 
@@ -66,6 +67,7 @@ public class PacketManager
 		_handler.Add((ushort)PacketID.UpdateRewardBroadcast, handler.UpdateRewardBroadcastHandler);
 		_handler.Add((ushort)PacketID.UpdateLocationBroadcast, handler.UpdateLocationBroadcastHandler);
 		_handler.Add((ushort)PacketID.UpdateStatBroadcast, handler.UpdateStatBroadcastHandler);
+		_handler.Add((ushort)PacketID.UpdatePlayerCurrency, handler.UpdatePlayerCurrencyHandler);
 
 	}
 
@@ -91,6 +93,7 @@ public class PacketManager
 		_makeFunc.Add((ushort)PacketID.UpdateRewardBroadcast, MakePacket<UpdateRewardBroadcast>);
 		_makeFunc.Add((ushort)PacketID.UpdateLocationBroadcast, MakePacket<UpdateLocationBroadcast>);
 		_makeFunc.Add((ushort)PacketID.UpdateStatBroadcast, MakePacket<UpdateStatBroadcast>);
+		_makeFunc.Add((ushort)PacketID.UpdatePlayerCurrency, MakePacket<UpdatePlayerCurrency>);
 
 	}
 

@@ -127,7 +127,7 @@ namespace Server
                     }
                 case RewardType.Item:
                     {
-                        broadcast.item = new Item()
+                        broadcast.item = new PItem()
                         {
                             //NOTE : 임시 값. 
                             itemKey = worldItem.itemData.subType,

@@ -286,7 +286,7 @@ namespace Server
             S_Respawn respawn = new S_Respawn()
             {
                 id = id,
-                stat = player.stat.ConvertStat(),
+                stat = player.stat.ConvertToPStat(),
             };
 
             _broadcaster.Broadcast(respawn);
@@ -447,7 +447,7 @@ namespace Server
         }
 
 
-        public void OnRecvPickReward(PickRewardRequest req)
+        public void OnRecvPickRewardRequest(PickRewardRequest req)
         {
             var player = GetEntityById(req.id);
             if (player == null)
@@ -475,7 +475,7 @@ namespace Server
                     }
                 case RewardType.Item:
                     {
-                        broadcast.item = new Item()
+                        broadcast.item = new PItem()
                         {
                             //NOTE : 임시 값. 
                             itemKey = rewardData.subType,
@@ -493,6 +493,22 @@ namespace Server
             }
 
             _broadcaster.Broadcast(broadcast);
+
+            switch ((RewardType)rewardData.rewardType)
+            {
+                case RewardType.Gold:
+                    {
+                        //골드 변화량 갱신
+                        break;
+                    }
+                case RewardType.Item:
+                    {
+                        //슬롯에 장착. 
+                        break;
+                    }
+                default:
+                    break;
+            }
 
             //TODO : Send PickRewardResponse
         }

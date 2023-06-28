@@ -28,6 +28,7 @@ public enum PacketID
 	UpdateRewardBroadcast = 18,
 	UpdateLocationBroadcast = 19,
 	UpdateStatBroadcast = 20,
+	UpdatePlayerCurrency = 21,
 	
 }
 
@@ -645,7 +646,7 @@ public class S_Respawn : IPacket
 {
 	public int id;
 	public PVec3 pos;
-	public Stat stat;
+	public PStat stat;
 
 	public ushort Protocol { get { return (ushort)PacketID.S_Respawn; } }
 
@@ -737,8 +738,8 @@ public class IncreaseStatResponse : IPacket
 	public int type;
 	public int increase;
 	public int usedGold;
-	public Stat originStat;
-	public Stat addStat;
+	public PStat originStat;
+	public PStat addStat;
 	public int result;
 
 	public ushort Protocol { get { return (ushort)PacketID.IncreaseStatResponse; } }
@@ -842,7 +843,7 @@ public class PickRewardResponse : IPacket
 	public int worldId;
 	public int gold;
 	public int itemSlotId;
-	public Item item;
+	public PItem item;
 
 	public ushort Protocol { get { return (ushort)PacketID.PickRewardResponse; } }
 
@@ -897,7 +898,7 @@ public class UpdateRewardBroadcast : IPacket
 	public int status;
 	public int rewardType;
 	public int gold;
-	public Item item;
+	public PItem item;
 	public PVec3 pos;
 
 	public ushort Protocol { get { return (ushort)PacketID.UpdateRewardBroadcast; } }
@@ -1005,8 +1006,8 @@ public class UpdateLocationBroadcast : IPacket
 public class UpdateStatBroadcast : IPacket
 {
 	public int id;
-	public Stat originStat;
-	public Stat addStat;
+	public PStat originStat;
+	public PStat addStat;
 
 	public ushort Protocol { get { return (ushort)PacketID.UpdateStatBroadcast; } }
 
@@ -1044,6 +1045,57 @@ public class UpdateStatBroadcast : IPacket
 		return SendBufferHelper.Close(count);
 	}
 }
+
+public class UpdatePlayerCurrency : IPacket
+{
+	public int id;
+	public List<PCurrency> currencyList = new List<PCurrency>();
+
+	public ushort Protocol { get { return (ushort)PacketID.UpdatePlayerCurrency; } }
+
+	public void Read(ArraySegment<byte> segment)
+	{
+		ushort count = 0;
+
+		ReadOnlySpan<byte> s = new ReadOnlySpan<byte>(segment.Array, segment.Offset, segment.Count);
+		count += sizeof(ushort);
+		count += sizeof(ushort);
+		this.id = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+		count += sizeof(int);
+		this.currencyList.Clear();
+		ushort currencyLen = BitConverter.ToUInt16(s.Slice(count, s.Length - count));
+		count += sizeof(ushort);
+		for (int i = 0; i < currencyLen; i++)
+		{
+			PCurrency currency = new PCurrency();
+			currency.Read(s, ref count);
+			currencyList.Add(currency);
+		}
+	}
+
+	public ArraySegment<byte> Write()
+	{
+		ArraySegment<byte> segment = SendBufferHelper.Open(4096);
+		ushort count = 0;
+		bool success = true;
+
+		Span<byte> s = new Span<byte>(segment.Array, segment.Offset, segment.Count);
+
+		count += sizeof(ushort);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.UpdatePlayerCurrency);
+		count += sizeof(ushort);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.id);
+		count += sizeof(int);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)this.currencyList.Count);
+		count += sizeof(ushort);
+		foreach (PCurrency currency in this.currencyList)
+			success &= currency.Write(s, ref count);
+		success &= BitConverter.TryWriteBytes(s, count);
+		if (success == false)
+			return null;
+		return SendBufferHelper.Close(count);
+	}
+}
 public struct PVec3
 {
 	public float x;
@@ -1072,7 +1124,7 @@ public struct PVec3
 		return success;
 	}	
 }
-	public struct Stat
+	public struct PStat
 {
 	public int str;
 	public int def;
@@ -1110,7 +1162,7 @@ public struct PVec3
 		return success;
 	}	
 }
-	public struct Item
+	public struct PItem
 {
 	public int itemKey;
 	public int level;
@@ -1155,6 +1207,29 @@ public struct PVec3
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.canUse);
 		count += sizeof(bool);
+		return success;
+	}	
+}
+	public struct PCurrency
+{
+	public int currencyType;
+	public int count;
+
+	public void Read(ReadOnlySpan<byte> s, ref ushort count)
+	{
+		this.currencyType = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+		count += sizeof(int);
+		this.count = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+		count += sizeof(int);
+	}
+
+	public bool Write(Span<byte> s, ref ushort count)
+	{
+		bool success = true;
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.currencyType);
+		count += sizeof(int);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.count);
+		count += sizeof(int);
 		return success;
 	}	
 }

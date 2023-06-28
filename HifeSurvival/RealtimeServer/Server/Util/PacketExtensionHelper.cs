@@ -99,9 +99,9 @@ namespace Server
             return list;
         }
 
-        public static Stat ConvertStat(this EntityStat inSelf)
+        public static PStat ConvertToPStat(this EntityStat inSelf)
         {
-            return new Stat()
+            return new PStat()
             {
                 str = inSelf.str,
                 def = inSelf.def,

@@ -100,7 +100,7 @@ namespace Server
 
         public override void IncreaseStatRequestHandler(PacketSession session, IPacket packet)
         {
-            IncreaseStatRequest req = packet as IncreaseStatRequest;
+            var req = packet as IncreaseStatRequest;
             push(session, room => room?.Mode.OnRecvIncreaseStatRequest(req));
         }
 
@@ -116,7 +116,8 @@ namespace Server
 
         public override void PickRewardRequestHandler(PacketSession session, IPacket packet)
         {
-            throw new NotImplementedException();
+            var req = packet as PickRewardRequest;
+            push(session, room => room?.Mode.OnRecvPickRewardRequest(req));
         }
 
         public override void PickRewardResponseHandler(PacketSession session, IPacket packet)
@@ -125,6 +126,11 @@ namespace Server
         }
 
         public override void UpdateRewardBroadcastHandler(PacketSession session, IPacket packet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void UpdatePlayerCurrencyHandler(PacketSession session, IPacket packet)
         {
             throw new NotImplementedException();
         }

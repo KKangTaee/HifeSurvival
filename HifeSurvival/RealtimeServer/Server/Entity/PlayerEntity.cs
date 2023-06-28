@@ -99,7 +99,7 @@ namespace Server
                 S_Respawn respawn = new S_Respawn()
                 {
                     id = id,
-                    stat = stat.ConvertStat(),
+                    stat = stat.ConvertToPStat(),
                 };
 
                 broadcaster.Broadcast(respawn);

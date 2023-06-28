@@ -106,4 +106,9 @@ public class ClientPacketHandler : PacketHandler
     {
         throw new NotImplementedException();
     }
+
+    public override void UpdatePlayerCurrencyHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
 }

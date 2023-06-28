@@ -70,8 +70,8 @@ namespace Server
             broadcast.id = id;
 
             GetStat(out var originStat, out var addStat);
-            broadcast.originStat = originStat.ConvertStat();
-            broadcast.addStat = addStat.ConvertStat();
+            broadcast.originStat = originStat.ConvertToPStat();
+            broadcast.addStat = addStat.ConvertToPStat();
 
             broadcaster.Broadcast(broadcast);
         }

@@ -72,7 +72,7 @@ namespace Server
                     S_Respawn respawn = new S_Respawn()
                     {
                         id = entity.id,
-                        stat = entity.stat.ConvertStat(),
+                        stat = entity.stat.ConvertToPStat(),
                     };
                 }
             }, RespawnTime * DEFINE.SEC_TO_MS);

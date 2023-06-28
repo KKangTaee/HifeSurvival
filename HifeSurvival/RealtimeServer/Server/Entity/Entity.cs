@@ -10,7 +10,7 @@ namespace Server
     {
         public IBroadcaster broadcaster;
 
-        public int targetId;
+        public int id;
 
         public PVec3 spawnPos;
 
@@ -19,8 +19,6 @@ namespace Server
 
         public EntityStat stat;
         public EntityStatus Status;
-
-        public abstract bool IsPlayer { get; }
 
         #region StatusAction
         protected abstract void ChangeState<P>(EntityStatus inStatue, P inParam) where P : struct, IStateParam;

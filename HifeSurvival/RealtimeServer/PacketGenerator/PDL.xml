@@ -10,24 +10,24 @@
     <list name = "JoinPlayer">
       <string name = "userId"/>
       <string name = "userName"/>
-      <int name = "targetId"/>
-      <int name ="heroId"/>
+      <int name = "id"/>
+      <int name ="heroKey"/>
     </list>
     <int name="roomId"/>
   </packet>
 
   <packet name ="S_LeaveToGame">
     <string name = "userId"/>
-    <int name ="targetId"/>
+    <int name ="id"/>
   </packet>
 
   <packet name="CS_SelectHero">
-    <int name="targetId"/>
-    <int name="heroId"/>
+    <int name="id"/>
+    <int name="heroKey"/>
   </packet>
 
   <packet name="CS_ReadyToGame">
-    <int name ="targetId"/>
+    <int name ="id"/>
   </packet>
 
   <packet name="S_Countdown">
@@ -45,17 +45,13 @@
   </packet>
 
   <packet name ="CS_Attack">
-    <bool name = "toIsPlayer"/>
-    <bool name = "fromIsPlayer"/>
-    <int name ="toId"/>
-    <int name ="fromId"/>
-    <struct_PVec3 name ="fromPos"/>
-    <struct_PVec3 name ="fromDir"/>
+    <int name ="id"/>
+    <int name ="targetId"/>
     <int name ="attackValue"/>
   </packet>
   
   <packet name ="MoveRequest">
-    <int name ="targetId"/>
+    <int name ="id"/>
     <struct_PVec3 name ="currentPos"/>
     <struct_PVec3 name ="targetPos"/>
     <float name ="speed"/>
@@ -63,22 +59,19 @@
   </packet>
 
   <packet name ="S_Dead">
-    <bool name ="toIsPlayer"/>
-    <bool name ="fromIsPlayer"/>
-    <int name  ="toId"/>
+    <int name  ="id"/>
     <int name  ="fromId"/>
     <int name  ="respawnTime"/>
   </packet>
 
   <packet name ="S_Respawn">
-    <int name ="targetId"/>
-    <bool name ="isPlayer"/>
+    <int name ="id"/>
     <struct_PVec3 name ="pos"/>
     <struct_Stat name ="stat"/>
   </packet>
 
   <packet name = "CS_UpdateStat">
-    <int name ="targetId"/>
+    <int name ="id"/>
     <int name ="usedGold"/>
     <struct_Stat name ="updateStat"/>
   </packet>
@@ -90,26 +83,25 @@
   </packet>
 
   <packet name ="C_PickReward">
-    <int name= "targetId"/>
+    <int name= "id"/>
     <int name= "worldId"/>
   </packet>
 
   <packet name ="S_GetItem">
-    <int name ="targetId"/>
+    <int name ="id"/>
     <int name ="worldId"/>
     <int name ="itemSlotId"/>
     <struct_Item name="item"/>
   </packet>
 
   <packet name ="S_GetGold">
-    <int name ="targetId"/>
+    <int name ="id"/>
     <int name ="worldId"/>
     <int name ="gold"/>
   </packet>
 
   <packet name ="UpdateLocationBroadcast">
-    <int name ="targetId"/>
-    <bool name ="isPlayer"/>
+    <int name ="id"/>
     <struct_PVec3 name ="currentPos"/>
     <struct_PVec3 name ="targetPos"/>
     <float name ="speed"/>
@@ -141,13 +133,13 @@
   </struct>
 
   <class name ="PlayerSpawn">
-    <int name="targetId"/>
+    <int name="id"/>
     <int name="herosKey"/>
     <struct_PVec3 name ="pos"/>
   </class>
 
   <class name ="MonsterSpawn">
-    <int name="targetId"/>
+    <int name="id"/>
     <int name ="monstersKey"/>
     <int name ="groupId"/>
     <int name ="grade"/>

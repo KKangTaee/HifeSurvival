@@ -14,8 +14,6 @@ namespace Server
 
         StateMachine<MonsterEntity> _stateMachine;
 
-        public override bool IsPlayer => false;
-
         private MonsterAIController AIController { get; set; }
         private event Action<string, PVec3> dropItemDelegate;
         private MonsterGroup group;
@@ -55,14 +53,14 @@ namespace Server
             }
             else
             {
-                if (attacker.IsPlayer)
+                if (attacker is PlayerEntity playerAttacker)
                 {
                     Attack(new AttackParam()
                     {
-                        target = attacker,
+                        target = playerAttacker,
                     });
 
-                    group.OnAttack(targetId, attacker);
+                    group.OnAttack(id, playerAttacker);
                 }
             }
         }
@@ -71,10 +69,8 @@ namespace Server
         {
             CS_Attack attackPacket = new CS_Attack()
             {
-                toIsPlayer = true,
-                toId = target.targetId,
-                fromIsPlayer = false,
-                fromId = this.targetId,
+                id = id,
+                targetId = target.id,
                 attackValue = damageValue,
             };
 

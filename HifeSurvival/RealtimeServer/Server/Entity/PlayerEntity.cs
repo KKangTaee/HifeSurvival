@@ -10,13 +10,11 @@ namespace Server
         public string userId;
         public string userName;
         
-        public int  heroId;
+        public int  heroKey;
         public bool isReady;
 
         public int  gold;
         public PlayerItem[] itemSlot = new PlayerItem[4];
-
-        public override bool IsPlayer => true;
 
         StateMachine<PlayerEntity> _stateMachine;
 
@@ -38,8 +36,8 @@ namespace Server
             {
                 userId = this.userId,
                 userName = this.userName,
-                targetId = this.targetId,
-                heroId = this.heroId
+                id = this.id,
+                heroKey = this.heroKey
             };
         }
 
@@ -75,8 +73,7 @@ namespace Server
 
                 S_Respawn respawn = new S_Respawn()
                 {
-                    targetId = targetId,
-                    isPlayer = true,
+                    id = id,
                     stat = stat.ConvertStat(),
                 };
 

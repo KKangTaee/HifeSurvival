@@ -21,7 +21,7 @@ namespace Server
 
         public void Add(MonsterEntity inEntity)
         {
-            _monstersDict.Add(inEntity.targetId, inEntity);
+            _monstersDict.Add(inEntity.id, inEntity);
         }
 
         public void ExecuteGroupAI()
@@ -30,9 +30,9 @@ namespace Server
                 m.Value.ExecuteAI();
         }
 
-        public void OnAttack(int damagedTargetId, Entity attacker)
+        public void OnAttack(int damagedId, Entity attacker)
         {
-            foreach (var m in _monstersDict.AsQueryable().Where(m => m.Value.targetId != damagedTargetId && !m.Value.ExistAggro()))
+            foreach (var m in _monstersDict.AsQueryable().Where(m => m.Value.id != damagedId && !m.Value.ExistAggro()))
                 m.Value.Attack(new AttackParam() 
                 { 
                     target = attacker, 
@@ -71,8 +71,7 @@ namespace Server
 
                     S_Respawn respawn = new S_Respawn()
                     {
-                        targetId = entity.targetId,
-                        isPlayer = false,
+                        id = entity.id,
                         stat = entity.stat.ConvertStat(),
                     };
                 }

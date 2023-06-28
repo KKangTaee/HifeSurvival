@@ -413,14 +413,22 @@ namespace Server
             var entity = GetEntityById(inPacket.id);
             if (entity == null)
                 return;
-            
+
+            var res = new IncreaseStatResponse();
+            res.id = entity.id;
+            res.result = DEFINE.SUCCESS;
+
             int  increaseValue = inPacket.increase;
             if (entity is PlayerEntity  playerEntity)
             {
                 //NOTE : 현재 1골드 당 해당 스탯 1 증가. 
                 //TODO : 골드량 대 스탯 증가량 비례 값은 데이터 시트로 관리할 예정. 
                 if (increaseValue > playerEntity.gold)
+                {
+                    res.result = DEFINE.ERROR;
+                    _broadcaster.Broadcast(res);
                     return;
+                }
 
                 playerEntity.gold -= increaseValue;
 
@@ -439,10 +447,19 @@ namespace Server
                         Logger.GetInstance().Error($"Wrong Stat Type {(StatType)inPacket.type}");
                         break; ;
                 }
+
+                res.increase = increaseValue;
+                res.usedGold = increaseValue;
             }
 
             entity.UpdateStat();
 
+            entity.GetStat(out var originEStat, out var addEStat);
+            res.originStat = originEStat.ConvertToPStat();
+            res.addStat = addEStat.ConvertToPStat();
+
+
+            _broadcaster.Broadcast(res);
             //TODO : Send IncreaseStatResponse + result 값 처리
         }
 

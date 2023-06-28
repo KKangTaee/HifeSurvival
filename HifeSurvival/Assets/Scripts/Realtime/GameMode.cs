@@ -82,7 +82,7 @@ public class GameMode
 
     public bool IsSelf(int inPlayerId)
     {
-        return EntitySelf.targetId == inPlayerId;
+        return EntitySelf.id == inPlayerId;
     }
 
     public void Leave()
@@ -94,11 +94,11 @@ public class GameMode
     public void AddPlayerEntity(S_JoinToGame.JoinPlayer joinPlayer)
     {
         // 이미 참가중인 유저에 대해서는 패스처리한다.
-        if (PlayerEntitysDict.ContainsKey(joinPlayer.targetId) == true)
+        if (PlayerEntitysDict.ContainsKey(joinPlayer.id) == true)
             return;
 
 
-        if (StaticData.Instance.HerosDict.TryGetValue(joinPlayer.heroId.ToString(), out var heros) == false)
+        if (StaticData.Instance.HerosDict.TryGetValue(joinPlayer.id.ToString(), out var heros) == false)
         {
             Debug.LogError("heros static data is null or empty!");
             return;
@@ -108,8 +108,8 @@ public class GameMode
         {
             userId = joinPlayer.userId,
             userName = joinPlayer.userName,
-            targetId = joinPlayer.targetId,
-            heroId = joinPlayer.heroId,
+            id = joinPlayer.id,
+            heroId = joinPlayer.heroKey,
             stat = new EntityStat(heros),
         };
 
@@ -117,7 +117,7 @@ public class GameMode
         if (joinPlayer.userId == ServerData.Instance.UserData.user_id)
             EntitySelf = entity;
 
-        PlayerEntitysDict.Add(joinPlayer.targetId, entity);
+        PlayerEntitysDict.Add(joinPlayer.id, entity);
     }
 
 
@@ -183,7 +183,7 @@ public class GameMode
     {
         MoveRequest moveRequest = new MoveRequest()
         {
-            targetId = EntitySelf.targetId,
+            id = EntitySelf.id,
             currentPos = inCurrPos.ConvertPVec3(),
             targetPos  = inDestPos.ConvertPVec3(),
             speed = EntitySelf.stat.moveSpeed,
@@ -197,24 +197,24 @@ public class GameMode
     {
         CS_Attack attack = new CS_Attack()
         {
-            toIsPlayer = toIsPlayer,
-            toId = toId,
-            fromIsPlayer = true,
-            fromId = EntitySelf.targetId,
-            fromPos = inPos.ConvertPVec3(),
-            fromDir = inDir.ConvertPVec3(),
+            // toIsPlayer = toIsPlayer,
+            id = EntitySelf.id,
+            targetId = toId,
+            // fromIsPlayer = true,
+            // fromPos = inPos.ConvertPVec3(),
+            // fromDir = inDir.ConvertPVec3(),
             attackValue = damageValue,
         };
 
         NetworkManager.Instance.Send(attack);
     }
 
-    public void OnSendSelectHero(int inHeroId)
+    public void OnSendSelectHero(int inHeroKey)
     {
         CS_SelectHero packet = new CS_SelectHero()
         {
-            targetId = EntitySelf.targetId,
-            heroId = inHeroId,
+            id = EntitySelf.id,
+            heroKey = inHeroKey,
         };
 
         NetworkManager.Instance.Send(packet);
@@ -235,19 +235,20 @@ public class GameMode
     {
         CS_ReadyToGame readyToGame = new CS_ReadyToGame()
         {
-            targetId = EntitySelf.targetId,
+            id = EntitySelf.id,
         };
 
         NetworkManager.Instance.Send(readyToGame);
     }
 
-    public void OnSendUpdateStat(int inUsedGold, in Stat inStat)
+    public void OnSendUpdateStat(int inUsedGold, int inType, int inIncrease)
     {
-        CS_UpdateStat updateStat = new CS_UpdateStat()
+        IncreaseStatRequest updateStat = new IncreaseStatRequest()
         {
-            targetId = EntitySelf.targetId,
-            usedGold = inUsedGold,
-            updateStat = inStat,
+            id   = EntitySelf.id,
+            type = inUsedGold,
+            increase = inIncrease
+            // updateStat = inStat,
         };
 
         NetworkManager.Instance.Send(updateStat);
@@ -257,7 +258,7 @@ public class GameMode
     {
         C_PickReward getItem = new C_PickReward()
         {
-            targetId = EntitySelf.targetId,
+            id = EntitySelf.id,
             worldId = inWorldId,
         };
 
@@ -278,10 +279,10 @@ public class GameMode
             // 이미 내가 참가 중이라면, 내려온 데이터에서 처리해야할 것들만 처리해주면 된다.
             foreach (var joinPlayer in inPacket.joinPlayerList)
             {
-                if (PlayerEntitysDict.ContainsKey(joinPlayer.targetId) == false)
+                if (PlayerEntitysDict.ContainsKey(joinPlayer.id) == false)
                 {
                     AddPlayerEntity(joinPlayer);
-                    _onRecvJoinCB?.Invoke(PlayerEntitysDict[joinPlayer.targetId]);
+                    _onRecvJoinCB?.Invoke(PlayerEntitysDict[joinPlayer.id]);
                     break;
                 }
             }
@@ -295,38 +296,38 @@ public class GameMode
 
     public void OnRecvLeave(S_LeaveToGame inPacket)
     {
-        RemovePlayerEntity(inPacket.targetId);
+        RemovePlayerEntity(inPacket.id);
 
-        _onRecvLeaveCB?.Invoke(inPacket.targetId);
+        _onRecvLeaveCB?.Invoke(inPacket.id);
     }
 
 
     public void OnRecvSelectHero(CS_SelectHero inPacket)
     {
-        var player = GetPlayerEntity(inPacket.targetId);
+        var player = GetPlayerEntity(inPacket.id);
 
         if (player == null)
             return;
 
-        player.heroId = inPacket.heroId;
+        player.heroId = inPacket.heroKey;
         player.stat = new EntityStat(StaticData.Instance.HerosDict[player.heroId.ToString()]);
 
 
-        if (IsSelf(inPacket.targetId) == false)
+        if (IsSelf(inPacket.id) == false)
             _onRecvSelectCB?.Invoke(player);
     }
 
 
     public void OnRecvReadyToGame(CS_ReadyToGame inPacket)
     {
-        var player = GetPlayerEntity(inPacket.targetId);
+        var player = GetPlayerEntity(inPacket.id);
 
         if (player == null)
             return;
 
         player.isReady = true;
 
-        if (IsSelf(inPacket.targetId) == false)
+        if (IsSelf(inPacket.id) == false)
             _onRecvReadyCB?.Invoke(player);
     }
 
@@ -345,7 +346,7 @@ public class GameMode
 
         foreach (PlayerSpawn p in playerList)
         {
-            var playerEntity = GetPlayerEntity(p.targetId);
+            var playerEntity = GetPlayerEntity(p.id);
             playerEntity.heroId = p.herosKey;
             playerEntity.pos = p.pos;
         }
@@ -353,7 +354,7 @@ public class GameMode
         foreach (MonsterSpawn m in monsterList)
         {
             var monsterEntity = CreateMonsterEntity(m);
-            MonsterEntityDict.Add(monsterEntity.targetId, monsterEntity);
+            MonsterEntityDict.Add(monsterEntity.id, monsterEntity);
         }
         
         _onRecvStartGameCB?.Invoke();
@@ -366,7 +367,7 @@ public class GameMode
         foreach (MonsterSpawn m in monsterList)
         {
             var monsterEntity = CreateMonsterEntity(m);
-            MonsterEntityDict.Add(monsterEntity.targetId, monsterEntity);
+            MonsterEntityDict.Add(monsterEntity.id, monsterEntity);
         }
     }
 
@@ -380,7 +381,7 @@ public class GameMode
 
         var monsterEntity = new MonsterEntity()
         {
-            targetId = m.targetId,
+            id = m.id,
             monsterId = m.monstersKey,
             grade = m.grade,
             pos = m.pos,
@@ -391,36 +392,44 @@ public class GameMode
 
     public void OnUpdateLocation(UpdateLocationBroadcast inPacket)
     {
-        Entity entity = inPacket.isPlayer == true ? GetPlayerEntity(inPacket.targetId)
-                                                  : GetMonsterEntity(inPacket.targetId);
 
-        Debug.Log($"currPos : {inPacket.currentPos.ConvertUnityVector3()}, targetPos : {inPacket.targetPos.ConvertUnityVector3()}");
+        Entity entity = null;
+
+        switch(Entity.GetEntityType(inPacket.id))
+        {
+            case Entity.EEntityType.PLAYER:
+                entity = GetPlayerEntity(inPacket.id);
+                break;
+            
+            case Entity.EEntityType.MOSNTER:
+                entity =GetMonsterEntity(inPacket.id);
+                break;
+        }
 
         entity.pos = inPacket.currentPos;
 
         OnUpdateLocationHandler.Invoke(inPacket);
-        
     }
 
     public void OnRecvAttack(CS_Attack inPacket)
     {
         Entity toEntity = null;
 
-        if (inPacket.toIsPlayer == true)
+        switch(Entity.GetEntityType(inPacket.targetId))
         {
-            if (PlayerEntitysDict.TryGetValue(inPacket.toId, out var player) == true)
-                toEntity = player;
-        }
-        else
-        {
-            if (MonsterEntityDict.TryGetValue(inPacket.toId, out var monster) == true)
-                toEntity = monster;
+            case Entity.EEntityType.PLAYER:
+                toEntity = GetPlayerEntity(inPacket.targetId);
+                break;
+            
+            case Entity.EEntityType.MOSNTER:
+                toEntity =GetMonsterEntity(inPacket.targetId);
+                break;
         }
 
         // 공격
         toEntity.stat.AddCurrHp(-inPacket.attackValue);
 
-        if (IsSelf(inPacket.fromId) == false)
+        if (IsSelf(inPacket.id) == false)
             OnRecvAttackHandler?.Invoke(inPacket);
     }
 
@@ -433,9 +442,12 @@ public class GameMode
 
     public void OnRecvRespawn(S_Respawn inPacket)
     {
-        if (inPacket.isPlayer == true)
+
+        switch(Entity.GetEntityType(inPacket.id))
         {
-            var player = GetPlayerEntity(inPacket.targetId);
+            case Entity.EEntityType.PLAYER:
+              
+            var player = GetPlayerEntity(inPacket.id);
 
             if (player == null)
                 return;
@@ -443,23 +455,23 @@ public class GameMode
             player.pos = inPacket.pos;
 
             OnRecvRespawnHandler?.Invoke(player);
+                break;
+            
+            case Entity.EEntityType.MOSNTER:
+                break;
         }
-        else
-        {
 
-        }
     }
 
-
-    public void OnRecvUpdateStat(CS_UpdateStat inPacket)
+    public void OnRecvUpdateStat(IncreaseStatResponse inPacket)
     {
-        var player = GetPlayerEntity(inPacket.targetId);
+        var player = GetPlayerEntity(inPacket.id);
 
         if (player == null)
             return;
 
         player.AddGold(-inPacket.usedGold);
-        player.stat.IncreaseStat(inPacket.updateStat);
+        player.stat.IncreaseStat(inPacket.addStat);
     }
 
 
@@ -471,7 +483,7 @@ public class GameMode
 
     public void OnRecvGetItem(S_GetItem inPacket)
     {
-        var player = GetPlayerEntity(inPacket.targetId);
+        var player = GetPlayerEntity(inPacket.id);
 
         player.itemSlot[inPacket.itemSlotId] = new EntityItem(inPacket.item);
 
@@ -481,7 +493,7 @@ public class GameMode
 
     public void OnRecvGetGold(S_GetGold inPacket)
     {
-        var player = GetPlayerEntity(inPacket.targetId);
+        var player = GetPlayerEntity(inPacket.id);
 
         player.AddGold(inPacket.gold);
 

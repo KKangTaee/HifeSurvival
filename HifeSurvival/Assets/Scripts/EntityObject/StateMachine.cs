@@ -60,7 +60,7 @@ public struct AttackParam
 
     public EntityObject target;
 
-    public Vector3 fromPos;
+    // public Vector3 fromPos;
     public Vector3 fromDir;
 }
 

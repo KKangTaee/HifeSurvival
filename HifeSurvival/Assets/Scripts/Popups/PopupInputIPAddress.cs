@@ -137,7 +137,7 @@ public class PopupInputIPAddress : PopupBase
                 foreach(var entity in currPlayerEntitys.Values)
                     popup.AddPlayerView(entity);
 
-                popup.SetPlayerIdSelf(GameMode.Instance.EntitySelf.targetId);
+                popup.SetPlayerIdSelf(GameMode.Instance.EntitySelf.id);
 
                 GameMode.Instance.AddEvent(
                     inRecvJoin  : entity =>  popup.OnRecvJoin(entity),

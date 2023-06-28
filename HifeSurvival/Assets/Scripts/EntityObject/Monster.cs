@@ -30,6 +30,8 @@ public class Monster : EntityObject
         #region  Local Func
         void Attack(AttackParam inParam, Monster inFrom, EntityObject inTo)
         {
+            // NOTE@taeho.kang 
+
             inFrom.OnAttack(inParam.fromDir);
             inTo.OnDamaged(inParam.attackValue);
         }

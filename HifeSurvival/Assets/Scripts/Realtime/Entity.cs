@@ -6,7 +6,15 @@ using System.Linq;
 
 public abstract class Entity
 {
-    public int targetId;
+    public enum EEntityType
+    {
+        PLAYER,
+        MOSNTER,
+
+        NONE,
+    }
+
+    public int id;
 
     public EntityStat stat;
 
@@ -40,6 +48,24 @@ public abstract class Entity
     public virtual int GetTotalHp()
     {
         return stat.hp;
+    }
+
+
+    //-----------------
+    // static
+    //-----------------
+
+    public const int PLAYER_ID_MAX    = 100;
+    public const int MONSTER_ID_MAX   = 10000;
+
+    public static EEntityType GetEntityType(int inId)
+    {
+        if(inId <PLAYER_ID_MAX)
+            return EEntityType.PLAYER;
+        else if(inId <MONSTER_ID_MAX)
+            return EEntityType.MOSNTER;
+
+        return EEntityType.NONE;
     }
 }
 

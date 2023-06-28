@@ -59,12 +59,6 @@ public class ClientPacketHandler : PacketHandler
         GameMode.Instance.OnRecvRespawn(respawn);
     }
 
-    public override void CS_UpdateStatHandler(PacketSession session, IPacket packet)
-    {
-        CS_UpdateStat updateStat = packet as CS_UpdateStat;
-        GameMode.Instance.OnRecvUpdateStat(updateStat);
-    }
-
     public override void C_JoinToGameHandler(PacketSession session, IPacket packet)
     {
         throw new NotImplementedException();
@@ -113,5 +107,26 @@ public class ClientPacketHandler : PacketHandler
         //TODO 좌표 기준 이동 리뉴얼
         UpdateLocationBroadcast locationBroadcast = packet as UpdateLocationBroadcast;
         GameMode.Instance.OnUpdateLocation(locationBroadcast);
+    }
+
+    public override void MoveResponseHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void IncreaseStatRequestHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void IncreaseStatResponseHandler(PacketSession session, IPacket packet)
+    {
+        IncreaseStatResponse increaseStat = packet as IncreaseStatResponse;
+        GameMode.Instance.OnRecvUpdateStat(increaseStat);
+    }
+
+    public override void UpdateStatBroadcastHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
     }
 }

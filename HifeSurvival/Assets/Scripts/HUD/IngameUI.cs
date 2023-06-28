@@ -66,7 +66,7 @@ public class IngameUI : MonoBehaviour
             if (iter.MoveNext())
             {
                 KDView view = iter.Current as KDView;
-                view?.SetInfo(entity.targetId, 0, 0);
+                view?.SetInfo(entity.id, 0, 0);
 
                 // 나 자신이라면..?
                 if (entity.userId == ServerData.Instance.UserData.user_id)
@@ -78,17 +78,17 @@ public class IngameUI : MonoBehaviour
 
     public void OnRecvDead(S_Dead inPacket)
     {
-        if(inPacket.toIsPlayer == true)
+        if(Entity.GetEntityType(inPacket.id) == Entity.EEntityType.PLAYER)
         {
-            var dead = _kdViewArr.FirstOrDefault(x => x.targetId == inPacket.toId);
+            var dead = _kdViewArr.FirstOrDefault(x => x.targetId == inPacket.id);
             dead.AddDead(1);
 
             // 내가 사망했다면...? 리스폰 화면 띄워라
-            if(inPacket.toId == GameMode.Instance.EntitySelf.targetId)
+            if(inPacket.id == GameMode.Instance.EntitySelf.id)
                 ShowRespawnTimer(inPacket.respawnTime);
         }
 
-        if(inPacket.fromIsPlayer == true)
+        if(Entity.GetEntityType(inPacket.id) == Entity.EEntityType.MOSNTER)
         {
             var kill = _kdViewArr.FirstOrDefault(x => x.targetId == inPacket.fromId);
             kill.AddKill(1);

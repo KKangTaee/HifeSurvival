@@ -57,11 +57,6 @@ public class ClientPacketHandler : PacketHandler
         throw new NotImplementedException();
     }
 
-    public override void CS_UpdateStatHandler(PacketSession session, IPacket packet)
-    {
-        throw new NotImplementedException();
-    }
-
     public override void S_SpawnMonsterHandler(PacketSession session, IPacket packet)
     {
         throw new NotImplementedException();
@@ -93,6 +88,26 @@ public class ClientPacketHandler : PacketHandler
     }
     
     public override void UpdateLocationBroadcastHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void MoveResponseHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void UpdateStatBroadcastHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void IncreaseStatRequestHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void IncreaseStatResponseHandler(PacketSession session, IPacket packet)
     {
         throw new NotImplementedException();
     }

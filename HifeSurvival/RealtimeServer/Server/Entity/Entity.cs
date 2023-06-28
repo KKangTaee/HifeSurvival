@@ -18,6 +18,8 @@ namespace Server
         public PVec3 targetPos;
 
         public EntityStat stat;
+        public EntityStat defaultStat;
+
         public EntityStatus Status;
 
         #region StatusAction
@@ -54,7 +56,26 @@ namespace Server
         #endregion
 
 
+        public abstract void UpdateStat();
+        public abstract void GetStat(out EntityStat defaultStat, out EntityStat additionalStat);
+
+
+
+        #region Callback
         public abstract void OnDamaged(in Entity attacker);
+
+        public virtual void OnStatChange()
+        {
+            var broadcast = new UpdateStatBroadcast();
+            broadcast.id = id;
+
+            GetStat(out var originStat, out var addStat);
+            broadcast.originStat = originStat.ConvertStat();
+            broadcast.addStat = addStat.ConvertStat();
+
+            broadcaster.Broadcast(broadcast);
+        }
+        #endregion
 
 
         public virtual void MoveToRespawn()

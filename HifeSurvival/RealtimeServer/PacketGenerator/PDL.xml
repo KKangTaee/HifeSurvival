@@ -58,6 +58,10 @@
     <long name ="timestamp"/>
   </packet>
 
+	<packet name = "MoveResponse">
+		
+	</packet>
+
   <packet name ="S_Dead">
     <int name  ="id"/>
     <int name  ="fromId"/>
@@ -70,11 +74,21 @@
     <struct_Stat name ="stat"/>
   </packet>
 
-  <packet name = "CS_UpdateStat">
-    <int name ="id"/>
-    <int name ="usedGold"/>
-    <struct_Stat name ="updateStat"/>
-  </packet>
+	<packet name = "IncreaseStatRequest">
+		<int name ="id"/>
+		<int name ="type"/>
+		<int name ="increase"/>
+	</packet>
+
+	<packet name = "IncreaseStatResponse">
+		<int name ="id"/>
+		<int name ="type"/>
+		<int name ="increase"/>
+		<int name ="usedGold"/>
+		<struct_Stat name ="originStat"/>
+		<struct_Stat name ="addStat"/>
+		<int name="result"/>
+	</packet>
 
   <packet name ="S_DropReward">
     <int name="worldId"/>
@@ -108,7 +122,13 @@
     <long name ="timestamp"/>
   </packet>
 
-  <struct name="PVec3">
+  <packet name ="UpdateStatBroadcast">
+	  <int name ="id"/>
+	  <struct_Stat name ="originStat"/>
+	  <struct_Stat name ="addStat"/>
+  </packet>
+
+	<struct name="PVec3">
     <float name ="x"/>
     <float name ="y"/>
     <float name ="z"/>

@@ -41,6 +41,24 @@ namespace Server
             _stateMachine.OnChangeState(inStatue, this, inParam);
         }
 
+        public override void UpdateStat()
+        {
+            bool bChanged = true;   //변화 감지가 필요함. 일단 생략. 
+
+            stat = new EntityStat();
+            stat += defaultStat;
+
+            if (bChanged)
+            {
+                OnStatChange();
+            }
+        }
+
+        public override void GetStat(out EntityStat defaultStat, out EntityStat additionalStat)
+        {
+            defaultStat = this.stat;
+            additionalStat = new EntityStat();
+        }
 
         public override void OnDamaged(in Entity attacker)
         {

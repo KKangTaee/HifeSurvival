@@ -47,12 +47,6 @@ namespace Server
             push(session, room => room?.Mode.OnRecvReady(readyToGame));
         }
 
-        public override void CS_UpdateStatHandler(PacketSession session, IPacket packet)
-        {
-            CS_UpdateStat updateStat = packet as CS_UpdateStat;
-            push(session, room => room?.Mode.OnRecvUpdateStat(updateStat));
-        }
-
         public override void S_JoinToGameHandler(PacketSession session, IPacket packet)
         {
             throw new NotImplementedException();
@@ -115,6 +109,27 @@ namespace Server
         }
 
         public override void UpdateLocationBroadcastHandler(PacketSession session, IPacket packet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void MoveResponseHandler(PacketSession session, IPacket packet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void IncreaseStatRequestHandler(PacketSession session, IPacket packet)
+        {
+            IncreaseStatRequest req = packet as IncreaseStatRequest;
+            push(session, room => room?.Mode.OnRecvIncreaseStatRequest(req));
+        }
+
+        public override void IncreaseStatResponseHandler(PacketSession session, IPacket packet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void UpdateStatBroadcastHandler(PacketSession session, IPacket packet)
         {
             throw new NotImplementedException();
         }

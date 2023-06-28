@@ -62,7 +62,7 @@ namespace Server
                                 _monsterGroupDict.Add(group.groupId, monsterGroup);
                             }
 
-                            MonsterEntity entity = new MonsterEntity(monsterGroup, _worldMap.DropItem)
+                            MonsterEntity monsterEntity = new MonsterEntity(monsterGroup, _worldMap.DropItem)
                             {
                                 id = _mId++,
                                 groupId = group.groupId,
@@ -72,19 +72,21 @@ namespace Server
                                 spawnPos = pos,
                                 grade = data.grade,
                                 broadcaster = _broadcaster,
-                                stat = new EntityStat(data),
+                                defaultStat = new EntityStat(data),
                                 rewardDatas = data.rewardIds,
                             };
 
-                            monsterGroup.Add(entity);
+                            monsterEntity.UpdateStat();
+
+                            monsterGroup.Add(monsterEntity);
 
                             var mData = new MonsterSpawn()
                             {
-                                id = entity.id,
-                                monstersKey = entity.monsterId,
-                                groupId = entity.groupId,
-                                grade = entity.grade,
-                                pos = entity.spawnPos,
+                                id = monsterEntity.id,
+                                monstersKey = monsterEntity.monsterId,
+                                groupId = monsterEntity.groupId,
+                                grade = monsterEntity.grade,
+                                pos = monsterEntity.spawnPos,
                             };
 
                             monsterList.Add(mData);
@@ -295,23 +297,25 @@ namespace Server
         // Receive
         //---------------
 
-        public void OnRecvJoin(C_JoinToGame inPacket, int inSessionId)
+        public void RecvJoin(C_JoinToGame inPacket, int inSessionId)
         {
             var data = GameDataLoader.Instance.HerosDict.Values.FirstOrDefault();
             if (data == null)
                 return;
 
-            var playerInfo = new PlayerEntity()
+            var playerEntity = new PlayerEntity()
             {
                 userId = inPacket.userId,
                 id = inSessionId,
                 heroKey = data.key,
                 userName = inPacket.userName,
                 broadcaster = _broadcaster,
-                stat = new EntityStat(data)
+                defaultStat = new EntityStat(data)
             };
 
-            _playersDict.Add(inSessionId, playerInfo);
+            playerEntity.UpdateStat();
+
+            _playersDict.Add(inSessionId, playerEntity);
 
             S_JoinToGame packet = new S_JoinToGame();
             packet.joinPlayerList = new List<S_JoinToGame.JoinPlayer>();
@@ -404,26 +408,42 @@ namespace Server
         }
 
 
-        public void OnRecvUpdateStat(CS_UpdateStat inPacket)
+        public void OnRecvIncreaseStatRequest(IncreaseStatRequest inPacket)
         {
             var entity = GetEntityById(inPacket.id);
             if (entity == null)
                 return;
-
-            if(entity is PlayerEntity  playerEntity)
+            
+            int  increaseValue = inPacket.increase;
+            if (entity is PlayerEntity  playerEntity)
             {
-                if (inPacket.usedGold > playerEntity.gold)
+                //NOTE : 현재 1골드 당 해당 스탯 1 증가. 
+                //TODO : 골드량 대 스탯 증가량 비례 값은 데이터 시트로 관리할 예정. 
+                if (increaseValue > playerEntity.gold)
                     return;
 
-                playerEntity.gold -= inPacket.usedGold;
-            }
- 
-            entity.stat.AddMaxHp(inPacket.updateStat.str);
-            entity.stat.AddDef(inPacket.updateStat.def);
-            entity.stat.AddMaxHp(inPacket.updateStat.hp);
-            entity.stat.AddCurrHp(inPacket.updateStat.hp);
+                playerEntity.gold -= increaseValue;
 
-            _broadcaster.Broadcast(inPacket);
+                switch ((StatType)inPacket.type)
+                {
+                    case StatType.Str:
+                        playerEntity.upgradeStat.AddStr(increaseValue);
+                        break;
+                    case StatType.Def:
+                        playerEntity.upgradeStat.AddDef(increaseValue);
+                        break;
+                    case StatType.Hp:
+                        playerEntity.upgradeStat.AddMaxHp(increaseValue, true);
+                        break;
+                    default:
+                        Logger.GetInstance().Error($"Wrong Stat Type {(StatType)inPacket.type}");
+                        break; ;
+                }
+            }
+
+            entity.UpdateStat();
+
+            //TODO : Send IncreaseStatResponse + result 값 처리
         }
 
 

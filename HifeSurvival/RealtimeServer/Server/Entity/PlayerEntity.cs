@@ -13,6 +13,10 @@ namespace Server
         public int  heroKey;
         public bool isReady;
 
+        
+        public EntityStat itemStat;
+        public EntityStat upgradeStat;
+
         public int  gold;
         public PlayerItem[] itemSlot = new PlayerItem[4];
 
@@ -41,7 +45,6 @@ namespace Server
             };
         }
 
-
         protected override void ChangeState<P>(EntityStatus inStatue, P inParam)
         {
             _stateMachine.OnChangeState(inStatue, this, inParam);
@@ -59,6 +62,28 @@ namespace Server
 
                 return;
             }
+        }
+
+        public override void UpdateStat()
+        {
+            bool bChanged = true;   //변화 감지가 필요함. 일단 생략. 
+
+            stat = new EntityStat();
+            stat += defaultStat;
+
+            stat += upgradeStat;
+            stat += itemStat;
+
+            if (bChanged)
+            {
+                OnStatChange();
+            }
+        }
+
+        public override void GetStat(out EntityStat defaultStat, out EntityStat additionalStat)
+        {
+            defaultStat = this.stat;
+            additionalStat = (this.upgradeStat + this.itemStat);
         }
 
 

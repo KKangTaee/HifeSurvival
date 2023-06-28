@@ -90,29 +90,27 @@
 		<int name="result"/>
 	</packet>
 
-  <packet name ="S_DropReward">
-    <int name="worldId"/>
-    <int name="rewardType"/>
-    <struct_PVec3 name ="pos"/>
-  </packet>
-
-  <packet name ="C_PickReward">
+  <packet name ="PickRewardRequest">
     <int name= "id"/>
     <int name= "worldId"/>
   </packet>
 
-  <packet name ="S_GetItem">
+  <packet name ="PickRewardResponse">
     <int name ="id"/>
     <int name ="worldId"/>
+	 <int name ="gold"/>
     <int name ="itemSlotId"/>
     <struct_Item name="item"/>
   </packet>
 
-  <packet name ="S_GetGold">
-    <int name ="id"/>
-    <int name ="worldId"/>
-    <int name ="gold"/>
-  </packet>
+	<packet name ="UpdateRewardBroadcast">
+		<int name ="worldId"/>
+		<int name ="status"/>
+		<int name="rewardType"/>
+		<int name ="gold"/>
+		<struct_Item name="item"/>
+		<struct_PVec3 name ="pos"/>
+	</packet>
 
   <packet name ="UpdateLocationBroadcast">
     <int name ="id"/>

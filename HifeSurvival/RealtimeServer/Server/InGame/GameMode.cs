@@ -297,7 +297,7 @@ namespace Server
         // Receive
         //---------------
 
-        public void RecvJoin(C_JoinToGame inPacket, int inSessionId)
+        public void OnRecvJoin(C_JoinToGame inPacket, int inSessionId)
         {
             var data = GameDataLoader.Instance.HerosDict.Values.FirstOrDefault();
             if (data == null)
@@ -447,46 +447,54 @@ namespace Server
         }
 
 
-        public void OnRecvPickReward(C_PickReward inPacket)
+        public void OnRecvPickReward(PickRewardRequest req)
         {
-            var player = GetEntityById(inPacket.id);
+            var player = GetEntityById(req.id);
             if (player == null)
                 return;
 
-            IPacket packet = null;
-            var rewardData = _worldMap.PickReward(inPacket.worldId);
+            var worldId = req.worldId;
+            var rewardData = _worldMap.PickReward(worldId);
+            if(rewardData.Equals(default(RewardData)))
+            {
+                Logger.GetInstance().Warn($"no reward in world id {worldId}");
+                return;
+            }
+
+            var broadcast = new UpdateRewardBroadcast();
+            broadcast.worldId = worldId;
+            broadcast.status = (int)RewardState.Pick;
+            broadcast.rewardType = rewardData.rewardType;
+
             switch ((RewardType)rewardData.rewardType)
             {
                 case RewardType.Gold:
                     {
-                        packet = new S_GetGold()
-                        {
-                            id = inPacket.id,
-                            worldId = inPacket.worldId,
-                            gold = rewardData.count,
-                        };
+                        broadcast.gold = rewardData.count;
                         break;
                     }
                 case RewardType.Item:
                     {
-                        packet = new S_GetItem()
+                        broadcast.item = new Item()
                         {
-                            id = inPacket.id,
-                            worldId = inPacket.worldId,
-                            // itemSlotId = 1,
-                            item = new Item()
-                            {
-
-                            }
+                            //NOTE : 임시 값. 
+                            itemKey = rewardData.subType,
+                            level = 1,
+                            str = 999,
+                            def = 999,
+                            hp = 999,
+                            cooltime = 12,
+                            canUse = true
                         };
-
                         break;
                     }
                 default:
                     break;
             }
 
-            _broadcaster.Broadcast(packet);
+            _broadcaster.Broadcast(broadcast);
+
+            //TODO : Send PickRewardResponse
         }
     }
 }

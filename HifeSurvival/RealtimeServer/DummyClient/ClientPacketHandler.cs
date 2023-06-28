@@ -62,26 +62,6 @@ public class ClientPacketHandler : PacketHandler
         throw new NotImplementedException();
     }
 
-    public override void S_DropRewardHandler(PacketSession session, IPacket packet)
-    {
-        throw new NotImplementedException();
-    }
-
-    public override void C_PickRewardHandler(PacketSession session, IPacket packet)
-    {
-        throw new NotImplementedException();
-    }
-
-    public override void S_GetItemHandler(PacketSession session, IPacket packet)
-    {
-        throw new NotImplementedException();
-    }
-
-    public override void S_GetGoldHandler(PacketSession session, IPacket packet)
-    {
-        throw new NotImplementedException();
-    }
-
     public override void MoveRequestHandler(PacketSession session, IPacket packet)
     {
         throw new NotImplementedException();
@@ -108,6 +88,21 @@ public class ClientPacketHandler : PacketHandler
     }
 
     public override void IncreaseStatResponseHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void PickRewardRequestHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void PickRewardResponseHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void UpdateRewardBroadcastHandler(PacketSession session, IPacket packet)
     {
         throw new NotImplementedException();
     }

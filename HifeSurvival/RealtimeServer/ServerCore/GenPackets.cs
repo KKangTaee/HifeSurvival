@@ -23,12 +23,11 @@ public enum PacketID
 	S_Respawn = 13,
 	IncreaseStatRequest = 14,
 	IncreaseStatResponse = 15,
-	S_DropReward = 16,
-	C_PickReward = 17,
-	S_GetItem = 18,
-	S_GetGold = 19,
-	UpdateLocationBroadcast = 20,
-	UpdateStatBroadcast = 21,
+	PickRewardRequest = 16,
+	PickRewardResponse = 17,
+	UpdateRewardBroadcast = 18,
+	UpdateLocationBroadcast = 19,
+	UpdateStatBroadcast = 20,
 	
 }
 
@@ -795,57 +794,12 @@ public class IncreaseStatResponse : IPacket
 	}
 }
 
-public class S_DropReward : IPacket
-{
-	public int worldId;
-	public int rewardType;
-	public PVec3 pos;
-
-	public ushort Protocol { get { return (ushort)PacketID.S_DropReward; } }
-
-	public void Read(ArraySegment<byte> segment)
-	{
-		ushort count = 0;
-
-		ReadOnlySpan<byte> s = new ReadOnlySpan<byte>(segment.Array, segment.Offset, segment.Count);
-		count += sizeof(ushort);
-		count += sizeof(ushort);
-		this.worldId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
-		count += sizeof(int);
-		this.rewardType = BitConverter.ToInt32(s.Slice(count, s.Length - count));
-		count += sizeof(int);
-		pos.Read(s, ref count);
-	}
-
-	public ArraySegment<byte> Write()
-	{
-		ArraySegment<byte> segment = SendBufferHelper.Open(4096);
-		ushort count = 0;
-		bool success = true;
-
-		Span<byte> s = new Span<byte>(segment.Array, segment.Offset, segment.Count);
-
-		count += sizeof(ushort);
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.S_DropReward);
-		count += sizeof(ushort);
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.worldId);
-		count += sizeof(int);
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.rewardType);
-		count += sizeof(int);
-		success &= pos.Write(s,ref count);
-		success &= BitConverter.TryWriteBytes(s, count);
-		if (success == false)
-			return null;
-		return SendBufferHelper.Close(count);
-	}
-}
-
-public class C_PickReward : IPacket
+public class PickRewardRequest : IPacket
 {
 	public int id;
 	public int worldId;
 
-	public ushort Protocol { get { return (ushort)PacketID.C_PickReward; } }
+	public ushort Protocol { get { return (ushort)PacketID.PickRewardRequest; } }
 
 	public void Read(ArraySegment<byte> segment)
 	{
@@ -869,7 +823,7 @@ public class C_PickReward : IPacket
 		Span<byte> s = new Span<byte>(segment.Array, segment.Offset, segment.Count);
 
 		count += sizeof(ushort);
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.C_PickReward);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.PickRewardRequest);
 		count += sizeof(ushort);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.id);
 		count += sizeof(int);
@@ -882,14 +836,15 @@ public class C_PickReward : IPacket
 	}
 }
 
-public class S_GetItem : IPacket
+public class PickRewardResponse : IPacket
 {
 	public int id;
 	public int worldId;
+	public int gold;
 	public int itemSlotId;
 	public Item item;
 
-	public ushort Protocol { get { return (ushort)PacketID.S_GetItem; } }
+	public ushort Protocol { get { return (ushort)PacketID.PickRewardResponse; } }
 
 	public void Read(ArraySegment<byte> segment)
 	{
@@ -901,6 +856,8 @@ public class S_GetItem : IPacket
 		this.id = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
 		this.worldId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+		count += sizeof(int);
+		this.gold = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
 		this.itemSlotId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
@@ -916,11 +873,13 @@ public class S_GetItem : IPacket
 		Span<byte> s = new Span<byte>(segment.Array, segment.Offset, segment.Count);
 
 		count += sizeof(ushort);
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.S_GetItem);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.PickRewardResponse);
 		count += sizeof(ushort);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.id);
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.worldId);
+		count += sizeof(int);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.gold);
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.itemSlotId);
 		count += sizeof(int);
@@ -932,13 +891,16 @@ public class S_GetItem : IPacket
 	}
 }
 
-public class S_GetGold : IPacket
+public class UpdateRewardBroadcast : IPacket
 {
-	public int id;
 	public int worldId;
+	public int status;
+	public int rewardType;
 	public int gold;
+	public Item item;
+	public PVec3 pos;
 
-	public ushort Protocol { get { return (ushort)PacketID.S_GetGold; } }
+	public ushort Protocol { get { return (ushort)PacketID.UpdateRewardBroadcast; } }
 
 	public void Read(ArraySegment<byte> segment)
 	{
@@ -947,12 +909,16 @@ public class S_GetGold : IPacket
 		ReadOnlySpan<byte> s = new ReadOnlySpan<byte>(segment.Array, segment.Offset, segment.Count);
 		count += sizeof(ushort);
 		count += sizeof(ushort);
-		this.id = BitConverter.ToInt32(s.Slice(count, s.Length - count));
-		count += sizeof(int);
 		this.worldId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+		count += sizeof(int);
+		this.status = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+		count += sizeof(int);
+		this.rewardType = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
 		this.gold = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
+		item.Read(s, ref count);
+		pos.Read(s, ref count);
 	}
 
 	public ArraySegment<byte> Write()
@@ -964,14 +930,18 @@ public class S_GetGold : IPacket
 		Span<byte> s = new Span<byte>(segment.Array, segment.Offset, segment.Count);
 
 		count += sizeof(ushort);
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.S_GetGold);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.UpdateRewardBroadcast);
 		count += sizeof(ushort);
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.id);
-		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.worldId);
+		count += sizeof(int);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.status);
+		count += sizeof(int);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.rewardType);
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.gold);
 		count += sizeof(int);
+		success &= item.Write(s,ref count);
+		success &= pos.Write(s,ref count);
 		success &= BitConverter.TryWriteBytes(s, count);
 		if (success == false)
 			return null;

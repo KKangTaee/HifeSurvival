@@ -95,7 +95,6 @@ namespace Server
         public void DropItem(string inRewardData, PVec3 dropPos)
         {
             var itemDataStr = PacketExtensionHelper.FilterRewardIdsByRandomProbability(inRewardData);
-
             if (itemDataStr == null)
                 return;
 
@@ -113,14 +112,39 @@ namespace Server
                 ItemDict.Add(worldItem.worldId, worldItem);
             }
 
-            S_DropReward dropItem = new S_DropReward()
-            {
-                worldId = worldItem.worldId,
-                rewardType = worldItem.itemData.rewardType,
-                pos = dropPos,
-            };
+            var broadcast = new UpdateRewardBroadcast();
+            broadcast.worldId = worldItem.worldId;
+            broadcast.status = (int)RewardState.Drop;
+            broadcast.rewardType = worldItem.itemData.rewardType;
+            broadcast.pos = dropPos;
 
-            _broadcaster.Broadcast(dropItem);
+            switch ((RewardType)worldItem.itemData.rewardType)
+            {
+                case RewardType.Gold:
+                    {
+                        broadcast.gold = worldItem.itemData.count;
+                        break;
+                    }
+                case RewardType.Item:
+                    {
+                        broadcast.item = new Item()
+                        {
+                            //NOTE : 임시 값. 
+                            itemKey = worldItem.itemData.subType,
+                            level = 1,
+                            str = 999,
+                            def = 999,
+                            hp = 999,
+                            cooltime = 12,
+                            canUse = true
+                        };
+                        break;
+                    }
+                default:
+                    break;
+            }
+
+            _broadcaster.Broadcast(broadcast);
 
             return;
         }

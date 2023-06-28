@@ -82,26 +82,6 @@ namespace Server
             throw new NotImplementedException();
         }
 
-        public override void S_DropRewardHandler(PacketSession session, IPacket packet)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void C_PickRewardHandler(PacketSession session, IPacket packet)
-        {
-            
-        }
-
-        public override void S_GetItemHandler(PacketSession session, IPacket packet)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void S_GetGoldHandler(PacketSession session, IPacket packet)
-        {
-            throw new NotImplementedException();
-        }
-
         public override void MoveRequestHandler(PacketSession session, IPacket packet)
         {
             MoveRequest move = packet as MoveRequest;
@@ -130,6 +110,21 @@ namespace Server
         }
 
         public override void UpdateStatBroadcastHandler(PacketSession session, IPacket packet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void PickRewardRequestHandler(PacketSession session, IPacket packet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void PickRewardResponseHandler(PacketSession session, IPacket packet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void UpdateRewardBroadcastHandler(PacketSession session, IPacket packet)
         {
             throw new NotImplementedException();
         }

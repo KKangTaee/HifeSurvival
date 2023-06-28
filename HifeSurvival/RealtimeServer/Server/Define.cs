@@ -70,6 +70,12 @@ public enum RewardType
     Item = 2,
 }
 
+public enum RewardState
+{
+    Drop,
+    Pick,
+}
+
 public enum StatType
 {
     Str,

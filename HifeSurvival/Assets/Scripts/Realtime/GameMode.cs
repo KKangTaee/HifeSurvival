@@ -462,7 +462,8 @@ public class GameMode
 
     }
 
-    public void OnRecvUpdateStat(IncreaseStatResponse inPacket)
+
+    public void OnRecvIncreasStat(IncreaseStatResponse inPacket)
     {
         var player = GetPlayerEntity(inPacket.id);
 

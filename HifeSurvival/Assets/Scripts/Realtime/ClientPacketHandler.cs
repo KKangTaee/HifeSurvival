@@ -122,7 +122,7 @@ public class ClientPacketHandler : PacketHandler
     public override void IncreaseStatResponseHandler(PacketSession session, IPacket packet)
     {
         IncreaseStatResponse increaseStat = packet as IncreaseStatResponse;
-        GameMode.Instance.OnRecvUpdateStat(increaseStat);
+        GameMode.Instance.OnRecvIncreasStat(increaseStat);
     }
 
     public override void UpdateStatBroadcastHandler(PacketSession session, IPacket packet)

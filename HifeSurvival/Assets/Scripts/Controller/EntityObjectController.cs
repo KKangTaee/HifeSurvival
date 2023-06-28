@@ -89,7 +89,7 @@ public abstract class EntityObjectController<T> : ControllerBase where T : Entit
         EntityObject fromEntity  = GetEntityObject(inPacket.id);
         EntityObject toEntity    = null;
 
-        switch(Entity.GetEntityType(inPacket.id))
+        switch(Entity.GetEntityType(inPacket.targetId))
         {
             case Entity.EEntityType.PLAYER:
                 toEntity = ControllerManager.Instance.GetController<PlayerController>().GetEntityObject(inPacket.targetId);
@@ -99,6 +99,15 @@ public abstract class EntityObjectController<T> : ControllerBase where T : Entit
                 toEntity = ControllerManager.Instance.GetController<MonsterController>().GetEntityObject(inPacket.targetId);
                 break;
         }
+
+        if(toEntity == null)
+        {
+            Debug.LogError($"[{nameof(OnRecvAttack)}] toEntity is null or empty! : {inPacket.targetId}");
+            return;
+        }
+
+
+        Debug.Log(inPacket.id);
 
         SetAttackState(toEntity,
                        fromEntity,

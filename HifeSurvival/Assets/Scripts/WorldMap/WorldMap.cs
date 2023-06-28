@@ -85,13 +85,13 @@ public class WorldMap : MonoBehaviour
 
     public void UpdateWallMasking(Vector3 hitPoint, Vector3 inWorldPos)
     {
-        Vector3Int wallCoord = _wall.WorldToCell(hitPoint);
-        Vector3Int targetCoord = _wall.WorldToCell(transform.position);
+        Vector3Int wallCoord =   _wall.WorldToCell(hitPoint);
+        Vector3Int targetCoord = _wall.WorldToCell(inWorldPos);
 
         if ((targetCoord.x > wallCoord.x || targetCoord.y > wallCoord.y) ||
              targetCoord == wallCoord)
         {
-            SetPosWallMask(inWorldPos);
+            SetPosWallMask(inWorldPos + new Vector3(0, 0.8f, 0));
         }
         else
         {

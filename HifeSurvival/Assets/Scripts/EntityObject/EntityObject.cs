@@ -24,7 +24,7 @@ public abstract class EntityObject : MonoBehaviour
     [SerializeField] private MoveMachine _moveMachine;
 
     public Entity TargetEntity { get; protected set; }
-    public int TargetId        { get; protected set;}
+    public int id        { get; protected set;}
     public EStatus Status      { get; protected set; }
     
     // public EntityStat Stat   { get; protected set; }
@@ -38,7 +38,7 @@ public abstract class EntityObject : MonoBehaviour
 
     public virtual void Init(Entity inEntity, in Vector3 inPos)
     {
-        TargetId = inEntity.targetId;
+        id = inEntity.id;
         TargetEntity = inEntity;
         
         // Stat = inStat;

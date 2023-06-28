@@ -40,7 +40,7 @@ public class MonsterController : EntityObjectController<Monster>
             inst.Init(entity, entity.pos.ConvertUnityVector3());
             inst.SetMonster(entity.monsterId);
 
-            _entityObjectDict.Add(inst.TargetId, inst);
+            _entityObjectDict.Add(inst.id, inst);
         }
     }
 }

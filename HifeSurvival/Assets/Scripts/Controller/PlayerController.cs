@@ -59,7 +59,7 @@ public sealed class PlayerController : EntityObjectController<Player>
                 inst.SetSelf(OnGetItemSelf);
             }
 
-            _entityObjectDict.Add(entity.targetId, inst);
+            _entityObjectDict.Add(entity.id, inst);
         }
 
         _cameraController.SetCameraPos(Self.GetPos());
@@ -167,7 +167,7 @@ public sealed class PlayerController : EntityObjectController<Player>
         _gameMode.OnSendAttack(Self.GetPos(),
                                Self.GetDir(),
                                inTarget.IsPlayer,
-                               inTarget.TargetId,
+                               inTarget.id,
                                damagedVal);
 
         _attackDelay = Observable.Timer(TimeSpan.FromSeconds(Self.TargetEntity.stat.attackSpeed))
@@ -219,8 +219,9 @@ public sealed class PlayerController : EntityObjectController<Player>
     {
         base.OnRecvDead(inEntity);
 
-        if (inEntity.toId == Self.TargetId)
+        if (inEntity.id == Self.id)
         {
+            // _joystickController.stop
             _joystickController.HideJoystick();
         }
     }
@@ -230,7 +231,7 @@ public sealed class PlayerController : EntityObjectController<Player>
     {
         base.OnRecvRespawn(inEntity);
 
-        if (Self.TargetId == inEntity.targetId)
+        if (Self.id == inEntity.id)
         {
             Self.SetSelf(OnGetItemSelf);
 
@@ -242,7 +243,7 @@ public sealed class PlayerController : EntityObjectController<Player>
     public override void OnUpdateLocation(UpdateLocationBroadcast inPacket)
     {
         // 타겟 그 자신이라면 리턴
-        if(Self.TargetId == inPacket.targetId)
+        if(Self.id == inPacket.id)
            return;
 
         base.OnUpdateLocation(inPacket);
@@ -251,17 +252,16 @@ public sealed class PlayerController : EntityObjectController<Player>
 
     public void OnRecvUpdateStat(PlayerEntity inEntity)
     {
-        var player = GetEntityObject(inEntity.targetId);
+        var player = GetEntityObject(inEntity.id);
         player.UpdateHp();
     }
 
 
     public void OnRecvGetItem(S_GetItem inEntity)
     {
-        var player = GetEntityObject(inEntity.targetId);
+        var player = GetEntityObject(inEntity.id);
         player.UpdateItemSlot();
     }
-
 
 
 }

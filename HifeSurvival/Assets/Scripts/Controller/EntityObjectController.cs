@@ -33,10 +33,10 @@ public abstract class EntityObjectController<T> : ControllerBase where T : Entit
 
     public virtual void OnUpdateLocation(UpdateLocationBroadcast inPacket)
     {
-        if(ContainEntity(inPacket.targetId) == false)
+        if(ContainEntity(inPacket.id) == false)
             return;
 
-         var entityObj = GetEntityObject(inPacket.targetId);
+         var entityObj = GetEntityObject(inPacket.id);
 
         // 값이 동등한 경우. : 정지상태
         if(inPacket.currentPos.NearlyEqual(inPacket.targetPos))
@@ -60,10 +60,10 @@ public abstract class EntityObjectController<T> : ControllerBase where T : Entit
 
     public virtual void OnRecvStopMove(Entity inEntity)
     {
-        if(ContainEntity(inEntity.targetId) == false)
+        if(ContainEntity(inEntity.id) == false)
            return;
 
-        var entityObj = GetEntityObject(inEntity.targetId);
+        var entityObj = GetEntityObject(inEntity.id);
 
         SetIdleState(entityObj,
                      inEntity.pos.ConvertUnityVector3(),
@@ -73,36 +73,46 @@ public abstract class EntityObjectController<T> : ControllerBase where T : Entit
 
     public virtual void OnRecvDead(S_Dead inEntity)
     {
-        if(ContainEntity(inEntity.toId) == false)
+        if(ContainEntity(inEntity.id) == false)
            return;
 
-        var entityObj = GetEntityObject(inEntity.toId);
+        var entityObj = GetEntityObject(inEntity.id);
 
         SetDeadState(entityObj);
     }
 
     public virtual void OnRecvAttack(CS_Attack inPacket)
     {
-        if(ContainEntity(inPacket.fromId) == false)
+        if(ContainEntity(inPacket.id) == false)
            return;
 
-        EntityObject fromEntity  = GetEntityObject(inPacket.fromId);
-        EntityObject toEntity    = inPacket.toIsPlayer == true ? ControllerManager.Instance.GetController<PlayerController>().GetEntityObject(inPacket.toId)
-                                                               : ControllerManager.Instance.GetController<MonsterController>().GetEntityObject(inPacket.toId);
+        EntityObject fromEntity  = GetEntityObject(inPacket.id);
+        EntityObject toEntity    = null;
+
+        switch(Entity.GetEntityType(inPacket.id))
+        {
+            case Entity.EEntityType.PLAYER:
+                toEntity = ControllerManager.Instance.GetController<PlayerController>().GetEntityObject(inPacket.targetId);
+                break;
+            
+            case Entity.EEntityType.MOSNTER:
+                toEntity = ControllerManager.Instance.GetController<MonsterController>().GetEntityObject(inPacket.targetId);
+                break;
+        }
 
         SetAttackState(toEntity,
                        fromEntity,
-                       inPacket.fromPos.ConvertUnityVector3(),
-                       inPacket.fromDir.ConvertUnityVector3(),
+                       default,  //inPacket.fromPos.ConvertUnityVector3(),
+                       Vector3.Normalize(toEntity.GetPos() - fromEntity.GetPos()),
                        inPacket.attackValue);
     }
 
     public virtual void OnRecvRespawn(Entity inEntity)
     {
-        if(ContainEntity(inEntity.targetId) == false)
+        if(ContainEntity(inEntity.id) == false)
            return;
            
-        var entityObj = GetEntityObject(inEntity.targetId);
+        var entityObj = GetEntityObject(inEntity.id);
 
         entityObj.Init(inEntity, inEntity.pos.ConvertUnityVector3());
     }
@@ -171,8 +181,8 @@ public abstract class EntityObjectController<T> : ControllerBase where T : Entit
             attackValue = inDamageVal,
             target = inTo,
 
-            fromPos = inFromPos,
-            fromDir = inFromDir,
+            // fromPos = inFromPos,
+            // fromDir = inFromDir,
         };
 
         inFrom.ChangeState(EntityObject.EStatus.ATTACK, attackParam);

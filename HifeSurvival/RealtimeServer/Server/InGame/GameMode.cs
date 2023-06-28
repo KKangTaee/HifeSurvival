@@ -177,8 +177,12 @@ namespace Server
             {
                 case GameModeStatus.GameStart:
                     {
-                        _monsterGroupDict.AsParallel().ForAll(mg => mg.Value.OnEnterGame());
-                        _playersDict.AsParallel().ForAll(p => p.Value.UpdateStat());
+                        //임시 코드 (게임 모드 상태 후 실행해야함)
+                        JobTimer.Instance.Push(() =>
+                        {
+                            _monsterGroupDict.AsParallel().ForAll(mg => mg.Value.OnEnterGame());
+                            _playersDict.AsParallel().ForAll(p => p.Value.UpdateStat());
+                        }, (int)(2.5 * DEFINE.SEC_TO_MS));
                     }
                     break;
                 default:
@@ -313,6 +317,10 @@ namespace Server
                 broadcaster = _broadcaster,
                 defaultStat = new EntityStat(data)
             };
+
+            //임시 코드 (게임 모드 상태 후 실행해야함)
+            playerEntity.stat = new EntityStat();
+            playerEntity.stat += playerEntity.defaultStat;
 
             _playersDict.Add(inSessionId, playerEntity);
 

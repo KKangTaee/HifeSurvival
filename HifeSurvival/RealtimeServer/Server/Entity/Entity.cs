@@ -17,7 +17,7 @@ namespace Server
         public PVec3 currentPos;
         public PVec3 targetPos;
 
-        public EntityStat stat;
+        public EntityStat stat = new EntityStat();
         public EntityStat defaultStat;
 
         public EntityStatus Status;

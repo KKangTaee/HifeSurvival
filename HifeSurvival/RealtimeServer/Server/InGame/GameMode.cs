@@ -12,7 +12,7 @@ namespace Server
 
         private IBroadcaster _broadcaster = null;
         private WorldMap _worldMap;
-        private int _mId = 10000;
+        private int _mId = DEFINE.MONSTER_ID;
 
         public GameModeStatus Status { get; private set; } = GameModeStatus.None;
 
@@ -75,8 +75,6 @@ namespace Server
                                 defaultStat = new EntityStat(data),
                                 rewardDatas = data.rewardIds,
                             };
-
-                            monsterEntity.UpdateStat();
 
                             monsterGroup.Add(monsterEntity);
 
@@ -178,7 +176,10 @@ namespace Server
             switch (Status)
             {
                 case GameModeStatus.GameStart:
-                    _monsterGroupDict.AsParallel().ForAll(mg => { mg.Value.ExecuteGroupAI(); });
+                    {
+                        _monsterGroupDict.AsParallel().ForAll(mg => mg.Value.OnEnterGame());
+                        _playersDict.AsParallel().ForAll(p => p.Value.UpdateStat());
+                    }
                     break;
                 default:
                     break;
@@ -312,8 +313,6 @@ namespace Server
                 broadcaster = _broadcaster,
                 defaultStat = new EntityStat(data)
             };
-
-            playerEntity.UpdateStat();
 
             _playersDict.Add(inSessionId, playerEntity);
 

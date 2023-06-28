@@ -24,7 +24,7 @@ namespace Server
             _monstersDict.Add(inEntity.id, inEntity);
         }
 
-        public void OnEnterGame()
+        public void OnPlayStart()
         {
             foreach (var m in _monstersDict)
             {

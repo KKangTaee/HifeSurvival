@@ -10,7 +10,7 @@ namespace Server
         public string userName;
         
         public int  heroKey;
-        public bool isReady;
+        public ClientStatus clientStatus;
 
         
         public EntityStat itemStat = new EntityStat();
@@ -34,16 +34,9 @@ namespace Server
             _stateMachine = new StateMachine<PlayerEntity>(smdic);
         }
 
-        public S_JoinToGame.JoinPlayer CreateJoinPlayerPacket()
-        {
-            return new S_JoinToGame.JoinPlayer()
-            {
-                userId = this.userId,
-                userName = this.userName,
-                id = this.id,
-                heroKey = this.heroKey
-            };
-        }
+        public void SelectReady() => clientStatus = ClientStatus.SelectReady;
+        public void PlayReady() => clientStatus = ClientStatus.PlayReady;
+
 
         protected override void ChangeState<P>(EntityStatus inStatue, P inParam)
         {

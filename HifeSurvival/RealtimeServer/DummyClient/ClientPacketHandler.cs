@@ -111,4 +111,19 @@ public class ClientPacketHandler : PacketHandler
     {
         throw new NotImplementedException();
     }
+
+    public override void PlayStartRequestHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void PlayStartResponseHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void UpdateGameModeStatusBroadcastHandler(PacketSession session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
 }

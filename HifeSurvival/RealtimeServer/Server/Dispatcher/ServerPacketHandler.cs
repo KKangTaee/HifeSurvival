@@ -134,5 +134,21 @@ namespace Server
         {
             throw new NotImplementedException();
         }
+
+        public override void PlayStartRequestHandler(PacketSession session, IPacket packet)
+        {
+            var req = packet as PlayStartRequest;
+            push(session, room => room?.Mode.OnPlayStartRequest(req));
+        }
+
+        public override void PlayStartResponseHandler(PacketSession session, IPacket packet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void UpdateGameModeStatusBroadcastHandler(PacketSession session, IPacket packet)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

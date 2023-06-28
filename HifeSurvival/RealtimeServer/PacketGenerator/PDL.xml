@@ -132,6 +132,19 @@
 		<struct_PCurrency_list name ="currency"/>
 	</packet>
 
+  <packet name ="PlayStartRequest">
+    <int name ="id"/>
+  </packet>
+
+  <packet name ="PlayStartResponse">
+    <int name = "id"/>
+  </packet>
+
+  <packet name ="UpdateGameModeStatusBroadcast">
+    <int name ="status"/>
+  </packet>
+  
+
 	<struct name="PVec3">
     <float name ="x"/>
     <float name ="y"/>

@@ -26,6 +26,9 @@ public abstract class PacketHandler
 	public abstract void UpdateLocationBroadcastHandler(PacketSession session, IPacket packet);
 	public abstract void UpdateStatBroadcastHandler(PacketSession session, IPacket packet);
 	public abstract void UpdatePlayerCurrencyHandler(PacketSession session, IPacket packet);
+	public abstract void PlayStartRequestHandler(PacketSession session, IPacket packet);
+	public abstract void PlayStartResponseHandler(PacketSession session, IPacket packet);
+	public abstract void UpdateGameModeStatusBroadcastHandler(PacketSession session, IPacket packet);
 
 }
 
@@ -68,6 +71,9 @@ public class PacketManager
 		_handler.Add((ushort)PacketID.UpdateLocationBroadcast, handler.UpdateLocationBroadcastHandler);
 		_handler.Add((ushort)PacketID.UpdateStatBroadcast, handler.UpdateStatBroadcastHandler);
 		_handler.Add((ushort)PacketID.UpdatePlayerCurrency, handler.UpdatePlayerCurrencyHandler);
+		_handler.Add((ushort)PacketID.PlayStartRequest, handler.PlayStartRequestHandler);
+		_handler.Add((ushort)PacketID.PlayStartResponse, handler.PlayStartResponseHandler);
+		_handler.Add((ushort)PacketID.UpdateGameModeStatusBroadcast, handler.UpdateGameModeStatusBroadcastHandler);
 
 	}
 
@@ -94,6 +100,9 @@ public class PacketManager
 		_makeFunc.Add((ushort)PacketID.UpdateLocationBroadcast, MakePacket<UpdateLocationBroadcast>);
 		_makeFunc.Add((ushort)PacketID.UpdateStatBroadcast, MakePacket<UpdateStatBroadcast>);
 		_makeFunc.Add((ushort)PacketID.UpdatePlayerCurrency, MakePacket<UpdatePlayerCurrency>);
+		_makeFunc.Add((ushort)PacketID.PlayStartRequest, MakePacket<PlayStartRequest>);
+		_makeFunc.Add((ushort)PacketID.PlayStartResponse, MakePacket<PlayStartResponse>);
+		_makeFunc.Add((ushort)PacketID.UpdateGameModeStatusBroadcast, MakePacket<UpdateGameModeStatusBroadcast>);
 
 	}
 

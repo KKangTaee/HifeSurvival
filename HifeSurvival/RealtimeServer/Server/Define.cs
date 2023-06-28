@@ -38,10 +38,17 @@ public enum GameModeStatus
     None,
     Ready,
     Countdown,
-    GameStart,
-    RunningGame,
+    LoadGame,
+    PlayStart,
     FinishGame,
 }
+
+public enum ClientStatus
+{
+    SelectReady,
+    PlayReady,
+}
+
 
 public enum EntityStatus
 {

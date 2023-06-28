@@ -84,7 +84,7 @@ namespace Server
         public void Leave(ClientSession session)
         {
             _sessions.Remove(session);
-            _gameMode.OnSendLeave(session.SessionId);
+            _gameMode.OnSessionRemove(session.SessionId);
 
             session.Room = null;
 

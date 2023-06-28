@@ -21,6 +21,102 @@ namespace Server
             _broadcaster = new RoomBroadcaster(inRoom);
             _worldMap = new WorldMap(_broadcaster);
         }
+        public void OnSessionRemove(int inSessionId)
+        {
+            var playerInfo = _playersDict.Values.FirstOrDefault(x => x.id == inSessionId);
+            if (playerInfo == null)
+                return;
+
+            _playersDict.Remove(playerInfo.id);
+
+            S_LeaveToGame packet = new S_LeaveToGame()
+            {
+                userId = playerInfo.userId,
+                id = playerInfo.id,
+            };
+
+            _broadcaster.Broadcast(packet);
+        }
+
+        private void UpdateModeStatus(GameModeStatus updatedStatus)
+        {
+            Logger.GetInstance().Warn($"<-----{updatedStatus}----->");
+
+            switch (updatedStatus)
+            {
+                case GameModeStatus.Ready:
+                    {
+                        var packet = new S_JoinToGame() { joinPlayerList = new List<S_JoinToGame.JoinPlayer>() };
+                        _playersDict.AsParallel().ForAll(p => packet.joinPlayerList.Add(new S_JoinToGame.JoinPlayer()
+                        {
+                            userId = p.Value.userId,
+                            userName = p.Value.userName,
+                            id = p.Value.id,
+                            heroKey = p.Value.heroKey,
+                        }));
+
+                        _broadcaster.Broadcast(packet);                    
+                    }
+                    break;
+                case GameModeStatus.Countdown:
+                    {
+                        var countdown = new S_Countdown()
+                        {
+                            countdownSec = DEFINE.START_COUNTDOWN_SEC
+                        };
+
+                        _broadcaster.Broadcast(countdown);
+
+                        JobTimer.Instance.Push(StartLoadGame, DEFINE.START_COUNTDOWN_SEC * DEFINE.SEC_TO_MS);
+                    }
+                    break;
+                case GameModeStatus.LoadGame:
+                    {
+                        if (GameDataLoader.Instance.ChapaterDataDict.TryGetValue("1", out var chapterData) == false)
+                        {
+                            Logger.GetInstance().Error("chapterdata is not found");
+                            return;
+                        }
+
+                        _worldMap.LoadMap(chapterData.mapData);
+
+                        var gameStart = new S_StartGame()
+                        {
+                            playTimeSec = chapterData.playTimeSec,
+                            playerList = SpawnPlayer(),
+                            monsterList = SpawnMonster(chapterData.phase1.Split(':'))
+                        };
+
+                        _broadcaster.Broadcast(gameStart);
+                    }
+                    break;
+                case GameModeStatus.PlayStart:
+                    {
+                        JobTimer.Instance.Push(() =>
+                        {
+                            _monsterGroupDict.AsParallel().ForAll(mg => mg.Value.OnPlayStart());
+                            _playersDict.AsParallel().ForAll(p => p.Value.UpdateStat());
+                        });
+                    }
+                    break;
+                case GameModeStatus.FinishGame:
+                    {
+
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            if (Status != updatedStatus)
+            {
+                _broadcaster.Broadcast(new UpdateGameModeStatusBroadcast() { 
+                    status = (int)updatedStatus 
+                });
+            }
+
+            Status = updatedStatus;
+        }
 
         public List<MonsterSpawn> SpawnMonster(string[] inGroupKeyArr)
         {
@@ -96,6 +192,22 @@ namespace Server
             return monsterList;
         }
 
+        public void SpawnMonsterTimer(string inPhase, int inSec)
+        {
+            if (inPhase == null)
+                return;
+
+            JobTimer.Instance.Push(() =>
+            {
+                S_SpawnMonster spawnMoster = new S_SpawnMonster()
+                {
+                    monsterList = SpawnMonster(inPhase.Split(':'))
+                };
+
+                _broadcaster.Broadcast(spawnMoster);
+            }, inSec * DEFINE.SEC_TO_MS);
+        }
+
         public List<PlayerSpawn> SpawnPlayer()
         {
             var playerList = new List<PlayerSpawn>();
@@ -126,7 +238,6 @@ namespace Server
 
             return playerList;
         }
-
 
         public Entity GetEntityById(int id)
         {
@@ -161,146 +272,13 @@ namespace Server
             return null;
         }
 
-        public bool CanStartGame()
-        {
-            return _playersDict.Values.All(x => x.isReady);
-        }
+        public bool CanJoinRoom() => Status == GameModeStatus.Ready && _playersDict.Count < DEFINE.PLAYER_MAX_COUNT;
 
-        public bool CanJoinRoom()
-        {
-            return Status == GameModeStatus.Ready && _playersDict.Count < DEFINE.PLAYER_MAX_COUNT;
-        }
+        public bool CanLoadGame() => _playersDict.Values.All(x => x.clientStatus == ClientStatus.SelectReady);
 
-        private void OnModeStatusChange()
-        {
-            switch (Status)
-            {
-                case GameModeStatus.GameStart:
-                    {
-                        //임시 코드 (게임 모드 상태 후 실행해야함)
-                        JobTimer.Instance.Push(() =>
-                        {
-                            _monsterGroupDict.AsParallel().ForAll(mg => mg.Value.OnEnterGame());
-                            _playersDict.AsParallel().ForAll(p => p.Value.UpdateStat());
-                        }, (int)(2.5 * DEFINE.SEC_TO_MS));
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
+        public bool CanPlayStart() => _playersDict.Values.All(x => x.clientStatus == ClientStatus.PlayReady);
 
-
-        //---------------
-        // Send
-        //---------------
-
-        public void OnSendLeave(int inSessionId)
-        {
-            var playerInfo = _playersDict.Values.FirstOrDefault(x => x.id == inSessionId);
-
-            if (playerInfo == null)
-                return;
-
-            _playersDict.Remove(playerInfo.id);
-
-            S_LeaveToGame packet = new S_LeaveToGame()
-            {
-                userId = playerInfo.userId,
-                id = playerInfo.id,
-            };
-
-            _broadcaster.Broadcast(packet);
-        }
-
-
-        public void SendStartGame()
-        {
-            // TODO@taeho.kang 후에 나중에
-            if (GameDataLoader.Instance.ChapaterDataDict.TryGetValue("1", out var chapterData) == false)
-            {
-                Logger.GetInstance().Error("chapterdata is not found");
-                return;
-            }
-
-            // 맵 로드
-            _worldMap.LoadMap(chapterData.mapData);
-
-            // 플레이어 몬스터 스폰
-            var playerSpawnList = SpawnPlayer();
-
-            S_StartGame gameStart = new S_StartGame()
-            {
-                playTimeSec = chapterData.playTimeSec,
-                playerList = playerSpawnList,
-                monsterList = SpawnMonster(chapterData.phase1.Split(':'))
-            };
-
-            _broadcaster.Broadcast(gameStart);
-
-            // TODO@taeho.kang 나중에 더 좋은 방법이 있으면 수정
-            // 몬스터 스폰
-            // SpawnMonsterTimer(chapterData.phase1, 0);
-            //SpawnMonsterTimer(chapterData.phase2, 60);
-            //SpawnMonsterTimer(chapterData.phase3, 120);
-            //SpawnMonsterTimer(chapterData.phase4, 300);
-
-            // 게임종료 타이머도 추가해야함.
-
-            Status = GameModeStatus.GameStart;
-            OnModeStatusChange();
-        }
-
-        public void SpawnMonsterTimer(string inPhase, int inSec)
-        {
-            if (inPhase == null)
-                return;
-
-            JobTimer.Instance.Push(() =>
-            {
-                S_SpawnMonster spawnMoster = new S_SpawnMonster()
-                {
-                    monsterList = SpawnMonster(inPhase.Split(':'))
-                };
-
-                _broadcaster.Broadcast(spawnMoster);
-            }, inSec * DEFINE.SEC_TO_MS);
-        }
-
-        public void OnSendCountDown()
-        {
-            S_Countdown countdown = new S_Countdown()
-            {
-                countdownSec = DEFINE.START_COUNTDOWN_SEC
-            };
-
-            _broadcaster.Broadcast(countdown);
-
-            Status = GameModeStatus.Countdown;
-
-            JobTimer.Instance.Push(SendStartGame, DEFINE.START_COUNTDOWN_SEC * DEFINE.SEC_TO_MS);
-        }
-
-
-        public void OnSendRespawn(int id)
-        {
-            var player = GetEntityById(id);
-            if (player == null)
-                return;
-
-            S_Respawn respawn = new S_Respawn()
-            {
-                id = id,
-                stat = player.stat.ConvertToPStat(),
-            };
-
-            _broadcaster.Broadcast(respawn);
-        }
-
-
-        //---------------
-        // Receive
-        //---------------
+        public void StartLoadGame() => UpdateModeStatus(GameModeStatus.LoadGame);
 
         public void OnRecvJoin(C_JoinToGame inPacket, int inSessionId)
         {
@@ -318,41 +296,10 @@ namespace Server
                 defaultStat = new EntityStat(data)
             };
 
-            //임시 코드 (게임 모드 상태 후 실행해야함)
-            playerEntity.stat = new EntityStat();
-            playerEntity.stat += playerEntity.defaultStat;
-
             _playersDict.Add(inSessionId, playerEntity);
 
-            S_JoinToGame packet = new S_JoinToGame();
-            packet.joinPlayerList = new List<S_JoinToGame.JoinPlayer>();
-
-            foreach (var player in _playersDict.Values)
-                packet.joinPlayerList.Add(player.CreateJoinPlayerPacket());
-
-            _broadcaster.Broadcast(packet);
-
-            Status = GameModeStatus.Ready;
+            UpdateModeStatus(GameModeStatus.Ready);
         }
-
-
-        public void OnRecvReady(CS_ReadyToGame inPacket)
-        {
-            var entity = GetEntityById(inPacket.id);
-            if (entity == null)
-                return;
-
-            if(entity is PlayerEntity player)
-            {
-                player.isReady = true;
-                _broadcaster.Broadcast(inPacket);
-
-                // 모두 레디라면..? 게임시작
-                if (CanStartGame() == true)
-                    OnSendCountDown();
-            }
-        }
-
 
         public void OnRecvSelect(CS_SelectHero inPacket)
         {
@@ -366,6 +313,42 @@ namespace Server
             }
 
             _broadcaster.Broadcast(inPacket);
+        }
+
+        public void OnRecvReady(CS_ReadyToGame inPacket)
+        {
+            var entity = GetEntityById(inPacket.id);
+            if (entity == null)
+                return;
+
+            if(entity is PlayerEntity player)
+            {
+                player.SelectReady();
+                _broadcaster.Broadcast(inPacket);
+
+                if (CanLoadGame())
+                {
+                    UpdateModeStatus(GameModeStatus.LoadGame);
+                }
+            }
+        }
+
+        public void OnPlayStartRequest(PlayStartRequest req)
+        {
+            var entity = GetEntityById(req.id);
+            if (entity == null)
+                return;
+
+            if (entity is PlayerEntity player)
+            {
+                player.PlayReady();
+                _broadcaster.Broadcast(new PlayStartResponse() { id = player.id });  //TODO : Send
+
+                if (CanPlayStart())
+                {
+                    UpdateModeStatus(GameModeStatus.PlayStart);
+                }
+            }
         }
 
         public void OnRecvMoveRequest(MoveRequest inPacket)

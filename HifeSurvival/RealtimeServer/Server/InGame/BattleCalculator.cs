@@ -8,12 +8,12 @@ namespace Server
     {
         public static int ComputeAttackValue(in EntityStat atkStat)
         {
-            return new Random().Next(atkStat.str - 15, (int)(atkStat.str * 1.2f));
+            return new Random().Next((int)(atkStat.str * 0.8)  , (int)(atkStat.str * 1.3));
         }
 
         public static int ComputeDamagedValue(in EntityStat atkStat, in EntityStat defStat)
         {
-            return (int)(ComputeAttackValue(atkStat) - defStat.def * 0.1f);
+            return (ComputeAttackValue(atkStat) - (new Random().Next((int)(defStat.def * 0.2f), (int)(defStat.def * 0.4f))));
         }
 
         public static bool CanAttackTarget(in Entity self , in Entity target)

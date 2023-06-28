@@ -357,6 +357,9 @@ public class TouchController : ControllerBase
 
     public bool IsPointerOverUIObject()
     {
+        if(_eventDataCurrentPosition == null)
+            return false;
+
         // 현재 터치/마우스 좌표 설정
         _eventDataCurrentPosition.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
 

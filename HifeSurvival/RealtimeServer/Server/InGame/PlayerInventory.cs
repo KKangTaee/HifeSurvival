@@ -6,11 +6,11 @@ namespace Server
 {
     public class PlayerInventory
     {
-        public PlayerItem[] itemSlot = new PlayerItem[DEFINE.PLAYER_ITEM_SLOT];
+        public InvenItem[] itemSlot = new InvenItem[DEFINE.PLAYER_ITEM_SLOT];
 
         public int EquipItem(PItem item)
         {
-            PlayerItem equippedItem = null;
+            InvenItem equippedItem = null;
             int slot = -1;
 
             for (int i = 0; i < DEFINE.PLAYER_ITEM_SLOT; i++)
@@ -27,7 +27,7 @@ namespace Server
                 var nextSlot = NextItemSlot();
                 if(nextSlot > 0)
                 {
-                    itemSlot[i] = new PlayerItem(nextSlot,item);
+                    itemSlot[nextSlot] = new InvenItem(nextSlot,item);
                     slot = nextSlot;
                 }
             }

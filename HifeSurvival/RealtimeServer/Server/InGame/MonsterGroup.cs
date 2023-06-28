@@ -24,10 +24,13 @@ namespace Server
             _monstersDict.Add(inEntity.id, inEntity);
         }
 
-        public void ExecuteGroupAI()
+        public void OnEnterGame()
         {
-            foreach(var m in _monstersDict)
+            foreach (var m in _monstersDict)
+            {
+                m.Value.UpdateStat();
                 m.Value.ExecuteAI();
+            }
         }
 
         public void OnAttack(int damagedId, Entity attacker)

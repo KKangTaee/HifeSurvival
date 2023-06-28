@@ -12,7 +12,7 @@ static class DEFINE
     //System
     public const int SEND_TICK_MS = 125;
     public const int TIMER_SEQ_MAX_PER_GAME = 300;
-    public const int MONSTER_ID = 1000;
+    public const int MONSTER_ID = 10000;
 
     //ResponseResult
     public const int SUCCESS = 0;

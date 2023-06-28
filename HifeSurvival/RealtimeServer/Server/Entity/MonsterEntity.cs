@@ -56,7 +56,7 @@ namespace Server
 
         public override void GetStat(out EntityStat defaultStat, out EntityStat additionalStat)
         {
-            defaultStat = this.stat;
+            defaultStat = this.defaultStat;
             additionalStat = new EntityStat();
         }
 

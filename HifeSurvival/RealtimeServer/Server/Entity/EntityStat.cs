@@ -40,6 +40,13 @@ namespace Server
             attackSpeed = monsters.attackSpeed;
         }
 
+        public EntityStat(in PItem item)
+        {
+            str = item.str;
+            def = item.def;
+            maxHp = item.hp;
+        }
+
         //스탯이 관리하기 충분하여 수동으로 처리했으나, 많은 양의 스탯이 추가될 경우 Generic과 Macro 를 활용해 다시 구현 할 수 있음.
         public static EntityStat operator +(EntityStat a, EntityStat b)
         {

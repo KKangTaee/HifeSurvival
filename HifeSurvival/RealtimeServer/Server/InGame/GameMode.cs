@@ -449,68 +449,65 @@ namespace Server
 
         public void OnRecvPickRewardRequest(PickRewardRequest req)
         {
-            var player = GetEntityById(req.id);
-            if (player == null)
+            var entity = GetEntityById(req.id);
+            if (entity == null)
                 return;
 
             var worldId = req.worldId;
-            var rewardData = _worldMap.PickReward(worldId);
-            if(rewardData.Equals(default(RewardData)))
-            {
-                Logger.GetInstance().Warn($"no reward in world id {worldId}");
-                return;
-            }
 
-            var broadcast = new UpdateRewardBroadcast();
-            broadcast.worldId = worldId;
-            broadcast.status = (int)RewardState.Pick;
-            broadcast.rewardType = rewardData.rewardType;
+            var res = new PickRewardResponse();
+            res.id = entity.id;
+            res.worldId = worldId;
 
-            switch ((RewardType)rewardData.rewardType)
+            if (entity is PlayerEntity player)
             {
-                case RewardType.Gold:
-                    {
-                        broadcast.gold = rewardData.count;
-                        break;
-                    }
-                case RewardType.Item:
-                    {
-                        broadcast.item = new PItem()
+                var rewardData = _worldMap.PickReward(worldId);
+                if (rewardData.Equals(default(RewardData)))
+                {
+                    Logger.GetInstance().Warn($"no reward in world id {worldId}");
+                    return;
+                }
+
+                var broadcast = new UpdateRewardBroadcast();
+                broadcast.worldId = worldId;
+                broadcast.status = (int)RewardState.Pick;
+                broadcast.rewardType = rewardData.rewardType;
+
+                switch ((RewardType)rewardData.rewardType)
+                {
+                    case RewardType.Gold:
                         {
-                            //NOTE : 임시 값. 
-                            itemKey = rewardData.subType,
-                            level = 1,
-                            str = 999,
-                            def = 999,
-                            hp = 999,
-                            cooltime = 12,
-                            canUse = true
-                        };
+                            res.gold = broadcast.gold = rewardData.count;
+                            break;
+                        }
+                    case RewardType.Item:
+                        {
+                            // Item Layer 나누기. (PItem , GameDataItem, InvenItem, PInvenItem)
+                            var toEquipItem = new PItem()
+                            {
+                                //NOTE : 임시 값. 
+                                itemKey = rewardData.subType,
+                                level = 1,
+                                str = 999,
+                                def = 999,
+                                hp = 999,
+                                cooltime = 12,
+                                canUse = true
+                            };
+                            res.item = broadcast.item = toEquipItem;
+
+                            int slot = player.EquipItem(toEquipItem);
+                            if (slot > 0)
+                                res.itemSlotId = slot;
+                            break;
+                        }
+                    default:
                         break;
-                    }
-                default:
-                    break;
+                }
+
+                _broadcaster.Broadcast(broadcast);
+                _broadcaster.Broadcast(res);         //TODO : Send PickRewardResponse
             }
-
-            _broadcaster.Broadcast(broadcast);
-
-            switch ((RewardType)rewardData.rewardType)
-            {
-                case RewardType.Gold:
-                    {
-                        //골드 변화량 갱신
-                        break;
-                    }
-                case RewardType.Item:
-                    {
-                        //슬롯에 장착. 
-                        break;
-                    }
-                default:
-                    break;
-            }
-
-            //TODO : Send PickRewardResponse
         }
     }
 }

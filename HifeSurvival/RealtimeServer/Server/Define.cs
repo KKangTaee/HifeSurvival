@@ -20,6 +20,7 @@ static class DEFINE
 
     //Player
     public const int PLAYER_RESPAWN_MS = 15000;
+    public const int PLAYER_ITEM_SLOT = 4;
 
     //Monster
     public const int AI_CHECK_MS = 50;

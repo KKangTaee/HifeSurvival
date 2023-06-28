@@ -15,8 +15,7 @@ namespace Server
                 {
                     UpdateLocationBroadcast broadcast = new UpdateLocationBroadcast()
                     {
-                        targetId = inSelf.targetId,
-                        isPlayer = inSelf.IsPlayer,
+                        id = inSelf.id,
                         currentPos = idleParam.currentPos,
                         targetPos = idleParam.currentPos,
                         speed = inSelf.stat.moveSpeed,
@@ -61,8 +60,7 @@ namespace Server
             {
                 UpdateLocationBroadcast move = new UpdateLocationBroadcast()
                 {
-                    targetId = inSelf.targetId,
-                    isPlayer = inSelf.IsPlayer,
+                    id = inSelf.id,
                     currentPos = inParam.currentPos,
                     targetPos = inParam.targetPos,
                     speed = inParam.speed,
@@ -141,10 +139,8 @@ namespace Server
                 {
                     S_Dead deadPacket = new S_Dead()
                     {
-                        toIsPlayer = true,
-                        toId = inSelf.targetId,
-                        fromIsPlayer = false,
-                        fromId = deadParam.killerTarget.targetId,
+                        id = inSelf.id,
+                        fromId = deadParam.killerTarget.id,
                         respawnTime = DEFINE.MONSTER_RESPAWN_SEC,
                     };
                     inSelf.broadcaster.Broadcast(deadPacket);

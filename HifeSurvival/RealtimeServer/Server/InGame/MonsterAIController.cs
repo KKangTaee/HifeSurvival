@@ -97,7 +97,7 @@ namespace Server
 
             if (monster.currentPos.IsSame(targetPos))
             {
-                Logger.GetInstance().Debug($"Arrived !! id : {monster.targetId}");
+                Logger.GetInstance().Debug($"Arrived !! id : {monster.id}");
 
                 if (aiMode == AIMode.ReturnToRespawnArea)
                 {
@@ -154,10 +154,10 @@ namespace Server
 
         public void UpdateAggro(Entity target)
         {
-            Logger.GetInstance().Debug($"aggroid : {target.targetId}, self : {monster.targetId}");
+            Logger.GetInstance().Debug($"aggroid : {target.id}, self : {monster.id}");
             if (ExistAggro())
             {
-                if (CurrentTarget().targetId == target.targetId)
+                if (CurrentTarget().id == target.id)
                     return;
 
                 aggroStack.Remove(target);

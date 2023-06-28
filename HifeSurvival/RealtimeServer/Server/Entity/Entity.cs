@@ -10,7 +10,7 @@ namespace Server
     {
         public IBroadcaster broadcaster;
 
-        public int targetId;
+        public int id;
 
         public PVec3 spawnPos;
 
@@ -18,9 +18,9 @@ namespace Server
         public PVec3 targetPos;
 
         public EntityStat stat;
-        public EntityStatus Status;
+        public EntityStat defaultStat;
 
-        public abstract bool IsPlayer { get; }
+        public EntityStatus Status;
 
         #region StatusAction
         protected abstract void ChangeState<P>(EntityStatus inStatue, P inParam) where P : struct, IStateParam;
@@ -56,7 +56,26 @@ namespace Server
         #endregion
 
 
+        public abstract void UpdateStat();
+        public abstract void GetStat(out EntityStat defaultStat, out EntityStat additionalStat);
+
+
+
+        #region Callback
         public abstract void OnDamaged(in Entity attacker);
+
+        public virtual void OnStatChange()
+        {
+            var broadcast = new UpdateStatBroadcast();
+            broadcast.id = id;
+
+            GetStat(out var originStat, out var addStat);
+            broadcast.originStat = originStat.ConvertStat();
+            broadcast.addStat = addStat.ConvertStat();
+
+            broadcaster.Broadcast(broadcast);
+        }
+        #endregion
 
 
         public virtual void MoveToRespawn()

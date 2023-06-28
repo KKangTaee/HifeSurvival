@@ -12,6 +12,11 @@ static class DEFINE
     //System
     public const int SEND_TICK_MS = 125;
     public const int TIMER_SEQ_MAX_PER_GAME = 300;
+    public const int MONSTER_ID = 1000;
+
+    //ResponseResult
+    public const int SUCCESS = 0;
+    public const int ERROR = 1;
 
     //Player
     public const int PLAYER_RESPAWN_MS = 15000;
@@ -63,4 +68,11 @@ public enum RewardType
 {
     Gold = 1,
     Item = 2,
+}
+
+public enum StatType
+{
+    Str,
+    Def,
+    Hp,
 }

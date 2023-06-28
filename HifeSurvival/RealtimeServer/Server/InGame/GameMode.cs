@@ -22,7 +22,6 @@ namespace Server
             _worldMap = new WorldMap(_broadcaster);
         }
 
-
         public List<MonsterSpawn> SpawnMonster(string[] inGroupKeyArr)
         {
             var monsterList = new List<MonsterSpawn>();
@@ -63,9 +62,9 @@ namespace Server
                                 _monsterGroupDict.Add(group.groupId, monsterGroup);
                             }
 
-                            MonsterEntity entity = new MonsterEntity(monsterGroup, _worldMap.DropItem)
+                            MonsterEntity monsterEntity = new MonsterEntity(monsterGroup, _worldMap.DropItem)
                             {
-                                targetId = _mId++,
+                                id = _mId++,
                                 groupId = group.groupId,
                                 monsterId = int.Parse(id),
                                 currentPos = pos,
@@ -73,19 +72,21 @@ namespace Server
                                 spawnPos = pos,
                                 grade = data.grade,
                                 broadcaster = _broadcaster,
-                                stat = new EntityStat(data),
+                                defaultStat = new EntityStat(data),
                                 rewardDatas = data.rewardIds,
                             };
 
-                            monsterGroup.Add(entity);
+                            monsterEntity.UpdateStat();
+
+                            monsterGroup.Add(monsterEntity);
 
                             var mData = new MonsterSpawn()
                             {
-                                targetId = entity.targetId,
-                                monstersKey = entity.monsterId,
-                                groupId = entity.groupId,
-                                grade = entity.grade,
-                                pos = entity.spawnPos,
+                                id = monsterEntity.id,
+                                monstersKey = monsterEntity.monsterId,
+                                groupId = monsterEntity.groupId,
+                                grade = monsterEntity.grade,
+                                pos = monsterEntity.spawnPos,
                             };
 
                             monsterList.Add(mData);
@@ -116,8 +117,8 @@ namespace Server
 
                     var data = new PlayerSpawn()
                     {
-                        targetId = info.targetId,
-                        herosKey = info.heroId,
+                        id = info.id,
+                        herosKey = info.heroKey,
                         pos = pos
                     };
 
@@ -129,30 +130,38 @@ namespace Server
         }
 
 
-        public PlayerEntity GetPlayerEntity(int inId)
+        public Entity GetEntityById(int id)
         {
-            if (_playersDict.TryGetValue(inId, out var player) && player != null)
+            // monster id 이하보다 작으면 플레이어라고 상정.
+            if (id < DEFINE.MONSTER_ID)
             {
-                return player;
+                if (_playersDict.TryGetValue(id, out var player) && player != null)
+                {
+                    return player;
+                }
+                Logger.GetInstance().Error("PlayerEntity is null or Empty");
+            }
+            else
+            {
+                var group = _monsterGroupDict.Values.FirstOrDefault(x => x.HaveEntityInGroup(id));
+                if (group == null)
+                {
+                    Logger.GetInstance().Error("MonsterGroup is null or Empty");
+                    return null;
+                }
+
+                var monster = group.GetMonsterEntity(id);
+                if(monster == null)
+                {
+                    Logger.GetInstance().Error("MonsterEntity is null or Empty");
+                    return null;
+                }
+
+                return monster;
             }
 
-            Logger.GetInstance().Error("PlayerEntity is null or Empty");
             return null;
         }
-
-
-        public MonsterEntity GetMonsterEntity(int inId)
-        {
-            var group = _monsterGroupDict.Values.FirstOrDefault(x => x.HaveEntityInGroup(inId));
-            if (group == null)
-            {
-                Logger.GetInstance().Error("MonsterEntity is null or Empty");
-                return null;
-            }
-
-            return group.GetMonsterEntity(inId);
-        }
-
 
         public bool CanStartGame()
         {
@@ -183,17 +192,17 @@ namespace Server
 
         public void OnSendLeave(int inSessionId)
         {
-            var playerInfo = _playersDict.Values.FirstOrDefault(x => x.targetId == inSessionId);
+            var playerInfo = _playersDict.Values.FirstOrDefault(x => x.id == inSessionId);
 
             if (playerInfo == null)
                 return;
 
-            _playersDict.Remove(playerInfo.targetId);
+            _playersDict.Remove(playerInfo.id);
 
             S_LeaveToGame packet = new S_LeaveToGame()
             {
                 userId = playerInfo.userId,
-                targetId = playerInfo.targetId,
+                id = playerInfo.id,
             };
 
             _broadcaster.Broadcast(packet);
@@ -268,16 +277,15 @@ namespace Server
         }
 
 
-        public void OnSendRespawn(int inPlayerId)
+        public void OnSendRespawn(int id)
         {
-            var player = GetPlayerEntity(inPlayerId);
+            var player = GetEntityById(id);
             if (player == null)
                 return;
 
             S_Respawn respawn = new S_Respawn()
             {
-                targetId = inPlayerId,
-                isPlayer = true,
+                id = id,
                 stat = player.stat.ConvertStat(),
             };
 
@@ -289,23 +297,25 @@ namespace Server
         // Receive
         //---------------
 
-        public void OnRecvJoin(C_JoinToGame inPacket, int inSessionId)
+        public void RecvJoin(C_JoinToGame inPacket, int inSessionId)
         {
             var data = GameDataLoader.Instance.HerosDict.Values.FirstOrDefault();
             if (data == null)
                 return;
 
-            var playerInfo = new PlayerEntity()
+            var playerEntity = new PlayerEntity()
             {
                 userId = inPacket.userId,
-                targetId = inSessionId,
-                heroId = data.key,
+                id = inSessionId,
+                heroKey = data.key,
                 userName = inPacket.userName,
                 broadcaster = _broadcaster,
-                stat = new EntityStat(data)
+                defaultStat = new EntityStat(data)
             };
 
-            _playersDict.Add(inSessionId, playerInfo);
+            playerEntity.UpdateStat();
+
+            _playersDict.Add(inSessionId, playerEntity);
 
             S_JoinToGame packet = new S_JoinToGame();
             packet.joinPlayerList = new List<S_JoinToGame.JoinPlayer>();
@@ -321,33 +331,39 @@ namespace Server
 
         public void OnRecvReady(CS_ReadyToGame inPacket)
         {
-            var player = GetPlayerEntity(inPacket.targetId);
-            if (player == null)
+            var entity = GetEntityById(inPacket.id);
+            if (entity == null)
                 return;
 
-            player.isReady = true;
-            _broadcaster.Broadcast(inPacket);
+            if(entity is PlayerEntity player)
+            {
+                player.isReady = true;
+                _broadcaster.Broadcast(inPacket);
 
-            // 모두 레디라면..? 게임시작
-            if (CanStartGame() == true)
-                OnSendCountDown();
+                // 모두 레디라면..? 게임시작
+                if (CanStartGame() == true)
+                    OnSendCountDown();
+            }
         }
 
 
         public void OnRecvSelect(CS_SelectHero inPacket)
         {
-            var player = GetPlayerEntity(inPacket.targetId);
-            if (player == null)
+            var entity = GetEntityById(inPacket.id);
+            if (entity == null)
                 return;
 
-            player.heroId = inPacket.heroId;
+            if (entity is PlayerEntity player)
+            {
+                player.heroKey = inPacket.heroKey;
+            }
 
             _broadcaster.Broadcast(inPacket);
         }
 
         public void OnRecvMoveRequest(MoveRequest inPacket)
         {
-            var player = GetPlayerEntity(inPacket.targetId);
+            var player = GetEntityById(inPacket.id);
             if (player == null)
                 return;
 
@@ -377,49 +393,63 @@ namespace Server
 
         public void OnRecvAttack(CS_Attack inPacket)
         {
-            var fromPlayer = GetPlayerEntity(inPacket.fromId);
+            var fromPlayer = GetEntityById(inPacket.id);
             if (fromPlayer == null)
                 return;
 
-            Entity toEntity = null;
-            if (inPacket.toIsPlayer)
-                toEntity = GetPlayerEntity(inPacket.toId);
-            else
-                toEntity = GetMonsterEntity(inPacket.toId);
-
-            if (toEntity == null)
+            var targetEntity = GetEntityById(inPacket.targetId);
+            if (targetEntity == null)
                 return;
 
             fromPlayer.Attack(new AttackParam()
             {
-                target = toEntity,
+                target = targetEntity,
             });
         }
 
 
-        public void OnRecvUpdateStat(CS_UpdateStat inPacket)
+        public void OnRecvIncreaseStatRequest(IncreaseStatRequest inPacket)
         {
-            var player = GetPlayerEntity(inPacket.targetId);
-            if (player == null)
+            var entity = GetEntityById(inPacket.id);
+            if (entity == null)
                 return;
+            
+            int  increaseValue = inPacket.increase;
+            if (entity is PlayerEntity  playerEntity)
+            {
+                //NOTE : 현재 1골드 당 해당 스탯 1 증가. 
+                //TODO : 골드량 대 스탯 증가량 비례 값은 데이터 시트로 관리할 예정. 
+                if (increaseValue > playerEntity.gold)
+                    return;
 
-            if (inPacket.usedGold > player.gold)
-                return;
+                playerEntity.gold -= increaseValue;
 
-            player.gold -= inPacket.usedGold;
+                switch ((StatType)inPacket.type)
+                {
+                    case StatType.Str:
+                        playerEntity.upgradeStat.AddStr(increaseValue);
+                        break;
+                    case StatType.Def:
+                        playerEntity.upgradeStat.AddDef(increaseValue);
+                        break;
+                    case StatType.Hp:
+                        playerEntity.upgradeStat.AddMaxHp(increaseValue, true);
+                        break;
+                    default:
+                        Logger.GetInstance().Error($"Wrong Stat Type {(StatType)inPacket.type}");
+                        break; ;
+                }
+            }
 
-            player.stat.AddMaxHp(inPacket.updateStat.str);
-            player.stat.AddDef(inPacket.updateStat.def);
-            player.stat.AddMaxHp(inPacket.updateStat.hp);
-            player.stat.AddCurrHp(inPacket.updateStat.hp);
+            entity.UpdateStat();
 
-            _broadcaster.Broadcast(inPacket);
+            //TODO : Send IncreaseStatResponse + result 값 처리
         }
 
 
         public void OnRecvPickReward(C_PickReward inPacket)
         {
-            var player = GetPlayerEntity(inPacket.targetId);
+            var player = GetEntityById(inPacket.id);
             if (player == null)
                 return;
 
@@ -431,7 +461,7 @@ namespace Server
                     {
                         packet = new S_GetGold()
                         {
-                            targetId = inPacket.targetId,
+                            id = inPacket.id,
                             worldId = inPacket.worldId,
                             gold = rewardData.count,
                         };
@@ -441,7 +471,7 @@ namespace Server
                     {
                         packet = new S_GetItem()
                         {
-                            targetId = inPacket.targetId,
+                            id = inPacket.id,
                             worldId = inPacket.worldId,
                             // itemSlotId = 1,
                             item = new Item()

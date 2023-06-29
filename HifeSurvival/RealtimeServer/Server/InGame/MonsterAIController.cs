@@ -61,21 +61,19 @@ namespace Server
 
         private void AttackRoutine()
         {
+            if (!CanAttack())
+                return;
+
             var currentTarget = CurrentTarget();
+            var damagedVal = BattleCalculator.ComputeDamagedValue(_monster.stat, currentTarget.stat);
 
-            if (ServerTime.GetCurrentTimestamp() - _lastAttackTime > _monster.stat.AttackSpeed * DEFINE.SEC_TO_MS)
-            {
-                var damagedVal = BattleCalculator.ComputeDamagedValue(_monster.stat, currentTarget.stat);
+            currentTarget.ReduceHP(damagedVal);
+            currentTarget.OnDamaged(_monster);
 
-                currentTarget.ReduceHP(damagedVal);
-                currentTarget.OnDamaged(_monster);
-                _lastAttackTime = ServerTime.GetCurrentTimestamp();
-                _lastAnimTime = ServerTime.GetCurrentTimestamp();
+            _lastAttackTime = ServerTime.GetCurrentTimestamp();
+            _lastAnimTime = ServerTime.GetCurrentTimestamp();
 
-                _monster.OnAttackSuccess(currentTarget, damagedVal);
-            }
-
-            return;
+            _monster.OnAttackSuccess(currentTarget, damagedVal);
         }
 
         private void MoveRoutine()
@@ -159,6 +157,7 @@ namespace Server
         }
 
         private bool CanMove() => ServerTime.GetCurrentTimestamp() - _lastAnimTime > DEFINE.MONSTER_ATTACK_ANIM_TIME;
+        private bool CanAttack() => ServerTime.GetCurrentTimestamp() - _lastAttackTime > _monster.stat.AttackSpeed * DEFINE.SEC_TO_MS;
 
         public void UpdateAggro(Entity target)
         {

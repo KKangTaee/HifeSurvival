@@ -29,12 +29,12 @@ public partial class Monster
         }
 
         #region  Local Func
-        void Attack(AttackParam inParam, Monster inFrom, EntityObject inTo)
+        void Attack(AttackParam param, Monster fromMonster, EntityObject toEntity)
         {
-            // NOTE@taeho.kang 
+            var dir = Vector3.Normalize(toEntity.GetPos() - fromMonster.GetPos());
 
-            inFrom.OnAttack(inParam.fromDir);
-            inTo.OnDamaged(inParam.attackValue);
+            fromMonster.OnAttack(dir);
+            toEntity.OnDamaged(param.attackValue);
         }
         #endregion
     }

@@ -59,13 +59,15 @@ public partial class Player
         }
 
         #region  Local Func
-        void Attack(AttackParam inParam, Player inFrom, EntityObject inTo)
+        void Attack(AttackParam param, Player fromPlayer, EntityObject toEntity)
         {
-            inFrom.OnAttack(inParam.fromDir);
-            inTo.OnDamaged(inParam.attackValue);
+            var dir = Vector3.Normalize(toEntity.GetPos() - fromPlayer.GetPos());
 
-            if (inFrom.IsSelf == true)
-                ActionDisplayUI.Show(ActionDisplayUI.ESpawnType.ATTACK, inParam.attackValue, inTo.GetPos() + Vector3.up);
+            fromPlayer.OnAttack(dir);
+            toEntity.OnDamaged(param.attackValue);
+
+            if (fromPlayer.IsSelf == true)
+                ActionDisplayUI.Show(ActionDisplayUI.ESpawnType.ATTACK, param.attackValue, toEntity.GetPos() + Vector3.up);
         }
         #endregion
     }

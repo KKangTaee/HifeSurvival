@@ -50,6 +50,7 @@ public class PacketManager
 	
 	public void BindHandler(PacketHandler handler)
 	{
+		_handler.Clear();
 		_handler.Add((ushort)PacketID.C_JoinToGame, handler.C_JoinToGameHandler);
 		_handler.Add((ushort)PacketID.S_JoinToGame, handler.S_JoinToGameHandler);
 		_handler.Add((ushort)PacketID.S_LeaveToGame, handler.S_LeaveToGameHandler);

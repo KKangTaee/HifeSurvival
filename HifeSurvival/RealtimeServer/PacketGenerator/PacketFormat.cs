@@ -38,6 +38,7 @@ public class PacketManager
 	
 	public void BindHandler(PacketHandler handler)
 	{{
+		_handler.Clear();
 {2}
 	}}
 

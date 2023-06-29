@@ -62,7 +62,7 @@ namespace Server
 
         public override void OnDamaged(in Entity attacker)
         {
-            if(IsDead())
+            if (IsDead())
             {
                 Dead(new DeadParam()
                 {
@@ -109,7 +109,15 @@ namespace Server
                 return;
 
             var broadcast = _worldMap.DropItem(rewardDatas, currentPos);
-            broadcaster.Broadcast(broadcast);
+            if (broadcast == null)
+            {
+                Logger.GetInstance().Warn("Reward Drop Failed");
+            }
+            else
+            {
+                Logger.GetInstance().Debug($"Reward Drop worldid : {broadcast.worldId}, pos : {broadcast.pos.Print()}");
+                broadcaster.Broadcast(broadcast);
+            }
             return;
         }
 

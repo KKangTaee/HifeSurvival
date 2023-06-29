@@ -26,9 +26,9 @@
     ```csharp
     public enum EState
     {
-    		IDLE,
-    		MOVE,
-            SOME_STATE,
+        IDLE,
+        MOVE,
+        SOME_STATE,
     }
     ```
     

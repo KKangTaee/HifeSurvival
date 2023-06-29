@@ -1,6 +1,7 @@
 using ServerCore;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Server
@@ -88,6 +89,12 @@ namespace Server
                         };
 
                         _broadcaster.Broadcast(gameStart);
+
+                        JobTimer.Instance.Push(() =>
+                        {
+                            _monsterGroupDict.AsParallel().ForAll(mg => mg.Value.UpdateStat());
+                            _playersDict.AsParallel().ForAll(p => p.Value.UpdateStat());
+                        });
                     }
                     break;
                 case EGameModeStatus.PLAY_START:
@@ -95,7 +102,6 @@ namespace Server
                         JobTimer.Instance.Push(() =>
                         {
                             _monsterGroupDict.AsParallel().ForAll(mg => mg.Value.OnPlayStart());
-                            _playersDict.AsParallel().ForAll(p => p.Value.UpdateStat());
                         });
                     }
                     break;
@@ -157,7 +163,7 @@ namespace Server
                                 monsterGroup = new MonsterGroup(group.groupId, group.respawnTime);
                                 _monsterGroupDict.Add(group.groupId, monsterGroup);
                             }
-
+                            Logger.GetInstance().Debug($"monster id {id}, reward id {data.rewardIds}");
                             MonsterEntity monsterEntity = new MonsterEntity(monsterGroup, _worldMap.DropItem)
                             {
                                 id = _mId++,

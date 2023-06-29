@@ -28,8 +28,15 @@ namespace Server
         {
             foreach (var m in _monstersDict)
             {
-                m.Value.UpdateStat();
                 m.Value.ExecuteAI();
+            }
+        }
+
+        public void UpdateStat()
+        {
+            foreach (var m in _monstersDict)
+            {
+                m.Value.UpdateStat();
             }
         }
 

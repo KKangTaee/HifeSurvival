@@ -98,7 +98,7 @@ public class GameMode
             userName = joinPlayer.userName,
             id = joinPlayer.id,
             heroId = joinPlayer.heroKey,
-            stat = new EntityStat(heros),
+            // stat = new EntityStat(heros),
         };
 
         // 내 자신일 경우 캐싱처리한다
@@ -179,7 +179,7 @@ public class GameMode
         NetworkManager.Instance.Send(moveRequest);
     }
 
-    public void OnSendAttack(in Vector3 inPos, in Vector3 inDir, bool toIsPlayer, int toId, int damageValue)
+    public void OnSendAttack(int toId, int damageValue)
     {
         CS_Attack attack = new CS_Attack()
         {
@@ -230,7 +230,6 @@ public class GameMode
             id   = EntitySelf.id,
             type = inUsedGold,
             increase = inIncrease
-            // updateStat = inStat,
         };
 
         NetworkManager.Instance.Send(updateStat);
@@ -302,8 +301,7 @@ public class GameMode
             return;
 
         player.heroId = inPacket.heroKey;
-        player.stat = new EntityStat(StaticData.Instance.HerosDict[player.heroId.ToString()]);
-
+        // player.stat = new EntityStat(StaticData.Instance.HerosDict[player.heroId.ToString()]);
 
         if (IsSelf(inPacket.id) == false)
             _onRecvSelectCB?.Invoke(player);
@@ -369,12 +367,10 @@ public class GameMode
             monsterId = m.monstersKey,
             grade = m.grade,
             pos = m.pos,
-            stat = new EntityStat(monster),
+            // stat = new EntityStat(monster),
         };
         return monsterEntity;
     }
-
-
 
 
     public void OnRecvAttack(CS_Attack inPacket)
@@ -511,5 +507,22 @@ public class GameMode
                 OnUpdateGameModeStatusHandler?.Invoke(packet);
                 break;
         }
+    }
+
+    public void OnUpdateStat(UpdateStatBroadcast packet)
+    {
+        Entity entity = null;
+        switch(Entity.GetEntityType(packet.id))
+        {
+            case Entity.EEntityType.PLAYER:
+                entity = GetPlayerEntity(packet.id);
+                break;
+            
+            case Entity.EEntityType.MOSNTER:
+                entity = GetMonsterEntity(packet.id);
+                break;
+        }
+
+        entity.stat = new EntityStat(packet.originStat);
     }
 }

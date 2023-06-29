@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using static Server.GameDataLoader;
 
 namespace Server
 {
@@ -21,6 +22,8 @@ namespace Server
                         speed = self.stat.MoveSpeed,
                         timestamp = idleParam.timestamp,
                     };
+
+                    Logger.GetInstance().Debug($"IdleState monster : {self.id}, param Pos : {idleParam.currentPos.Print()}");
 
                     self.broadcaster.Broadcast(move);
                 }

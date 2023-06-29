@@ -35,7 +35,6 @@ namespace Server
 
         public void ParseJson(string mapData)
         {
-      
             if (mapData == null)
             {
                 Logger.GetInstance().Error("mapData is null or empty!");
@@ -90,7 +89,9 @@ namespace Server
         {
             var itemDataStr = PacketExtensionHelper.FilterRewardIdsByRandomProbability(rewardData);
             if (itemDataStr == null)
+            {
                 return null;
+            }
 
             var itemData = RewardData.Parse(itemDataStr).FirstOrDefault();
 
@@ -100,7 +101,7 @@ namespace Server
                 itemData = itemData,
             };
 
-            Logger.GetInstance().Info($"Drop Item ID {worldItem.worldId}");
+            Logger.GetInstance().Debug($"Drop Item ID {worldItem.worldId}");
             ItemDict.TryAdd(worldItem.worldId, worldItem);
 
             var broadcast = new UpdateRewardBroadcast();
@@ -142,7 +143,7 @@ namespace Server
         {
             if (ItemDict.TryGetValue(worldId, out var worldItem) == false)
             {
-                Logger.GetInstance().Error($"[{nameof(PickReward)}] worldId is wrong : {worldId}");
+                Logger.GetInstance().Error($"invalid worldId : {worldId}");
                 return default;
             }
 

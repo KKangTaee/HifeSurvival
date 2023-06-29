@@ -99,6 +99,8 @@ namespace Server
             }
 
             var currentTarget = CurrentTarget();
+            Logger.GetInstance().Debug($"currentTarget : {currentTarget.id}, Pos : {currentTarget.currentPos.Print()}");
+            Logger.GetInstance().Debug($"monster : {_monster.id}, Pos : {_monster.currentPos.Print()}");
             var damagedVal = BattleCalculator.ComputeDamagedValue(_monster.stat, currentTarget.stat);
 
             currentTarget.ReduceHP(damagedVal);
@@ -117,7 +119,7 @@ namespace Server
                 return;
             }
 
-            if (_lastMovetime > _lastMoveInfo.Value.timestamp)
+            if (_lastMoveInfo.Value.timestamp < _lastMovetime)
             {
                 return;
             }

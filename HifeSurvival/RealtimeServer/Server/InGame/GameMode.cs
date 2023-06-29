@@ -447,11 +447,6 @@ namespace Server
 
             player.UpdateStat();
 
-            player.GetStat(out var originEStat, out var addEStat);
-            res.originStat = originEStat.ConvertToPStat();
-            res.addStat = addEStat.ConvertToPStat();
-
-
             _broadcaster.Broadcast(res);
             //TODO : Send IncreaseStatResponse + result 값 처리
         }

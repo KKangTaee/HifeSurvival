@@ -54,10 +54,15 @@ namespace Server
             }
         }
 
-        public override void GetStat(out EntityStat defaultStat, out EntityStat additionalStat)
+        public override PStat GetDefaultPStat()
         {
-            defaultStat = this.defaultStat;
-            additionalStat = new EntityStat();
+            return this.defaultStat.ConvertToPStat();
+        }
+
+        public override PStat GetAdditionalPStat()
+        {
+            //임시
+            return (new EntityStat()).ConvertToPStat();
         }
 
         public override void OnDamaged(in Entity attacker)

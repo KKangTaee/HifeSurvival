@@ -186,17 +186,10 @@ namespace Server
             }
 
             var currentTarget = CurrentTarget();
-            if (currentTarget == null)
+            if (IsValidTarget(currentTarget))
             {
-                return;
+                _monster.MoveToTarget(currentTarget.currentPos);
             }
-
-            if (!IsValidTarget(currentTarget))
-            {
-                return;
-            }
-
-            _monster.MoveToTarget(currentTarget.currentPos);
         }
 
         private void ReturnToRespawnArea()

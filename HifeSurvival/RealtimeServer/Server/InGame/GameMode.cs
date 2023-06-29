@@ -14,7 +14,7 @@ namespace Server
         private WorldMap _worldMap;
         private int _mId = DEFINE.MONSTER_ID;
 
-        public GameModeStatus Status { get; private set; } = GameModeStatus.None;
+        public EGameModeStatus Status { get; private set; } = EGameModeStatus.NONE;
 
         public GameMode(GameRoom inRoom)
         {
@@ -38,13 +38,13 @@ namespace Server
             _broadcaster.Broadcast(packet);
         }
 
-        private void UpdateModeStatus(GameModeStatus updatedStatus)
+        private void UpdateModeStatus(EGameModeStatus updatedStatus)
         {
             Logger.GetInstance().Warn($"<-----{updatedStatus}----->");
 
             switch (updatedStatus)
             {
-                case GameModeStatus.Ready:
+                case EGameModeStatus.READY:
                     {
                         var packet = new S_JoinToGame() { joinPlayerList = new List<S_JoinToGame.JoinPlayer>() };
                         _playersDict.AsParallel().ForAll(p => packet.joinPlayerList.Add(new S_JoinToGame.JoinPlayer()
@@ -58,7 +58,7 @@ namespace Server
                         _broadcaster.Broadcast(packet);                    
                     }
                     break;
-                case GameModeStatus.Countdown:
+                case EGameModeStatus.COUNT_DOWN:
                     {
                         var countdown = new S_Countdown()
                         {
@@ -70,7 +70,7 @@ namespace Server
                         JobTimer.Instance.Push(StartLoadGame, DEFINE.START_COUNTDOWN_SEC * DEFINE.SEC_TO_MS);
                     }
                     break;
-                case GameModeStatus.LoadGame:
+                case EGameModeStatus.LOAD_GAME:
                     {
                         if (GameDataLoader.Instance.ChapaterDataDict.TryGetValue("1", out var chapterData) == false)
                         {
@@ -90,7 +90,7 @@ namespace Server
                         _broadcaster.Broadcast(gameStart);
                     }
                     break;
-                case GameModeStatus.PlayStart:
+                case EGameModeStatus.PLAY_START:
                     {
                         JobTimer.Instance.Push(() =>
                         {
@@ -99,7 +99,7 @@ namespace Server
                         });
                     }
                     break;
-                case GameModeStatus.FinishGame:
+                case EGameModeStatus.FINISH_GAME:
                     {
 
                     }
@@ -127,7 +127,7 @@ namespace Server
                 if (GameDataLoader.Instance.MonstersGroupDict.TryGetValue(groupKey, out var group) == true)
                 {
                     var monsterKey = group.monsterGroups.Split(':');
-                    var spawnData = _worldMap.SpawnList.FirstOrDefault(x => x.spawnType == (int)WorldMapSpawnType.Monster &&
+                    var spawnData = _worldMap.SpawnList.FirstOrDefault(x => x.spawnType == (int)EWorldMapSpawnType.MONSTER &&
                                                                          x.groupId == group.groupId);
 
                     if (spawnData == null)
@@ -211,7 +211,7 @@ namespace Server
         public List<PlayerSpawn> SpawnPlayer()
         {
             var playerList = new List<PlayerSpawn>();
-            var playerSpawn = _worldMap.SpawnList.FirstOrDefault(x => x.spawnType == (int)WorldMapSpawnType.Player);
+            var playerSpawn = _worldMap.SpawnList.FirstOrDefault(x => x.spawnType == (int)EWorldMapSpawnType.PLAYER);
             if (playerSpawn == null)
             {
                 Logger.GetInstance().Error("player spawn null or empty!");
@@ -272,13 +272,13 @@ namespace Server
             return null;
         }
 
-        public bool CanJoinRoom() => Status == GameModeStatus.Ready && _playersDict.Count < DEFINE.PLAYER_MAX_COUNT;
+        public bool CanJoinRoom() => Status == EGameModeStatus.READY && _playersDict.Count < DEFINE.PLAYER_MAX_COUNT;
 
-        public bool CanLoadGame() => _playersDict.Values.All(x => x.clientStatus == ClientStatus.SelectReady);
+        public bool CanLoadGame() => _playersDict.Values.All(x => x.clientStatus == EClientStatus.SELECT_READY);
 
-        public bool CanPlayStart() => _playersDict.Values.All(x => x.clientStatus == ClientStatus.PlayReady);
+        public bool CanPlayStart() => _playersDict.Values.All(x => x.clientStatus == EClientStatus.PLAY_READY);
 
-        public void StartLoadGame() => UpdateModeStatus(GameModeStatus.LoadGame);
+        public void StartLoadGame() => UpdateModeStatus(EGameModeStatus.LOAD_GAME);
 
         public void OnRecvJoin(C_JoinToGame inPacket, int inSessionId)
         {
@@ -298,7 +298,7 @@ namespace Server
 
             _playersDict.Add(inSessionId, playerEntity);
 
-            UpdateModeStatus(GameModeStatus.Ready);
+            UpdateModeStatus(EGameModeStatus.READY);
         }
 
         public void OnRecvSelect(CS_SelectHero inPacket)
@@ -328,7 +328,7 @@ namespace Server
 
                 if (CanLoadGame())
                 {
-                    UpdateModeStatus(GameModeStatus.LoadGame);
+                    UpdateModeStatus(EGameModeStatus.LOAD_GAME);
                 }
             }
         }
@@ -346,7 +346,7 @@ namespace Server
 
                 if (CanPlayStart())
                 {
-                    UpdateModeStatus(GameModeStatus.PlayStart);
+                    UpdateModeStatus(EGameModeStatus.PLAY_START);
                 }
             }
         }
@@ -422,19 +422,19 @@ namespace Server
 
                 playerEntity.gold -= increaseValue;
 
-                switch ((StatType)inPacket.type)
+                switch ((EStatType)inPacket.type)
                 {
-                    case StatType.Str:
+                    case EStatType.STR:
                         playerEntity.upgradeStat.AddStr(increaseValue);
                         break;
-                    case StatType.Def:
+                    case EStatType.DEF:
                         playerEntity.upgradeStat.AddDef(increaseValue);
                         break;
-                    case StatType.Hp:
+                    case EStatType.HP:
                         playerEntity.upgradeStat.AddMaxHp(increaseValue, true);
                         break;
                     default:
-                        Logger.GetInstance().Error($"Wrong Stat Type {(StatType)inPacket.type}");
+                        Logger.GetInstance().Error($"Wrong Stat Type {(EStatType)inPacket.type}");
                         break; ;
                 }
 
@@ -477,18 +477,18 @@ namespace Server
 
                 var broadcast = new UpdateRewardBroadcast();
                 broadcast.worldId = worldId;
-                broadcast.status = (int)RewardState.Pick;
+                broadcast.status = (int)ERewardState.PICK;
                 broadcast.rewardType = rewardData.rewardType;
                 res.rewardType = rewardData.rewardType;
 
-                switch ((RewardType)rewardData.rewardType)
+                switch ((ERewardType)rewardData.rewardType)
                 {
-                    case RewardType.Gold:
+                    case ERewardType.GOLD:
                         {
                             res.gold = broadcast.gold = rewardData.count;
                             break;
                         }
-                    case RewardType.Item:
+                    case ERewardType.ITEM:
                         {
                             // Item Layer 나누기. (PItem , GameDataItem, InvenItem, PInvenItem)
                             var toEquipItem = new PItem()

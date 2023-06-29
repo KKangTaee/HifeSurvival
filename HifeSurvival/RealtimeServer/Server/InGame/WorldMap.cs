@@ -114,18 +114,18 @@ namespace Server
 
             var broadcast = new UpdateRewardBroadcast();
             broadcast.worldId = worldItem.worldId;
-            broadcast.status = (int)RewardState.Drop;
+            broadcast.status = (int)ERewardState.DROP;
             broadcast.rewardType = worldItem.itemData.rewardType;
             broadcast.pos = dropPos;
 
-            switch ((RewardType)worldItem.itemData.rewardType)
+            switch ((ERewardType)worldItem.itemData.rewardType)
             {
-                case RewardType.Gold:
+                case ERewardType.GOLD:
                     {
                         broadcast.gold = worldItem.itemData.count;
                         break;
                     }
-                case RewardType.Item:
+                case ERewardType.ITEM:
                     {
                         broadcast.item = new PItem()
                         {

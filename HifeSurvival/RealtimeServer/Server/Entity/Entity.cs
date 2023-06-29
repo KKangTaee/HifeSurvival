@@ -20,38 +20,38 @@ namespace Server
         public EntityStat stat;
         public EntityStat defaultStat;
 
-        public EntityStatus Status;
+        public EEntityStatus Status;
 
         #region StatusAction
-        protected abstract void ChangeState<P>(EntityStatus inStatue, P inParam) where P : struct, IStateParam;
+        protected abstract void ChangeState<P>(EEntityStatus inStatue, P inParam) where P : struct, IStateParam;
         public virtual void Attack(AttackParam inParam)
         {
-            Status = EntityStatus.Attack;
-            ChangeState(EntityStatus.Attack, inParam);
+            Status = EEntityStatus.ATTACK;
+            ChangeState(EEntityStatus.ATTACK, inParam);
         }
 
         public virtual void Idle(in IdleParam inParam = default)
         {
-            Status = EntityStatus.Idle;
-            ChangeState(EntityStatus.Idle, inParam);
+            Status = EEntityStatus.IDLE;
+            ChangeState(EEntityStatus.IDLE, inParam);
         }
 
         public virtual void MoveStop(in IdleParam inParam = default)
         {
-            Status = EntityStatus.Idle;
-            ChangeState(EntityStatus.Idle, inParam);
+            Status = EEntityStatus.IDLE;
+            ChangeState(EEntityStatus.IDLE, inParam);
         }
 
         public virtual void Move(in MoveParam inParam = default)
         {
-            Status = EntityStatus.Move;
-            ChangeState(EntityStatus.Move, inParam);
+            Status = EEntityStatus.MOVE;
+            ChangeState(EEntityStatus.MOVE, inParam);
         }
 
         public virtual void Dead(in DeadParam inParam = default)
         {
-            Status = EntityStatus.Dead;
-            ChangeState(EntityStatus.Dead, inParam);
+            Status = EEntityStatus.DEAD;
+            ChangeState(EEntityStatus.DEAD, inParam);
         }
         #endregion
 
@@ -107,7 +107,7 @@ namespace Server
 
         public virtual bool IsDead()
         {
-            return stat.curHp < 0 || Status == EntityStatus.Dead;
+            return stat.curHp < 0 || Status == EEntityStatus.DEAD;
         }
     }
 }

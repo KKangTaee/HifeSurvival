@@ -33,60 +33,60 @@ static class DEFINE
 }
 
 
-public enum GameModeStatus
+public enum EGameModeStatus
 {
-    None,
-    Ready,
-    Countdown,
-    LoadGame,
-    PlayStart,
-    FinishGame,
+    NONE,
+    READY,
+    COUNT_DOWN,
+    LOAD_GAME,
+    PLAY_START,
+    FINISH_GAME,
 }
 
-public enum ClientStatus
+public enum EClientStatus
 {
-    SelectReady,
-    PlayReady,
+    SELECT_READY,
+    PLAY_READY,
 }
 
 
-public enum EntityStatus
+public enum EEntityStatus
 {
-    Idle,
-    Move,
-    Attack,
-    UseSkill,
-    Dead,
+    IDLE,
+    MOVE,
+    ATTACK,
+    USESKILL,
+    DEAD,
 }
 
-public enum AIMode
+public enum EAIMode
 {
-    Free,
-    ReturnToRespawnArea,
+    FREE,
+    RETURN_TO_RESPAWN_AREA,
 }
 
-public enum WorldMapSpawnType
+public enum EWorldMapSpawnType
 {
-    Player,
-    Monster,
-    Item,
+    PLAYER,
+    MONSTER,
+    ITEM,
 }
 
-public enum RewardType
+public enum ERewardType
 {
-    Gold = 1,
-    Item = 2,
+    GOLD = 1,
+    ITEM = 2,
 }
 
-public enum RewardState
+public enum ERewardState
 {
-    Drop,
-    Pick,
+    DROP,
+    PICK,
 }
 
-public enum StatType
+public enum EStatType
 {
-    Str,
-    Def,
-    Hp,
+    STR,
+    DEF,
+    HP,
 }

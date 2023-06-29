@@ -10,7 +10,7 @@ namespace Server
         public string userName;
         
         public int  heroKey;
-        public ClientStatus clientStatus;
+        public EClientStatus clientStatus;
 
         
         public EntityStat itemStat = new EntityStat();
@@ -24,21 +24,21 @@ namespace Server
 
         public PlayerEntity()
         {
-            var smdic = new Dictionary<EntityStatus, IState<PlayerEntity, IStateParam>>();
-            smdic[EntityStatus.Idle] = new IdleState();
-            smdic[EntityStatus.Attack] = new AttackState();
-            smdic[EntityStatus.Move] = new MoveState();
-            smdic[EntityStatus.UseSkill] = new UseSkillState();
-            smdic[EntityStatus.Dead] = new DeadState();
+            var smdic = new Dictionary<EEntityStatus, IState<PlayerEntity, IStateParam>>();
+            smdic[EEntityStatus.IDLE] = new IdleState();
+            smdic[EEntityStatus.ATTACK] = new AttackState();
+            smdic[EEntityStatus.MOVE] = new MoveState();
+            smdic[EEntityStatus.USESKILL] = new UseSkillState();
+            smdic[EEntityStatus.DEAD] = new DeadState();
 
             _stateMachine = new StateMachine<PlayerEntity>(smdic);
         }
 
-        public void SelectReady() => clientStatus = ClientStatus.SelectReady;
-        public void PlayReady() => clientStatus = ClientStatus.PlayReady;
+        public void SelectReady() => clientStatus = EClientStatus.SELECT_READY;
+        public void PlayReady() => clientStatus = EClientStatus.PLAY_READY;
 
 
-        protected override void ChangeState<P>(EntityStatus inStatue, P inParam)
+        protected override void ChangeState<P>(EEntityStatus inStatue, P inParam)
         {
             _stateMachine.OnChangeState(inStatue, this, inParam);
         }

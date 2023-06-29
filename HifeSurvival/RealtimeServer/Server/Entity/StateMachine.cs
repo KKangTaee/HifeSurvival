@@ -8,17 +8,17 @@ namespace Server
 
     public class StateMachine<T> where T : Entity
     {
-        protected EntityStatus _status;
+        protected EEntityStatus _status;
         protected IState<T, IStateParam>      _state;
 
-        protected Dictionary<EntityStatus, IState<T, IStateParam>> _stateMachine;
+        protected Dictionary<EEntityStatus, IState<T, IStateParam>> _stateMachine;
 
-        public StateMachine(Dictionary<EntityStatus, IState<T, IStateParam>> inStateMachine)
+        public StateMachine(Dictionary<EEntityStatus, IState<T, IStateParam>> inStateMachine)
         {
             _stateMachine = inStateMachine;
         }
 
-        public void OnChangeState(EntityStatus inStatue, T inEntity, IStateParam inParam)
+        public void OnChangeState(EEntityStatus inStatue, T inEntity, IStateParam inParam)
         {
             if (_status == inStatue)
             {

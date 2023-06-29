@@ -16,7 +16,7 @@ namespace Server
         private MoveParam? lastMoveInfo = null;
         private long lastMovetime = 0;
 
-        private AIMode aiMode = AIMode.Free;
+        private EAIMode aiMode = EAIMode.FREE;
 
         public MonsterAIController(MonsterEntity monster)
         {
@@ -29,7 +29,7 @@ namespace Server
             if (monster.IsDead())
                 return;
 
-            if (aiMode == AIMode.Free)
+            if (aiMode == EAIMode.FREE)
             {
                 if (SelectTarget())
                 {
@@ -99,9 +99,9 @@ namespace Server
             {
                 Logger.GetInstance().Debug($"Arrived !! id : {monster.id}");
 
-                if (aiMode == AIMode.ReturnToRespawnArea)
+                if (aiMode == EAIMode.RETURN_TO_RESPAWN_AREA)
                 {
-                    aiMode = AIMode.Free;
+                    aiMode = EAIMode.FREE;
                     ClearAggro();
                 }
 
@@ -147,7 +147,7 @@ namespace Server
 
         public void ReturnToRespawnArea()
         {
-            aiMode = AIMode.ReturnToRespawnArea;
+            aiMode = EAIMode.RETURN_TO_RESPAWN_AREA;
             monster.MoveToRespawn();
             Logger.GetInstance().Debug("ReturnToRespawnArea");
         }

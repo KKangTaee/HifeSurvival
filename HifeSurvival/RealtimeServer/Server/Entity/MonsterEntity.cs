@@ -15,10 +15,10 @@ namespace Server
         StateMachine<MonsterEntity> _stateMachine;
 
         private MonsterAIController AIController { get; set; }
-        private event Action<string, PVec3> dropItemDelegate;
+        private event Action<string, PVec3> OnDropItemHandler;
         private MonsterGroup _group;
 
-        public MonsterEntity(MonsterGroup group, Action<string, PVec3> dropItem)
+        public MonsterEntity(MonsterGroup group, Action<string, PVec3> dropItemHandler)
         {
             var smDict = new Dictionary<EEntityStatus, IState<MonsterEntity, IStateParam>>();
             smDict[EEntityStatus.IDLE] = new IdleState();
@@ -32,7 +32,7 @@ namespace Server
             _stateMachine = new StateMachine<MonsterEntity>(smDict);
             AIController = new MonsterAIController(this);
             
-            dropItemDelegate += dropItem;
+            OnDropItemHandler += dropItemHandler;
         }
 
 
@@ -105,11 +105,11 @@ namespace Server
 
         public void DropItem()
         {
-            if (dropItemDelegate == null)
+            if (OnDropItemHandler == null)
                 return;
 
-            dropItemDelegate(rewardDatas, currentPos);
-            dropItemDelegate = null;
+            OnDropItemHandler(rewardDatas, currentPos);
+            OnDropItemHandler = null;
             return;
         }
 

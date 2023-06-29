@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using ServerCore;
@@ -66,36 +66,8 @@ public class ClientPacketHandler : PacketHandler
 
     public override void S_SpawnMonsterHandler(PacketSession session, IPacket packet)
     {
-        // throw new NotImplementedException();
+
     }
-
-    // public override void S_DropRewardHandler(PacketSession session, IPacket packet)
-    // {
-    //     // throw new NotImplementedException();
-    //     S_DropReward dropReward = packet as S_DropReward;
-    //     GameMode.Instance.OnRecvDropReward(dropReward);
-    
-    // }
-
-    // public override void C_PickRewardHandler(PacketSession session, IPacket packet)
-    // {
-    //     throw new NotImplementedException();
-    // }
-
-    // public override void S_GetItemHandler(PacketSession session, IPacket packet)
-    // {
-    //     // throw new NotImplementedException();
-    //     S_GetItem item = packet as S_GetItem;
-    //     GameMode.Instance.OnRecvGetItem(item);
-    // }
-
-    // public override void S_GetGoldHandler(PacketSession session, IPacket packet)
-    // {
-    //     // hrow new NotImplementedException();
-    //     S_GetGold gold = packet as S_GetGold;
-    //     GameMode.Instance.OnRecvGetGold(gold);
-    // }
-
 
     public override void MoveRequestHandler(PacketSession session, IPacket packet)
     {
@@ -144,10 +116,24 @@ public class ClientPacketHandler : PacketHandler
     public override void UpdateRewardBroadcastHandler(PacketSession session, IPacket packet)
     {
         UpdateRewardBroadcast updateReward = packet as UpdateRewardBroadcast;
-
     }
 
     public override void UpdatePlayerCurrencyHandler(PacketSession session, IPacket packet)
+    {
+
+    }
+
+    public override void PlayStartRequestHandler(PacketSession session, IPacket packet)
+    {
+
+    }
+
+    public override void PlayStartResponseHandler(PacketSession session, IPacket packet)
+    {
+        
+    }
+
+    public override void UpdateGameModeStatusBroadcastHandler(PacketSession session, IPacket packet)
     {
         throw new NotImplementedException();
     }

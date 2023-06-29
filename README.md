@@ -20,8 +20,8 @@
 
 ### enum
 
-- 앞에 E를 붙임.
-- 내용에 들어갈 원소들은 대문자 형태로
+- 접두어 `E` 사용.
+- 값은 모두 대문자, `Snake Case`
     
     ```csharp
     public enum EState
@@ -35,7 +35,8 @@
 
 ### const, readonly
 
-- 대문자로 통일함.
+- 이름 모두 대문자
+- `Snake Case`
     
     ```csharp
     // const
@@ -48,7 +49,7 @@
 
 ### class
 
-- 클래스 명 : 대문자
+- `Pascal Case`
     
     ```csharp
     public class Item
@@ -57,13 +58,16 @@
     }
     ```
     
-- 변수  : private 일 경우 : 이름 시작 지점에 _ (언더바) 를 붙인다
-    
+- 변수
+    - `Camel Case`
+    - 접근 지정자가 private 일 경우 접두어 `_` 사용.
     ```csharp
     private int _val;
+    public int value;
     ```
     
-- 프로퍼티 : 앞글자 대문자 사용
+- 프로퍼티
+    - `Pascal Case`
     
     ```csharp
     public Vector3 Pos { get; private set;}
@@ -72,7 +76,8 @@
 
 ### interface
 
-- I로 시작하며 대문자로 정의한다.
+- 접두어 `I` 사용.
+- `Pascal Case`
     
     ```csharp
     public interface IState
@@ -84,20 +89,21 @@
 
 ### Collection
 
-- Array 일 경우 : 뒤에 Arr를 붙인다
+- Array
+    - 접미어 `Arr` 사용.
     
     ```csharp
     int [] numArr = new int[5];
     ```
     
-- List 일 경우 : 뒤에 List를 붙인다.
-    
+- List
+    - 접미어 `List를` 사용.
     ```csharp
     List<int> numList = new List<int>();
     ```
     
-- Dictionary 일 경우 : 뒤에 Dict를 붙임
-    
+- Dictionary
+    - 접미어 `Dict를` 사용.
     ```csharp
     Dictionary<int, int> numDict = new Dictionary<int, int>();
     ```
@@ -105,9 +111,8 @@
 
 ### Function
 
-- 첫글자는 대문자로 작성한다
-- 파리미터의 네이밍은 in으로 시작
-- 기본 함수일 경우 동사형으로 사용함
+- `Pascal Case`
+- 매개변수 이름 접두어 `in` 사용. CamelCase
     
     ```csharp
     public void SetHp(int inHp)
@@ -116,7 +121,8 @@
     {
     ```
     
-- bool 형은 의문형으로 사용함
+- 반환형 `bool`
+    - `Can`, `Has`, `Is` 와 같이 의문문으로 작성.
     
     ```csharp
     public bool IsValied(int inValue);
@@ -124,7 +130,8 @@
     public bool CanAttack();
     ```
     
-- (선택) 함수가 한줄일 경우 람다식 메서드 사용
+- 람다
+    - 한 줄일 경우 사용 해도 됨.
     
     ```csharp
     public bool HasValue() => true;
@@ -133,27 +140,27 @@
 
 ### 이벤트, 액션
 
-- Action<T> 일 경우 뒤에 Callback 혹은 CB 로 정의
-    
+- Action<T>
+    - 접미어 `Callback` 또는 `CB` 사용.
     ```csharp
     private Action<int> _damageValCallback; 
     ```
     
-- Func<T> 일 경우 뒤에 Func를 붙인다.
-    
+- Func<T>
+    - 접미어 `Func` 사용.
     ```csharp
     private Func<int>  _checkFunc;
     ```
     
-- event는 앞에 `On내용Handler`  로 정의한다.
-    
+- event
+    - `On내용Handler` 포맷을 사용.
     ```csharp
     public event Action<T> OnRecvAttackHandler;
     ```
     
 ### 패킷 구조체
 
-- 구조체 명 앞에 P를 붙임.
+- 접두어 `P` 사용.
     
     ```csharp
     struct PItem

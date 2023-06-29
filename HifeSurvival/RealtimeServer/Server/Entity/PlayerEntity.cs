@@ -24,14 +24,14 @@ namespace Server
 
         public PlayerEntity()
         {
-            var smdic = new Dictionary<EEntityStatus, IState<PlayerEntity, IStateParam>>();
-            smdic[EEntityStatus.IDLE] = new IdleState();
-            smdic[EEntityStatus.ATTACK] = new AttackState();
-            smdic[EEntityStatus.MOVE] = new MoveState();
-            smdic[EEntityStatus.USESKILL] = new UseSkillState();
-            smdic[EEntityStatus.DEAD] = new DeadState();
+            var smDict = new Dictionary<EEntityStatus, IState<PlayerEntity, IStateParam>>();
+            smDict[EEntityStatus.IDLE] = new IdleState();
+            smDict[EEntityStatus.ATTACK] = new AttackState();
+            smDict[EEntityStatus.MOVE] = new MoveState();
+            smDict[EEntityStatus.USESKILL] = new UseSkillState();
+            smDict[EEntityStatus.DEAD] = new DeadState();
 
-            _stateMachine = new StateMachine<PlayerEntity>(smdic);
+            _stateMachine = new StateMachine<PlayerEntity>(smDict);
         }
 
         public void SelectReady() => clientStatus = EClientStatus.SELECT_READY;

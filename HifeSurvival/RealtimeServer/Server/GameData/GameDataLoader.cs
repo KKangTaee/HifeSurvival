@@ -46,7 +46,7 @@ namespace Server
         {
             // 구글 스프레드 시트의 모든 이름 가져오기
             var waiter = new AsyncWaiting();
-            List<string> sheetNames = new List<string>();
+            List<string> sheetNameList = new List<string>();
 
             ServerRequestManager.Instance.AddRequestData(new ServerRequestManager.ServerRequestData()
             {
@@ -57,7 +57,7 @@ namespace Server
                     JSONArray sheetsArray = sheetsInfoJson["sheets"].AsArray;
 
                     foreach (JSONNode sheet in sheetsArray)
-                        sheetNames.Add(sheet["properties"]["title"].Value);
+                        sheetNameList.Add(sheet["properties"]["title"].Value);
 
                     waiter.Signal();
                 }
@@ -67,7 +67,7 @@ namespace Server
             waiter.Reset();
 
             // 배치로 모든 스프레드 시트의 데이터 가져오기.
-            string ranges = string.Join("&", sheetNames.Select(sheetName => $"ranges={Uri.EscapeDataString(sheetName)}"));
+            string ranges = string.Join("&", sheetNameList.Select(sheetName => $"ranges={Uri.EscapeDataString(sheetName)}"));
             string batchGetUrl = $"{sheetsApiUrl}/{sheetId}/values:batchGet?{ranges}&key={apiKey}";
 
             ServerRequestManager.Instance.AddRequestData(new ServerRequestManager.ServerRequestData()
@@ -82,8 +82,8 @@ namespace Server
                     foreach (JSONNode node in batchDataJson["valueRanges"].AsArray)
                     {
                         string trimmed = node["range"].ToString().Trim('\"');
-                        string[] parts = trimmed.Split('!');
-                        var rangeValue = parts[0];
+                        string[] partArr = trimmed.Split('!');
+                        var rangeValue = partArr[0];
 
                         if (rangeValue.Equals("systems"))
                         {
@@ -128,16 +128,16 @@ namespace Server
             {
                 public string range;
                 public string majorDimension;
-                public List<List<string>> values;
+                public List<List<string>> valueList;
             }
 
             public static Dictionary<string, T> ParseJsonToDictionary<T>(string jsonString) where T : class, new()
             {
-                List<List<string>> rawData = JsonToRawData(jsonString);
-                Dictionary<string, T> resultDictionary = new Dictionary<string, T>();
+                List<List<string>> rawDataList = JsonToRawData(jsonString);
+                Dictionary<string, T> resultDict = new Dictionary<string, T>();
 
                 // 첫 번째 행은 헤더이므로 1부터 시작
-                for (int i = 1; i < rawData.Count; i++)
+                for (int i = 1; i < rawDataList.Count; i++)
                 {
                     T item = new T();
                     var itemType = item.GetType();
@@ -149,55 +149,55 @@ namespace Server
 
                         if (field.FieldType == typeof(int))
                         {
-                            value = int.Parse(rawData[i][fieldIndex]);
+                            value = int.Parse(rawDataList[i][fieldIndex]);
                         }
                         else if (field.FieldType == typeof(float))
                         {
-                            value = float.Parse(rawData[i][fieldIndex]);
+                            value = float.Parse(rawDataList[i][fieldIndex]);
                         }
                         else if (field.FieldType == typeof(double))
                         {
-                            value = double.Parse(rawData[i][fieldIndex]);
+                            value = double.Parse(rawDataList[i][fieldIndex]);
                         }
                         else if (field.FieldType == typeof(long))
                         {
-                            value = long.Parse(rawData[i][fieldIndex]);
+                            value = long.Parse(rawDataList[i][fieldIndex]);
                         }
                         else if (field.FieldType == typeof(short))
                         {
-                            value = short.Parse(rawData[i][fieldIndex]);
+                            value = short.Parse(rawDataList[i][fieldIndex]);
                         }
                         else if (field.FieldType == typeof(uint))
                         {
-                            value = uint.Parse(rawData[i][fieldIndex]);
+                            value = uint.Parse(rawDataList[i][fieldIndex]);
                         }
                         else if (field.FieldType == typeof(ulong))
                         {
-                            value = ulong.Parse(rawData[i][fieldIndex]);
+                            value = ulong.Parse(rawDataList[i][fieldIndex]);
                         }
                         else if (field.FieldType == typeof(ushort))
                         {
-                            value = ushort.Parse(rawData[i][fieldIndex]);
+                            value = ushort.Parse(rawDataList[i][fieldIndex]);
                         }
                         else if (field.FieldType == typeof(byte))
                         {
-                            value = byte.Parse(rawData[i][fieldIndex]);
+                            value = byte.Parse(rawDataList[i][fieldIndex]);
                         }
                         else if (field.FieldType == typeof(sbyte))
                         {
-                            value = sbyte.Parse(rawData[i][fieldIndex]);
+                            value = sbyte.Parse(rawDataList[i][fieldIndex]);
                         }
                         else if (field.FieldType == typeof(char))
                         {
-                            value = rawData[i][fieldIndex][0];
+                            value = rawDataList[i][fieldIndex][0];
                         }
                         else if (field.FieldType == typeof(bool))
                         {
-                            value = bool.Parse(rawData[i][fieldIndex]);
+                            value = bool.Parse(rawDataList[i][fieldIndex]);
                         }
                         else if (field.FieldType == typeof(string))
                         {
-                            value = rawData[i][fieldIndex];
+                            value = rawDataList[i][fieldIndex];
                         }
 
                         // 다른 필드 유형이 필요한 경우 여기에 추가
@@ -209,30 +209,30 @@ namespace Server
 
                     string key = itemType.GetField("key").GetValue(item).ToString();
 
-                    resultDictionary.Add(key, item);
+                    resultDict.Add(key, item);
                 }
 
-                return resultDictionary;
+                return resultDict;
             }
 
 
             private static List<List<string>> JsonToRawData(string jsonString)
             {
                 JSONNode sheetJson = JSONNode.Parse(jsonString);
-                List<List<string>> values = new List<List<string>>();
+                List<List<string>> valueList = new List<List<string>>();
 
                 JSONArray rows = sheetJson["values"].AsArray;
                 foreach (JSONNode row in rows)
                 {
-                    List<string> rowData = new List<string>();
+                    List<string> rowDataList = new List<string>();
                     foreach (JSONNode cell in row.AsArray)
                     {
-                        rowData.Add(cell.Value);
+                        rowDataList.Add(cell.Value);
                     }
-                    values.Add(rowData);
+                    valueList.Add(rowDataList);
                 }
 
-                return values;
+                return valueList;
             }
         }
 

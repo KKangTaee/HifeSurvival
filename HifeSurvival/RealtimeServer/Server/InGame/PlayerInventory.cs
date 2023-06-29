@@ -6,7 +6,7 @@ namespace Server
 {
     public class PlayerInventory
     {
-        public InvenItem[] itemSlot = new InvenItem[DEFINE.PLAYER_ITEM_SLOT];
+        private InvenItem[] _itemSlotArr = new InvenItem[DEFINE.PLAYER_ITEM_SLOT];
 
         public int EquipItem(PItem item)
         {
@@ -15,9 +15,9 @@ namespace Server
 
             for (int i = 0; i < DEFINE.PLAYER_ITEM_SLOT; i++)
             {
-                if (item.itemKey == itemSlot[i].itemKey)
+                if (item.itemKey == _itemSlotArr[i].itemKey)
                 {
-                    equippedItem = itemSlot[i];
+                    equippedItem = _itemSlotArr[i];
                     break;
                 }
             }
@@ -27,7 +27,7 @@ namespace Server
                 var nextSlot = NextItemSlot();
                 if(nextSlot > 0)
                 {
-                    itemSlot[nextSlot] = new InvenItem(nextSlot,item);
+                    _itemSlotArr[nextSlot] = new InvenItem(nextSlot,item);
                     slot = nextSlot;
                 }
             }
@@ -44,7 +44,7 @@ namespace Server
         {
             for (int i = 0; i < DEFINE.PLAYER_ITEM_SLOT; i++)
             {
-                if (itemSlot[i] == null)
+                if (_itemSlotArr[i] == null)
                 {
                     return i;
                 }
@@ -56,7 +56,7 @@ namespace Server
         public EntityStat TotalItemStat()
         {
             var stat = new EntityStat();
-            foreach(var item in itemSlot)
+            foreach(var item in _itemSlotArr)
             {
                 if (item == null)
                     continue;

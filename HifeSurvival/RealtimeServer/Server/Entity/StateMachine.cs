@@ -11,11 +11,11 @@ namespace Server
         protected EEntityStatus _status;
         protected IState<T, IStateParam>      _state;
 
-        protected Dictionary<EEntityStatus, IState<T, IStateParam>> _stateMachine;
+        protected Dictionary<EEntityStatus, IState<T, IStateParam>> _stateMachineDict;
 
-        public StateMachine(Dictionary<EEntityStatus, IState<T, IStateParam>> inStateMachine)
+        public StateMachine(Dictionary<EEntityStatus, IState<T, IStateParam>> inStateMachineDict)
         {
-            _stateMachine = inStateMachine;
+            _stateMachineDict = inStateMachineDict;
         }
 
         public void OnChangeState(EEntityStatus inStatue, T inEntity, IStateParam inParam)
@@ -28,7 +28,7 @@ namespace Server
             {
                 _status = inStatue;
                 _state?.Exit(inEntity, inParam);
-                _state = _stateMachine[_status];
+                _state = _stateMachineDict[_status];
                 _state?.Enter(inEntity, inParam);
             }
         }

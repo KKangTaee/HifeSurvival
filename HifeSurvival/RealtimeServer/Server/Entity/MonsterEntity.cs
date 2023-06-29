@@ -20,16 +20,16 @@ namespace Server
 
         public MonsterEntity(MonsterGroup group, Action<string, PVec3> dropItem)
         {
-            var smdic = new Dictionary<EEntityStatus, IState<MonsterEntity, IStateParam>>();
-            smdic[EEntityStatus.IDLE] = new IdleState();
-            smdic[EEntityStatus.ATTACK] = new AttackState();
-            smdic[EEntityStatus.MOVE] = new MoveState();
-            smdic[EEntityStatus.USESKILL] = new UseSkillState();
-            smdic[EEntityStatus.DEAD] = new DeadState();
+            var smDict = new Dictionary<EEntityStatus, IState<MonsterEntity, IStateParam>>();
+            smDict[EEntityStatus.IDLE] = new IdleState();
+            smDict[EEntityStatus.ATTACK] = new AttackState();
+            smDict[EEntityStatus.MOVE] = new MoveState();
+            smDict[EEntityStatus.USESKILL] = new UseSkillState();
+            smDict[EEntityStatus.DEAD] = new DeadState();
 
             this._group = group;
 
-            _stateMachine = new StateMachine<MonsterEntity>(smdic);
+            _stateMachine = new StateMachine<MonsterEntity>(smDict);
             AIController = new MonsterAIController(this);
             
             dropItemDelegate += dropItem;

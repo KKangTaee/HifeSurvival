@@ -30,7 +30,7 @@ namespace Server
     {
 
         private JobQueue _jobQueue = new JobQueue();
-        private List<ClientSession> _sessions = new List<ClientSession>();
+        private List<ClientSession> _sessionList = new List<ClientSession>();
         private List<ArraySegment<byte>> _pendingList = new List<ArraySegment<byte>>();
 
         private GameMode _gameMode;
@@ -53,7 +53,7 @@ namespace Server
 
         public void Flush()
         {
-            foreach (ClientSession s in _sessions)
+            foreach (ClientSession s in _sessionList)
                 s.Send(_pendingList);
 
             _pendingList.Clear();
@@ -71,10 +71,10 @@ namespace Server
 
         public void Enter(ClientSession session)
         {
-            _sessions.Add(session);
+            _sessionList.Add(session);
             session.Room = this;
 
-            if (_sessions.Count > 0)
+            if (_sessionList.Count > 0)
             {
                 _isRunningFlush = true;
                 FlushRoom();
@@ -83,12 +83,12 @@ namespace Server
 
         public void Leave(ClientSession session)
         {
-            _sessions.Remove(session);
+            _sessionList.Remove(session);
             _gameMode.OnSessionRemove(session.SessionId);
 
             session.Room = null;
 
-            if (_sessions.Count == 0)
+            if (_sessionList.Count == 0)
                 _isRunningFlush = false;
         }
 

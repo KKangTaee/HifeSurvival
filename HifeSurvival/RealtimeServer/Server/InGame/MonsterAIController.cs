@@ -10,7 +10,7 @@ namespace Server
     {
         private MonsterEntity _monster = null;
 
-        private List<Entity> _aggroStack = new List<Entity>();
+        private List<Entity> _aggroList = new List<Entity>();
         private long _lastAttackTime = 0;
 
         private MoveParam? _lastMoveInfo = null;
@@ -160,21 +160,21 @@ namespace Server
                 if (CurrentTarget().id == target.id)
                     return;
 
-                _aggroStack.Remove(target);
+                _aggroList.Remove(target);
             }
 
-            _aggroStack.Add(target);
+            _aggroList.Add(target);
         }
 
         public bool ExistAggro()
         {
-            return _aggroStack.Count > 0;
+            return _aggroList.Count > 0;
         }
 
         private Entity CurrentTarget()
         {
             if(ExistAggro())
-                return _aggroStack[_aggroStack.Count - 1];
+                return _aggroList[_aggroList.Count - 1];
 
             return null;
         }
@@ -183,10 +183,10 @@ namespace Server
         {
             if (ExistAggro())
             {
-                _aggroStack.RemoveAt(_aggroStack.Count - 1);
+                _aggroList.RemoveAt(_aggroList.Count - 1);
 
                 if(ExistAggro())
-                    return _aggroStack[_aggroStack.Count - 1];
+                    return _aggroList[_aggroList.Count - 1];
             }
 
             return null;
@@ -200,7 +200,7 @@ namespace Server
 
         private void ClearAggro()
         {
-            _aggroStack.Clear();
+            _aggroList.Clear();
         }
 
         public void ClearLastMove()

@@ -9,7 +9,7 @@ namespace Server
 	{
 		static SessionManager _session = new SessionManager();
 		public static SessionManager Instance { get { return _session; } }
-		Dictionary<int, ClientSession> _sessions = new Dictionary<int, ClientSession>();
+		Dictionary<int, ClientSession> _sessionDict = new Dictionary<int, ClientSession>();
 		
 		int _sessionId = 0;
 		object _lock = new object();
@@ -22,7 +22,7 @@ namespace Server
 
 				ClientSession session = new ClientSession();
 				session.SessionId = sessionId;
-				_sessions.Add(sessionId, session);
+				_sessionDict.Add(sessionId, session);
 
                 Logger.GetInstance().Info($"Connected : {sessionId}");
 
@@ -35,7 +35,7 @@ namespace Server
 			lock (_lock)
 			{
 				ClientSession session = null;
-				_sessions.TryGetValue(id, out session);
+				_sessionDict.TryGetValue(id, out session);
 				return session;
 			}
 		}
@@ -44,7 +44,7 @@ namespace Server
 		{
 			lock (_lock)
 			{
-				_sessions.Remove(session.SessionId);
+				_sessionDict.Remove(session.SessionId);
 			}
 		}
 	}

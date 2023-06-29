@@ -53,12 +53,12 @@ namespace Server
             CanGoTiles = new HashSet<PVec3>();
             foreach (JSONNode node in N["can_go_tile"].AsArray)
             {
-                string[] parts = node.Value.Split(',');
+                string[] partArr = node.Value.Split(',');
                 PVec3 tile = new PVec3()
                 {
-                    x = float.Parse(parts[0]),
-                    y = float.Parse(parts[1]),
-                    z = float.Parse(parts[2])
+                    x = float.Parse(partArr[0]),
+                    y = float.Parse(partArr[1]),
+                    z = float.Parse(partArr[2])
                 };
                 CanGoTiles.Add(tile);
             }
@@ -74,12 +74,12 @@ namespace Server
                 spawnData.pivotList = new List<PVec3>();
                 foreach (JSONNode pivotNode in node["pivot_list"].AsArray)
                 {
-                    string[] parts = pivotNode.Value.Split(',');
+                    string[] partArr = pivotNode.Value.Split(',');
                     PVec3 pivot = new PVec3()
                     {
-                        x = float.Parse(parts[0]),
-                        y = float.Parse(parts[1]),
-                        z = float.Parse(parts[2])
+                        x = float.Parse(partArr[0]),
+                        y = float.Parse(partArr[1]),
+                        z = float.Parse(partArr[2])
                     };
                     spawnData.pivotList.Add(pivot);
                 }

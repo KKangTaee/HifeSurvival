@@ -117,7 +117,7 @@ namespace Server
                 return;
             }
 
-            if (_lastMovetime > _lastMoveInfo.Value.timestamp)
+            if (_lastMoveInfo.Value.timestamp < _lastMovetime)
             {
                 return;
             }

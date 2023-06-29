@@ -85,8 +85,6 @@
 		<int name ="type"/>
 		<int name ="increase"/>
 		<int name ="usedGold"/>
-		<struct_PStat name ="originStat"/>
-		<struct_PStat name ="addStat"/>
 		<int name="result"/>
 	</packet>
 

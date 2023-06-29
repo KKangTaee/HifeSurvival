@@ -432,7 +432,6 @@ public class GameMode
             return;
 
         player.AddGold(-inPacket.usedGold);
-        player.stat.IncreaseStat(inPacket.addStat);
     }
 
 

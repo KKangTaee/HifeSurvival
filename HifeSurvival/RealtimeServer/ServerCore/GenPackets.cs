@@ -741,8 +741,6 @@ public class IncreaseStatResponse : IPacket
 	public int type;
 	public int increase;
 	public int usedGold;
-	public PStat originStat;
-	public PStat addStat;
 	public int result;
 
 	public ushort Protocol { get { return (ushort)PacketID.IncreaseStatResponse; } }
@@ -762,8 +760,6 @@ public class IncreaseStatResponse : IPacket
 		count += sizeof(int);
 		this.usedGold = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
-		originStat.Read(s, ref count);
-		addStat.Read(s, ref count);
 		this.result = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
 	}
@@ -787,8 +783,6 @@ public class IncreaseStatResponse : IPacket
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.usedGold);
 		count += sizeof(int);
-		success &= originStat.Write(s,ref count);
-		success &= addStat.Write(s,ref count);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.result);
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s, count);

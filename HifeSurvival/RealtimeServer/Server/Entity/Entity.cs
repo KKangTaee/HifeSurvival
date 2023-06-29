@@ -57,8 +57,9 @@ namespace Server
 
 
         public abstract void UpdateStat();
-        public abstract void GetStat(out EntityStat defaultStat, out EntityStat additionalStat);
 
+        public abstract PStat GetDefaultPStat();
+        public abstract PStat GetAdditionalPStat();
 
 
         #region Callback
@@ -68,10 +69,8 @@ namespace Server
         {
             var broadcast = new UpdateStatBroadcast();
             broadcast.id = id;
-
-            GetStat(out var originStat, out var addStat);
-            broadcast.originStat = originStat.ConvertToPStat();
-            broadcast.addStat = addStat.ConvertToPStat();
+            broadcast.originStat = GetDefaultPStat();
+            broadcast.addStat = GetAdditionalPStat();
 
             broadcaster.Broadcast(broadcast);
         }

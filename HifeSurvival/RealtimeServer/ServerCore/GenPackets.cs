@@ -1250,6 +1250,9 @@ public struct PVec3
 	public int hp;
 	public float moveSpeed;
 	public float attackSpeed;
+	public float attackRange;
+	public float detectRange;
+	public float bodyRange;
 
 	public void Read(ReadOnlySpan<byte> s, ref ushort count)
 	{
@@ -1262,6 +1265,12 @@ public struct PVec3
 		this.moveSpeed = BitConverter.ToSingle(s.Slice(count, s.Length - count));
 		count += sizeof(float);
 		this.attackSpeed = BitConverter.ToSingle(s.Slice(count, s.Length - count));
+		count += sizeof(float);
+		this.attackRange = BitConverter.ToSingle(s.Slice(count, s.Length - count));
+		count += sizeof(float);
+		this.detectRange = BitConverter.ToSingle(s.Slice(count, s.Length - count));
+		count += sizeof(float);
+		this.bodyRange = BitConverter.ToSingle(s.Slice(count, s.Length - count));
 		count += sizeof(float);
 	}
 
@@ -1277,6 +1286,12 @@ public struct PVec3
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.moveSpeed);
 		count += sizeof(float);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.attackSpeed);
+		count += sizeof(float);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.attackRange);
+		count += sizeof(float);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.detectRange);
+		count += sizeof(float);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.bodyRange);
 		count += sizeof(float);
 		return success;
 	}	

@@ -32,13 +32,6 @@ namespace Server
         private object _dropLock = new object();
         private int _dropID = 0;
 
-        private IBroadcaster _broadcaster = null;
-
-        public WorldMap(IBroadcaster broadcaster)
-        {
-            _broadcaster = broadcaster;
-        }
-
         public void ParseJson(string mapData)
         {
       
@@ -92,11 +85,11 @@ namespace Server
             ParseJson(mapData);
         }
 
-        public void DropItem(string rewardData, PVec3 dropPos)
+        public UpdateRewardBroadcast DropItem(string rewardData, PVec3 dropPos)
         {
             var itemDataStr = PacketExtensionHelper.FilterRewardIdsByRandomProbability(rewardData);
             if (itemDataStr == null)
-                return;
+                return null;
 
             var itemData = RewardData.Parse(itemDataStr).FirstOrDefault();
 
@@ -144,9 +137,7 @@ namespace Server
                     break;
             }
 
-            _broadcaster.Broadcast(broadcast);
-
-            return;
+            return broadcast;
         }
 
         public RewardData PickReward(int worldId)

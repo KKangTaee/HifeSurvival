@@ -15,10 +15,10 @@ namespace Server
         StateMachine<MonsterEntity> _stateMachine;
 
         private MonsterAIController AIController { get; set; }
-        private event Action<string, PVec3> OnDropItemHandler;
         private MonsterGroup _group;
+        private WorldMap _worldMap;
 
-        public MonsterEntity(MonsterGroup group, Action<string, PVec3> dropItemHandler)
+        public MonsterEntity(MonsterGroup group, WorldMap worldMap)
         {
             var smDict = new Dictionary<EEntityStatus, IState<MonsterEntity, IStateParam>>();
             smDict[EEntityStatus.IDLE] = new IdleState();
@@ -31,8 +31,8 @@ namespace Server
 
             _stateMachine = new StateMachine<MonsterEntity>(smDict);
             AIController = new MonsterAIController(this);
-            
-            OnDropItemHandler += dropItemHandler;
+
+            _worldMap = worldMap;
         }
 
 
@@ -105,11 +105,11 @@ namespace Server
 
         public void DropItem()
         {
-            if (OnDropItemHandler == null)
+            if (_worldMap == null)
                 return;
 
-            OnDropItemHandler(rewardDatas, currentPos);
-            OnDropItemHandler = null;
+            var broadcast = _worldMap.DropItem(rewardDatas, currentPos);
+            broadcaster.Broadcast(broadcast);
             return;
         }
 

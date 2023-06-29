@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using static Server.GameDataLoader;
 
 namespace Server
 {
@@ -13,6 +14,7 @@ namespace Server
         public int CurHp { get; private set; }
 
         public float DetectRange { get; private set; }
+        public float BodyRange { get; private set; }
         public float AttackRange { get; private set; }
         public float MoveSpeed { get; private set; }
         public float AttackSpeed { get; private set; }
@@ -27,6 +29,7 @@ namespace Server
             AttackRange = heros.attackRange;
             MoveSpeed = heros.moveSpeed;
             AttackSpeed = heros.attackSpeed;
+            BodyRange = heros.bodyRange;
         }
 
         public EntityStat(GameDataLoader.Monsters monsters)
@@ -38,6 +41,7 @@ namespace Server
             AttackRange = monsters.attackRange;
             MoveSpeed = monsters.moveSpeed;
             AttackSpeed = monsters.attackSpeed;
+            BodyRange = monsters.bodyRange;
         }
 
         public EntityStat(in PItem item)

@@ -157,6 +157,9 @@
     <int name ="hp"/>
     <float name = "moveSpeed"/>
     <float name = "attackSpeed"/>
+    <float name = "attackRange"/>
+    <float name = "detectRange"/>
+    <float name = "bodyRange"/>
   </struct>
 
   <struct name = "PItem">

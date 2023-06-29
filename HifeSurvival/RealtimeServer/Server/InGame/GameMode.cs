@@ -20,7 +20,7 @@ namespace Server
         public GameMode(GameRoom room)
         {
             _broadcaster = new RoomBroadcaster(room);
-            _worldMap = new WorldMap(_broadcaster);
+            _worldMap = new WorldMap();
         }
         public void OnSessionRemove(int sessionId)
         {
@@ -164,7 +164,7 @@ namespace Server
                                 _monsterGroupDict.Add(group.groupId, monsterGroup);
                             }
                             Logger.GetInstance().Debug($"monster id {id}, reward id {data.rewardIds}");
-                            MonsterEntity monsterEntity = new MonsterEntity(monsterGroup, _worldMap.DropItem)
+                            MonsterEntity monsterEntity = new MonsterEntity(monsterGroup, _worldMap)
                             {
                                 id = _mId++,
                                 groupId = group.groupId,

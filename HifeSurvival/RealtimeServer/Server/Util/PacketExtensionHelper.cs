@@ -113,6 +113,9 @@ namespace Server
                 hp = selfEntity.MaxHp,
                 attackSpeed = selfEntity.AttackSpeed,
                 moveSpeed = selfEntity.MoveSpeed,
+                detectRange = selfEntity.DetectRange,
+                attackRange = selfEntity.AttackRange,
+                bodyRange = selfEntity.BodyRange,
             };
         }
 

@@ -256,6 +256,7 @@ namespace Server
             public float moveSpeed;
             public float attackRange;
             public float detectRange;
+            public float bodyRange;
             public string desc;
         }
 
@@ -272,6 +273,7 @@ namespace Server
             public float moveSpeed;
             public float attackRange;
             public float detectRange;
+            public float bodyRange;
             public string rewardIds;
             public string desc;
         }

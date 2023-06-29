@@ -71,6 +71,13 @@ public partial class Monster : EntityObject
         _anim.OnDead();
     }
 
+    public void OnIdle(in Vector3 inPos, in Vector3 inDir = default)
+    {
+        _anim.OnIdle();
+        StopMoveEntity(inPos);
+    }
+
+
     public override void OnDamaged(int inDamageValue)
     {
         _anim.OnDamaged();

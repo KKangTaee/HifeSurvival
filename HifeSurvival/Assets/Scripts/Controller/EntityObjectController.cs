@@ -189,9 +189,6 @@ public abstract class EntityObjectController<T> : ControllerBase where T : Entit
         {
             attackValue = inDamageVal,
             target = inTo,
-
-            // fromPos = inFromPos,
-            // fromDir = inFromDir,
         };
 
         inFrom.ChangeState(EntityObject.EStatus.ATTACK, attackParam);

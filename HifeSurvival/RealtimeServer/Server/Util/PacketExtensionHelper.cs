@@ -141,6 +141,7 @@ namespace Server
                 }
                 else
                 {
+                    Logger.GetInstance().Info("Drop Failed By Probability");
                     return null;
                 }
             }

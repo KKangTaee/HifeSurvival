@@ -101,7 +101,8 @@ public class ClientPacketHandler : PacketHandler
 
     public override void UpdateStatBroadcastHandler(PacketSession session, IPacket packet)
     {
-        //TODO: Stat 업데이트 해야함. 
+        UpdateStatBroadcast updateStat = packet as UpdateStatBroadcast;
+        GameMode.Instance.OnUpdateStat(updateStat);
     }
 
     public override void PickRewardRequestHandler(PacketSession session, IPacket packet)

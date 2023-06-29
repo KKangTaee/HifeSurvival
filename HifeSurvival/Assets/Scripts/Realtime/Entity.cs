@@ -120,34 +120,23 @@ public class EntityStat
 
     public float detectRange { get; private set; }
     public float attackRange { get; private set; }
+    public float bodyRange   { get; private set; }
     public float moveSpeed   { get; private set; }
     public float attackSpeed { get; private set; }
 
 
-    public EntityStat(StaticData.Heros heros)
+    public EntityStat(PStat stat)
     {
-        str = heros.str;
-        def = heros.def;
+        str = stat.str;
+        def = stat.def;
         
-        currHP = hp  = heros.hp;
+        currHP = hp  = stat.hp;
         
-        detectRange = heros.detectRange;
-        attackRange = heros.attackRange;
-        moveSpeed   = heros.moveSpeed;
-        attackSpeed = heros.attackSpeed;
-    }
-
-    public EntityStat(StaticData.Monsters monsters)
-    {
-        str = monsters.str;
-        def = monsters.def;
-
-        currHP = hp = monsters.hp;
-
-        detectRange = monsters.detectRange;
-        attackRange = monsters.attackRange;
-        moveSpeed   = monsters.moveSpeed;
-        attackSpeed = monsters.attackSpeed;
+        detectRange = stat.detectRange;
+        attackRange = stat.attackRange;
+        moveSpeed   = stat.moveSpeed;
+        attackSpeed = stat.attackSpeed;
+        bodyRange   = stat.bodyRange;
     }
 
     public void AddStr(int inStr) =>

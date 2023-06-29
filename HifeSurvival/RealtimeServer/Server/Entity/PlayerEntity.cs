@@ -106,7 +106,7 @@ namespace Server
             //TODO : Timer 클래스로 모두 빼야함. (취소 가능 기능 필요)
             JobTimer.Instance.Push(() =>
             {
-                stat.AddCurrHp(stat.maxHp);
+                stat.AddCurrHp(stat.MaxHp);
                 Idle();
 
                 S_Respawn respawn = new S_Respawn()

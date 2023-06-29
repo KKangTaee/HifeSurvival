@@ -62,7 +62,7 @@ namespace Server
         {
             var currentTarget = CurrentTarget();
 
-            if (ServerTime.GetCurrentTimestamp() - lastAttackTime >= monster.stat.attackSpeed * DEFINE.SEC_TO_MS)
+            if (ServerTime.GetCurrentTimestamp() - lastAttackTime >= monster.stat.AttackSpeed * DEFINE.SEC_TO_MS)
             {
                 var damagedVal = BattleCalculator.ComputeDamagedValue(monster.stat, currentTarget.stat);
 
@@ -90,7 +90,7 @@ namespace Server
             var targetPos = lastMoveInfo.Value.targetPos;
 
             var normalizedVec = currentPos.NormalizeToTargetPVec3(targetPos);
-            float ratio = monster.stat.moveSpeed * DEFINE.AI_CHECK_MS * DEFINE.MS_TO_SEC;
+            float ratio = monster.stat.MoveSpeed * DEFINE.AI_CHECK_MS * DEFINE.MS_TO_SEC;
 
             monster.currentPos.x = currentPos.x + normalizedVec.x * ratio;
             monster.currentPos.y = currentPos.y + normalizedVec.y * ratio;

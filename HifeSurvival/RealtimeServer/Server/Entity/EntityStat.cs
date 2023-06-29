@@ -6,45 +6,45 @@ namespace Server
 {
     public class EntityStat
     {
-        public int str { get; private set; } = 0;
-        public int def { get; private set; } = 0;
+        public int Str { get; private set; } = 0;
+        public int Def { get; private set; } = 0;
 
-        public int maxHp { get; private set; } = 0;
-        public int curHp { get; private set; } = 0;
+        public int MaxHp { get; private set; } = 0;
+        public int CurHp { get; private set; } = 0;
 
-        public float detectRange { get; private set; } = 0f;
-        public float attackRange { get; private set; } = 0f;
-        public float moveSpeed { get; private set; } = 0f;
-        public float attackSpeed { get; private set; } = 0f;
+        public float DetectRange { get; private set; } = 0f;
+        public float AttackRange { get; private set; } = 0f;
+        public float MoveSpeed { get; private set; } = 0f;
+        public float AttackSpeed { get; private set; } = 0f;
 
         public EntityStat() { }
         public EntityStat(GameDataLoader.Heros heros)
         {
-            str = heros.str;
-            def = heros.def;
-            curHp = maxHp = heros.hp;
-            detectRange = heros.detectRange;
-            attackRange = heros.attackRange;
-            moveSpeed = heros.moveSpeed;
-            attackSpeed = heros.attackSpeed;
+            Str = heros.str;
+            Def = heros.def;
+            CurHp = MaxHp = heros.hp;
+            DetectRange = heros.detectRange;
+            AttackRange = heros.attackRange;
+            MoveSpeed = heros.moveSpeed;
+            AttackSpeed = heros.attackSpeed;
         }
 
         public EntityStat(GameDataLoader.Monsters monsters)
         {
-            str = monsters.str;
-            def = monsters.def;
-            curHp = maxHp = monsters.hp;
-            detectRange = monsters.detectRange;
-            attackRange = monsters.attackRange;
-            moveSpeed = monsters.moveSpeed;
-            attackSpeed = monsters.attackSpeed;
+            Str = monsters.str;
+            Def = monsters.def;
+            CurHp = MaxHp = monsters.hp;
+            DetectRange = monsters.detectRange;
+            AttackRange = monsters.attackRange;
+            MoveSpeed = monsters.moveSpeed;
+            AttackSpeed = monsters.attackSpeed;
         }
 
         public EntityStat(in PItem item)
         {
-            str = item.str;
-            def = item.def;
-            maxHp = item.hp;
+            Str = item.str;
+            Def = item.def;
+            MaxHp = item.hp;
         }
 
         //스탯이 관리하기 충분하여 수동으로 처리했으나, 많은 양의 스탯이 추가될 경우 Generic과 Macro 를 활용해 다시 구현 할 수 있음.
@@ -52,34 +52,34 @@ namespace Server
         {
             var resultStat = new EntityStat();
 
-            resultStat.str = a.str + b.str;
-            resultStat.def = a.def + b.def;
-            resultStat.maxHp = a.maxHp + b.maxHp;
-            resultStat.curHp = a.curHp + b.curHp;
+            resultStat.Str = a.Str + b.Str;
+            resultStat.Def = a.Def + b.Def;
+            resultStat.MaxHp = a.MaxHp + b.MaxHp;
+            resultStat.CurHp = a.CurHp + b.CurHp;
 
-            resultStat.detectRange = a.detectRange + b.detectRange;
-            resultStat.attackRange = a.attackRange + b.attackRange;
-            resultStat.moveSpeed = a.moveSpeed + b.moveSpeed;
-            resultStat.attackSpeed = a.attackSpeed + b.attackSpeed;     //증가할 수록 빨라진다고 가정하고.. 
+            resultStat.DetectRange = a.DetectRange + b.DetectRange;
+            resultStat.AttackRange = a.AttackRange + b.AttackRange;
+            resultStat.MoveSpeed = a.MoveSpeed + b.MoveSpeed;
+            resultStat.AttackSpeed = a.AttackSpeed + b.AttackSpeed;     //증가할 수록 빨라진다고 가정하고.. 
 
             return resultStat;
         }
 
 
         public void AddStr(int inStr) =>
-            str += inStr;
+            Str += inStr;
 
         public void AddDef(int inDef) =>
-            def += inDef;
+            Def += inDef;
 
         public void AddMaxHp(int inHp, bool currHp = false)
         {
-            maxHp += inHp;
+            MaxHp += inHp;
             if (currHp)
                 AddCurrHp(inHp);
         }
 
         public void AddCurrHp(int inHp) =>
-            curHp += inHp;
+            CurHp += inHp;
     }
 }

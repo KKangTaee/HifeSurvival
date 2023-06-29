@@ -103,11 +103,11 @@ namespace Server
         {
             return new PStat()
             {
-                str = inSelf.str,
-                def = inSelf.def,
-                hp = inSelf.maxHp,
-                attackSpeed = inSelf.attackSpeed,
-                moveSpeed = inSelf.moveSpeed,
+                str = inSelf.Str,
+                def = inSelf.Def,
+                hp = inSelf.MaxHp,
+                attackSpeed = inSelf.AttackSpeed,
+                moveSpeed = inSelf.MoveSpeed,
             };
         }
 

@@ -84,7 +84,7 @@ namespace Server
             {
                 currentPos = currentPos,
                 targetPos = spawnPos,
-                speed = stat.moveSpeed,
+                speed = stat.MoveSpeed,
                 timestamp = ServerTime.GetCurrentTimestamp()
             });
         }
@@ -95,7 +95,7 @@ namespace Server
             {
                 currentPos = currentPos,
                 targetPos = targetPos,
-                speed = stat.moveSpeed,
+                speed = stat.MoveSpeed,
                 timestamp = ServerTime.GetCurrentTimestamp()
             });
         }
@@ -107,7 +107,7 @@ namespace Server
 
         public virtual bool IsDead()
         {
-            return stat.curHp < 0 || Status == EEntityStatus.DEAD;
+            return stat.CurHp < 0 || Status == EEntityStatus.DEAD;
         }
     }
 }

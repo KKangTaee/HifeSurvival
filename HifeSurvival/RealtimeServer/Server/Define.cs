@@ -75,12 +75,14 @@ public enum EWorldMapSpawnType
 
 public enum ERewardType
 {
+    NONE,
     GOLD = 1,
     ITEM = 2,
 }
 
 public enum ERewardState
 {
+    NONE,
     DROP,
     PICK,
 }

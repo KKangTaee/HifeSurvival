@@ -14,6 +14,11 @@ namespace Server
             return dist < 0.25f;     //해당 값보다 작으면, 같다고 상정한다.
         }
 
+        public static bool IsDifferent(this PVec3 selfPos, in PVec3 otherPos)
+        {
+            return !IsSame(selfPos, otherPos);
+        }
+
         public static PVec3 AddPVec3(this PVec3 selfPos, in PVec3 otherPos)
         {
             return new PVec3()

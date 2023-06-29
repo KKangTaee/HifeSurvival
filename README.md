@@ -115,7 +115,7 @@
 - 매개 변수 `CamelCase`
     
     ```csharp
-    public void SetHp(int inHp)
+    public void SetHp(int hp)
     {
     
     {
@@ -125,7 +125,7 @@
     - `Can`, `Has`, `Is` 와 같이 의문문으로 작성.
     
     ```csharp
-    public bool IsValied(int inValue);
+    public bool IsValied(int value);
     public bool HasValue();
     public bool CanAttack();
     ```

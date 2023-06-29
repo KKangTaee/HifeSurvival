@@ -94,7 +94,7 @@ public class SceneManager
                 isSuccess &= await load.PrevLoadAsync();
 
                 isSuccess &= await LoadSceneAsync(scene.SceneName);
-
+                                
                 isSuccess &= await load.PostLoadAsync();
             }
             else

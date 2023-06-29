@@ -20,7 +20,7 @@ public class ControllerManager
             return _instance;
         }
     }
-
+    
 
     public const string RESOURCES_PATH = "Prefabs/Controllers";
 
@@ -87,7 +87,6 @@ public class ControllerManager
         {
             return value is T controller ? controller : null;
         }
-
         else
         {
             return null;

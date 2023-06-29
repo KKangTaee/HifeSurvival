@@ -131,7 +131,7 @@ public class NetworkManager : MonoBehaviour, IJobQueue
         Push(() =>
         {
             // NOTE@ytaeho.kang Retry 내부의 UnityEngine 을 사용하기 위해 Push로 래핑처리함.
-            if(GameMode.Instance.Status == GameMode.EStatus.GAME_RUNIING)
+            if(GameMode.Instance.Status != EGameModeStatus.None)
             {
                 RetryConnect(isSuccess =>
                 {
@@ -200,3 +200,10 @@ public class SimpleTaskCompletionSource<T>
     }
 
 }
+
+// Ready 캐릭터 선택창
+// Countdown 
+// LoadGame : 카운트다운 끝나고
+// -> 클라에서 PlayStar를 리퀘스트한다.
+// -> 리스폰을 받으면 대기한다.
+// 플레이 스타트 

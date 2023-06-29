@@ -7,7 +7,6 @@ using UniRx.Async;
 public class IngameMain : MonoBehaviour
 {
     [SerializeField] WorldMap   _worldMap;
-
     [SerializeField] IngameUI   _ingameUI;
 
     private void Awake()
@@ -23,6 +22,10 @@ public class IngameMain : MonoBehaviour
         // 월드맵
         _worldMap.Init();
 
+        // UI
         _ingameUI.Init();
+
+        // TODO@taeho.kang 임시
+        GameMode.Instance.OnSendPlayStart();
     }
 }

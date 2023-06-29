@@ -230,7 +230,7 @@ public class WorldMap : MonoBehaviour
     public void OnRecvUpdateReward(UpdateRewardBroadcast inPacket)
     {
         // 아이템 드랍시
-        if(inPacket.status == (int)EUpdateRewardStatus.DROP_REWARD)
+        if(inPacket.status == (int)ERewardStatus.DROP_REWARD)
         {
         
             var itemObj = _objectPoolController.SpawnFromPool<WorldItem>();
@@ -247,7 +247,7 @@ public class WorldMap : MonoBehaviour
             AddWorldObject(itemObj);
         
         }
-        else if(inPacket.status == (int)EUpdateRewardStatus.PICK_REWARD)
+        else if(inPacket.status == (int)ERewardStatus.PICK_REWARD)
         {
              PickReward(inPacket.worldId);
         }

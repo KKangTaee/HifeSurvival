@@ -7,15 +7,6 @@ using System.Linq;
 
 public class GameMode
 {
-    public enum EStatus
-    {
-        JOIN,
-
-        NOT_JOIN,
-
-        GAME_RUNIING,
-    }
-
     private static GameMode _instance = new GameMode();
     public static GameMode Instance { get => _instance; }
 
@@ -49,14 +40,13 @@ public class GameMode
     public event Action<PlayerEntity> OnRecvUpdateStatHandler;
     public event Action<UpdateRewardBroadcast> OnRecvUpdateRewardHandler;
     public event Action<PickRewardResponse>    OnRecvPickRewardHandler;
-
     public event Action<UpdateLocationBroadcast> OnUpdateLocationHandler;
+    public event Action<UpdateGameModeStatusBroadcast> OnUpdateGameModeStatusHandler;
 
 
     public int RoomId { get; private set; }
-    public EStatus Status { get; private set; } = EStatus.NOT_JOIN;
+    public EGameModeStatus Status  { get; private set; } = EGameModeStatus.None;
     public PlayerEntity EntitySelf { get; private set; }
-
 
     public void RemovePlayerEntity(int inPlayerId)
     {
@@ -86,7 +76,6 @@ public class GameMode
 
     public void Leave()
     {
-        Status = EStatus.NOT_JOIN;
         PlayerEntitysDict.Clear();
     }
 
@@ -165,18 +154,16 @@ public class GameMode
         foreach (var joinPlayer in joinPlayerList)
             AddPlayerEntity(joinPlayer);
 
-        Status = EStatus.JOIN;
+        // Status = EStatus.JOIN;
 
         return true;
     }
 
 
 
-
     //-----------------
     // Send
     //-----------------
-
 
     public void OnSendMoveRequest(in Vector3 inCurrPos, in Vector3 inDestPos)
     {
@@ -196,12 +183,8 @@ public class GameMode
     {
         CS_Attack attack = new CS_Attack()
         {
-            // toIsPlayer = toIsPlayer,
             id = EntitySelf.id,
             targetId = toId,
-            // fromIsPlayer = true,
-            // fromPos = inPos.ConvertPVec3(),
-            // fromDir = inDir.ConvertPVec3(),
             attackValue = damageValue,
         };
 
@@ -223,7 +206,7 @@ public class GameMode
     {
         C_JoinToGame joinToGame = new C_JoinToGame()
         {
-            userId = ServerData.Instance.UserData.user_id,
+            userId  = ServerData.Instance.UserData.user_id,
             userName = ServerData.Instance.UserData.nickname,
         };
 
@@ -264,6 +247,16 @@ public class GameMode
         NetworkManager.Instance.Send(getItem);
     }
 
+    public void OnSendPlayStart()
+    {
+        PlayStartRequest request = new PlayStartRequest()
+        {
+            id = EntitySelf.id,
+        };
+
+        NetworkManager.Instance.Send(request);
+    }
+
 
 
     //-----------------
@@ -273,7 +266,7 @@ public class GameMode
 
     public void OnRecvJoin(S_JoinToGame inPacket)
     {
-        if (Status == EStatus.JOIN)
+        if (Status != EGameModeStatus.None)
         {
             // 이미 내가 참가 중이라면, 내려온 데이터에서 처리해야할 것들만 처리해주면 된다.
             foreach (var joinPlayer in inPacket.joinPlayerList)
@@ -331,15 +324,8 @@ public class GameMode
     }
 
 
-    public void OnRecvCountdown(S_Countdown inPacket)
-    {
-        _onRecvCountdownCB?.Invoke(inPacket.countdownSec);
-    }
-
     public void OnRecvStartGame(S_StartGame inPacket)
     {
-        Status = EStatus.GAME_RUNIING;
-
         var playerList = inPacket.playerList;
         var monsterList = inPacket.monsterList;
 
@@ -355,8 +341,7 @@ public class GameMode
             var monsterEntity = CreateMonsterEntity(m);
             MonsterEntityDict.Add(monsterEntity.id, monsterEntity);
         }
-        
-        _onRecvStartGameCB?.Invoke();
+
     }
 
     public void OnRecvSpawnMonster(S_SpawnMonster inPacket)
@@ -389,26 +374,8 @@ public class GameMode
         return monsterEntity;
     }
 
-    public void OnUpdateLocation(UpdateLocationBroadcast inPacket)
-    {
 
-        Entity entity = null;
 
-        switch(Entity.GetEntityType(inPacket.id))
-        {
-            case Entity.EEntityType.PLAYER:
-                entity = GetPlayerEntity(inPacket.id);
-                break;
-            
-            case Entity.EEntityType.MOSNTER:
-                entity =GetMonsterEntity(inPacket.id);
-                break;
-        }
-
-        entity.pos = inPacket.currentPos;
-
-        OnUpdateLocationHandler.Invoke(inPacket);
-    }
 
     public void OnRecvAttack(CS_Attack inPacket)
     {
@@ -441,7 +408,6 @@ public class GameMode
 
     public void OnRecvRespawn(S_Respawn inPacket)
     {
-
         switch(Entity.GetEntityType(inPacket.id))
         {
             case Entity.EEntityType.PLAYER:
@@ -459,7 +425,6 @@ public class GameMode
             case Entity.EEntityType.MOSNTER:
                 break;
         }
-
     }
 
 
@@ -495,5 +460,56 @@ public class GameMode
         }
 
         OnRecvPickRewardHandler?.Invoke(inPacket);
+    }
+
+
+
+
+    //----------------------
+    // UpdateBroadcast
+    //----------------------
+
+    public void OnUpdateLocation(UpdateLocationBroadcast inPacket)
+    {
+        Entity entity = null;
+        switch(Entity.GetEntityType(inPacket.id))
+        {
+            case Entity.EEntityType.PLAYER:
+                entity = GetPlayerEntity(inPacket.id);
+                break;
+            
+            case Entity.EEntityType.MOSNTER:
+                entity = GetMonsterEntity(inPacket.id);
+                break;
+        }
+
+        entity.pos = inPacket.currentPos;
+        OnUpdateLocationHandler.Invoke(inPacket);
+    }
+
+
+    public void OnUpdateGameModeStatus(UpdateGameModeStatusBroadcast packet)
+    {
+        Status = (EGameModeStatus)packet.status;
+
+        switch(Status)
+        {
+            // 게임 카운트다운
+            case EGameModeStatus.Countdown:                
+                // TODO@taeho.kang 임시
+                int countdownSec = 10;
+                _onRecvCountdownCB?.Invoke(countdownSec);
+                break;
+
+            // 씬 전환
+            case EGameModeStatus.LoadGame:
+                _onRecvStartGameCB?.Invoke();
+                break;
+
+            // 완전 게임시작
+            case EGameModeStatus.PlayStart:
+                OnUpdateGameModeStatusHandler?.Invoke(packet);
+                break;
+        }
     }
 }

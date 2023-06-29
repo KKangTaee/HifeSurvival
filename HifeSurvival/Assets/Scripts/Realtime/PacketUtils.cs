@@ -1,17 +1,16 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-
-public enum EUpdateRewardStatus
+public enum EGameModeStatus
 {
-    DROP_REWARD     = 0,
-    PICK_REWARD   = 1,
-
-    NONE,
+    None,
+    Ready,
+    Countdown,
+    LoadGame,
+    PlayStart,
+    FinishGame,
 }
 
-public enum EPickRewardType
+public enum ERewardStatus
 {
-    
+    NONE          = 0,
+    DROP_REWARD   = 1,
+    PICK_REWARD   = 2,
 }

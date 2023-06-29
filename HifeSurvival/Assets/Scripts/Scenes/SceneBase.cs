@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Threading.Tasks;
+using UniRx.Async;
 
 
 //-------------
@@ -10,62 +10,61 @@ using System.Threading.Tasks;
 
 public interface ISceneLoad
 {
-    Task<bool> PrevLoadAsync();
-    Task<bool> PostLoadAsync();
+    UniTask<bool> PrevLoadAsync();
+    UniTask<bool> PostLoadAsync();
 }
 
 public interface ISceneUnload
 {
-    Task<bool> PrevUnloadAsync();
-    Task<bool> PostUnloadAsync();
+    UniTask<bool> PrevUnloadAsync();
+    UniTask<bool> PostUnloadAsync();
 }
 
 
 public abstract class SceneBase 
 {
     public abstract string SceneName {get;}
-    public abstract void Initialize();
 }
 
-public class LobbyScene : SceneBase, ISceneLoad
+public class LobbyScene : SceneBase
 {
     public override string SceneName => nameof(LobbyScene);
-
-    public override void Initialize()
-    {
-        
-    }
-
-    public async Task<bool> PostLoadAsync()
-    {
-        await Task.Delay(1000);
-        return true;
-    }
-
-    public async Task<bool> PrevLoadAsync()
-    {
-        await Task.Delay(1000);
-        return true;
-    }
 }
 
 
 public class TitleScene : SceneBase
 {
     public override string SceneName => nameof(TitleScene);
-
-    public override void Initialize()
-    {
-
-    }
 }
 
-public class IngameScene : SceneBase
+public class IngameScene : SceneBase, ISceneLoad, IUpdateGameStatus
 {
     public override string SceneName => nameof(IngameScene);
 
-    public override void Initialize()
-    {
+    private bool _playStartToken = false;
 
+    public async UniTask<bool> PrevLoadAsync()
+    {
+        GameMode.Instance.OnUpdateGameModeStatusHandler += OnUpdateGameStatus;
+        return true;
+    }
+
+    public async UniTask<bool> PostLoadAsync()
+    {
+        while(_playStartToken == false)
+            await UniTask.Yield();
+
+         GameMode.Instance.OnUpdateGameModeStatusHandler -= OnUpdateGameStatus;
+        _playStartToken = false;
+
+        return true;
+    } 
+
+    public void OnUpdateGameStatus(UpdateGameModeStatusBroadcast packet)
+    {
+        if((EGameModeStatus)packet.status != EGameModeStatus.PlayStart)
+            return;
+        
+        _playStartToken = true;
     }
 }

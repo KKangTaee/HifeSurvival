@@ -5,10 +5,12 @@ using ServerCore;
 
 public class ClientPacketHandler : PacketHandler
 {
+    
+    [Obsolete]
     public override void S_CountdownHandler(PacketSession session, IPacket packet)
     {
         S_Countdown countdown = packet as S_Countdown;
-        GameMode.Instance.OnRecvCountdown(countdown);
+        // GameMode.Instance.OnRecvCountdown(countdown);
     }
 
     public override void S_JoinToGameHandler(PacketSession session, IPacket packet)
@@ -135,6 +137,7 @@ public class ClientPacketHandler : PacketHandler
 
     public override void UpdateGameModeStatusBroadcastHandler(PacketSession session, IPacket packet)
     {
-        throw new NotImplementedException();
+        UpdateGameModeStatusBroadcast gameModeStatus = packet as UpdateGameModeStatusBroadcast;
+        GameMode.Instance.OnUpdateGameModeStatus(gameModeStatus);
     }
 }

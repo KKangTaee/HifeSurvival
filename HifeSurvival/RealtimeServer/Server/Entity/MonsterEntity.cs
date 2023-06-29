@@ -115,6 +115,7 @@ namespace Server
             }
             else
             {
+                Logger.GetInstance().Debug($"Reward Drop worldid : {broadcast.worldId}, pos : {broadcast.pos.Print()}");
                 broadcaster.Broadcast(broadcast);
             }
             return;

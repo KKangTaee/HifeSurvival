@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using ServerCore;
 
@@ -27,9 +29,8 @@ namespace Server
         public List<WorldSpawnData> SpawnList { get; private set; }
 
         // 월드맵에 스폰된 아이템
-        public Dictionary<int, WorldItemData> ItemDict { get; private set; } = new Dictionary<int, WorldItemData>();
+        public ConcurrentDictionary<int, WorldItemData> ItemDict { get; private set; } = new ConcurrentDictionary<int, WorldItemData>();
 
-        private object _dropLock = new object();
         private int _dropID = 0;
 
         public void ParseJson(string mapData)
@@ -93,17 +94,14 @@ namespace Server
 
             var itemData = RewardData.Parse(itemDataStr).FirstOrDefault();
 
-            WorldItemData worldItem = null;
-            lock (_dropLock)
+            WorldItemData worldItem = new WorldItemData()
             {
-                worldItem = new WorldItemData()
-                {
-                    worldId = _dropID++,
-                    itemData = itemData,
-                };
+                worldId = Interlocked.Increment(ref _dropID),
+                itemData = itemData,
+            };
 
-                ItemDict.Add(worldItem.worldId, worldItem);
-            }
+            Logger.GetInstance().Info($"Drop Item ID {worldItem.worldId}");
+            ItemDict.TryAdd(worldItem.worldId, worldItem);
 
             var broadcast = new UpdateRewardBroadcast();
             broadcast.worldId = worldItem.worldId;
@@ -142,17 +140,14 @@ namespace Server
 
         public RewardData PickReward(int worldId)
         {
-            lock (_dropLock)
+            if (ItemDict.TryGetValue(worldId, out var worldItem) == false)
             {
-                if (ItemDict.TryGetValue(worldId, out var worldItem) == false)
-                {
-                    Logger.GetInstance().Error($"[{nameof(PickReward)}] worldId is wrong : {worldId}");
-                    return default;
-                }
-
-                ItemDict.Remove(worldId);
-                return worldItem.itemData;
+                Logger.GetInstance().Error($"[{nameof(PickReward)}] worldId is wrong : {worldId}");
+                return default;
             }
+
+            ItemDict.TryRemove(worldId, out _);
+            return worldItem.itemData;
         }
 
     }

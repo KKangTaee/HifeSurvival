@@ -12,6 +12,7 @@ namespace Server
 
         private List<Entity> _aggroList = new List<Entity>();
         private long _lastAttackTime = 0;
+        private long _lastAnimTime = 0;
 
         private MoveParam? _lastMoveInfo = null;
         private long _lastMovetime = 0;
@@ -33,14 +34,14 @@ namespace Server
             {
                 if (SelectTarget())
                 {
-                    if(CheckAttackRange())
+                    if(BattleCalculator.CanAttackDistance(_monster, CurrentTarget()))
                     {
                         ClearLastMove(); 
                         AttackRoutine();
                     }
                     else
                     {
-                        _monster.MoveToTarget(CurrentTarget().currentPos);
+                        MoveToCurrentTarget();
                     }
                 }
                 else
@@ -62,13 +63,14 @@ namespace Server
         {
             var currentTarget = CurrentTarget();
 
-            if (ServerTime.GetCurrentTimestamp() - _lastAttackTime >= _monster.stat.AttackSpeed * DEFINE.SEC_TO_MS)
+            if (ServerTime.GetCurrentTimestamp() - _lastAttackTime > _monster.stat.AttackSpeed * DEFINE.SEC_TO_MS)
             {
                 var damagedVal = BattleCalculator.ComputeDamagedValue(_monster.stat, currentTarget.stat);
 
                 currentTarget.ReduceHP(damagedVal);
                 currentTarget.OnDamaged(_monster);
                 _lastAttackTime = ServerTime.GetCurrentTimestamp();
+                _lastAnimTime = ServerTime.GetCurrentTimestamp();
 
                 _monster.OnAttackSuccess(currentTarget, damagedVal);
             }
@@ -109,11 +111,6 @@ namespace Server
             }
         }
 
-        private bool CheckAttackRange()
-        {
-            return BattleCalculator.CanAttackTarget(_monster, CurrentTarget());
-        }
-
         private bool SelectTarget()
         {
             if (BattleCalculator.IsOutOfSpawnArea(_monster))
@@ -123,34 +120,45 @@ namespace Server
             }
 
             var currentTarget = CurrentTarget();
-            if (currentTarget != null && !currentTarget.IsDead())
-            {
+            if (IsValidTarget(currentTarget))
                 return true;
-            }
-            else
+
+            while (ExistAggro())
             {
-                while (ExistAggro())
-                {
-                    currentTarget = GetNextTarget();
-                    if (currentTarget != null && !currentTarget.IsDead())
-                        return true;
-                }
+                currentTarget = GetNextTarget();
+                if (IsValidTarget(currentTarget))
+                    return true;
             }
 
             return false;
         }
+
+        private bool IsValidTarget(in Entity target) => target != null && !target.IsDead(); 
 
         public void UpdateNextMove(MoveParam? moveParam)
         {
             _lastMoveInfo = moveParam;
         }
 
-        public void ReturnToRespawnArea()
+        private void MoveToCurrentTarget()
         {
+            if (!CanMove())
+                return;
+
+            _monster.MoveToTarget(CurrentTarget().currentPos);
+        }
+
+        private void ReturnToRespawnArea()
+        {
+            if (!CanMove())
+                return;
+
             _aiMode = EAIMode.RETURN_TO_RESPAWN_AREA;
             _monster.MoveToRespawn();
             Logger.GetInstance().Debug("ReturnToRespawnArea");
         }
+
+        private bool CanMove() => ServerTime.GetCurrentTimestamp() - _lastAnimTime > DEFINE.MONSTER_ATTACK_ANIM_TIME;
 
         public void UpdateAggro(Entity target)
         {
@@ -164,11 +172,6 @@ namespace Server
             }
 
             _aggroList.Add(target);
-        }
-
-        public bool ExistAggro()
-        {
-            return _aggroList.Count > 0;
         }
 
         private Entity CurrentTarget()
@@ -198,12 +201,10 @@ namespace Server
             ClearLastMove();
         }
 
-        private void ClearAggro()
-        {
-            _aggroList.Clear();
-        }
+        public bool ExistAggro() => _aggroList.Count > 0;
+        private void ClearAggro() => _aggroList.Clear();
 
-        public void ClearLastMove()
+        private void ClearLastMove()
         {
             _lastMoveInfo = null;
 

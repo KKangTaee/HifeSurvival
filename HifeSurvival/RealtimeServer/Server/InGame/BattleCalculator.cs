@@ -16,7 +16,7 @@ namespace Server
             return (ComputeAttackValue(atkStat) - (new Random().Next((int)(defStat.Def * 0.2f), (int)(defStat.Def * 0.4f))));
         }
 
-        public static bool CanAttackTarget(in Entity self , in Entity target)
+        public static bool CanAttackDistance(in Entity self , in Entity target)
         {
             return self.currentPos.DistanceTo(target.currentPos) <= self.stat.AttackRange;
         }

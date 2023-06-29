@@ -101,7 +101,7 @@ public class ClientPacketHandler : PacketHandler
 
     public override void UpdateStatBroadcastHandler(PacketSession session, IPacket packet)
     {
-        throw new NotImplementedException();
+        //TODO: Stat 업데이트 해야함. 
     }
 
     public override void PickRewardRequestHandler(PacketSession session, IPacket packet)

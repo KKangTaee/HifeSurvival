@@ -17,7 +17,7 @@
 ## Convention
 <details markdown="1">
 <summary> Code Convention</summary>
-  
+
 ### enum
 
 - 앞에 E를 붙임.
@@ -159,6 +159,11 @@
     ```csharp
     struct PItem
     ```
-    
+
+*****
+참고 링크 
+> https://docs.popekim.com/ko/coding-standards/pocu-csharp  
+> https://learn.microsoft.com/ko-kr/dotnet/csharp/fundamentals/coding-style/coding-conventions
+
 </details>
 

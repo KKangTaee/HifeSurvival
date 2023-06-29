@@ -16,7 +16,7 @@ namespace Server
 
         private MonsterAIController AIController { get; set; }
         private event Action<string, PVec3> dropItemDelegate;
-        private MonsterGroup group;
+        private MonsterGroup _group;
 
         public MonsterEntity(MonsterGroup group, Action<string, PVec3> dropItem)
         {
@@ -27,7 +27,7 @@ namespace Server
             smdic[EEntityStatus.USESKILL] = new UseSkillState();
             smdic[EEntityStatus.DEAD] = new DeadState();
 
-            this.group = group;
+            this._group = group;
 
             _stateMachine = new StateMachine<MonsterEntity>(smdic);
             AIController = new MonsterAIController(this);
@@ -78,7 +78,7 @@ namespace Server
                         target = playerAttacker,
                     });
 
-                    group.OnAttack(id, playerAttacker);
+                    _group.OnAttack(id, playerAttacker);
                 }
             }
         }
@@ -114,8 +114,8 @@ namespace Server
         }
 
 
-        public bool IsGroupAllDead() => group.IsAllDead();
+        public bool IsGroupAllDead() => _group.IsAllDead();
 
-        public void StartRespawning() => group.SendRespawnGroup();
+        public void StartRespawning() => _group.SendRespawnGroup();
     }
 }

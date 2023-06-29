@@ -82,7 +82,7 @@ namespace Server
             return $"[{pVec.x}, {pVec.y}, {pVec.z}]";
         }
 
-        private static Random rand = new Random();
+        private static Random _rand = new Random();
 
         public static IList<T> Shuffle<T>(this IList<T> list)
         {
@@ -90,7 +90,7 @@ namespace Server
             while (n > 1)
             {
                 n--;
-                int k = rand.Next(n + 1);
+                int k = _rand.Next(n + 1);
                 T value = list[k];
                 list[k] = list[n];
                 list[n] = value;

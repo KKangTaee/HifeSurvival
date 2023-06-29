@@ -10,25 +10,25 @@ namespace Server
         FileStream fs = null;
         StreamWriter sw = null;
 
-        private static Logger ins;
-        private string titleName;
-        private bool bConsoleWirte = true; // TODO: Config
+        private static Logger _ins;
+        private string _titleName;
+        private bool _bConsoleWirte = true; // TODO: Config
 
         public static Logger GetInstance()
         {
-            ins ??= new Logger();
-            return ins;
+            _ins ??= new Logger();
+            return _ins;
         }
 
         private Logger()
         {
-            titleName = System.Reflection.Assembly.GetEntryAssembly().GetName().Name;
+            _titleName = System.Reflection.Assembly.GetEntryAssembly().GetName().Name;
             CreateLogFile();
         }
 
         private void CreateLogFile()
         {
-            string title = titleName + DateTime.Now.ToString(" yyyy-MM-dd-HH-mm-ss");
+            string title = _titleName + DateTime.Now.ToString(" yyyy-MM-dd-HH-mm-ss");
 
             if (Directory.Exists("logs") == false)
                 Directory.CreateDirectory("logs");
@@ -63,7 +63,7 @@ namespace Server
             string logMsg = $"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")}   {verbose}   {methodName} - {message}";
             sw.WriteLine(logMsg);
 
-            if(bConsoleWirte)
+            if(_bConsoleWirte)
             {
                 Console.ResetColor();
                 switch(verbose)

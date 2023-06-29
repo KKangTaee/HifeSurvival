@@ -86,7 +86,7 @@ public class GameMode
             return;
 
 
-        if (StaticData.Instance.HerosDict.TryGetValue(joinPlayer.id.ToString(), out var heros) == false)
+        if (StaticData.Instance.HerosDict.TryGetValue(joinPlayer.heroKey.ToString(), out var heros) == false)
         {
             Debug.LogError("heros static data is null or empty!");
             return;
@@ -436,11 +436,6 @@ public class GameMode
     }
 
 
-    public void OnRecvUpdateRewad(UpdateRewardBroadcast inPacket)
-    {
-        // 아이템 드랍 및 월드맵 오브젝트 제거
-        OnRecvUpdateRewardHandler?.Invoke(inPacket);
-    }
 
     public void OnRecvGetItem(PickRewardResponse inPacket)
     {
@@ -524,5 +519,12 @@ public class GameMode
         }
 
         entity.stat = new EntityStat(packet.originStat);
+    }
+
+
+    public void OnUpdateReward(UpdateRewardBroadcast inPacket)
+    {
+        // 아이템 드랍 및 월드맵 오브젝트 제거
+        OnRecvUpdateRewardHandler?.Invoke(inPacket);
     }
 }

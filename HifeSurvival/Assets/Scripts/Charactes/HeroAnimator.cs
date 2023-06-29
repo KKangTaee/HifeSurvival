@@ -51,14 +51,14 @@ public class HeroAnimator : MonoBehaviour
         _anim.Play(AnimKey.KEY_ATTACK);
         _anim.SetFloat(ParamKey.KEY_DIR, inDir.y);
         _anim.SetBool(ParamKey.KEY_IS_WALK, false);
+    
+        SetDir(inDir.x);
     }
 
     public void OnWalk(in Vector2 inDir)
     {
         _anim.SetBool(ParamKey.KEY_IS_WALK, true);
         _anim.SetFloat(ParamKey.KEY_DIR, inDir.y);
-
-        SetDir(inDir.x);
     }
 
     public void SetDir(float inDir)

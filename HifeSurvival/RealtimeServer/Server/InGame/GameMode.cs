@@ -244,32 +244,42 @@ namespace Server
             // monster id 이하보다 작으면 플레이어라고 상정.
             if (id < DEFINE.MONSTER_ID)
             {
-                if (_playersDict.TryGetValue(id, out var player) && player != null)
-                {
-                    return player;
-                }
-                Logger.GetInstance().Error("PlayerEntity is null or Empty");
+                return GetPlayerEntityById(id);
             }
             else
             {
-                var group = _monsterGroupDict.Values.FirstOrDefault(x => x.HaveEntityInGroup(id));
-                if (group == null)
-                {
-                    Logger.GetInstance().Error("MonsterGroup is null or Empty");
-                    return null;
-                }
+                return GetMonsterEntityById(id);
+            }
+        }
 
-                var monster = group.GetMonsterEntity(id);
-                if(monster == null)
-                {
-                    Logger.GetInstance().Error("MonsterEntity is null or Empty");
-                    return null;
-                }
-
-                return monster;
+        public PlayerEntity GetPlayerEntityById(int id)
+        {
+            if (_playersDict.TryGetValue(id, out var player) && player != null)
+            {
+                return player;
             }
 
+            Logger.GetInstance().Error($"PlayerEntity is null or Empty id {id}");
             return null;
+        }
+
+        public MonsterEntity GetMonsterEntityById(int id)
+        {
+            var group = _monsterGroupDict.Values.FirstOrDefault(x => x.HaveEntityInGroup(id));
+            if (group == null)
+            {
+                Logger.GetInstance().Error("MonsterGroup is null or Empty");
+                return null;
+            }
+
+            var monster = group.GetMonsterEntity(id);
+            if (monster == null)
+            {
+                Logger.GetInstance().Error("MonsterEntity is null or Empty");
+                return null;
+            }
+
+            return monster;
         }
 
         public bool CanJoinRoom() => Status == EGameModeStatus.READY && _playersDict.Count < DEFINE.PLAYER_MAX_COUNT;
@@ -303,57 +313,47 @@ namespace Server
 
         public void OnRecvSelect(CS_SelectHero inPacket)
         {
-            var entity = GetEntityById(inPacket.id);
-            if (entity == null)
+            var player = GetPlayerEntityById(inPacket.id);
+            if (player == null)
                 return;
 
-            if (entity is PlayerEntity player)
-            {
-                player.heroKey = inPacket.heroKey;
-            }
-
+            player.heroKey = inPacket.heroKey;
             _broadcaster.Broadcast(inPacket);
         }
 
         public void OnRecvReady(CS_ReadyToGame inPacket)
         {
-            var entity = GetEntityById(inPacket.id);
-            if (entity == null)
+            var player = GetPlayerEntityById(inPacket.id);
+            if (player == null)
                 return;
 
-            if(entity is PlayerEntity player)
-            {
-                player.SelectReady();
-                _broadcaster.Broadcast(inPacket);
+            player.SelectReady();
+            _broadcaster.Broadcast(inPacket);
 
-                if (CanLoadGame())
-                {
-                    UpdateModeStatus(EGameModeStatus.LOAD_GAME);
-                }
+            if (CanLoadGame())
+            {
+                UpdateModeStatus(EGameModeStatus.LOAD_GAME);
             }
         }
 
         public void OnPlayStartRequest(PlayStartRequest req)
         {
-            var entity = GetEntityById(req.id);
-            if (entity == null)
+            var player = GetPlayerEntityById(req.id);
+            if (player == null)
                 return;
 
-            if (entity is PlayerEntity player)
-            {
-                player.PlayReady();
-                _broadcaster.Broadcast(new PlayStartResponse() { id = player.id });  //TODO : Send
+            player.PlayReady();
+            _broadcaster.Broadcast(new PlayStartResponse() { id = player.id });  //TODO : Send
 
-                if (CanPlayStart())
-                {
-                    UpdateModeStatus(EGameModeStatus.PLAY_START);
-                }
+            if (CanPlayStart())
+            {
+                UpdateModeStatus(EGameModeStatus.PLAY_START);
             }
         }
 
         public void OnRecvMoveRequest(MoveRequest inPacket)
         {
-            var player = GetEntityById(inPacket.id);
+            var player = GetPlayerEntityById(inPacket.id);
             if (player == null)
                 return;
 
@@ -383,7 +383,7 @@ namespace Server
 
         public void OnRecvAttack(CS_Attack inPacket)
         {
-            var fromPlayer = GetEntityById(inPacket.id);
+            var fromPlayer = GetPlayerEntityById(inPacket.id);
             if (fromPlayer == null)
                 return;
 
@@ -400,51 +400,48 @@ namespace Server
 
         public void OnRecvIncreaseStatRequest(IncreaseStatRequest inPacket)
         {
-            var entity = GetEntityById(inPacket.id);
-            if (entity == null)
+            var player = GetPlayerEntityById(inPacket.id);
+            if (player == null)
                 return;
 
             var res = new IncreaseStatResponse();
-            res.id = entity.id;
+            res.id = player.id;
             res.result = DEFINE.SUCCESS;
 
-            int  increaseValue = inPacket.increase;
-            if (entity is PlayerEntity  playerEntity)
+            int increaseValue = inPacket.increase;
+            //NOTE : 현재 1골드 당 해당 스탯 1 증가. 
+            //TODO : 골드량 대 스탯 증가량 비례 값은 데이터 시트로 관리할 예정. 
+            if (increaseValue > player.gold)
             {
-                //NOTE : 현재 1골드 당 해당 스탯 1 증가. 
-                //TODO : 골드량 대 스탯 증가량 비례 값은 데이터 시트로 관리할 예정. 
-                if (increaseValue > playerEntity.gold)
-                {
-                    res.result = DEFINE.ERROR;
-                    _broadcaster.Broadcast(res);
-                    return;
-                }
-
-                playerEntity.gold -= increaseValue;
-
-                switch ((EStatType)inPacket.type)
-                {
-                    case EStatType.STR:
-                        playerEntity.upgradeStat.AddStr(increaseValue);
-                        break;
-                    case EStatType.DEF:
-                        playerEntity.upgradeStat.AddDef(increaseValue);
-                        break;
-                    case EStatType.HP:
-                        playerEntity.upgradeStat.AddMaxHp(increaseValue, true);
-                        break;
-                    default:
-                        Logger.GetInstance().Error($"Wrong Stat Type {(EStatType)inPacket.type}");
-                        break; ;
-                }
-
-                res.increase = increaseValue;
-                res.usedGold = increaseValue;
+                res.result = DEFINE.ERROR;
+                _broadcaster.Broadcast(res);
+                return;
             }
 
-            entity.UpdateStat();
+            player.gold -= increaseValue;
 
-            entity.GetStat(out var originEStat, out var addEStat);
+            switch ((EStatType)inPacket.type)
+            {
+                case EStatType.STR:
+                    player.upgradeStat.AddStr(increaseValue);
+                    break;
+                case EStatType.DEF:
+                    player.upgradeStat.AddDef(increaseValue);
+                    break;
+                case EStatType.HP:
+                    player.upgradeStat.AddMaxHp(increaseValue, true);
+                    break;
+                default:
+                    Logger.GetInstance().Error($"Wrong Stat Type {(EStatType)inPacket.type}");
+                    break; ;
+            }
+
+            res.increase = increaseValue;
+            res.usedGold = increaseValue;
+
+            player.UpdateStat();
+
+            player.GetStat(out var originEStat, out var addEStat);
             res.originStat = originEStat.ConvertToPStat();
             res.addStat = addEStat.ConvertToPStat();
 
@@ -456,66 +453,63 @@ namespace Server
 
         public void OnRecvPickRewardRequest(PickRewardRequest req)
         {
-            var entity = GetEntityById(req.id);
-            if (entity == null)
+            var player = GetPlayerEntityById(req.id);
+            if (player == null)
                 return;
 
             var worldId = req.worldId;
 
             var res = new PickRewardResponse();
-            res.id = entity.id;
+            res.id = player.id;
             res.worldId = worldId;
 
-            if (entity is PlayerEntity player)
+            var rewardData = _worldMap.PickReward(worldId);
+            if (rewardData.Equals(default(RewardData)))
             {
-                var rewardData = _worldMap.PickReward(worldId);
-                if (rewardData.Equals(default(RewardData)))
-                {
-                    Logger.GetInstance().Warn($"no reward in world id {worldId}");
-                    return;
-                }
-
-                var broadcast = new UpdateRewardBroadcast();
-                broadcast.worldId = worldId;
-                broadcast.status = (int)ERewardState.PICK;
-                broadcast.rewardType = rewardData.rewardType;
-                res.rewardType = rewardData.rewardType;
-
-                switch ((ERewardType)rewardData.rewardType)
-                {
-                    case ERewardType.GOLD:
-                        {
-                            res.gold = broadcast.gold = rewardData.count;
-                            break;
-                        }
-                    case ERewardType.ITEM:
-                        {
-                            // Item Layer 나누기. (PItem , GameDataItem, InvenItem, PInvenItem)
-                            var toEquipItem = new PItem()
-                            {
-                                //NOTE : 임시 값. 
-                                itemKey = rewardData.subType,
-                                level = 1,
-                                str = 999,
-                                def = 999,
-                                hp = 999,
-                                cooltime = 12,
-                                canUse = true
-                            };
-                            res.item = broadcast.item = toEquipItem;
-
-                            int slot = player.EquipItem(toEquipItem);
-                            if (slot > 0)
-                                res.itemSlotId = slot;
-                            break;
-                        }
-                    default:
-                        break;
-                }
-
-                _broadcaster.Broadcast(broadcast);
-                _broadcaster.Broadcast(res);         //TODO : Send PickRewardResponse
+                Logger.GetInstance().Warn($"no reward in world id {worldId}");
+                return;
             }
+
+            var broadcast = new UpdateRewardBroadcast();
+            broadcast.worldId = worldId;
+            broadcast.status = (int)ERewardState.PICK;
+            broadcast.rewardType = rewardData.rewardType;
+            res.rewardType = rewardData.rewardType;
+
+            switch ((ERewardType)rewardData.rewardType)
+            {
+                case ERewardType.GOLD:
+                    {
+                        res.gold = broadcast.gold = rewardData.count;
+                        break;
+                    }
+                case ERewardType.ITEM:
+                    {
+                        // Item Layer 나누기. (PItem , GameDataItem, InvenItem, PInvenItem)
+                        var toEquipItem = new PItem()
+                        {
+                            //NOTE : 임시 값. 
+                            itemKey = rewardData.subType,
+                            level = 1,
+                            str = 999,
+                            def = 999,
+                            hp = 999,
+                            cooltime = 12,
+                            canUse = true
+                        };
+                        res.item = broadcast.item = toEquipItem;
+
+                        int slot = player.EquipItem(toEquipItem);
+                        if (slot > 0)
+                            res.itemSlotId = slot;
+                        break;
+                    }
+                default:
+                    break;
+            }
+
+            _broadcaster.Broadcast(broadcast);
+            _broadcaster.Broadcast(res);         //TODO : Send PickRewardResponse
         }
     }
 }

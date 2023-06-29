@@ -35,8 +35,7 @@
 
 ### const, readonly
 
-- 이름 모두 대문자
-- `Snake Case`
+- 이름 모두 대문자, `Snake Case`
     
     ```csharp
     // const
@@ -60,7 +59,7 @@
     
 - 변수
     - `Camel Case`
-    - 접근 지정자가 private 일 경우 접두어 `_` 사용.
+    - 접근 지정자가 public이 아닐 경우, 접두어 `_` 사용.
     ```csharp
     private int _val;
     public int value;

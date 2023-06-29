@@ -516,6 +516,7 @@ namespace Server
 
             _broadcaster.Broadcast(broadcast);
             _broadcaster.Broadcast(res);         //TODO : Send PickRewardResponse
+            player.UpdateStat();
         }
     }
 }

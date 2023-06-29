@@ -36,9 +36,9 @@ namespace Server
         }
 
 
-        protected override void ChangeState<P>(EEntityStatus inStatue, P inParam)
+        protected override void ChangeState<P>(EEntityStatus status, P param)
         {
-            _stateMachine.OnChangeState(inStatue, this, inParam);
+            _stateMachine.OnChangeState(status, this, param);
         }
 
         public override void UpdateStat()

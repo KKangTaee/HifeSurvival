@@ -9,29 +9,29 @@ namespace Server
     {
         public class IdleState : IState<MonsterEntity, IStateParam>
         {
-            public void Enter(MonsterEntity inSelf, in IStateParam inParam = default)
+            public void Enter(MonsterEntity self, in IStateParam param = default)
             {
-                if(inParam is IdleParam idleParam)
+                if(param is IdleParam idleParam)
                 {
                     UpdateLocationBroadcast move = new UpdateLocationBroadcast()
                     {
-                        id = inSelf.id,
+                        id = self.id,
                         currentPos = idleParam.currentPos,
                         targetPos = idleParam.currentPos,
-                        speed = inSelf.stat.MoveSpeed,
+                        speed = self.stat.MoveSpeed,
                         timestamp = idleParam.timestamp,
                     };
 
-                    inSelf.broadcaster.Broadcast(move);
+                    self.broadcaster.Broadcast(move);
                 }
             }
 
-            public void Update(MonsterEntity inSelf, in IStateParam inParam = default)
+            public void Update(MonsterEntity self, in IStateParam param = default)
             {
 
             }
 
-            public void Exit(MonsterEntity inSelf, in IStateParam inParam = default)
+            public void Exit(MonsterEntity self, in IStateParam param = default)
             {
 
             }
@@ -39,60 +39,60 @@ namespace Server
 
         public class MoveState : IState<MonsterEntity, IStateParam>
         {
-            public void Enter(MonsterEntity inSelf, in IStateParam inParam = default)
+            public void Enter(MonsterEntity self, in IStateParam param = default)
             {
-                if (inParam is MoveParam moveParam)
+                if (param is MoveParam moveParam)
                 {
-                    updateMove(inSelf, moveParam);
+                    updateMove(self, moveParam);
                 }
             }
 
-            public void Update(MonsterEntity inSelf, in IStateParam inParam = default)
+            public void Update(MonsterEntity self, in IStateParam param = default)
             {
-                if (inParam is MoveParam moveParam)
+                if (param is MoveParam moveParam)
                 {
-                    updateMove(inSelf, moveParam);
+                    updateMove(self, moveParam);
                 }
             }
 
-            public void Exit(MonsterEntity inSelf, in IStateParam inParam = default)
+            public void Exit(MonsterEntity self, in IStateParam param = default)
             {
 
             }
 
-            private void updateMove(MonsterEntity inSelf, MoveParam inParam)
+            private void updateMove(MonsterEntity self, MoveParam param)
             {
-                inSelf.AIController.UpdateNextMove(inParam);
+                self.AIController.UpdateNextMove(param);
 
                 UpdateLocationBroadcast move = new UpdateLocationBroadcast()
                 {
-                    id = inSelf.id,
-                    currentPos = inParam.currentPos,
-                    targetPos = inParam.targetPos,
-                    speed = inParam.speed,
-                    timestamp = inParam.timestamp,
+                    id = self.id,
+                    currentPos = param.currentPos,
+                    targetPos = param.targetPos,
+                    speed = param.speed,
+                    timestamp = param.timestamp,
                 };
 
-                inSelf.broadcaster.Broadcast(move);
+                self.broadcaster.Broadcast(move);
             }
         }
 
         public class AttackState : IState<MonsterEntity, IStateParam>
         {
-            public void Enter(MonsterEntity inSelf, in IStateParam inParam = default)
+            public void Enter(MonsterEntity self, in IStateParam param = default)
             {
-                if(inParam is AttackParam attackParam)
+                if(param is AttackParam attackParam)
                 {
-                    inSelf.AIController.UpdateAggro(attackParam.target);
+                    self.AIController.UpdateAggro(attackParam.target);
                 }
             }
 
-            public void Update(MonsterEntity inSelf, in IStateParam inParam = default)
+            public void Update(MonsterEntity self, in IStateParam param = default)
             {
 
             }
 
-            public void Exit(MonsterEntity inSelf, in IStateParam inParam = default)
+            public void Exit(MonsterEntity self, in IStateParam param = default)
             {
 
             }
@@ -100,17 +100,17 @@ namespace Server
 
         public class UseSkillState : IState<MonsterEntity, IStateParam>
         {
-            public void Enter(MonsterEntity inSelf, in IStateParam inParam = default)
+            public void Enter(MonsterEntity self, in IStateParam param = default)
             {
 
             }
 
-            public void Update(MonsterEntity inSelf, in IStateParam inParam = default)
+            public void Update(MonsterEntity self, in IStateParam param = default)
             {
 
             }
 
-            public void Exit(MonsterEntity inSelf, in IStateParam inParam = default)
+            public void Exit(MonsterEntity self, in IStateParam param = default)
             {
 
             }
@@ -118,35 +118,35 @@ namespace Server
 
         public class DeadState : IState<MonsterEntity, IStateParam>
         {
-            public void Enter(MonsterEntity inSelf, in IStateParam inParam = default)
+            public void Enter(MonsterEntity self, in IStateParam param = default)
             {
-                if (inParam is DeadParam deadParam)
+                if (param is DeadParam deadParam)
                 {
-                    inSelf.AIController.Clear();
+                    self.AIController.Clear();
 
                     S_Dead deadPacket = new S_Dead()
                     {
-                        id = inSelf.id,
+                        id = self.id,
                         fromId = deadParam.killerTarget.id,
                         respawnTime = DEFINE.MONSTER_RESPAWN_SEC,
                     };
-                    inSelf.broadcaster.Broadcast(deadPacket);
+                    self.broadcaster.Broadcast(deadPacket);
 
-                    inSelf.DropItem();
+                    self.DropItem();
 
-                    if (inSelf.IsGroupAllDead())
+                    if (self.IsGroupAllDead())
                     {
-                        inSelf.StartRespawning();
+                        self.StartRespawning();
                     }
                 }
             }
 
-            public void Update(MonsterEntity inSelf, in IStateParam inParam = default)
+            public void Update(MonsterEntity self, in IStateParam param = default)
             {
 
             }
 
-            public void Exit(MonsterEntity inSelf, in IStateParam inParam = default)
+            public void Exit(MonsterEntity self, in IStateParam param = default)
             {
 
             }

@@ -8,53 +8,53 @@ namespace Server
 {
     public static class PacketExtensionHelper
     {
-        public static bool IsSame(this PVec3 inSelf, in PVec3 inOther)
+        public static bool IsSame(this PVec3 selfPos, in PVec3 otherPos)
         {
-            var dist = inSelf.DistanceTo(inOther);
+            var dist = selfPos.DistanceTo(otherPos);
             return dist < 0.25f;     //해당 값보다 작으면, 같다고 상정한다.
         }
 
-        public static PVec3 AddPVec3(this PVec3 inSelf, in PVec3 inOther)
+        public static PVec3 AddPVec3(this PVec3 selfPos, in PVec3 otherPos)
         {
             return new PVec3()
             {
-                x = inSelf.x + inOther.x,
-                y = inSelf.y + inOther.y,
-                z = inSelf.z + inOther.z
+                x = selfPos.x + otherPos.x,
+                y = selfPos.y + otherPos.y,
+                z = selfPos.z + otherPos.z
             };
         }
 
-        public static PVec3 MulitflyPVec3(this PVec3 inSelf, float inOther)
+        public static PVec3 MulitflyPVec3(this PVec3 selfPos, float factor)
         {
             return new PVec3()
             {
-                x = inSelf.x * inOther,
-                y = inSelf.y * inOther,
-                z = inSelf.z * inOther
+                x = selfPos.x * factor,
+                y = selfPos.y * factor,
+                z = selfPos.z * factor
             };
         }
 
-        public static PVec3 SubtractPVec3(this PVec3 inSelf, in PVec3 inOther)
+        public static PVec3 SubtractPVec3(this PVec3 selfPos, in PVec3 otherPos)
         {
             return new PVec3()
             {
-                x = inSelf.x - inOther.x,
-                y = inSelf.y - inOther.y,
-                z = inSelf.z - inOther.z
+                x = selfPos.x - otherPos.x,
+                y = selfPos.y - otherPos.y,
+                z = selfPos.z - otherPos.z
             };
         }
 
-        public static PVec3 NormalizePVec3(this PVec3 inSelf)
+        public static PVec3 NormalizePVec3(this PVec3 selfPos)
         {
-            float length = (float)Math.Sqrt(inSelf.x * inSelf.x + inSelf.y * inSelf.y + inSelf.z * inSelf.z);
+            float length = (float)Math.Sqrt(selfPos.x * selfPos.x + selfPos.y * selfPos.y + selfPos.z * selfPos.z);
 
             if (length > 0)
             {
                 return new PVec3
                 {
-                    x = inSelf.x / length,
-                    y = inSelf.y / length,
-                    z = inSelf.z / length
+                    x = selfPos.x / length,
+                    y = selfPos.y / length,
+                    z = selfPos.z / length
                 };
             }
             else
@@ -63,23 +63,23 @@ namespace Server
             }
         }
 
-        public static PVec3 NormalizeToTargetPVec3(this PVec3 inSelf, in PVec3 targetPos)
+        public static PVec3 NormalizeToTargetPVec3(this PVec3 selfPos, in PVec3 targetPos)
         {
-            return targetPos.SubtractPVec3(inSelf).NormalizePVec3();
+            return targetPos.SubtractPVec3(selfPos).NormalizePVec3();
         }
 
-        public static float DistanceTo(this PVec3 inSelf, in PVec3 inOther)
+        public static float DistanceTo(this PVec3 selfPos, in PVec3 targetPos)
         {
-            float dx = inOther.x - inSelf.x;
-            float dy = inOther.y - inSelf.y;
-            float dz = inOther.z - inSelf.z;
+            float dx = targetPos.x - selfPos.x;
+            float dy = targetPos.y - selfPos.y;
+            float dz = targetPos.z - selfPos.z;
 
             return (float)Math.Sqrt(dx * dx + dy * dy + dz * dz);
         }
 
-        public static string Print(this PVec3 pVec)
+        public static string Print(this PVec3 selfPos)
         {
-            return $"[{pVec.x}, {pVec.y}, {pVec.z}]";
+            return $"[{selfPos.x}, {selfPos.y}, {selfPos.z}]";
         }
 
         private static Random _rand = new Random();
@@ -99,27 +99,27 @@ namespace Server
             return list;
         }
 
-        public static PStat ConvertToPStat(this EntityStat inSelf)
+        public static PStat ConvertToPStat(this EntityStat selfEntity)
         {
             return new PStat()
             {
-                str = inSelf.Str,
-                def = inSelf.Def,
-                hp = inSelf.MaxHp,
-                attackSpeed = inSelf.AttackSpeed,
-                moveSpeed = inSelf.MoveSpeed,
+                str = selfEntity.Str,
+                def = selfEntity.Def,
+                hp = selfEntity.MaxHp,
+                attackSpeed = selfEntity.AttackSpeed,
+                moveSpeed = selfEntity.MoveSpeed,
             };
         }
 
-        public static string FilterRewardIdsByRandomProbability(this string inSelf)
+        public static string FilterRewardIdsByRandomProbability(this string rewardIdStr)
         {
-            var split = inSelf.Split(':');
+            var split = rewardIdStr.Split(':');
 
 
             // NOTE@taeho.kang 만약 1:0:50 으로 값이 들어올 경우, 100퍼 확률
             if (split?.Length == 3)
             {
-                return inSelf;
+                return rewardIdStr;
             }
             else if (split?.Length == 4)
             {

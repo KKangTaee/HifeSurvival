@@ -39,16 +39,16 @@ namespace Server
             _broadcaster = broadcaster;
         }
 
-        public void ParseJson(string inMapData)
+        public void ParseJson(string mapData)
         {
       
-            if (inMapData == null)
+            if (mapData == null)
             {
                 Logger.GetInstance().Error("mapData is null or empty!");
                 return;
             }
 
-            var N = JSON.Parse(inMapData);
+            var N = JSON.Parse(mapData);
 
             CanGoTiles = new HashSet<PVec3>();
             foreach (JSONNode node in N["can_go_tile"].AsArray)
@@ -87,14 +87,14 @@ namespace Server
             }
         }
 
-        public void LoadMap(string inMapData)
+        public void LoadMap(string mapData)
         {
-            ParseJson(inMapData);
+            ParseJson(mapData);
         }
 
-        public void DropItem(string inRewardData, PVec3 dropPos)
+        public void DropItem(string rewardData, PVec3 dropPos)
         {
-            var itemDataStr = PacketExtensionHelper.FilterRewardIdsByRandomProbability(inRewardData);
+            var itemDataStr = PacketExtensionHelper.FilterRewardIdsByRandomProbability(rewardData);
             if (itemDataStr == null)
                 return;
 
@@ -149,17 +149,17 @@ namespace Server
             return;
         }
 
-        public RewardData PickReward(int inWorldId)
+        public RewardData PickReward(int worldId)
         {
             lock (_dropLock)
             {
-                if (ItemDict.TryGetValue(inWorldId, out var worldItem) == false)
+                if (ItemDict.TryGetValue(worldId, out var worldItem) == false)
                 {
-                    Logger.GetInstance().Error($"[{nameof(PickReward)}] worldId is wrong : {inWorldId}");
+                    Logger.GetInstance().Error($"[{nameof(PickReward)}] worldId is wrong : {worldId}");
                     return default;
                 }
 
-                ItemDict.Remove(inWorldId);
+                ItemDict.Remove(worldId);
                 return worldItem.itemData;
             }
         }

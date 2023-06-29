@@ -9,29 +9,29 @@ namespace Server
     {
         public class IdleState : IState<PlayerEntity, IStateParam>
         {
-            public void Enter(PlayerEntity inSelf, in IStateParam inParam = default)
+            public void Enter(PlayerEntity self, in IStateParam param = default)
             {
-                if (inParam is IdleParam idleParam)
+                if (param is IdleParam idleParam)
                 {
                     UpdateLocationBroadcast broadcast = new UpdateLocationBroadcast()
                     {
-                        id = inSelf.id,
+                        id = self.id,
                         currentPos = idleParam.currentPos,
                         targetPos = idleParam.currentPos,
-                        speed = inSelf.stat.MoveSpeed,
+                        speed = self.stat.MoveSpeed,
                         timestamp = idleParam.timestamp,
                     };
 
-                    inSelf.broadcaster.Broadcast(broadcast);
+                    self.broadcaster.Broadcast(broadcast);
                 }
             }
 
-            public void Update(PlayerEntity inSelf, in IStateParam inParam = default)
+            public void Update(PlayerEntity self, in IStateParam param = default)
             {
 
             }
 
-            public void Exit(PlayerEntity inSelf, in IStateParam inParam = default)
+            public void Exit(PlayerEntity self, in IStateParam param = default)
             {
 
             }
@@ -39,43 +39,43 @@ namespace Server
 
         public class MoveState : IState<PlayerEntity, IStateParam>
         {
-            public void Enter(PlayerEntity inSelf, in IStateParam inParam = default)
+            public void Enter(PlayerEntity self, in IStateParam param = default)
             {
-                var param = (MoveParam)inParam;
-                updateMove(inSelf, param);
+                var moveParam = (MoveParam)param;
+                updateMove(self, moveParam);
             }
 
-            public void Update(PlayerEntity inSelf, in IStateParam inParam = default)
+            public void Update(PlayerEntity self, in IStateParam param = default)
             {
-                var param = (MoveParam)inParam;
-                updateMove(inSelf, param);
+                var moveParam = (MoveParam)param;
+                updateMove(self, moveParam);
             }
 
-            public void Exit(PlayerEntity inSelf, in IStateParam inParam = default)
+            public void Exit(PlayerEntity self, in IStateParam param = default)
             {
                 Logger.GetInstance().Debug("Move Exit");
             }
 
-            private void updateMove(PlayerEntity inSelf, MoveParam inParam)
+            private void updateMove(PlayerEntity self, MoveParam param)
             {
                 UpdateLocationBroadcast move = new UpdateLocationBroadcast()
                 {
-                    id = inSelf.id,
-                    currentPos = inParam.currentPos,
-                    targetPos = inParam.targetPos,
-                    speed = inParam.speed,
-                    timestamp = inParam.timestamp,
+                    id = self.id,
+                    currentPos = param.currentPos,
+                    targetPos = param.targetPos,
+                    speed = param.speed,
+                    timestamp = param.timestamp,
                 };
 
-                inSelf.broadcaster.Broadcast(move);
+                self.broadcaster.Broadcast(move);
             }
         }
 
         public class AttackState : IState<PlayerEntity, IStateParam>
         {
-            public void Enter(PlayerEntity inSelf, in IStateParam inParam = default)
+            public void Enter(PlayerEntity self, in IStateParam param = default)
             {
-                if (inParam is AttackParam attackParam)
+                if (param is AttackParam attackParam)
                 {
                     var target = attackParam.target;
                     if (target == null)
@@ -84,15 +84,15 @@ namespace Server
                         return;
                     }
 
-                    var damagedVal = BattleCalculator.ComputeDamagedValue(inSelf.stat, target.stat); 
+                    var damagedVal = BattleCalculator.ComputeDamagedValue(self.stat, target.stat); 
                     target.ReduceHP(damagedVal);
-                    target.OnDamaged(inSelf);
+                    target.OnDamaged(self);
                 }
             }
 
-            public void Update(PlayerEntity inSelf, in IStateParam inParam = default)
+            public void Update(PlayerEntity self, in IStateParam param = default)
             {
-                if (inParam is AttackParam attackParam)
+                if (param is AttackParam attackParam)
                 {
                     var target = attackParam.target;
                     if (target == null)
@@ -101,13 +101,13 @@ namespace Server
                         return;
                     }
 
-                    var damagedVal = BattleCalculator.ComputeDamagedValue(inSelf.stat, target.stat);
+                    var damagedVal = BattleCalculator.ComputeDamagedValue(self.stat, target.stat);
                     target.ReduceHP(damagedVal);
-                    target.OnDamaged(inSelf);
+                    target.OnDamaged(self);
                 }
             }
 
-            public void Exit(PlayerEntity inSelf, in IStateParam inParam = default)
+            public void Exit(PlayerEntity self, in IStateParam param = default)
             {
 
             }
@@ -115,17 +115,17 @@ namespace Server
 
         public class UseSkillState : IState<PlayerEntity, IStateParam>
         {
-            public void Enter(PlayerEntity inSelf, in IStateParam inParam = default)
+            public void Enter(PlayerEntity self, in IStateParam param = default)
             {
 
             }
 
-            public void Update(PlayerEntity inSelf, in IStateParam inParam = default)
+            public void Update(PlayerEntity self, in IStateParam param = default)
             {
 
             }
 
-            public void Exit(PlayerEntity inSelf, in IStateParam inParam = default)
+            public void Exit(PlayerEntity self, in IStateParam param = default)
             {
 
             }
@@ -133,27 +133,27 @@ namespace Server
 
         public class DeadState : IState<PlayerEntity, IStateParam>
         {
-            public void Enter(PlayerEntity inSelf, in IStateParam inParam = default)
+            public void Enter(PlayerEntity self, in IStateParam param = default)
             {
-                if (inParam is DeadParam deadParam)
+                if (param is DeadParam deadParam)
                 {
                     S_Dead deadPacket = new S_Dead()
                     {
-                        id = inSelf.id,
+                        id = self.id,
                         fromId = deadParam.killerTarget.id,
                         respawnTime = DEFINE.MONSTER_RESPAWN_SEC,
                     };
-                    inSelf.broadcaster.Broadcast(deadPacket);
+                    self.broadcaster.Broadcast(deadPacket);
 
-                    inSelf.RegistRespawnTimer();
+                    self.RegistRespawnTimer();
                 }
             }
 
-            public void Update(PlayerEntity inSelf, in IStateParam inParam = default)
+            public void Update(PlayerEntity self, in IStateParam param = default)
             {
 
             }
-            public void Exit(PlayerEntity inSelf, in IStateParam inParam = default)
+            public void Exit(PlayerEntity self, in IStateParam param = default)
             {
 
             }

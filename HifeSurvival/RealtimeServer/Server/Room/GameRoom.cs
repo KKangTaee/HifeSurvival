@@ -40,9 +40,9 @@ namespace Server
 
         public GameMode Mode { get => _gameMode; }
 
-        public GameRoom(int inRoomId)
+        public GameRoom(int roomId)
         {
-            RoomId = inRoomId;
+            RoomId = roomId;
             _gameMode = new GameMode(this);
         }
 
@@ -59,12 +59,12 @@ namespace Server
             _pendingList.Clear();
         }
 
-        public void Broadcast(IPacket inPacket)
+        public void Broadcast(IPacket packet)
         {
             Push(() =>
             {
-                Logger.GetInstance().Log("INF", $"PacketType : {inPacket.GetType()}", $"{nameof(Broadcast)}");
-                ArraySegment<byte> segment = inPacket.Write();
+                Logger.GetInstance().Log("INF", $"PacketType : {packet.GetType()}", $"{nameof(Broadcast)}");
+                ArraySegment<byte> segment = packet.Write();
                 _pendingList.Add(segment);
             });
         }

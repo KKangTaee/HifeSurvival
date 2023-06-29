@@ -38,9 +38,9 @@ namespace Server
         public void PlayReady() => clientStatus = EClientStatus.PLAY_READY;
 
 
-        protected override void ChangeState<P>(EEntityStatus inStatue, P inParam)
+        protected override void ChangeState<P>(EEntityStatus status, P param)
         {
-            _stateMachine.OnChangeState(inStatue, this, inParam);
+            _stateMachine.OnChangeState(status, this, param);
         }
 
 

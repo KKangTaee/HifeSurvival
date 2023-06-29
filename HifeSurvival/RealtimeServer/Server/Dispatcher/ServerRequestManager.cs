@@ -43,9 +43,9 @@ namespace Server
             _client = new HttpClient();
         }
 
-        public void AddRequestData(ServerRequestData inData)
+        public void AddRequestData(ServerRequestData data)
         {
-            _requestQueue.Enqueue(inData);
+            _requestQueue.Enqueue(data);
 
             if (_isRunning == false)
             {

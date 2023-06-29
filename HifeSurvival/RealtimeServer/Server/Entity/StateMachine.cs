@@ -18,29 +18,29 @@ namespace Server
             _stateMachineDict = inStateMachineDict;
         }
 
-        public void OnChangeState(EEntityStatus inStatue, T inEntity, IStateParam inParam)
+        public void OnChangeState(EEntityStatus status, T entity, IStateParam param)
         {
-            if (_status == inStatue)
+            if (_status == status)
             {
-                _state?.Update(inEntity, inParam);
+                _state?.Update(entity, param);
             }
             else
             {
-                _status = inStatue;
-                _state?.Exit(inEntity, inParam);
+                _status = status;
+                _state?.Exit(entity, param);
                 _state = _stateMachineDict[_status];
-                _state?.Enter(inEntity, inParam);
+                _state?.Enter(entity, param);
             }
         }
     }
 
     public interface IState<T, P> where T : Entity where P : notnull,  IStateParam
     {
-        void Enter(T inSelf, in P inParam = default) ;
+        void Enter(T self, in P param = default) ;
 
-        void Update(T inSelf, in P inParam = default);
+        void Update(T self, in P param = default);
 
-        void Exit(T inSelf, in P inParam = default);
+        void Exit(T self, in P param = default);
     }
 
 

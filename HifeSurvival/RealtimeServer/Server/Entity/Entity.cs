@@ -20,38 +20,38 @@ namespace Server
         public EntityStat stat;
         public EntityStat defaultStat;
 
-        public EEntityStatus Status;
+        public EEntityStatus status;
 
         #region StatusAction
-        protected abstract void ChangeState<P>(EEntityStatus inStatue, P inParam) where P : struct, IStateParam;
-        public virtual void Attack(AttackParam inParam)
+        protected abstract void ChangeState<P>(EEntityStatus status, P param) where P : struct, IStateParam;
+        public virtual void Attack(AttackParam param)
         {
-            Status = EEntityStatus.ATTACK;
-            ChangeState(EEntityStatus.ATTACK, inParam);
+            status = EEntityStatus.ATTACK;
+            ChangeState(EEntityStatus.ATTACK, param);
         }
 
-        public virtual void Idle(in IdleParam inParam = default)
+        public virtual void Idle(in IdleParam param = default)
         {
-            Status = EEntityStatus.IDLE;
-            ChangeState(EEntityStatus.IDLE, inParam);
+            status = EEntityStatus.IDLE;
+            ChangeState(EEntityStatus.IDLE, param);
         }
 
-        public virtual void MoveStop(in IdleParam inParam = default)
+        public virtual void MoveStop(in IdleParam param = default)
         {
-            Status = EEntityStatus.IDLE;
-            ChangeState(EEntityStatus.IDLE, inParam);
+            status = EEntityStatus.IDLE;
+            ChangeState(EEntityStatus.IDLE, param);
         }
 
-        public virtual void Move(in MoveParam inParam = default)
+        public virtual void Move(in MoveParam param = default)
         {
-            Status = EEntityStatus.MOVE;
-            ChangeState(EEntityStatus.MOVE, inParam);
+            status = EEntityStatus.MOVE;
+            ChangeState(EEntityStatus.MOVE, param);
         }
 
-        public virtual void Dead(in DeadParam inParam = default)
+        public virtual void Dead(in DeadParam param = default)
         {
-            Status = EEntityStatus.DEAD;
-            ChangeState(EEntityStatus.DEAD, inParam);
+            status = EEntityStatus.DEAD;
+            ChangeState(EEntityStatus.DEAD, param);
         }
         #endregion
 
@@ -107,7 +107,7 @@ namespace Server
 
         public virtual bool IsDead()
         {
-            return stat.CurHp < 0 || Status == EEntityStatus.DEAD;
+            return stat.CurHp < 0 || status == EEntityStatus.DEAD;
         }
     }
 }

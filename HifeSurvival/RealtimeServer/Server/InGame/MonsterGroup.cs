@@ -13,15 +13,15 @@ namespace Server
         public int GroupId { get; private set; }
         public int RespawnTime { get; private set; }
 
-        public MonsterGroup(int inGroupId, int inRespawnTime)
+        public MonsterGroup(int groupId, int respawnTime)
         {
-            GroupId = inGroupId;
-            RespawnTime = inRespawnTime;
+            GroupId = groupId;
+            RespawnTime = respawnTime;
         }
 
-        public void Add(MonsterEntity inEntity)
+        public void Add(MonsterEntity monsterEntity)
         {
-            _monstersDict.Add(inEntity.id, inEntity);
+            _monstersDict.Add(monsterEntity.id, monsterEntity);
         }
 
         public void OnPlayStart()
@@ -42,9 +42,9 @@ namespace Server
                 });
         }
 
-        public MonsterEntity GetMonsterEntity(int inTargetId)
+        public MonsterEntity GetMonsterEntity(int id)
         {
-            if (_monstersDict.TryGetValue(inTargetId, out var monster) && monster != null)
+            if (_monstersDict.TryGetValue(id, out var monster) && monster != null)
             {
                 return monster;
             }
@@ -53,9 +53,9 @@ namespace Server
             return null;
         }
 
-        public bool HaveEntityInGroup(int inTargetId)
+        public bool HaveEntityInGroup(int id)
         {
-            return _monstersDict.ContainsKey(inTargetId);
+            return _monstersDict.ContainsKey(id);
         }
 
         public bool IsAllDead()

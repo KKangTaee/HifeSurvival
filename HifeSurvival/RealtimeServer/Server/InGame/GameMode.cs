@@ -16,14 +16,14 @@ namespace Server
 
         public EGameModeStatus Status { get; private set; } = EGameModeStatus.NONE;
 
-        public GameMode(GameRoom inRoom)
+        public GameMode(GameRoom room)
         {
-            _broadcaster = new RoomBroadcaster(inRoom);
+            _broadcaster = new RoomBroadcaster(room);
             _worldMap = new WorldMap(_broadcaster);
         }
-        public void OnSessionRemove(int inSessionId)
+        public void OnSessionRemove(int sessionId)
         {
-            var playerInfo = _playersDict.Values.FirstOrDefault(x => x.id == inSessionId);
+            var playerInfo = _playersDict.Values.FirstOrDefault(x => x.id == sessionId);
             if (playerInfo == null)
                 return;
 
@@ -118,11 +118,11 @@ namespace Server
             Status = updatedStatus;
         }
 
-        public List<MonsterSpawn> SpawnMonster(string[] inGroupKeyArr)
+        public List<MonsterSpawn> SpawnMonster(string[] groupKeyArr)
         {
             var monsterList = new List<MonsterSpawn>();
 
-            foreach (var groupKey in inGroupKeyArr)
+            foreach (var groupKey in groupKeyArr)
             {
                 if (GameDataLoader.Instance.MonstersGroupDict.TryGetValue(groupKey, out var group) == true)
                 {
@@ -192,20 +192,20 @@ namespace Server
             return monsterList;
         }
 
-        public void SpawnMonsterTimer(string inPhase, int inSec)
+        public void SpawnMonsterTimer(string phase, int timeout)
         {
-            if (inPhase == null)
+            if (phase == null)
                 return;
 
             JobTimer.Instance.Push(() =>
             {
                 S_SpawnMonster spawnMoster = new S_SpawnMonster()
                 {
-                    monsterList = SpawnMonster(inPhase.Split(':'))
+                    monsterList = SpawnMonster(phase.Split(':'))
                 };
 
                 _broadcaster.Broadcast(spawnMoster);
-            }, inSec * DEFINE.SEC_TO_MS);
+            }, timeout * DEFINE.SEC_TO_MS);
         }
 
         public List<PlayerSpawn> SpawnPlayer()

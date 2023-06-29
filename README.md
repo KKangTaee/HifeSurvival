@@ -22,13 +22,13 @@
 
 - 앞에 E를 붙임.
 - 내용에 들어갈 원소들은 대문자 형태로
-- 예시
     
     ```csharp
     public enum EState
     {
     		IDLE,
     		MOVE,
+            SOME_STATE,
     }
     ```
     
@@ -36,7 +36,6 @@
 ### const, readonly
 
 - 대문자로 통일함.
-- 예시
     
     ```csharp
     // const

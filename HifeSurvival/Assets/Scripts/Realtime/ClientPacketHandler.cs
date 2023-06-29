@@ -119,6 +119,7 @@ public class ClientPacketHandler : PacketHandler
     public override void UpdateRewardBroadcastHandler(PacketSession session, IPacket packet)
     {
         UpdateRewardBroadcast updateReward = packet as UpdateRewardBroadcast;
+        GameMode.Instance.OnUpdateReward(updateReward);
     }
 
     public override void UpdatePlayerCurrencyHandler(PacketSession session, IPacket packet)

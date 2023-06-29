@@ -6,16 +6,16 @@ namespace Server
 {
     public class EntityStat
     {
-        public int Str { get; private set; } = 0;
-        public int Def { get; private set; } = 0;
+        public int Str { get; private set; }
+        public int Def { get; private set; }
 
-        public int MaxHp { get; private set; } = 0;
-        public int CurHp { get; private set; } = 0;
+        public int MaxHp { get; private set; }
+        public int CurHp { get; private set; }
 
-        public float DetectRange { get; private set; } = 0f;
-        public float AttackRange { get; private set; } = 0f;
-        public float MoveSpeed { get; private set; } = 0f;
-        public float AttackSpeed { get; private set; } = 0f;
+        public float DetectRange { get; private set; }
+        public float AttackRange { get; private set; }
+        public float MoveSpeed { get; private set; }
+        public float AttackSpeed { get; private set; }
 
         public EntityStat() { }
         public EntityStat(GameDataLoader.Heros heros)

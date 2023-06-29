@@ -112,7 +112,7 @@
 ### Function
 
 - `Pascal Case`
-- 매개변수 이름 접두어 `in` 사용. CamelCase
+- 매개 변수 `CamelCase`
     
     ```csharp
     public void SetHp(int inHp)

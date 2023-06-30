@@ -8,7 +8,7 @@ using System;
 using System.Threading.Tasks;
 using System.Linq;
 
-public class NetworkManager : MonoBehaviour, IJobQueue
+public class NetworkManager : MonoBehaviour
 {
     private static NetworkManager _instance;
     public static NetworkManager Instance
@@ -29,13 +29,13 @@ public class NetworkManager : MonoBehaviour, IJobQueue
         }
     }
 
-    private ServerSession _session;
+    private ClientSession _session;
 
     private SimpleTaskCompletionSource<bool> _connectCompleted = new SimpleTaskCompletionSource<bool>();
     private Action _disconnectCB;
     // private bool _isConnected = false;
 
-    public ServerSession SessionSelf => _session;
+    public ClientSession SessionSelf => _session;
 
     private JobQueue _jobQueue = new JobQueue();
     private string _ipAddr;
@@ -80,7 +80,7 @@ public class NetworkManager : MonoBehaviour, IJobQueue
         // endPoint = new IPEndPoint(IPAddress.Parse("192.168.0.3"), 7777);
         // endPoint = new IPEndPoint(IPAddress.Parse("61.83.232.18"), 7777);
 
-        _session = new ServerSession();
+        _session = new ClientSession();
         Connector connector = new Connector();
         connector.Connect(endPoint, () => _session);
 

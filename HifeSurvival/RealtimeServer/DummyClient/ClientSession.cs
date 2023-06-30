@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DummyClient
 {
-    class ServerSession : PacketSession
+    class ClientSession : Session
     {
         public override void OnConnected(EndPoint endPoint)
         {
@@ -19,14 +19,9 @@ namespace DummyClient
             Console.WriteLine($"OnDisconnected : {endPoint}");
         }
 
-        public override void OnRecvPacket(ArraySegment<byte> buffer)
+        public override void OnRecv(ArraySegment<byte> buffer)
         {
             PacketManager.Instance.OnRecvPacket(this, buffer);
-        }
-
-        public override void OnSend(int numOfBytes)
-        {
-            Console.WriteLine($"Transferred bytes: {numOfBytes}");
         }
     }
 }

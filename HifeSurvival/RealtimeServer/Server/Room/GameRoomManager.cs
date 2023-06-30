@@ -6,22 +6,19 @@ using ServerCore;
 
 namespace Server
 {
-    public class GameRoomManager : IJobQueue
+    public class GameRoomManager : JobQueue
     {
-        static GameRoomManager _instance = new GameRoomManager();
         public static GameRoomManager Instance { get => _instance; }
 
+        private static GameRoomManager _instance = new GameRoomManager();
         private Dictionary<int, GameRoom> _gameRoomDict = new Dictionary<int, GameRoom>();
-
-        private JobQueue _jobQueue = new JobQueue();
-
         private int _nextRoomNum = 1;
 
-        public void EnterRoom(ClientSession session)
+        public void EnterRoom(ServerSession session)
         {
             Push(() =>
             {
-                var canJoinRoom = _gameRoomDict.Values.FirstOrDefault(x => x.CanJoinRoom());
+                var canJoinRoom = _gameRoomDict.Values.FirstOrDefault(x => x.Mode.CanJoinRoom());
                 if (canJoinRoom != null)
                 {
                     canJoinRoom.Enter(session);
@@ -36,22 +33,17 @@ namespace Server
             });
         }
 
-        public void LeaveRoom(ClientSession session)
+        public void LeaveRoom(ServerSession session)
         {
             Push(() =>
             {
                 SessionManager.Instance.Remove(session);
                 if (session.Room != null)
                 {
-                    GameRoom room = session.Room;
-                    room.Push(() => room.Leave(session));
+                    var room = session.Room;
+                    room.Leave(session);
                 }
             });
-        }
-
-        public void Push(Action job)
-        {
-            _jobQueue.Push(job);
         }
     }
 }

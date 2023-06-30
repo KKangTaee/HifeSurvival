@@ -106,3 +106,9 @@ C:/TH/HifeSurvival/HifeSurvival/RealtimeServer/DummyClient/obj/Debug/netcoreapp3
 C:/TH/HifeSurvival/HifeSurvival/RealtimeServer/DummyClient/obj/Debug/netcoreapp3.1/DummyClient.dll
 C:/TH/HifeSurvival/HifeSurvival/RealtimeServer/DummyClient/obj/Debug/netcoreapp3.1/DummyClient.pdb
 C:/TH/HifeSurvival/HifeSurvival/RealtimeServer/DummyClient/obj/Debug/netcoreapp3.1/DummyClient.genruntimeconfig.cache
+C:\Users\prism9411\Documents\GitHub\HifeSurvival\HifeSurvival\RealtimeServer\DummyClient\obj\Debug\netcoreapp3.1\DummyClient.csproj.AssemblyReference.cache
+C:\Users\prism9411\Documents\GitHub\HifeSurvival\HifeSurvival\RealtimeServer\DummyClient\obj\Debug\netcoreapp3.1\DummyClient.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\prism9411\Documents\GitHub\HifeSurvival\HifeSurvival\RealtimeServer\DummyClient\obj\Debug\netcoreapp3.1\DummyClient.AssemblyInfoInputs.cache
+C:\Users\prism9411\Documents\GitHub\HifeSurvival\HifeSurvival\RealtimeServer\DummyClient\obj\Debug\netcoreapp3.1\DummyClient.AssemblyInfo.cs
+C:\Users\prism9411\Documents\GitHub\HifeSurvival\HifeSurvival\RealtimeServer\DummyClient\obj\Debug\netcoreapp3.1\DummyClient.csproj.CoreCompileInputs.cache
+C:\Users\prism9411\Documents\GitHub\HifeSurvival\HifeSurvival\RealtimeServer\DummyClient\obj\Debug\netcoreapp3.1\DummyClient.pdb

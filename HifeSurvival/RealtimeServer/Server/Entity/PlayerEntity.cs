@@ -22,7 +22,8 @@ namespace Server
 
         StateMachine<PlayerEntity> _stateMachine;
 
-        public PlayerEntity()
+        public PlayerEntity(GameRoom room)
+            : base(room)
         {
             var smDict = new Dictionary<EEntityStatus, IState<PlayerEntity, IStateParam>>();
             smDict[EEntityStatus.IDLE] = new IdleState();
@@ -119,7 +120,7 @@ namespace Server
                     stat = stat.ConvertToPStat(),
                 };
 
-                broadcaster.Broadcast(respawn);
+                Room.Broadcast(respawn);
             }, DEFINE.PLAYER_RESPAWN_MS);
         }
     }

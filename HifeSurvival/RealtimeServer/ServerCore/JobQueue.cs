@@ -4,16 +4,11 @@ using System.Text;
 
 namespace ServerCore
 {
-	public interface IJobQueue
+	public class JobQueue
 	{
-		void Push(Action job);
-	}
-
-	public class JobQueue : IJobQueue
-	{
-		Queue<Action> _jobQueue = new Queue<Action>();
-		object _lock = new object();
-		bool _flush = false;
+		private Queue<Action> _jobQueue = new Queue<Action>();
+		private object _lock = new object();
+		private bool _flush = false;
 
 		public void Push(Action job)
 		{

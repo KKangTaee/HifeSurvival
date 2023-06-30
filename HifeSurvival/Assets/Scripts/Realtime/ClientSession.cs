@@ -6,7 +6,7 @@ using ServerCore;
 using UnityEngine;
 
 
-public class ServerSession : PacketSession
+public class ClientSession : Session
 {
 	public override void OnConnected(EndPoint endPoint)
 	{
@@ -20,17 +20,12 @@ public class ServerSession : PacketSession
 		NetworkManager.Instance.OnDisconnectResult();
 	}
 
-	public override void OnRecvPacket(ArraySegment<byte> buffer)
+	public override void OnRecv(ArraySegment<byte> buffer)
 	{
 		PacketManager.Instance.OnRecvPacket(this, buffer,
 		(session, packet)=>
 		{
 			PacketQueue.Instance.Push(packet);
 		});
-	}
-
-	public override void OnSend(int numOfBytes)
-	{
-		// Debug.Log($"바이트 호출 완료 Transferred bytes: {numOfBytes}");
 	}
 }

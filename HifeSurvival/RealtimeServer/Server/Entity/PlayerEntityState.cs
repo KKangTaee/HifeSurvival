@@ -22,7 +22,7 @@ namespace Server
                         timestamp = idleParam.timestamp,
                     };
 
-                    self.broadcaster.Broadcast(broadcast);
+                    self.Room.Broadcast(broadcast);
                 }
             }
 
@@ -67,7 +67,7 @@ namespace Server
                     timestamp = param.timestamp,
                 };
 
-                self.broadcaster.Broadcast(move);
+                self.Room.Broadcast(move);
             }
         }
 
@@ -143,7 +143,7 @@ namespace Server
                         fromId = deadParam.killerTarget.id,
                         respawnTime = DEFINE.MONSTER_RESPAWN_SEC,
                     };
-                    self.broadcaster.Broadcast(deadPacket);
+                    self.Room.Broadcast(deadPacket);
 
                     self.RegistRespawnTimer();
                 }

@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using static Server.GameDataLoader;
 
 namespace Server
 {
@@ -25,7 +24,7 @@ namespace Server
 
                     Logger.GetInstance().Debug($"IdleState monster : {self.id}, param current/target Pos : {idleParam.currentPos.Print()}");
 
-                    self.broadcaster.Broadcast(move);
+                    self.Room.Broadcast(move);
                 }
             }
 
@@ -77,7 +76,7 @@ namespace Server
                 };
 
                 Logger.GetInstance().Debug($"monster : {self.id}, param current Pos : {param.currentPos.Print()} , targetPos : {param.targetPos.Print()}");
-                self.broadcaster.Broadcast(move);
+                self.Room.Broadcast(move);
             }
         }
 
@@ -134,7 +133,8 @@ namespace Server
                         fromId = deadParam.killerTarget.id,
                         respawnTime = DEFINE.MONSTER_RESPAWN_SEC,
                     };
-                    self.broadcaster.Broadcast(deadPacket);
+
+                    self.Room.Broadcast(deadPacket);
 
                     self.DropItem();
 

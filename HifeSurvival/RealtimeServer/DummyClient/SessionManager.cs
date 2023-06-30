@@ -11,15 +11,15 @@ namespace DummyClient
         static SessionManager _session = new SessionManager();
         public static SessionManager Instance { get { return _session; } }
 
-        List<ServerSession> _sessionList = new List<ServerSession>();
+        List<ClientSession> _sessionList = new List<ClientSession>();
         object _lock = new object();
 
 
-        public ServerSession Generate()
+        public ClientSession Generate()
         {
             lock (_lock)
             {
-                ServerSession session = new ServerSession();
+                ClientSession session = new ClientSession();
                 _sessionList.Add(session);
                 return session;
             }

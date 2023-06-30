@@ -7,61 +7,25 @@ using System.Threading;
 
 namespace ServerCore
 {
-	public abstract class PacketSession : Session
+	public abstract class Session
 	{
 		public static readonly int HeaderSize = 2;
 
+		private Socket _socket;
+		private int _disconnected = 0;
+		private RecvBuffer _recvBuffer = new RecvBuffer(65535);
+		
 		// [size(2)][packetId(2)][ ... ][size(2)][packetId(2)][ ... ]
-		public sealed override int OnRecv(ArraySegment<byte> buffer)
-		{
-			int processLen = 0;
-			int packetCount = 0;
+		private object _lock = new object();
+		private Queue<ArraySegment<byte>> _sendQueue = new Queue<ArraySegment<byte>>();
+		private List<ArraySegment<byte>> _pendingList = new List<ArraySegment<byte>>();
 
-			while (true)
-			{
-				// 최소한 헤더는 파싱할 수 있는지 확인
-				if (buffer.Count < HeaderSize)
-					break;
-
-				// 패킷이 완전체로 도착했는지 확인
-				ushort dataSize = BitConverter.ToUInt16(buffer.Array, buffer.Offset);
-				if (buffer.Count < dataSize)
-					break;
-
-				// 여기까지 왔으면 패킷 조립 가능
-				OnRecvPacket(new ArraySegment<byte>(buffer.Array, buffer.Offset, dataSize));
-				packetCount++;
-
-				processLen += dataSize;
-				buffer = new ArraySegment<byte>(buffer.Array, buffer.Offset + dataSize, buffer.Count - dataSize);
-			}
-
-			//if (packetCount > 1)
-   //             Logger.GetInstance().Debug($"패킷 모아보내기 : {packetCount}");
-
-			return processLen;
-		}
-
-		public abstract void OnRecvPacket(ArraySegment<byte> buffer);
-	}
-
-	public abstract class Session
-	{
-		Socket _socket;
-		int _disconnected = 0;
-
-		RecvBuffer _recvBuffer = new RecvBuffer(65535);
-
-		object _lock = new object();
-		Queue<ArraySegment<byte>> _sendQueue = new Queue<ArraySegment<byte>>();
-		List<ArraySegment<byte>> _pendingList = new List<ArraySegment<byte>>();
-		SocketAsyncEventArgs _sendArgs = new SocketAsyncEventArgs();
-		SocketAsyncEventArgs _recvArgs = new SocketAsyncEventArgs();
+		private SocketAsyncEventArgs _sendArgs = new SocketAsyncEventArgs();
+		private SocketAsyncEventArgs _recvArgs = new SocketAsyncEventArgs();
 
 		public abstract void OnConnected(EndPoint endPoint);
-		public abstract int  OnRecv(ArraySegment<byte> buffer);
-		public abstract void OnSend(int numOfBytes);
 		public abstract void OnDisconnected(EndPoint endPoint);
+		public abstract void OnRecv(ArraySegment<byte> buffer);
 
 		void Clear()
 		{
@@ -120,7 +84,7 @@ namespace ServerCore
 
 		#region 네트워크 통신
 
-		void RegisterSend()
+		private void RegisterSend()
 		{
 			if (_disconnected == 1)
 				return;
@@ -138,13 +102,13 @@ namespace ServerCore
 				if (pending == false)
 					OnSendCompleted(null, _sendArgs);
 			}
-			catch (Exception e)
+			catch
 			{
-                //Logger.GetInstance().Error($"Exception : {e}");
+
 			}
 		}
 
-		void OnSendCompleted(object sender, SocketAsyncEventArgs args)
+		private void OnSendCompleted(object sender, SocketAsyncEventArgs args)
 		{
 			lock (_lock)
 			{
@@ -155,14 +119,12 @@ namespace ServerCore
 						_sendArgs.BufferList = null;
 						_pendingList.Clear();
 
-						OnSend(_sendArgs.BytesTransferred);
-
 						if (_sendQueue.Count > 0)
 							RegisterSend();
 					}
-					catch (Exception e)
+					catch
 					{
-                        //Logger.GetInstance().Error($"Exception : {e}");
+
 					}
 				}
 				else
@@ -187,12 +149,40 @@ namespace ServerCore
 				if (pending == false)
 					OnRecvCompleted(null, _recvArgs);
 			}
-			catch (Exception e)
+			catch
 			{
-                //Logger.GetInstance().Error($"Exception : {e}");
+
 			}
 		}
 
+		public int Recv(ArraySegment<byte> buffer)
+		{
+			int processLen = 0;
+			int packetCount = 0;
+
+			while (true)
+			{
+				// 최소한 헤더는 파싱할 수 있는지 확인
+				if (buffer.Count < HeaderSize)
+					break;
+
+				// 패킷이 완전체로 도착했는지 확인
+				ushort dataSize = BitConverter.ToUInt16(buffer.Array, buffer.Offset);
+				if (buffer.Count < dataSize)
+					break;
+
+				// 여기까지 왔으면 패킷 조립 가능
+				OnRecv(new ArraySegment<byte>(buffer.Array, buffer.Offset, dataSize));
+				packetCount++;
+
+				processLen += dataSize;
+				buffer = new ArraySegment<byte>(buffer.Array, buffer.Offset + dataSize, buffer.Count - dataSize);
+			}
+
+			return processLen;
+		}
+
+		
 		void OnRecvCompleted(object sender, SocketAsyncEventArgs args)
 		{
 			if (args.BytesTransferred > 0 && args.SocketError == SocketError.Success)
@@ -207,7 +197,7 @@ namespace ServerCore
 					}
 
 					// 컨텐츠 쪽으로 데이터를 넘겨주고 얼마나 처리했는지 받는다
-					int processLen = OnRecv(_recvBuffer.ReadSegment);
+					int processLen = Recv(_recvBuffer.ReadSegment);
 					if (processLen < 0 || _recvBuffer.DataSize < processLen)
 					{
 						Disconnect();
@@ -223,9 +213,9 @@ namespace ServerCore
 
 					RegisterRecv();
 				}
-				catch (Exception e)
+				catch
 				{
-                    //Logger.GetInstance().Error($"Exception : {e}");
+					
 				}
 			}
 			else

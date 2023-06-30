@@ -33,8 +33,8 @@ public class PacketManager
 	}}
 
 
-	Dictionary<ushort, Func<PacketSession, ArraySegment<byte>, IPacket>> _makeFunc = new Dictionary<ushort, Func<PacketSession, ArraySegment<byte>, IPacket>>();
-	Dictionary<ushort, Action<PacketSession, IPacket>> _handler = new Dictionary<ushort, Action<PacketSession, IPacket>>();
+	Dictionary<ushort, Func<Session, ArraySegment<byte>, IPacket>> _makeFunc = new Dictionary<ushort, Func<Session, ArraySegment<byte>, IPacket>>();
+	Dictionary<ushort, Action<Session, IPacket>> _handler = new Dictionary<ushort, Action<Session, IPacket>>();
 	
 	public void BindHandler(PacketHandler handler)
 	{{
@@ -47,7 +47,7 @@ public class PacketManager
 {0}
 	}}
 
-	public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer, Action<PacketSession, IPacket> onRecvCallback = null)
+	public void OnRecvPacket(Session session, ArraySegment<byte> buffer, Action<Session, IPacket> onRecvCallback = null)
 	{{
 		ushort count = 0;
 
@@ -67,16 +67,16 @@ public class PacketManager
 		}}
 	}}
 
-	T MakePacket<T>(PacketSession session, ArraySegment<byte> buffer) where T : IPacket, new()
+	T MakePacket<T>(Session session, ArraySegment<byte> buffer) where T : IPacket, new()
 	{{
 		T pkt = new T();
 		pkt.Read(buffer);
 		return pkt;	
 	}}
 
-	public void HandlePacket(PacketSession inSession, IPacket inPacket)
+	public void HandlePacket(Session inSession, IPacket inPacket)
 	{{
-		Action<PacketSession, IPacket> action = null;
+		Action<Session, IPacket> action = null;
 		if (_handler.TryGetValue(inPacket.Protocol, out action))
 			action.Invoke(inSession, inPacket);
 	}}
@@ -84,7 +84,7 @@ public class PacketManager
 ";
 		// {0} 패킷 이름
 		public static string managerHandlerFormat =
-@"	public abstract void {0}Handler(PacketSession session, IPacket packet);";
+@"	public abstract void {0}Handler(Session session, IPacket packet);";
 
 
         // {0} 패킷 이름

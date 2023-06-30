@@ -11,17 +11,19 @@ namespace Server
         private Dictionary<int, PlayerEntity> _playersDict = new Dictionary<int, PlayerEntity>();
         private Dictionary<int, MonsterGroup> _monsterGroupDict = new Dictionary<int, MonsterGroup>();
 
-        private IBroadcaster _broadcaster = null;
         private WorldMap _worldMap;
         private int _mId = DEFINE.MONSTER_ID;
+
+        private GameRoom _room;
 
         public EGameModeStatus Status { get; private set; } = EGameModeStatus.NONE;
 
         public GameMode(GameRoom room)
         {
-            _broadcaster = new RoomBroadcaster(room);
             _worldMap = new WorldMap();
+            _room = room;
         }
+
         public void OnSessionRemove(int sessionId)
         {
             var playerInfo = _playersDict.Values.FirstOrDefault(x => x.id == sessionId);
@@ -36,7 +38,7 @@ namespace Server
                 id = playerInfo.id,
             };
 
-            _broadcaster.Broadcast(packet);
+            _room.Broadcast(packet);
         }
 
         private void UpdateModeStatus(EGameModeStatus updatedStatus)
@@ -56,7 +58,7 @@ namespace Server
                             heroKey = p.Value.heroKey,
                         }));
 
-                        _broadcaster.Broadcast(packet);                    
+                        _room.Broadcast(packet);                    
                     }
                     break;
                 case EGameModeStatus.COUNT_DOWN:
@@ -66,7 +68,7 @@ namespace Server
                             countdownSec = DEFINE.START_COUNTDOWN_SEC
                         };
 
-                        _broadcaster.Broadcast(countdown);
+                        _room.Broadcast(countdown);
 
                         JobTimer.Instance.Push(StartLoadGame, DEFINE.START_COUNTDOWN_SEC * DEFINE.SEC_TO_MS);
                     }
@@ -88,7 +90,7 @@ namespace Server
                             monsterList = SpawnMonster(chapterData.phase1.Split(':'))
                         };
 
-                        _broadcaster.Broadcast(gameStart);
+                        _room.Broadcast(gameStart);
 
                         JobTimer.Instance.Push(() =>
                         {
@@ -116,7 +118,7 @@ namespace Server
 
             if (Status != updatedStatus)
             {
-                _broadcaster.Broadcast(new UpdateGameModeStatusBroadcast() { 
+                _room.Broadcast(new UpdateGameModeStatusBroadcast() { 
                     status = (int)updatedStatus 
                 });
             }
@@ -164,7 +166,7 @@ namespace Server
                                 _monsterGroupDict.Add(group.groupId, monsterGroup);
                             }
                             Logger.GetInstance().Debug($"monster id {id}, reward id {data.rewardIds}");
-                            MonsterEntity monsterEntity = new MonsterEntity(monsterGroup, _worldMap)
+                            MonsterEntity monsterEntity = new MonsterEntity(_room, monsterGroup, _worldMap)
                             {
                                 id = _mId++,
                                 groupId = group.groupId,
@@ -173,7 +175,6 @@ namespace Server
                                 targetPos = pos,
                                 spawnPos = pos,
                                 grade = data.grade,
-                                broadcaster = _broadcaster,
                                 defaultStat = new EntityStat(data),
                                 rewardDatas = data.rewardIds,
                             };
@@ -210,7 +211,7 @@ namespace Server
                     monsterList = SpawnMonster(phase.Split(':'))
                 };
 
-                _broadcaster.Broadcast(spawnMoster);
+                _room.Broadcast(spawnMoster);
             }, timeout * DEFINE.SEC_TO_MS);
         }
 
@@ -288,27 +289,40 @@ namespace Server
             return monster;
         }
 
-        public bool CanJoinRoom() => Status == EGameModeStatus.READY && _playersDict.Count < DEFINE.PLAYER_MAX_COUNT;
+        public bool CanJoinRoom()
+        {
+            return Status == EGameModeStatus.READY && _playersDict.Count < DEFINE.PLAYER_MAX_COUNT;
+        }
 
-        public bool CanLoadGame() => _playersDict.Values.All(x => x.clientStatus == EClientStatus.SELECT_READY);
+        public bool CanLoadGame()
+        {
+            return _playersDict.Values.All(x => x.clientStatus == EClientStatus.SELECT_READY);
+        }
 
-        public bool CanPlayStart() => _playersDict.Values.All(x => x.clientStatus == EClientStatus.PLAY_READY);
+        public bool CanPlayStart()
+        {
+            return _playersDict.Values.All(x => x.clientStatus == EClientStatus.PLAY_READY); 
+        }
 
-        public void StartLoadGame() => UpdateModeStatus(EGameModeStatus.LOAD_GAME);
+        public void StartLoadGame()
+        {
+            UpdateModeStatus(EGameModeStatus.LOAD_GAME); 
+        }
 
         public void OnRecvJoin(C_JoinToGame inPacket, int inSessionId)
         {
             var data = GameDataLoader.Instance.HerosDict.Values.FirstOrDefault();
             if (data == null)
+            {
                 return;
+            }
 
-            var playerEntity = new PlayerEntity()
+            var playerEntity = new PlayerEntity(_room)
             {
                 userId = inPacket.userId,
                 id = inSessionId,
                 heroKey = data.key,
                 userName = inPacket.userName,
-                broadcaster = _broadcaster,
                 defaultStat = new EntityStat(data)
             };
 
@@ -321,10 +335,12 @@ namespace Server
         {
             var player = GetPlayerEntityById(inPacket.id);
             if (player == null)
+            {
                 return;
+            }
 
             player.heroKey = inPacket.heroKey;
-            _broadcaster.Broadcast(inPacket);
+            _room.Broadcast(inPacket);
         }
 
         public void OnRecvReady(CS_ReadyToGame inPacket)
@@ -334,7 +350,7 @@ namespace Server
                 return;
 
             player.SelectReady();
-            _broadcaster.Broadcast(inPacket);
+            _room.Broadcast(inPacket);
 
             if (CanLoadGame())
             {
@@ -349,7 +365,7 @@ namespace Server
                 return;
 
             player.PlayReady();
-            _broadcaster.Broadcast(new PlayStartResponse() { id = player.id });  //TODO : Send
+            _room.Broadcast(new PlayStartResponse() { id = player.id });  //TODO : Send
 
             if (CanPlayStart())
             {
@@ -420,7 +436,7 @@ namespace Server
             if (increaseValue > player.gold)
             {
                 res.result = DEFINE.ERROR;
-                _broadcaster.Broadcast(res);
+                _room.Broadcast(res);
                 return;
             }
 
@@ -447,7 +463,7 @@ namespace Server
 
             player.UpdateStat();
 
-            _broadcaster.Broadcast(res);
+            _room.Broadcast(res);
             //TODO : Send IncreaseStatResponse + result 값 처리
         }
 
@@ -509,8 +525,8 @@ namespace Server
                     break;
             }
 
-            _broadcaster.Broadcast(broadcast);
-            _broadcaster.Broadcast(res);         //TODO : Send PickRewardResponse
+            _room.Broadcast(broadcast);
+            _room.Broadcast(res);         //TODO : Send PickRewardResponse
             player.UpdateStat();
         }
     }

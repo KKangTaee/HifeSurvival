@@ -18,7 +18,8 @@ namespace Server
         private MonsterGroup _group;
         private WorldMap _worldMap;
 
-        public MonsterEntity(MonsterGroup group, WorldMap worldMap)
+        public MonsterEntity(GameRoom room, MonsterGroup group, WorldMap worldMap)
+            : base(room)
         {
             var smDict = new Dictionary<EEntityStatus, IState<MonsterEntity, IStateParam>>();
             smDict[EEntityStatus.IDLE] = new IdleState();
@@ -97,7 +98,7 @@ namespace Server
                 attackValue = damageValue,
             };
 
-            broadcaster.Broadcast(attackPacket);
+            Room.Broadcast(attackPacket);
         }
 
 
@@ -111,7 +112,9 @@ namespace Server
         public void DropItem()
         {
             if (_worldMap == null)
+            {
                 return;
+            }
 
             var broadcast = _worldMap.DropItem(rewardDatas, currentPos);
             if (broadcast == null)
@@ -121,14 +124,20 @@ namespace Server
             else
             {
                 Logger.GetInstance().Debug($"Reward Drop worldid : {broadcast.worldId}, pos : {broadcast.pos.Print()}");
-                broadcaster.Broadcast(broadcast);
+                Room.Broadcast(broadcast);
             }
             return;
         }
 
 
-        public bool IsGroupAllDead() => _group.IsAllDead();
+        public bool IsGroupAllDead()
+        {
+            return _group.IsAllDead();
+        }
 
-        public void StartRespawning() => _group.SendRespawnGroup();
+        public void StartRespawning()
+        {
+            _group.SendRespawnGroup(); 
+        }
     }
 }

@@ -9,7 +9,7 @@ using System.Net;
 
 namespace Server
 {
-    public class ClientSession : PacketSession
+    public class ServerSession : Session
 	{
 		public int SessionId { get; set; }
 		public GameRoom Room { get; set; }
@@ -20,7 +20,7 @@ namespace Server
 			GameRoomManager.Instance.EnterRoom(this);
 		}
 
-		public override void OnRecvPacket(ArraySegment<byte> buffer)
+		public override void OnRecv(ArraySegment<byte> buffer)
 		{
 			PacketManager.Instance.OnRecvPacket(this, buffer);
 		}
@@ -29,11 +29,6 @@ namespace Server
 		{
 			GameRoomManager.Instance.LeaveRoom(this);
             Logger.GetInstance().Info($"OnDisconnected : {endPoint}");
-		}
-
-		public override void OnSend(int numOfBytes)
-		{
-			//Console.WriteLine($"Transferred bytes: {numOfBytes}");
 		}
 	}
 }

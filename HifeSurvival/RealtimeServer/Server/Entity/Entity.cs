@@ -8,12 +8,9 @@ namespace Server
 {
     public abstract class Entity
     {
-        public IBroadcaster broadcaster;
-
         public int id;
 
         public PVec3 spawnPos;
-
         public PVec3 currentPos;
         public PVec3 targetPos;
 
@@ -21,6 +18,13 @@ namespace Server
         public EntityStat defaultStat;
 
         public EEntityStatus status;
+
+        protected GameRoom Room { get; private set; }
+
+        public Entity(GameRoom room)
+        {
+            this.Room = room;
+        }
 
         #region StatusAction
         protected abstract void ChangeState<P>(EEntityStatus status, P param) where P : struct, IStateParam;
@@ -72,7 +76,7 @@ namespace Server
             broadcast.originStat = GetDefaultPStat();
             broadcast.addStat = GetAdditionalPStat();
 
-            broadcaster.Broadcast(broadcast);
+            Room.Broadcast(broadcast);
         }
         #endregion
 

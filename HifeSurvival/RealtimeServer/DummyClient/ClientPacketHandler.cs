@@ -7,122 +7,122 @@ using ServerCore;
 
 public class ClientPacketHandler : PacketHandler
 {
-    public override void C_JoinToGameHandler(PacketSession session, IPacket packet)
+    public override void C_JoinToGameHandler(Session session, IPacket packet)
     {
         throw new NotImplementedException();
     }
 
-    public override void S_JoinToGameHandler(PacketSession session, IPacket packet)
+    public override void S_JoinToGameHandler(Session session, IPacket packet)
     {
         throw new NotImplementedException();
     }
 
-    public override void S_LeaveToGameHandler(PacketSession session, IPacket packet)
+    public override void S_LeaveToGameHandler(Session session, IPacket packet)
     {
         throw new NotImplementedException();
     }
 
-    public override void CS_SelectHeroHandler(PacketSession session, IPacket packet)
+    public override void CS_SelectHeroHandler(Session session, IPacket packet)
     {
         throw new NotImplementedException();
     }
 
-    public override void CS_ReadyToGameHandler(PacketSession session, IPacket packet)
+    public override void CS_ReadyToGameHandler(Session session, IPacket packet)
     {
         throw new NotImplementedException();
     }
 
-    public override void S_CountdownHandler(PacketSession session, IPacket packet)
+    public override void S_CountdownHandler(Session session, IPacket packet)
     {
         throw new NotImplementedException();
     }
 
-    public override void S_StartGameHandler(PacketSession session, IPacket packet)
+    public override void S_StartGameHandler(Session session, IPacket packet)
     {
         throw new NotImplementedException();
     }
 
-    public override void CS_AttackHandler(PacketSession session, IPacket packet)
+    public override void CS_AttackHandler(Session session, IPacket packet)
     {
         throw new NotImplementedException();
     }
 
-    public override void S_DeadHandler(PacketSession session, IPacket packet)
+    public override void S_DeadHandler(Session session, IPacket packet)
     {
         throw new NotImplementedException();
     }
 
-    public override void S_RespawnHandler(PacketSession session, IPacket packet)
+    public override void S_RespawnHandler(Session session, IPacket packet)
     {
         throw new NotImplementedException();
     }
 
-    public override void S_SpawnMonsterHandler(PacketSession session, IPacket packet)
+    public override void S_SpawnMonsterHandler(Session session, IPacket packet)
     {
         throw new NotImplementedException();
     }
 
-    public override void MoveRequestHandler(PacketSession session, IPacket packet)
+    public override void MoveRequestHandler(Session session, IPacket packet)
     {
         throw new NotImplementedException();
     }
     
-    public override void UpdateLocationBroadcastHandler(PacketSession session, IPacket packet)
+    public override void UpdateLocationBroadcastHandler(Session session, IPacket packet)
     {
         throw new NotImplementedException();
     }
 
-    public override void MoveResponseHandler(PacketSession session, IPacket packet)
+    public override void MoveResponseHandler(Session session, IPacket packet)
     {
         throw new NotImplementedException();
     }
 
-    public override void UpdateStatBroadcastHandler(PacketSession session, IPacket packet)
+    public override void UpdateStatBroadcastHandler(Session session, IPacket packet)
     {
         throw new NotImplementedException();
     }
 
-    public override void IncreaseStatRequestHandler(PacketSession session, IPacket packet)
+    public override void IncreaseStatRequestHandler(Session session, IPacket packet)
     {
         throw new NotImplementedException();
     }
 
-    public override void IncreaseStatResponseHandler(PacketSession session, IPacket packet)
+    public override void IncreaseStatResponseHandler(Session session, IPacket packet)
     {
         throw new NotImplementedException();
     }
 
-    public override void PickRewardRequestHandler(PacketSession session, IPacket packet)
+    public override void PickRewardRequestHandler(Session session, IPacket packet)
     {
         throw new NotImplementedException();
     }
 
-    public override void PickRewardResponseHandler(PacketSession session, IPacket packet)
+    public override void PickRewardResponseHandler(Session session, IPacket packet)
     {
         throw new NotImplementedException();
     }
 
-    public override void UpdateRewardBroadcastHandler(PacketSession session, IPacket packet)
+    public override void UpdateRewardBroadcastHandler(Session session, IPacket packet)
     {
         throw new NotImplementedException();
     }
 
-    public override void UpdatePlayerCurrencyHandler(PacketSession session, IPacket packet)
+    public override void UpdatePlayerCurrencyHandler(Session session, IPacket packet)
     {
         throw new NotImplementedException();
     }
 
-    public override void PlayStartRequestHandler(PacketSession session, IPacket packet)
+    public override void PlayStartRequestHandler(Session session, IPacket packet)
     {
         throw new NotImplementedException();
     }
 
-    public override void PlayStartResponseHandler(PacketSession session, IPacket packet)
+    public override void PlayStartResponseHandler(Session session, IPacket packet)
     {
         throw new NotImplementedException();
     }
 
-    public override void UpdateGameModeStatusBroadcastHandler(PacketSession session, IPacket packet)
+    public override void UpdateGameModeStatusBroadcastHandler(Session session, IPacket packet)
     {
         throw new NotImplementedException();
     }

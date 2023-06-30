@@ -9,18 +9,18 @@ namespace Server
 	{
 		static SessionManager _session = new SessionManager();
 		public static SessionManager Instance { get { return _session; } }
-		Dictionary<int, ClientSession> _sessionDict = new Dictionary<int, ClientSession>();
+		Dictionary<int, ServerSession> _sessionDict = new Dictionary<int, ServerSession>();
 		
 		int _sessionId = 0;
 		object _lock = new object();
 
-		public ClientSession Generate()
+		public ServerSession Generate()
 		{
 			lock (_lock)
 			{
 				int sessionId = ++_sessionId;
 
-				ClientSession session = new ClientSession();
+				ServerSession session = new ServerSession();
 				session.SessionId = sessionId;
 				_sessionDict.Add(sessionId, session);
 
@@ -30,17 +30,17 @@ namespace Server
 			}
 		}
 
-		public ClientSession Find(int id)
+		public ServerSession Find(int id)
 		{
 			lock (_lock)
 			{
-				ClientSession session = null;
+				ServerSession session = null;
 				_sessionDict.TryGetValue(id, out session);
 				return session;
 			}
 		}
 
-		public void Remove(ClientSession session)
+		public void Remove(ServerSession session)
 		{
 			lock (_lock)
 			{

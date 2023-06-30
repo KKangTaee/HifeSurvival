@@ -8,8 +8,10 @@ public abstract class EntityObject : MonoBehaviour
 {
     public enum EStatus
     {
+        NONE,
+        
         IDLE,
-
+        
         MOVE,
 
         ATTACK,
@@ -23,13 +25,9 @@ public abstract class EntityObject : MonoBehaviour
 
     [SerializeField] private MoveMachine _moveMachine;
 
-    public Entity TargetEntity { get; protected set; }
-    public int id        { get; protected set;}
-    public EStatus Status      { get; protected set; }
-    
-    // public EntityStat Stat   { get; protected set; }
-
-    public abstract bool IsPlayer { get; }
+    public Entity TargetEntity    { get; protected set; }
+    public int id                 { get; protected set; }
+    public EStatus Status         { get; protected set; } = EStatus.NONE;
 
 
     //-------------
@@ -40,11 +38,9 @@ public abstract class EntityObject : MonoBehaviour
     {
         id = inEntity.id;
         TargetEntity = inEntity;
-        
-        // Stat = inStat;
+
         SetPos(inPos);
     }
-
 
     public virtual void ChangeState<P>(EStatus inStatus, in P inParam = default) where P : struct
     {
@@ -91,7 +87,6 @@ public abstract class EntityObject : MonoBehaviour
         _moveMachine.StartMoveLerpTarget(inTarget, inSpeed, inStopFunc, dirCallback, doneCallback);
     }
 
-
     public void StopMoveEntity(in Vector3 inPos)
     {
         _moveMachine.MoveStopSelf(inPos);
@@ -99,6 +94,23 @@ public abstract class EntityObject : MonoBehaviour
     }
 
 
+    [SerializeField] private SimplePoint _pointPrefab;
+    private List<SimplePoint> _pointList = new List<SimplePoint>();
+
+    public void SetPoint(Vector3 pos, Color color)
+    {
+        var inst = Instantiate(_pointPrefab);
+        inst.SetPoint(pos, color);
+        _pointList.Add(inst);
+    }
+
+    public void RemovePoint()
+    {
+        foreach (var point in _pointList)
+            Destroy(point);
+
+        _pointList.Clear();
+    }
 }
 
 public interface IState<T> where T : EntityObject

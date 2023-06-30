@@ -10,8 +10,6 @@ public partial class Monster : EntityObject
 
     private StateMachine<Monster> _stateMachine;
 
-    public override bool IsPlayer => false;
-
     private void Awake()
     {
         _stateMachine = new StateMachine<Monster>(
@@ -45,6 +43,8 @@ public partial class Monster : EntityObject
 
     public void OnMoveLerp(in Vector3 inCurrPos, in Vector3 inDestPos, float inSpeed, long inTimeStamp)
     {
+        SetPoint(inDestPos, Color.magenta);
+        
         var currDir = Vector3.Normalize(inDestPos - GetPos());
         _anim.SetDir(currDir.x);
         
@@ -73,6 +73,7 @@ public partial class Monster : EntityObject
 
     public void OnIdle(in Vector3 inPos, in Vector3 inDir = default)
     {
+        SetPoint(inPos, Color.red);
         _anim.OnIdle();
         StopMoveEntity(inPos);
     }

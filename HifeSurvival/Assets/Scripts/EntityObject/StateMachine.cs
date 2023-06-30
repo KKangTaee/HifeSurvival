@@ -20,7 +20,7 @@ public class StateMachine<T> where T : EntityObject
         // 같은 상태가 다시 돌아왔다는 것은, 파라미터만 넘겨주는 상황일 수 있다.
         if (_status == inStatus)
         {
-            _state.Update(inSelf, inParam);
+            _state?.Update(inSelf, inParam);
         }
         else
         {

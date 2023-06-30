@@ -12,10 +12,7 @@ public partial class Player : EntityObject
     [SerializeField] private PlayerUI _playerUI;
     [SerializeField] private TriggerMachine _playerTrigger;
     [SerializeField] private TriggerMachine _detectTrigger;
-
-    [SerializeField] private GameObject _detectRange;
-
-    public override bool IsPlayer => true;
+    [SerializeField] private GameObject     _detectRange;
 
     private HashSet<EntityObject> _targetSet;
 
@@ -32,7 +29,6 @@ public partial class Player : EntityObject
     public override void ChangeState<P>(EStatus inStatus, in P inParam = default) where P : struct
     {
         base.ChangeState(inStatus, inParam);
-
         _stateMachine.ChangeState(inStatus, this, inParam);
     }
 
@@ -208,7 +204,7 @@ public partial class Player : EntityObject
     
     public void OnMoveLerp(in Vector3 inCurrPos, in Vector3 inDestPos, float inSpeed, long inTimeStamp)
     {
-        SetPoint(inDestPos, Vector3.zero);
+        SetPoint(inDestPos, Color.magenta);
 
         var dir = inDestPos - inCurrPos;
 
@@ -219,6 +215,8 @@ public partial class Player : EntityObject
 
     public void OnIdle(in Vector3 inPos, in Vector3 inDir = default)
     {
+        // SetPoint(inPos, Color.red);
+
         _anim.OnIdle();
 
         StopMoveEntity(inPos);
@@ -310,27 +308,5 @@ public partial class Player : EntityObject
     }
 
 
-    [SerializeField] private GameObject _pointPrefab;
-    private List<GameObject> _pointList = new List<GameObject>();
 
-    public void SetPoint(Vector3 inPos, Vector3 inDir)
-    {
-        var inst = Instantiate(_pointPrefab);
-        inst.transform.position = inPos;
-
-        Vector2 direction = new Vector2(inDir.x, inDir.y); // 각도를 계산하려는 벡터
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-
-        inst.transform.localRotation = Quaternion.Euler(0, 0, angle);
-
-        _pointList.Add(inst);
-    }
-
-    public void RemovePoint()
-    {
-        foreach (var point in _pointList)
-            Destroy(point);
-
-        _pointList.Clear();
-    }
 }

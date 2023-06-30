@@ -65,8 +65,11 @@ public partial class Monster
         {
             if (inParam is IdleParam idleParam)
             {
-                 // 현재 서버좌표의 절대위치와 클라 동기화 위치의 간격이 꽤나 차이가 심하다면, 보간 후 정지 시킨다.
-                if(Vector3.Distance(inSelf.GetPos(), idleParam.pos) > DISTANCE_DIFF)
+                Debug.Log($"HJ_SETIDLESTATE res.currpos {idleParam.pos}), current client pos {inSelf.transform.position}");
+                Debug.DrawLine(idleParam.pos, idleParam.pos, Color.red, 1.0f);
+
+                // 현재 서버좌표의 절대위치와 클라 동기화 위치의 간격이 꽤나 차이가 심하다면, 보간 후 정지 시킨다.
+                if (Vector3.Distance(inSelf.GetPos(), idleParam.pos) > DISTANCE_DIFF)
                 {
                     inSelf.MoveLerpExpect(inSelf.GetPos(), 
                                         idleParam.pos, 
@@ -100,10 +103,15 @@ public partial class Monster
         public void Enter<P>(Monster inSelf, in P inParam) where P : struct
         {
             if (inParam is MoveParam move)
+            {
                 inSelf.OnMoveLerp(move.currPos,
-                                  move.destPos,
-                                  move.speed,
-                                  move.timeStamp);
+                  move.destPos,
+                  move.speed,
+                  move.timeStamp);
+
+                Debug.Log($"HJ_SETMOVESTATE res.currpos {move.currPos}), res.targetPos {move.destPos}, current client pos {inSelf.transform.position}");
+                Debug.DrawLine(move.currPos, move.destPos, Color.cyan, 1.0f);
+            }
         }
 
         public void Exit()
@@ -114,10 +122,15 @@ public partial class Monster
         public void Update<P>(Monster inSelf, in P inParam) where P : struct
         {
             if (inParam is MoveParam move)
+            {
                 inSelf.OnMoveLerp(move.currPos,
-                                  move.destPos,
-                                  move.speed,
-                                  move.timeStamp);
+                  move.destPos,
+                  move.speed,
+                  move.timeStamp);
+
+                Debug.Log($"HJ_SETMOVESTATE res.currpos {move.currPos}), res.targetPos {move.destPos}, current client pos {inSelf.transform.position}");
+                Debug.DrawLine(move.currPos, move.destPos, Color.cyan, 1.0f);
+            }
         }
     }
 

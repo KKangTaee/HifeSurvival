@@ -60,7 +60,7 @@ public class MoveMachine : MonoBehaviour
         _currSpeed = inSpeed;
         _timeStamp = inTimeStamp;
         _doneCallback = doneCallback;
-    
+        
         StartCoroutine(nameof(Co_MoveLerpExpect));
     }
 

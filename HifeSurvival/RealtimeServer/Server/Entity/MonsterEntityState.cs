@@ -23,7 +23,7 @@ namespace Server
                         timestamp = idleParam.timestamp,
                     };
 
-                    Logger.GetInstance().Debug($"IdleState monster : {self.id}, param Pos : {idleParam.currentPos.Print()}");
+                    Logger.GetInstance().Debug($"IdleState monster : {self.id}, param current/target Pos : {idleParam.currentPos.Print()}");
 
                     self.broadcaster.Broadcast(move);
                 }
@@ -76,6 +76,7 @@ namespace Server
                     timestamp = param.timestamp,
                 };
 
+                Logger.GetInstance().Debug($"monster : {self.id}, param current Pos : {param.currentPos.Print()} , targetPos : {param.targetPos.Print()}");
                 self.broadcaster.Broadcast(move);
             }
         }

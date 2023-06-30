@@ -61,7 +61,6 @@ namespace Server
 
         public void UpdateAggro(Entity target)
         {
-            Logger.GetInstance().Debug($"aggroid : {target.id}, self : {_monster.id}");
             if (ExistAggro())
             {
                 if (CurrentTarget().id == target.id)
@@ -72,6 +71,7 @@ namespace Server
                 _aggroList.Remove(target);
             }
 
+            Logger.GetInstance().Debug($" self : {_monster.id}, aggroid : {target.id}");
             _aggroList.Add(target);
         }
 

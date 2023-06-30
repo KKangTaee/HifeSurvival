@@ -5,30 +5,30 @@ using ServerCore;
 
 public abstract class PacketHandler
 {
-	public abstract void C_JoinToGameHandler(PacketSession session, IPacket packet);
-	public abstract void S_JoinToGameHandler(PacketSession session, IPacket packet);
-	public abstract void S_LeaveToGameHandler(PacketSession session, IPacket packet);
-	public abstract void CS_SelectHeroHandler(PacketSession session, IPacket packet);
-	public abstract void CS_ReadyToGameHandler(PacketSession session, IPacket packet);
-	public abstract void S_CountdownHandler(PacketSession session, IPacket packet);
-	public abstract void S_StartGameHandler(PacketSession session, IPacket packet);
-	public abstract void S_SpawnMonsterHandler(PacketSession session, IPacket packet);
-	public abstract void CS_AttackHandler(PacketSession session, IPacket packet);
-	public abstract void MoveRequestHandler(PacketSession session, IPacket packet);
-	public abstract void MoveResponseHandler(PacketSession session, IPacket packet);
-	public abstract void S_DeadHandler(PacketSession session, IPacket packet);
-	public abstract void S_RespawnHandler(PacketSession session, IPacket packet);
-	public abstract void IncreaseStatRequestHandler(PacketSession session, IPacket packet);
-	public abstract void IncreaseStatResponseHandler(PacketSession session, IPacket packet);
-	public abstract void PickRewardRequestHandler(PacketSession session, IPacket packet);
-	public abstract void PickRewardResponseHandler(PacketSession session, IPacket packet);
-	public abstract void UpdateRewardBroadcastHandler(PacketSession session, IPacket packet);
-	public abstract void UpdateLocationBroadcastHandler(PacketSession session, IPacket packet);
-	public abstract void UpdateStatBroadcastHandler(PacketSession session, IPacket packet);
-	public abstract void UpdatePlayerCurrencyHandler(PacketSession session, IPacket packet);
-	public abstract void PlayStartRequestHandler(PacketSession session, IPacket packet);
-	public abstract void PlayStartResponseHandler(PacketSession session, IPacket packet);
-	public abstract void UpdateGameModeStatusBroadcastHandler(PacketSession session, IPacket packet);
+	public abstract void C_JoinToGameHandler(Session session, IPacket packet);
+	public abstract void S_JoinToGameHandler(Session session, IPacket packet);
+	public abstract void S_LeaveToGameHandler(Session session, IPacket packet);
+	public abstract void CS_SelectHeroHandler(Session session, IPacket packet);
+	public abstract void CS_ReadyToGameHandler(Session session, IPacket packet);
+	public abstract void S_CountdownHandler(Session session, IPacket packet);
+	public abstract void S_StartGameHandler(Session session, IPacket packet);
+	public abstract void S_SpawnMonsterHandler(Session session, IPacket packet);
+	public abstract void CS_AttackHandler(Session session, IPacket packet);
+	public abstract void MoveRequestHandler(Session session, IPacket packet);
+	public abstract void MoveResponseHandler(Session session, IPacket packet);
+	public abstract void S_DeadHandler(Session session, IPacket packet);
+	public abstract void S_RespawnHandler(Session session, IPacket packet);
+	public abstract void IncreaseStatRequestHandler(Session session, IPacket packet);
+	public abstract void IncreaseStatResponseHandler(Session session, IPacket packet);
+	public abstract void PickRewardRequestHandler(Session session, IPacket packet);
+	public abstract void PickRewardResponseHandler(Session session, IPacket packet);
+	public abstract void UpdateRewardBroadcastHandler(Session session, IPacket packet);
+	public abstract void UpdateLocationBroadcastHandler(Session session, IPacket packet);
+	public abstract void UpdateStatBroadcastHandler(Session session, IPacket packet);
+	public abstract void UpdatePlayerCurrencyHandler(Session session, IPacket packet);
+	public abstract void PlayStartRequestHandler(Session session, IPacket packet);
+	public abstract void PlayStartResponseHandler(Session session, IPacket packet);
+	public abstract void UpdateGameModeStatusBroadcastHandler(Session session, IPacket packet);
 
 }
 
@@ -45,8 +45,8 @@ public class PacketManager
 	}
 
 
-	Dictionary<ushort, Func<PacketSession, ArraySegment<byte>, IPacket>> _makeFunc = new Dictionary<ushort, Func<PacketSession, ArraySegment<byte>, IPacket>>();
-	Dictionary<ushort, Action<PacketSession, IPacket>> _handler = new Dictionary<ushort, Action<PacketSession, IPacket>>();
+	Dictionary<ushort, Func<Session, ArraySegment<byte>, IPacket>> _makeFunc = new Dictionary<ushort, Func<Session, ArraySegment<byte>, IPacket>>();
+	Dictionary<ushort, Action<Session, IPacket>> _handler = new Dictionary<ushort, Action<Session, IPacket>>();
 	
 	public void BindHandler(PacketHandler handler)
 	{
@@ -107,7 +107,7 @@ public class PacketManager
 
 	}
 
-	public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer, Action<PacketSession, IPacket> onRecvCallback = null)
+	public void OnRecvPacket(Session session, ArraySegment<byte> buffer, Action<Session, IPacket> onRecvCallback = null)
 	{
 		ushort count = 0;
 
@@ -127,16 +127,16 @@ public class PacketManager
 		}
 	}
 
-	T MakePacket<T>(PacketSession session, ArraySegment<byte> buffer) where T : IPacket, new()
+	T MakePacket<T>(Session session, ArraySegment<byte> buffer) where T : IPacket, new()
 	{
 		T pkt = new T();
 		pkt.Read(buffer);
 		return pkt;	
 	}
 
-	public void HandlePacket(PacketSession inSession, IPacket inPacket)
+	public void HandlePacket(Session inSession, IPacket inPacket)
 	{
-		Action<PacketSession, IPacket> action = null;
+		Action<Session, IPacket> action = null;
 		if (_handler.TryGetValue(inPacket.Protocol, out action))
 			action.Invoke(inSession, inPacket);
 	}

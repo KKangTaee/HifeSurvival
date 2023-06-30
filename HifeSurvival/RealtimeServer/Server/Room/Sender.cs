@@ -47,6 +47,8 @@ namespace Server
 
                 _broadcastMessage.Clear();
             }
+
+            JobTimer.Instance.Push(FlushSendQueue, DEFINE.SEND_TICK_MS);
         }
 
         public void Broadcast(IPacket packet)
@@ -78,24 +80,27 @@ namespace Server
             });
         }
 
-        public void Enter(ServerSession session)
+        public void OnEnter(ServerSession session)
         {
             _seshDict.Add(session.SessionId, session);
+            Logger.GetInstance().Debug($"Session id {session.SessionId}");
 
             if (!_existSesh && _seshDict.Count > 0 )
             {
                 _existSesh = true;
+                Logger.GetInstance().Debug($"FlushSendQueue Start");
                 JobTimer.Instance.Push(FlushSendQueue, DEFINE.SEND_TICK_MS);
             }
         }
 
-        public void Leave(int seshId)
+        public void OnLeave(int seshId)
         {
             _seshDict.Remove(seshId);
 
             if(_seshDict.Count == 0 && _existSesh)
             {
                 _existSesh = false;
+                Logger.GetInstance().Debug($"FlushSendQueue End");
             }
         }
     }

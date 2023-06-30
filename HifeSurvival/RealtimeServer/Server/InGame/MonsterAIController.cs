@@ -99,7 +99,7 @@ namespace Server
             }
 
             var currentTarget = CurrentTarget();
-            Logger.GetInstance().Debug($"currentTarget : {currentTarget.id}, Pos : {currentTarget.currentPos.Print()}");
+            Logger.GetInstance().Debug($"playerTarget : {currentTarget.id}, Pos : {currentTarget.currentPos.Print()}");
             Logger.GetInstance().Debug($"monster : {_monster.id}, Pos : {_monster.currentPos.Print()}");
             var damagedVal = BattleCalculator.ComputeDamagedValue(_monster.stat, currentTarget.stat);
 

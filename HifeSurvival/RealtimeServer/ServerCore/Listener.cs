@@ -14,7 +14,7 @@ namespace ServerCore
 		public void Init(IPEndPoint endPoint, Func<Session> sessionFactory, int register = 10, int backlog = 100)
 		{
 			_listenSocket = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-			_sessionFactory += sessionFactory;
+			_sessionFactory = sessionFactory;
 
             // 문지기 교육
             _listenSocket.Bind(endPoint);

@@ -58,7 +58,7 @@ namespace Server
                             heroKey = p.Value.heroKey,
                         }));
 
-                        _room.Broadcast(packet);                    
+                        _room.Broadcast(packet);
                     }
                     break;
                 case EGameModeStatus.COUNT_DOWN:
@@ -118,8 +118,9 @@ namespace Server
 
             if (Status != updatedStatus)
             {
-                _room.Broadcast(new UpdateGameModeStatusBroadcast() { 
-                    status = (int)updatedStatus 
+                _room.Broadcast(new UpdateGameModeStatusBroadcast()
+                {
+                    status = (int)updatedStatus
                 });
             }
 
@@ -301,12 +302,12 @@ namespace Server
 
         public bool CanPlayStart()
         {
-            return _playersDict.Values.All(x => x.clientStatus == EClientStatus.PLAY_READY); 
+            return _playersDict.Values.All(x => x.clientStatus == EClientStatus.PLAY_READY);
         }
 
         public void StartLoadGame()
         {
-            UpdateModeStatus(EGameModeStatus.LOAD_GAME); 
+            UpdateModeStatus(EGameModeStatus.LOAD_GAME);
         }
 
         public void OnRecvJoin(C_JoinToGame inPacket, int inSessionId)
@@ -365,7 +366,7 @@ namespace Server
                 return;
 
             player.PlayReady();
-            _room.Broadcast(new PlayStartResponse() { id = player.id });  //TODO : Send
+            _room.Send(player.id, new PlayStartResponse() { id = player.id });
 
             if (CanPlayStart())
             {
@@ -382,13 +383,13 @@ namespace Server
             player.currentPos = inPacket.currentPos;
             player.targetPos = inPacket.targetPos;
 
-            if(player.currentPos.IsSame(player.targetPos))
+            if (player.currentPos.IsSame(player.targetPos))
             {
                 player.MoveStop(new IdleParam()
                 {
                     currentPos = inPacket.currentPos,
                     timestamp = inPacket.timestamp
-                } );
+                });
             }
             else
             {
@@ -428,7 +429,6 @@ namespace Server
 
             var res = new IncreaseStatResponse();
             res.id = player.id;
-            res.result = DEFINE.SUCCESS;
 
             int increaseValue = inPacket.increase;
             //NOTE : 현재 1골드 당 해당 스탯 1 증가. 
@@ -463,8 +463,7 @@ namespace Server
 
             player.UpdateStat();
 
-            _room.Broadcast(res);
-            //TODO : Send IncreaseStatResponse + result 값 처리
+            _room.Send(player.id, res);
         }
 
 
@@ -526,7 +525,7 @@ namespace Server
             }
 
             _room.Broadcast(broadcast);
-            _room.Broadcast(res);         //TODO : Send PickRewardResponse
+            _room.Send(player.id, res);
             player.UpdateStat();
         }
     }

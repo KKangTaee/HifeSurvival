@@ -15,9 +15,13 @@ namespace Server
 
             for (int i = 0; i < DEFINE.PLAYER_ITEM_SLOT; i++)
             {
-                if (item.itemKey == _itemSlotArr[i].itemKey)
+                var slotItem = _itemSlotArr[i];
+                if (slotItem == null)
+                    continue;
+
+                if (item.itemKey == slotItem.itemKey)
                 {
-                    equippedItem = _itemSlotArr[i];
+                    equippedItem = slotItem;
                     break;
                 }
             }
@@ -25,7 +29,7 @@ namespace Server
             if (equippedItem == null)
             {
                 var nextSlot = NextItemSlot();
-                if(nextSlot > 0)
+                if(nextSlot >= 0)
                 {
                     _itemSlotArr[nextSlot] = new InvenItem(nextSlot,item);
                     slot = nextSlot;

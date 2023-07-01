@@ -15,7 +15,7 @@ public class SimplePoint : MonoBehaviour
         TXT_point.text = $"({transform.position.x},{transform.position.y},{transform.position.z})";
         GetComponent<SpriteRenderer>().color = color;
 
-        Observable.Timer(TimeSpan.FromSeconds(3))
+        Observable.Timer(TimeSpan.FromSeconds(2))
                   .Subscribe(_=>
                   { 
                     Destroy(this.gameObject); 

@@ -475,6 +475,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _moveMachine: {fileID: 6877088650858367982}
+  _pointPrefab: {fileID: 8032217318937753618, guid: 1a271eab004fe477cb7a97803c9c2e82, type: 3}
   _anim: {fileID: 337707960541029772}
   _monsterUI: {fileID: 1756603117961871549}
 --- !u!58 &7704246997737720765

@@ -139,21 +139,51 @@ public class EntityStat
         bodyRange   = stat.bodyRange;
     }
 
-    public void AddStr(int inStr) =>
-        str += inStr;
-
-    public void AddDef(int inDef) =>
-        def += inDef;
-
-    public void AddCurrHp(int inHp) =>
-        currHP += inHp;
-
-    public void IncreaseStat(PStat inStat)
+    public void AddStr(int str)
     {
-        str += inStat.str;
-        def += inStat.def;
-        hp  += inStat.hp;
-        currHP += inStat.hp;
+        this.str += str;
+    }
+
+    public void AddDef(int def)
+    {
+        this.def += def;
+    }
+
+    public void AddHp(int hp)
+    {
+        this.hp += hp;
+    }
+
+    public void AddCurrHp(int hp)
+    {
+        currHP += hp;
+    }
+
+    public void IncreaseStat(PStat pStat)
+    {
+        str += pStat.str;
+        def += pStat.def;
+        hp  += pStat.hp;
+        currHP += pStat.hp;
+    }
+
+    public void IncreaseStat(EStatType statType, int val)
+    {
+        switch(statType)
+        {
+            case EStatType.STR:
+                AddStr(val);
+                break;
+            
+            case EStatType.DEF:
+                AddDef(val);
+                break;
+            
+            case EStatType.HP:
+                AddHp(val);
+                AddCurrHp(val);
+                break;
+        }
     }
 }
 

@@ -35,13 +35,16 @@ public class GameMode
     public event Action<Entity> OnRecvMoveHandler;
     public event Action<Entity> OnRecvStopMoveHandler;
     public event Action<S_Dead> OnRecvDeadHandler;
-    public event Action<CS_Attack> OnRecvAttackHandler;
+    public event Action<CS_Attack>      OnRecvAttackHandler;
     public event Action<Entity> OnRecvRespawnHandler;
-    public event Action<PlayerEntity> OnRecvUpdateStatHandler;
-    public event Action<UpdateRewardBroadcast> OnRecvUpdateRewardHandler;
     public event Action<PickRewardResponse>    OnRecvPickRewardHandler;
-    public event Action<UpdateLocationBroadcast> OnUpdateLocationHandler;
+    public event Action<IncreaseStatResponse>   OnRecvIncreasStatHandler;
+    public event Action<UpdateRewardBroadcast>  OnRecvUpdateRewardHandler;
+    
+    public event Action<PlayerEntity>   OnRecvUpdateStatHandler;
+    public event Action<UpdateLocationBroadcast>        OnUpdateLocationHandler;
     public event Action<UpdateGameModeStatusBroadcast> OnUpdateGameModeStatusHandler;
+
 
 
     public int RoomId { get; private set; }
@@ -435,14 +438,17 @@ public class GameMode
     }
 
 
-    public void OnRecvIncreasStat(IncreaseStatResponse inPacket)
+    public void OnRecvIncreasStat(IncreaseStatResponse packet)
     {
-        var player = GetPlayerEntity(inPacket.id);
+        var player = GetPlayerEntity(packet.id);
 
         if (player == null)
             return;
 
-        player.AddGold(-inPacket.usedGold);
+        player.AddGold(-packet.usedGold);
+        player.stat.IncreaseStat((EStatType)packet.type, packet.increase);
+
+        OnRecvIncreasStatHandler?.Invoke(packet);
     }
 
 

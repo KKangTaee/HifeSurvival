@@ -40,9 +40,10 @@ public class IngameUI : MonoBehaviour
     {
         GetComponent<Canvas>().worldCamera = ControllerManager.Instance.GetController<CameraController>().MainCamera;
 
-        GameMode.Instance.OnRecvDeadHandler       += OnRecvDead;
-        GameMode.Instance.OnRecvRespawnHandler    += OnRecvRespawn;
-        GameMode.Instance.OnRecvPickRewardHandler += OnRecvPickReward;
+        GameMode.Instance.OnRecvDeadHandler         += OnRecvDead;
+        GameMode.Instance.OnRecvRespawnHandler      += OnRecvRespawn;
+        GameMode.Instance.OnRecvPickRewardHandler   += OnRecvPickReward;
+        GameMode.Instance.OnRecvIncreasStatHandler  += OnRecvIncreaseStat;
 
         SetKDView();
 
@@ -117,7 +118,6 @@ public class IngameUI : MonoBehaviour
     private void IncreaseStat(EStatType statType)
     {
         GameMode.Instance.OnSendIncreaseStat((int)statType, 1);
-        Debug.Log("증가!");
     }
 
     public void OnRecvDead(S_Dead inPacket)
@@ -189,8 +189,13 @@ public class IngameUI : MonoBehaviour
         if((ERewardType)packet.rewardType == ERewardType.GOLD)
         {
            var entity =  GameMode.Instance.EntitySelf;
-
            SetStatUI(entity.stat, entity.gold);
         } 
+    }
+
+    public void OnRecvIncreaseStat(IncreaseStatResponse packet)
+    {
+         var entity =  GameMode.Instance.EntitySelf;
+        SetStatUI(entity.stat, entity.gold);
     }
 }

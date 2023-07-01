@@ -69,8 +69,8 @@ public class MoveMachine : MonoBehaviour
         _target = inTarget;
         _currSpeed = inSpeed;
         _stopFunc = inStopFunc;
-        _doneCallback = doneCallback;
         _dirCallback = dirCallback;
+        _doneCallback = doneCallback;
 
         StartCoroutine(nameof(Co_MoveLerpTarget));
     }
@@ -113,6 +113,7 @@ public class MoveMachine : MonoBehaviour
 
             yield return null;
         }
+        
         _doneCallback?.Invoke();
     }
 

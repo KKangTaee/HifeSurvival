@@ -230,7 +230,11 @@ public partial class Player : EntityObject
         MoveLerpTarget(inTarget,
                        inTarget.TargetEntity.stat.moveSpeed,
                       ()=> CanAttack(inTarget.GetPos()),
-                      (dir) => _anim.OnWalk(dir),
+                      (dir) => 
+                      {
+                        _anim.OnWalk(dir);
+                        dirCallback?.Invoke(dir);
+                      },
                       doneCallback);
     }
 
@@ -238,7 +242,6 @@ public partial class Player : EntityObject
     public void OnAttack(in Vector3 inDir)
     {
         _anim.OnAttack(inDir);
-
         StopMoveEntity(GetPos());
     }
 

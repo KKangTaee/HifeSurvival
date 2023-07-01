@@ -113,7 +113,7 @@ public class ClientPacketHandler : PacketHandler
     public override void PickRewardResponseHandler(Session session, IPacket packet)
     {
         PickRewardResponse pickReward = packet as PickRewardResponse;
-        GameMode.Instance.OnRecvGetItem(pickReward);
+        GameMode.Instance.OnRecvPickReward(pickReward);
     }
 
     public override void UpdateRewardBroadcastHandler(Session session, IPacket packet)

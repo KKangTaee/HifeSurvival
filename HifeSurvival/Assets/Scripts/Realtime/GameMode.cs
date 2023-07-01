@@ -256,6 +256,18 @@ public class GameMode
         NetworkManager.Instance.Send(request);
     }
 
+    public void OnSendIncreaseStat(int type, int increase)
+    {
+        IncreaseStatRequest increaseStat = new IncreaseStatRequest()
+        {
+            id = EntitySelf.id,
+            type = type,
+            increase = increase
+        };
+
+        NetworkManager.Instance.Send(increaseStat);
+    }
+
 
 
     //-----------------
@@ -367,7 +379,6 @@ public class GameMode
             monsterId = m.monstersKey,
             grade = m.grade,
             pos = m.pos,
-            // stat = new EntityStat(monster),
         };
         return monsterEntity;
     }
@@ -436,7 +447,7 @@ public class GameMode
 
 
 
-    public void OnRecvGetItem(PickRewardResponse inPacket)
+    public void OnRecvPickReward(PickRewardResponse inPacket)
     {
         var player = GetPlayerEntity(inPacket.id);
         
@@ -451,7 +462,6 @@ public class GameMode
 
         OnRecvPickRewardHandler?.Invoke(inPacket);
     }
-
 
 
 
@@ -519,7 +529,6 @@ public class GameMode
 
         entity.stat = new EntityStat(packet.originStat);
     }
-
 
     public void OnUpdateReward(UpdateRewardBroadcast inPacket)
     {

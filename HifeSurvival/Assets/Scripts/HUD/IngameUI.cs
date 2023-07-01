@@ -7,10 +7,11 @@ using DG.Tweening;
 using TMPro;
 using UniRx;
 using System;
-
+using UniRx.Triggers;
 
 public class IngameUI : MonoBehaviour
 {
+ 
     [SerializeField] RectTransform RT_kdList;
 
     [Header("[Top]")]
@@ -28,8 +29,12 @@ public class IngameUI : MonoBehaviour
     [SerializeField] KDView []      _kdViewArr;
     [SerializeField] ItemSlotList   _itemSlotList;
 
-    IDisposable _respawnTimer;
+    public const int BUTTON_CLICK_INTERVAL_MILLISECONDS = 250;
 
+    private IDisposable _respawnTimer;
+
+    private EStatType   _onClickButtonType = EStatType.NONE;
+    private long        _onClickButtonTime;
 
     public void Init()
     {
@@ -40,8 +45,9 @@ public class IngameUI : MonoBehaviour
         GameMode.Instance.OnRecvPickRewardHandler += OnRecvPickReward;
 
         SetKDView();
-    }
 
+        SetButton();
+    }
 
     public void SetStatUI(EntityStat inStat, int inGold)
     {
@@ -75,6 +81,44 @@ public class IngameUI : MonoBehaviour
         }
     }
 
+    private void SetButton()
+    {
+        // 버튼을 누르고 있을 때 true로 바꿉니다.
+        BTN_addStr.OnPointerDownAsObservable()
+            .Subscribe(_ =>
+            {
+                if(_onClickButtonType != EStatType.NONE)
+                    return;
+
+                _onClickButtonType = EStatType.STR;
+            })
+            .AddTo(this);
+
+        BTN_addStr.OnPointerUpAsObservable()
+            .Merge(BTN_addStr.OnPointerExitAsObservable())
+            .Subscribe(_=>{
+                _onClickButtonType = EStatType.NONE;
+            })
+            .AddTo(this);
+
+        this.UpdateAsObservable()
+            .Where(_ => _onClickButtonType != EStatType.NONE)
+            .Subscribe(_ => {
+                var utcNow = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                if(utcNow - _onClickButtonTime > BUTTON_CLICK_INTERVAL_MILLISECONDS)
+                {
+                    IncreaseStat(_onClickButtonType);
+                    _onClickButtonTime = utcNow;
+                }
+            })
+            .AddTo(this);
+    }
+
+    private void IncreaseStat(EStatType statType)
+    {
+        GameMode.Instance.OnSendIncreaseStat((int)statType, 1);
+        Debug.Log("증가!");
+    }
 
     public void OnRecvDead(S_Dead inPacket)
     {
@@ -140,8 +184,13 @@ public class IngameUI : MonoBehaviour
         HideRespawnTimer();
     }
 
-    public void OnRecvPickReward(PickRewardResponse inEntity)
+    public void OnRecvPickReward(PickRewardResponse packet)
     {
+        if((ERewardType)packet.rewardType == ERewardType.GOLD)
+        {
+           var entity =  GameMode.Instance.EntitySelf;
 
+           SetStatUI(entity.stat, entity.gold);
+        } 
     }
 }

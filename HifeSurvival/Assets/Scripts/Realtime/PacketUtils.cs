@@ -14,3 +14,14 @@ public enum ERewardStatus
     DROP_REWARD   = 1,
     PICK_REWARD   = 2,
 }
+
+public enum EStatType
+{
+    NONE = 0,
+
+    STR,
+
+    DEF,
+
+    HP,
+}

@@ -86,20 +86,33 @@ public class IngameUI : MonoBehaviour
     {
         // 버튼을 누르고 있을 때 true로 바꿉니다.
         BTN_addStr.OnPointerDownAsObservable()
-            .Subscribe(_ =>
-            {
-                if(_onClickButtonType != EStatType.NONE)
-                    return;
-
-                _onClickButtonType = EStatType.STR;
-            })
+            .Where(_=>_onClickButtonType == EStatType.NONE)
+            .Subscribe(_ => _onClickButtonType = EStatType.STR)
             .AddTo(this);
 
         BTN_addStr.OnPointerUpAsObservable()
             .Merge(BTN_addStr.OnPointerExitAsObservable())
-            .Subscribe(_=>{
-                _onClickButtonType = EStatType.NONE;
-            })
+            .Subscribe(_=> _onClickButtonType = EStatType.NONE)
+            .AddTo(this);
+
+        BTN_addDef.OnPointerDownAsObservable()
+            .Where(_=>_onClickButtonType == EStatType.NONE)
+            .Subscribe(_ => _onClickButtonType = EStatType.DEF)
+            .AddTo(this);
+
+        BTN_addDef.OnPointerUpAsObservable()
+            .Merge(BTN_addDef.OnPointerExitAsObservable())
+            .Subscribe(_=> _onClickButtonType = EStatType.NONE)
+            .AddTo(this);
+
+         BTN_addHp.OnPointerDownAsObservable()
+            .Where(_=>_onClickButtonType == EStatType.NONE)
+            .Subscribe(_ => _onClickButtonType = EStatType.DEF)
+            .AddTo(this);
+
+        BTN_addHp.OnPointerUpAsObservable()
+            .Merge(BTN_addHp.OnPointerExitAsObservable())
+            .Subscribe(_=> _onClickButtonType = EStatType.NONE)
             .AddTo(this);
 
         this.UpdateAsObservable()
@@ -195,7 +208,37 @@ public class IngameUI : MonoBehaviour
 
     public void OnRecvIncreaseStat(IncreaseStatResponse packet)
     {
-         var entity =  GameMode.Instance.EntitySelf;
+        var entity =  GameMode.Instance.EntitySelf;
         SetStatUI(entity.stat, entity.gold);
+        PlayAnimIncreaseStat((EStatType)packet.type);
+    }
+
+    public void PlayAnimIncreaseStat(EStatType type)
+    {
+        TMP_Text targetUI = null;
+
+        switch(type)
+        {
+            case EStatType.STR:
+                targetUI = TMP_str;
+                break;
+
+            case EStatType.DEF:
+                targetUI = TMP_def;
+                break;
+
+            case EStatType.HP:
+                targetUI = TMP_hp;
+                break;
+        }
+
+        // Sequence 생성
+        Sequence sequence = DOTween.Sequence();
+
+        // 0.1초 동안 scale 1.3으로 확대
+        sequence.Append(targetUI.transform.DOScale(1.3f, 0.1f));
+
+        // 0.2초 동안 scale 1로 축소
+        sequence.Append(targetUI.transform.DOScale(1f, 0.2f));
     }
 }

@@ -205,15 +205,18 @@ public class WorldMap : MonoBehaviour
     }
 
 
-    public void PickReward(int inWorldId)
+    public void PickReward(UpdateRewardBroadcast packet)
     {
-        var itemObj = GetWorldObjEnumerable<WorldItem>().FirstOrDefault(x => x.WorldId == inWorldId);
+        var itemObj = GetWorldObjEnumerable<WorldItem>().FirstOrDefault(x => x.WorldId == packet.worldId);
 
         if (itemObj == null)
         {
             Debug.LogError($"[{nameof(PickReward)}] itemObject is null or empty!");
             return;
         }
+
+        if(packet.rewardType == (int)ERewardType.GOLD)
+           ActionDisplayUI.Show(ActionDisplayUI.ESpawnType.GET_GOLD, packet.gold, itemObj.transform.position + Vector3.up);
 
         itemObj.PlayGetItem(() => 
         {
@@ -249,7 +252,7 @@ public class WorldMap : MonoBehaviour
         }
         else if(inPacket.status == (int)ERewardStatus.PICK_REWARD)
         {
-             PickReward(inPacket.worldId);
+             PickReward(inPacket);
         }
     }
 

@@ -95,6 +95,7 @@ public partial class Monster : EntityObject
         {
             // NOTE@taeho.kang 사망 후, 연출이 끝나고 콜백처리를 여기서 한다.
             // 아마 오브젝트 풀에 넣는 작업으로 이루어질듯
+            ControllerManager.Instance.GetController<ObjectPoolController>().StoreToPool(this);
         });
     }
 }

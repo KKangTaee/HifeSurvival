@@ -82,7 +82,6 @@ public class ActionDisplayUI : MonoBehaviour
     public void PlayGetGold(int gold, Action doneCallback)
     {
         float duration      = 1f; 
-        float moveY         = 2f; 
         float fadeDuration  = 0.5f;
 
         TMP_getGold.text = $"+{gold}";
@@ -96,13 +95,17 @@ public class ActionDisplayUI : MonoBehaviour
         Sequence seq = DOTween.Sequence();
         
         // 이동 애니메이션 추가
-        seq.Append(TMP_getGold.transform.DOLocalMoveY(moveY, duration));
+        seq.Append(TMP_getGold.transform.DOMoveY(TMP_getGold.transform.position.y + 1.8f, duration));
 
         // 페이드 아웃 애니메이션 추가
         seq.Insert(duration - fadeDuration, canvasGroup.DOFade(0, fadeDuration));
 
         // 모든 애니메이션이 끝나면 콜백 함수 호출
-        seq.OnComplete(() => doneCallback?.Invoke());
+        seq.OnComplete(() =>
+        {
+            TMP_getGold.transform.localPosition = Vector3.zero;
+            doneCallback?.Invoke();
+        });
     }
 
 
@@ -130,7 +133,8 @@ public class ActionDisplayUI : MonoBehaviour
                 break;
 
             case ESpawnType.GET_GOLD:
-                
+                inst.transform.position = pos;
+                inst.PlayGetGold(val, ()=> objectPool.StoreToPool(inst));
                 break;
         }
     }

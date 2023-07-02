@@ -162,8 +162,8 @@ public sealed class PlayerController : EntityObjectController<Player>
         var selfAttactValue = Self.TargetEntity.GetAttackValue();
         var damagedVal = inTarget.TargetEntity.GetDamagedValue(selfAttactValue);
 
-        SetAttackState(inTarget, Self, Self.GetPos(), Self.GetDir(), damagedVal);
-
+        SetAttackState(inTarget, Self, Self.GetPos(), damagedVal);
+        
         _gameMode.OnSendAttack(inTarget.id, damagedVal);
 
         _attackDelay = Observable.Timer(TimeSpan.FromSeconds(Self.TargetEntity.stat.attackSpeed))

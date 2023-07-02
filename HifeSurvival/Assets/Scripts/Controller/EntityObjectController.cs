@@ -105,14 +105,10 @@ public abstract class EntityObjectController<T> : ControllerBase where T : Entit
             Debug.LogError($"[{nameof(OnRecvAttack)}] toEntity is null or empty! : {inPacket.targetId}");
             return;
         }
-
-
-        Debug.Log(inPacket.id);
-
+        
         SetAttackState(toEntity,
                        fromEntity,
                        default,  //inPacket.fromPos.ConvertUnityVector3(),
-                       Vector3.Normalize(toEntity.GetPos() - fromEntity.GetPos()),
                        inPacket.attackValue);
     }
 
@@ -183,12 +179,13 @@ public abstract class EntityObjectController<T> : ControllerBase where T : Entit
     }
 
 
-    public void SetAttackState(EntityObject inTo, EntityObject inFrom, in Vector3 inFromPos, in Vector3 inFromDir, int inDamageVal)
+    public void SetAttackState(EntityObject inTo, EntityObject inFrom, in Vector3 fromPos, int damageVal)
     {
         var attackParam = new AttackParam()
         {
-            attackValue = inDamageVal,
+            attackValue = damageVal,
             target = inTo,
+            fromPos = fromPos,
         };
 
         inFrom.ChangeState(EntityObject.EStatus.ATTACK, attackParam);

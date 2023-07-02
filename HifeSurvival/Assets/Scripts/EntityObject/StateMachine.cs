@@ -57,11 +57,8 @@ public struct IdleParam
 public struct AttackParam
 {
     public int attackValue;
-
+    public Vector3 fromPos;
     public EntityObject target;
-
-    // public Vector3 fromPos;
-    // public Vector3 fromDir;
 }
 
 

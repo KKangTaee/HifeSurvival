@@ -9,12 +9,14 @@ using UnityEngine;
 
 public partial class Monster
 {
+    public const int DISTANCE_DIFF = 2;
+
     public class AttackState : IState<Monster>
     {
         public void Enter<P>(Monster inSelf, in P inParam) where P : struct
         {
             if (inParam is AttackParam attack)
-                Attack(attack, inSelf, attack.target);
+                TryAttack(attack, inSelf, attack.target);
         }
 
         public void Exit()
@@ -25,18 +27,40 @@ public partial class Monster
         public void Update<P>(Monster inSelf, in P inParam) where P : struct
         {
             if (inParam is AttackParam attack)
-                Attack(attack, inSelf, attack.target);
+                TryAttack(attack, inSelf, attack.target);
         }
 
-        #region  Local Func
-        void Attack(AttackParam param, Monster fromMonster, EntityObject toEntity)
+
+        void TryAttack(AttackParam param, Monster fromMonster, EntityObject toEntity)
         {
-            var dir = Vector3.Normalize(toEntity.GetPos() - fromMonster.GetPos());
+            var currPos = fromMonster.GetPos();
+            var distPos = fromMonster.TargetEntity.pos.ConvertUnityVector3();
 
-            fromMonster.OnAttack(dir);
-            toEntity.OnDamaged(param.attackValue);
+            if(Vector3.Distance(currPos,  distPos) > DISTANCE_DIFF)
+            {
+                fromMonster.MoveLerpExpect(currPos, 
+                                           distPos,fromMonster.TargetEntity.stat.moveSpeed, 
+                                           default, 
+                                           ()=>
+                                           {
+                                                Attack();
+                                           });
+            }
+            else
+            {
+                fromMonster.SetPos(distPos);
+                Attack();
+            }
+
+
+            void Attack()
+            {
+                var dir = Vector3.Normalize(toEntity.GetPos() - fromMonster.GetPos());
+            
+                fromMonster.OnAttack(dir);
+                toEntity.OnDamaged(param.attackValue);
+            }
         }
-        #endregion
     }
 
     public class DeadState : IState<Monster>

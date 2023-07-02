@@ -4,15 +4,32 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 using TMPro;
+using System;
+using System.Linq;
 
 public class PlayerUI : MonoBehaviour
 {
+    [Serializable]
+    public class ItemView
+    {
+        [SerializeField] private Image icon;
+
+        public bool IsEquipping { get => icon.sprite != null; }
+
+        public void SetSprite(Sprite iconSprite)
+        {
+            this.icon.gameObject.SetActive(iconSprite != null);
+            this.icon.sprite = iconSprite;
+        }
+    }
+
+
     [SerializeField] Slider SLD_hpInner;
     [SerializeField] Slider SLD_hpBar;
     [SerializeField] Image  IMG_hpInnerFill;
     [SerializeField] Image  IMG_hpBarFill;
     [SerializeField] TMP_Text TMP_hp;
-
+    [SerializeField] ItemView [] _itemViewArr;
 
     private int _maxHP;
     private int _currHP;
@@ -78,5 +95,26 @@ public class PlayerUI : MonoBehaviour
         // 바로 감소시키는 hpBar
         SLD_hpBar.value    = (float)_currHP / _maxHP;
         SLD_hpInner.value  = (float)_currHP / _maxHP;
+    }
+
+    public void EquipItem(EntityItem entityItem)
+    {
+        var emptyView = _itemViewArr.FirstOrDefault(x=>x.IsEquipping == false);
+
+        if(emptyView == null)
+        {
+            Debug.LogError($"[{nameof(EquipItem)}] emptyView is null or empty!");
+            return;
+        }
+
+        var iconSprite = GetSpriteIcon(entityItem.itemKey_static);
+        emptyView.SetSprite(iconSprite);
+    }
+
+    public Sprite GetSpriteIcon(int itemKey)
+    {
+        // TODO@taeho.kang 임시
+        string path = "Textures/Items";
+        return Resources.Load<Sprite>($"{path}/item_icon_{itemKey}");
     }
 }

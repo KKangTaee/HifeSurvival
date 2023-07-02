@@ -199,11 +199,18 @@ public class IngameUI : MonoBehaviour
 
     public void OnRecvPickReward(PickRewardResponse packet)
     {
-        if((ERewardType)packet.rewardType == ERewardType.GOLD)
+        var entity =  GameMode.Instance.EntitySelf;
+
+        switch((ERewardType)packet.rewardType)
         {
-           var entity =  GameMode.Instance.EntitySelf;
-           SetStatUI(entity.stat, entity.gold);
-        } 
+            case ERewardType.GOLD:
+                SetStatUI(entity.stat, entity.gold);
+                break;
+
+            case ERewardType.ITEM:
+                _itemSlotList.EquipItem(entity.itemSlot[0]);
+                break;
+        }
     }
 
     public void OnRecvIncreaseStat(IncreaseStatResponse packet)

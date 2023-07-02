@@ -9,6 +9,7 @@ using System;
 public class ItemSlot : MonoBehaviour
 {
     [SerializeField] Image IMG_itemIcon;
+    [SerializeField] Image IMG_itemAdd;
     [SerializeField] Image IMG_cooltime;
     [SerializeField] TMP_Text TMP_cooltime;
     [SerializeField] Button BTN_click;
@@ -19,14 +20,21 @@ public class ItemSlot : MonoBehaviour
     public bool IsEquipping    { get=> ItemInfo != null; }
     public EntityItem ItemInfo { get; private set; }
 
-    public void EquipItem(EntityItem inEntityItem)
+
+    public void EquipItem(EntityItem entityItem)
     {
-        ItemInfo = inEntityItem;
+        ItemInfo = entityItem;
+
+        SetActiveIcon();
+
+        IMG_itemIcon.sprite = GetSpriteIcon(entityItem.itemKey_static);
     }
     
     public void RemoveItem()
     {
         StopCooltime();
+
+        SetActiveIcon();
     }
 
     public void StartCooltime()
@@ -58,6 +66,12 @@ public class ItemSlot : MonoBehaviour
             .AddTo(this);
     }
 
+    public void SetActiveIcon()
+    {
+        IMG_itemAdd.gameObject.SetActive(IsEquipping == false);
+        IMG_itemIcon.gameObject.SetActive(IsEquipping == true);
+    }
+
     public void StopCooltime()
     {
         if (updateSubscription != null)
@@ -71,5 +85,12 @@ public class ItemSlot : MonoBehaviour
             countdownSubscription.Dispose();
             countdownSubscription = null;
         }
+    }
+
+    public Sprite GetSpriteIcon(int itemKey)
+    {
+        // TODO@taeho.kang 임시
+        string path = "Textures/Items";
+        return Resources.Load<Sprite>($"{path}/item_icon_{itemKey}");
     }
 }

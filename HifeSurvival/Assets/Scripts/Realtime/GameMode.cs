@@ -453,20 +453,21 @@ public class GameMode
 
 
 
-    public void OnRecvPickReward(PickRewardResponse inPacket)
+    public void OnRecvPickReward(PickRewardResponse packet)
     {
-        var player = GetPlayerEntity(inPacket.id);
+        var player = GetPlayerEntity(packet.id);
         
-        if(inPacket.gold == 0)
+        if(packet.gold == 0)
         {
-            player.itemSlot[inPacket.itemSlotId] = new EntityItem(inPacket.item);
+            Debug.LogWarning($"{packet.itemSlotId}, itemKey : {packet.id}");
+            player.itemSlot[packet.itemSlotId] = new EntityItem(packet.item);
         }
         else
         {
-            player.AddGold(inPacket.gold);
+            player.AddGold(packet.gold);
         }
 
-        OnRecvPickRewardHandler?.Invoke(inPacket);
+        OnRecvPickRewardHandler?.Invoke(packet);
     }
 
 

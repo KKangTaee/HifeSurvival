@@ -27,7 +27,6 @@ public class WorldItem : WorldObjectBase
     {
         WorldId = inWorldId;
         transform.position = inPos;
-        Debug.Log(inRewardType);
         SetTargetAnim(inRewardType);
 
         _col.enabled = false;

@@ -7,6 +7,18 @@ public class ItemSlotList : MonoBehaviour
 {
     [SerializeField] ItemSlot[] _itemSlotArr;
 
+
+    //---------------
+    // unity event
+    //---------------
+
+    private void Awake()
+    {
+        foreach(var slot in _itemSlotArr)
+            slot.RemoveItem();
+    }
+
+
     public void EquipItem(EntityItem inEntityItem)
     {
        var emptySlot = _itemSlotArr.FirstOrDefault(x=>x.IsEquipping == false);
@@ -16,6 +28,8 @@ public class ItemSlotList : MonoBehaviour
             Debug.LogError($"[{nameof(EquipItem)} itemSlot is full!");
             return;
        }
+
+        Debug.Log("임시 호출!");
 
        emptySlot.EquipItem(inEntityItem);
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using TMPro;
 
 public class PlayerUI : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class PlayerUI : MonoBehaviour
     [SerializeField] Slider SLD_hpBar;
     [SerializeField] Image  IMG_hpInnerFill;
     [SerializeField] Image  IMG_hpBarFill;
+    [SerializeField] TMP_Text TMP_hp;
 
 
     private int _maxHP;
@@ -65,6 +67,10 @@ public class PlayerUI : MonoBehaviour
         // 애니메이션으로 감소시키는 hpInner
         float newFillAmount = (float)_currHP / _maxHP;
         DOTween.To(() => SLD_hpInner.value, x => SLD_hpInner.value = x, newFillAmount, 0.2f).SetEase(Ease.InCubic);
+    
+        TMP_hp.transform.localScale *= 1.8f;
+        TMP_hp.transform.DOScale(1, 0.2f);
+        TMP_hp.text = _currHP.ToString();
     }
 
     public void UpdateHpBar()

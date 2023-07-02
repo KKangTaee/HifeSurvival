@@ -239,6 +239,12 @@ public class IngameUI : MonoBehaviour
                 break;
         }
 
+        if(targetUI == null)
+        {
+            Debug.LogError($"[{nameof(PlayAnimIncreaseStat)}] targetUI is null or empty! type : {type}");
+            return;
+        }
+
         // Sequence 생성
         Sequence sequence = DOTween.Sequence();
 

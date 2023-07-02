@@ -45,23 +45,20 @@ public partial class Monster : EntityObject
     {
         SetPoint(inDestPos, Color.magenta);
         
-        var currDir = Vector3.Normalize(inDestPos - GetPos());
-        _anim.SetDir(currDir.x);
+        var currDir = Vector3.Normalize(inDestPos - GetPos());    
         
         MoveLerpExpect(inCurrPos, inDestPos, inSpeed, inTimeStamp);
     }
 
-    public void OnMove(in Vector3 inDir)
+    public void OnMove(in Vector3 dir)
     {
-        _anim.SetDir(inDir.x);
-        _anim.OnWalk();
-        MoveEntity(inDir);
+        _anim.OnWalk(dir);
+        MoveEntity(dir);
     }
 
-    public void OnAttack(in Vector3 inDir)
+    public void OnAttack(in Vector3 dir)
     {
-        _anim.SetDir(inDir.x);
-        _anim.OnAttack();
+        _anim.OnAttack(dir);
         StopMoveEntity(GetPos());
     }
 

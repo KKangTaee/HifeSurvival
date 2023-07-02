@@ -68,7 +68,7 @@ public class HeroAnimator : MonoBehaviour
         transform.localScale = new Vector3(scaleX, 1, 1);
 
         // y축
-         _anim.SetFloat(ParamKey.KEY_DIR, dir.y);
+        _anim.SetFloat(ParamKey.KEY_DIR, dir.y);
     }
 
     public void OnDead()

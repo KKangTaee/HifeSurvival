@@ -57,8 +57,9 @@ public class MonsterAnimator : MonoBehaviour
         _targetAnim.SetState(MonsterState.Idle);
     }
 
-    public void OnAttack()
+    public void OnAttack(in Vector3 dir)
     {
+        SetDir(dir);
         _targetAnim.Attack();
     }
 
@@ -67,8 +68,9 @@ public class MonsterAnimator : MonoBehaviour
         _targetAnim.Die();
     }
 
-    public void OnWalk()
+    public void OnWalk(in Vector3 dir)
     {
+        SetDir(dir);
         _targetAnim.SetState(MonsterState.Walk);
     }
 
@@ -83,9 +85,9 @@ public class MonsterAnimator : MonoBehaviour
         _targetAnim.Damage();
     }
 
-    public void SetDir(float inDir)
+    public void SetDir(in Vector3 dir)
     {
-        var scaleX = inDir > 0 ? -1 : 1;
+        var scaleX = dir.x > 0 ? -1 : 1;
         transform.localScale = new Vector3()
         {
             x = scaleX * transform.localScale.x,

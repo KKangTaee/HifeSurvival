@@ -133,6 +133,7 @@ public interface IPacket
         // {3} 멤버 변수 Write
         public static string packetFormat =
 @"
+[Serializable]
 public class {0} : IPacket
 {{
 	{1}
@@ -171,7 +172,7 @@ public class {0} : IPacket
 		// {0} 변수 형식
 		// {1} 변수 이름
 		public static string memberFormat =
-@"public {0} {1};";
+@"public {0} {1} {{ get; set; }}";
 
 		// {0} 리스트 이름 [대문자]
 		// {1} 리스트 이름 [소문자]

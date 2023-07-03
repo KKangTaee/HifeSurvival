@@ -56,6 +56,7 @@ namespace Server
             Push(() =>
             {
                 Logger.GetInstance().Log("INF", $"PacketType : {packet.GetType()}", $"{nameof(Broadcast)}");
+                Logger.GetInstance().Trace(packet);
                 ArraySegment<byte> segment = packet.Write();
                 _broadcastMessage.Add(segment);
             });
@@ -66,6 +67,7 @@ namespace Server
             Push(() =>
             {
                 Logger.GetInstance().Log("INF", $"PacketType : {packet.GetType()}", $"{nameof(Send)}");
+                Logger.GetInstance().Trace(packet);
                 ArraySegment<byte> segment = packet.Write();
                 if(_sendMessage.TryGetValue(id, out var msgList))
                 {

@@ -79,11 +79,13 @@ public abstract class EntityObject : MonoBehaviour
 
     public void MoveLerpExpect(in Vector3 inCurrPos, in Vector3 inDestPos, float inSpeed, long inTimeStamp, Action doneCallback = null)
     {
+        _moveMachine.StopMoveLerpExpect();
         _moveMachine.StartMoveLerpExpect(inCurrPos, inDestPos, inSpeed, inTimeStamp, doneCallback);
     }
 
     public void MoveLerpTarget(EntityObject inTarget, float inSpeed, Func<bool> inStopFunc, Action<Vector3> dirCallback, Action doneCallback)
     {
+        _moveMachine.StopMoveLerpTarget();
         _moveMachine.StartMoveLerpTarget(inTarget, inSpeed, inStopFunc, dirCallback, doneCallback);
     }
 
@@ -96,21 +98,11 @@ public abstract class EntityObject : MonoBehaviour
 
 
     [SerializeField] private SimplePoint _pointPrefab;
-    private List<SimplePoint> _pointList = new List<SimplePoint>();
 
     public void SetPoint(Vector3 pos, Color color)
     {
         var inst = Instantiate(_pointPrefab);
         inst.SetPoint(pos, color);
-        _pointList.Add(inst);
-    }
-
-    public void RemovePoint()
-    {
-        foreach (var point in _pointList)
-            Destroy(point);
-
-        _pointList.Clear();
     }
 }
 

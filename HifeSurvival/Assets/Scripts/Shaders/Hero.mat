@@ -11,7 +11,7 @@ Material:
   m_Shader: {fileID: 4800000, guid: bf6bffc89f23965418a432dc7b07c1c0, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords:
-  - _STATUS_SPAWN
+  - _STATUS_NONE
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -53,9 +53,9 @@ Material:
     m_Floats:
     - _DstBlend: 0
     - _EnableExternalAlpha: 0
-    - _Spawn_Val: 2
+    - _Spawn_Val: 1.69
     - _SrcBlend: 1
-    - _Status: 1
+    - _Status: 0
     - _TwistUvAmount: 1
     - _TwistUvRadius: 0.75
     m_Colors:

@@ -108,32 +108,6 @@ public partial class Player : EntityObject
 
                 // 여기에 브로드캐스팅 처리
                 _getItemCallback?.Invoke(dropItem.WorldId);
-                // dropItem.PlayGetItem();
-            }
-        });
-
-        _playerTrigger.AddTriggerStay((col) =>
-        {
-            if (col.CompareTag(TagName.WORLDMAP_WALL) == true)
-            {
-                if (_worldMap == null)
-                    _worldMap = col.gameObject.GetComponentInParent<WorldMap>();
-
-                Vector3 playerPos = transform.position;
-                Vector3 hitPoint = col.ClosestPoint(playerPos);
-
-                _worldMap?.UpdateWallMasking(hitPoint, playerPos);
-            }
-        });
-
-        _playerTrigger.AddTriggerExit((col) =>
-        {
-            if (col.CompareTag(TagName.WORLDMAP_WALL) == true)
-            {
-                if (_worldMap == null)
-                    _worldMap = col.gameObject.GetComponentInParent<WorldMap>();
-
-                _worldMap?.DoneWallMasking();
             }
         });
 

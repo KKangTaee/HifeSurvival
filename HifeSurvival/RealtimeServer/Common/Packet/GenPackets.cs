@@ -43,7 +43,6 @@ public interface IPacket
 }
 
 
-[Serializable]
 public class C_JoinToGame : IPacket
 {
 	public string userId { get; set; }
@@ -96,10 +95,9 @@ public class C_JoinToGame : IPacket
 	}
 }
 
-[Serializable]
 public class S_JoinToGame : IPacket
 {
-	[Serializable]
+	
 	public class JoinPlayer
 	{
 		public string userId { get; set; }
@@ -192,7 +190,6 @@ public class S_JoinToGame : IPacket
 	}
 }
 
-[Serializable]
 public class S_LeaveToGame : IPacket
 {
 	public string userId { get; set; }
@@ -240,7 +237,6 @@ public class S_LeaveToGame : IPacket
 	}
 }
 
-[Serializable]
 public class CS_SelectHero : IPacket
 {
 	public int id { get; set; }
@@ -283,7 +279,6 @@ public class CS_SelectHero : IPacket
 	}
 }
 
-[Serializable]
 public class CS_ReadyToGame : IPacket
 {
 	public int id { get; set; }
@@ -321,7 +316,6 @@ public class CS_ReadyToGame : IPacket
 	}
 }
 
-[Serializable]
 public class S_Countdown : IPacket
 {
 	public int countdownSec { get; set; }
@@ -359,7 +353,6 @@ public class S_Countdown : IPacket
 	}
 }
 
-[Serializable]
 public class S_StartGame : IPacket
 {
 	public int playTimeSec { get; set; }
@@ -425,7 +418,6 @@ public class S_StartGame : IPacket
 	}
 }
 
-[Serializable]
 public class S_SpawnMonster : IPacket
 {
 	public List<MonsterSpawn> monsterList { get; set; } = new List<MonsterSpawn>();
@@ -472,7 +464,6 @@ public class S_SpawnMonster : IPacket
 	}
 }
 
-[Serializable]
 public class CS_Attack : IPacket
 {
 	public int id { get; set; }
@@ -520,7 +511,6 @@ public class CS_Attack : IPacket
 	}
 }
 
-[Serializable]
 public class MoveRequest : IPacket
 {
 	public int id { get; set; }
@@ -574,7 +564,6 @@ public class MoveRequest : IPacket
 	}
 }
 
-[Serializable]
 public class MoveResponse : IPacket
 {
 	
@@ -610,7 +599,6 @@ public class MoveResponse : IPacket
 	}
 }
 
-[Serializable]
 public class S_Dead : IPacket
 {
 	public int id { get; set; }
@@ -658,7 +646,6 @@ public class S_Dead : IPacket
 	}
 }
 
-[Serializable]
 public class S_Respawn : IPacket
 {
 	public int id { get; set; }
@@ -702,7 +689,6 @@ public class S_Respawn : IPacket
 	}
 }
 
-[Serializable]
 public class IncreaseStatRequest : IPacket
 {
 	public int id { get; set; }
@@ -750,7 +736,6 @@ public class IncreaseStatRequest : IPacket
 	}
 }
 
-[Serializable]
 public class IncreaseStatResponse : IPacket
 {
 	public int id { get; set; }
@@ -808,7 +793,6 @@ public class IncreaseStatResponse : IPacket
 	}
 }
 
-[Serializable]
 public class PickRewardRequest : IPacket
 {
 	public int id { get; set; }
@@ -851,7 +835,6 @@ public class PickRewardRequest : IPacket
 	}
 }
 
-[Serializable]
 public class PickRewardResponse : IPacket
 {
 	public int id { get; set; }
@@ -912,7 +895,6 @@ public class PickRewardResponse : IPacket
 	}
 }
 
-[Serializable]
 public class UpdateRewardBroadcast : IPacket
 {
 	public int worldId { get; set; }
@@ -971,7 +953,6 @@ public class UpdateRewardBroadcast : IPacket
 	}
 }
 
-[Serializable]
 public class UpdateLocationBroadcast : IPacket
 {
 	public int id { get; set; }
@@ -1025,7 +1006,6 @@ public class UpdateLocationBroadcast : IPacket
 	}
 }
 
-[Serializable]
 public class UpdateStatBroadcast : IPacket
 {
 	public int id { get; set; }
@@ -1069,7 +1049,6 @@ public class UpdateStatBroadcast : IPacket
 	}
 }
 
-[Serializable]
 public class UpdatePlayerCurrency : IPacket
 {
 	public int id { get; set; }
@@ -1121,7 +1100,6 @@ public class UpdatePlayerCurrency : IPacket
 	}
 }
 
-[Serializable]
 public class PlayStartRequest : IPacket
 {
 	public int id { get; set; }
@@ -1159,7 +1137,6 @@ public class PlayStartRequest : IPacket
 	}
 }
 
-[Serializable]
 public class PlayStartResponse : IPacket
 {
 	public int id { get; set; }
@@ -1197,7 +1174,6 @@ public class PlayStartResponse : IPacket
 	}
 }
 
-[Serializable]
 public class UpdateGameModeStatusBroadcast : IPacket
 {
 	public int status { get; set; }
@@ -1234,6 +1210,7 @@ public class UpdateGameModeStatusBroadcast : IPacket
 		return SendBufferHelper.Close(count);
 	}
 }
+
 public struct PVec3
 {
 	public float x { get; set; }
@@ -1262,7 +1239,8 @@ public struct PVec3
 		return success;
 	}	
 }
-	public struct PStat
+	
+public struct PStat
 {
 	public int str { get; set; }
 	public int def { get; set; }
@@ -1315,7 +1293,8 @@ public struct PVec3
 		return success;
 	}	
 }
-	public struct PItem
+	
+public struct PItem
 {
 	public int itemKey { get; set; }
 	public int level { get; set; }
@@ -1363,7 +1342,8 @@ public struct PVec3
 		return success;
 	}	
 }
-	public struct PCurrency
+	
+public struct PCurrency
 {
 	public int currencyType { get; set; }
 	public int count { get; set; }
@@ -1386,7 +1366,7 @@ public struct PVec3
 		return success;
 	}	
 }
-	[Serializable]
+	
 public class PlayerSpawn
 {
 	public int id { get; set; }
@@ -1413,7 +1393,7 @@ public class PlayerSpawn
 		return success;
 	}	
 }
-	[Serializable]
+	
 public class MonsterSpawn
 {
 	public int id { get; set; }

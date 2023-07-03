@@ -16,8 +16,6 @@ public partial class Player : EntityObject
 
     private HashSet<EntityObject> _targetSet;
 
-    private EntityItem[] _itemSlot;
-
     private Action<int> _getItemCallback;
 
     private WorldMap _worldMap;
@@ -148,12 +146,6 @@ public partial class Player : EntityObject
     }
 
 
-    public void SetItemSlot(EntityItem [] inItemSlot)
-    {
-        _itemSlot = inItemSlot;
-    }
-
-
     //-------------------
     // Player State
     //-------------------
@@ -223,15 +215,9 @@ public partial class Player : EntityObject
     }
 
 
-    public void UpdateItemSlot()
+    public void UpdateItemView(EntityItem entityItem)
     {
-        if (_itemSlot == null)
-            return;
-
-        foreach(var item in _itemSlot)
-        {
-            // TODO@taeho.kang 업데이트 처리
-        }
+        _playerUI.EquipItem(entityItem);
     }
 
 

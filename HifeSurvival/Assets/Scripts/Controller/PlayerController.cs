@@ -253,9 +253,10 @@ public sealed class PlayerController : EntityObjectController<Player>
     }
 
 
-    public void OnRecvPickReward(PickRewardResponse inEntity)
+    public void OnRecvPickReward(PickRewardResponse packet)
     {
-        var player = GetEntityObject(inEntity.id);
-        player.UpdateItemSlot();
+        var player = GetEntityObject(packet.id);
+        var entity = GameMode.Instance.GetPlayerEntity(packet.id);
+        player.UpdateItemView(entity.itemSlot[packet.itemSlotId]);
     }
 }

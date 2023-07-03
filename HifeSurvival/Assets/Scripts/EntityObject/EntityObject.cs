@@ -89,7 +89,7 @@ public abstract class EntityObject : MonoBehaviour
 
     public void StopMoveEntity(in Vector3 inPos)
     {
-        _moveMachine.MoveStopSelf(inPos);
+        _moveMachine.MoveStopSelf();
         _moveMachine.StopMoveLerpExpect();
         _moveMachine.StopMoveLerpTarget();
     }

@@ -190,13 +190,8 @@ public partial class Player : EntityObject
 
     public void OnIdle(in Vector3 inPos, in Vector3 inDir = default)
     {
-        // SetPoint(inPos, Color.red);
-
         _anim.OnIdle();
-
         StopMoveEntity(inPos);
-
-        RemovePoint();
     }
 
 

@@ -133,6 +133,7 @@ public interface IPacket
         // {3} 멤버 변수 Write
         public static string packetFormat =
 @"
+[Serializable]
 public class {0} : IPacket
 {{
 	{1}
@@ -179,7 +180,7 @@ public class {0} : IPacket
 		// {3} 멤버 변수 Read
 		// {4} 멤버 변수 Write
 		public static string memberListFormat =
-@"
+@"[Serializable]
 public class {0}
 {{
 	{2}
@@ -199,8 +200,7 @@ public class {0}
 public List<{0}> {1}List {{ get; set; }} = new List<{0}>();";
 
 			public static string structFormat =
-@"
-public struct {0}
+@"public struct {0}
 {{
 	{1}
 
@@ -218,7 +218,7 @@ public struct {0}
 }}";
 
 		public static string classFormat =
-@"
+@"[Serializable]
 public class {0}
 {{
 	{1}

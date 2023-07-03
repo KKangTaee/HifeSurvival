@@ -64,7 +64,7 @@ public partial class Player : EntityObject
         _detectTrigger.enabled = false;
         _playerTrigger.enabled = false;
 
-        _playerTrigger.tag = TagName.PLAYER_OTHER;
+        this.tag = TagName.PLAYER_OTHER;
         _playerTrigger.gameObject.layer = LayerMask.NameToLayer(LayerName.PLAYER_OTHER);
 
         _detectRange?.SetActive(false);
@@ -80,8 +80,9 @@ public partial class Player : EntityObject
 
         SetTrigger();
 
-        _playerTrigger.tag = TagName.PLAEYR_SELF;
-        _detectTrigger.tag = TagName.DETECT_SELF;
+        this.tag = TagName.PLAEYR_SELF;
+        // _playerTrigger.tag = TagName.PLAEYR_SELF;
+        // _detectTrigger.tag = TagName.DETECT_SELF;
 
         _playerTrigger.gameObject.layer = LayerMask.NameToLayer(LayerName.PLAYER_SELF);
         _detectTrigger.gameObject.layer = LayerMask.NameToLayer(LayerName.DETECT_SELF);

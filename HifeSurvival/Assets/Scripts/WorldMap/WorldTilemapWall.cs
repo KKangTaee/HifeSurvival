@@ -65,8 +65,9 @@ public class WorldTilemapWall : WorldTilemap
     {
         if (_targetTr == null)
             return;
-
-        TilemapMat.SetVector(MATERIAL_PROPERTY_KEY_START_POSITION, _targetTr.position);
+        
+        Vector3 offset = Vector3.up;
+        TilemapMat.SetVector(MATERIAL_PROPERTY_KEY_START_POSITION, _targetTr.position + offset);
     }
 
     private void StopMasking()

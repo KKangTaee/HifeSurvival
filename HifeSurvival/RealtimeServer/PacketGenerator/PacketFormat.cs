@@ -180,8 +180,7 @@ public class {0} : IPacket
 		// {3} 멤버 변수 Read
 		// {4} 멤버 변수 Write
 		public static string memberListFormat =
-@"[Serializable]
-public class {0}
+@"public class {0}
 {{
 	{2}
 
@@ -197,7 +196,7 @@ public class {0}
 		return success;
 	}}	
 }}
-public List<{0}> {1}List {{ get; set; }} = new List<{0}>();";
+public List<{0}> {1}List = new List<{0}>();";
 
 			public static string structFormat =
 @"public struct {0}
@@ -218,8 +217,7 @@ public List<{0}> {1}List {{ get; set; }} = new List<{0}>();";
 }}";
 
 		public static string classFormat =
-@"[Serializable]
-public class {0}
+@"public class {0}
 {{
 	{1}
 
@@ -304,6 +302,6 @@ foreach ({0} {1} in this.{1}List)
 @"{0}.Read(s, ref count);";
 
 		public static string memberStructFormat =
-@"public List<{0}> {1}List {{ get; set; }} = new List<{0}>();";
+@"public List<{0}> {1}List = new List<{0}>();";
 	}
 }

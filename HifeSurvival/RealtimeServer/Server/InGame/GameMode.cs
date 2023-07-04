@@ -75,7 +75,7 @@ namespace Server
                     break;
                 case EGameModeStatus.LOAD_GAME:
                     {
-                        if (GameDataLoader.Instance.ChapaterDataDict.TryGetValue("1", out var chapterData) == false)
+                        if (GameDataLoader.Instance.ChapaterDataDict.TryGetValue(1, out var chapterData) == false)
                         {
                             Logger.GetInstance().Error("chapterdata is not found");
                             return;
@@ -87,7 +87,7 @@ namespace Server
                         {
                             playTimeSec = chapterData.playTimeSec,
                             playerList = SpawnPlayer(),
-                            monsterList = SpawnMonster(chapterData.phase1.Split(':'))
+                            monsterList = SpawnMonster(chapterData.phase1Array)
                         };
 
                         _room.Broadcast(gameStart);
@@ -127,7 +127,7 @@ namespace Server
             Status = updatedStatus;
         }
 
-        public List<MonsterSpawn> SpawnMonster(string[] groupKeyArr)
+        public List<MonsterSpawn> SpawnMonster(int[] groupKeyArr)
         {
             var monsterList = new List<MonsterSpawn>();
 
@@ -150,7 +150,7 @@ namespace Server
 
                     foreach (var id in monsterKey)
                     {
-                        if (GameDataLoader.Instance.MonstersDict.TryGetValue(id, out var data) == true &&
+                        if (GameDataLoader.Instance.MonstersDict.TryGetValue(int.Parse(id)/*temp*/, out var data) == true &&
                             pivotIter.MoveNext() == true)
                         {
                             PVec3 pos = pivotIter.Current;
@@ -200,16 +200,17 @@ namespace Server
             return monsterList;
         }
 
-        public void SpawnMonsterTimer(string phase, int timeout)
+        public void SpawnMonsterTimer(int phase, int timeout)
         {
-            if (phase == null)
+            if (!GameDataLoader.Instance.ChapaterDataDict.TryGetValue(phase, out var phaseData))
                 return;
+                
 
             JobTimer.Instance.Push(() =>
             {
                 S_SpawnMonster spawnMoster = new S_SpawnMonster()
                 {
-                    monsterList = SpawnMonster(phase.Split(':'))
+                    monsterList = SpawnMonster(phaseData.phase1Array)
                 };
 
                 _room.Broadcast(spawnMoster);

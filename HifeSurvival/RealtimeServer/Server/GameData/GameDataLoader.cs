@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System;
 using System.Threading.Tasks;
@@ -35,12 +36,13 @@ namespace Server
         // Static Datas
         //------------------
 
-        public Dictionary<string, Heros> HerosDict { get; private set; }
-        public Dictionary<string, Systems> SystemsDict { get; private set; }
-        public Dictionary<string, Monsters> MonstersDict { get; private set; }
-        public Dictionary<string, MonstersGroup> MonstersGroupDict { get; private set; }
-        public Dictionary<string, Item> ItemDict { get; private set; }
-        public Dictionary<string, ChapterData> ChapaterDataDict { get; private set; }
+        [Obsolete]
+        public ConcurrentDictionary<string, Systems> SystemsDict { get; private set; }
+        public ConcurrentDictionary<int, Heros> HerosDict { get; private set; }
+        public ConcurrentDictionary<int, Monsters> MonstersDict { get; private set; }
+        public ConcurrentDictionary<int, MonstersGroup> MonstersGroupDict { get; private set; }
+        public ConcurrentDictionary<int, Item> ItemDict { get; private set; }
+        public ConcurrentDictionary<int, ChapterData> ChapaterDataDict { get; private set; }
 
         public async Task Init()
         {
@@ -85,11 +87,12 @@ namespace Server
                         string[] partArr = trimmed.Split('!');
                         var rangeValue = partArr[0];
 
-                        if (rangeValue.Equals("systems"))
-                        {
-                            SystemsDict = JsonToDictionaryGeneric.ParseJsonToDictionary<Systems>(node.ToString());
-                        }
-                        else if (rangeValue.Equals("heros"))
+                        //if (rangeValue.Equals("systems"))
+                        //{
+                        //    SystemsDict = JsonToDictionaryGeneric.ParseJsonToDictionary<Systems>(node.ToString());
+                        //}
+                        //else
+                        if (rangeValue.Equals("heros"))
                         {
                             HerosDict = JsonToDictionaryGeneric.ParseJsonToDictionary<Heros>(node.ToString());
                         }
@@ -116,6 +119,37 @@ namespace Server
             });
 
             await waiter.Wait();
+
+            BakeData();
+        }
+
+        private bool BakeData()
+        {
+            foreach (var chapDataKey in ChapaterDataDict.Keys)
+            {
+                if(ChapaterDataDict.TryGetValue(chapDataKey, out var data))
+                {
+                    var pList = new List<int>();
+
+                    data.phase1.Split(":").ToList().ForEach(p => pList.Add(int.Parse(p)));
+                    data.phase1Array = pList.ToArray();
+                    pList.Clear();
+
+                    data.phase2.Split(":").ToList().ForEach(p => pList.Add(int.Parse(p)));
+                    data.phase2Array = pList.ToArray();
+                    pList.Clear();
+
+                    data.phase3.Split(":").ToList().ForEach(p => pList.Add(int.Parse(p)));
+                    data.phase3Array = pList.ToArray();
+                    pList.Clear();
+
+                    data.phase4.Split(":").ToList().ForEach(p => pList.Add(int.Parse(p)));
+                    data.phase4Array = pList.ToArray();
+                    pList.Clear();
+                }
+            }
+
+            return true;
         }
 
 
@@ -131,10 +165,10 @@ namespace Server
                 public List<List<string>> valueList;
             }
 
-            public static Dictionary<string, T> ParseJsonToDictionary<T>(string jsonString) where T : class, new()
+            public static ConcurrentDictionary<int, T> ParseJsonToDictionary<T>(string jsonString) where T : class, new()
             {
                 List<List<string>> rawDataList = JsonToRawData(jsonString);
-                Dictionary<string, T> resultDict = new Dictionary<string, T>();
+                ConcurrentDictionary<int, T> resultDict = new ConcurrentDictionary<int, T>();
 
                 // 첫 번째 행은 헤더이므로 1부터 시작
                 for (int i = 1; i < rawDataList.Count; i++)
@@ -207,9 +241,19 @@ namespace Server
                         fieldIndex++;
                     }
 
-                    string key = itemType.GetField("key").GetValue(item).ToString();
+                    var key = itemType.GetField("key").GetValue(item).ToString();
 
-                    resultDict.Add(key, item);
+                    if(int.TryParse(key, out var numberKey))
+                    {
+                        if (!resultDict.TryAdd(numberKey, item))
+                        {
+                            Logger.GetInstance().Warn($"DATA LOAD CHECK - duplicated {numberKey}");
+                        }
+                    }
+                    else
+                    {
+                        Logger.GetInstance().Warn($"DATA LOAD CHECK - Key must be int :  {key}");
+                    }
                 }
 
                 return resultDict;
@@ -314,6 +358,12 @@ namespace Server
             public string phase3;
             public string phase4;
             public int playTimeSec;
+
+
+            public int[] phase1Array;
+            public int[] phase2Array;
+            public int[] phase3Array;
+            public int[] phase4Array;
         }
     }
 }

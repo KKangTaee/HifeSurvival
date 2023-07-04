@@ -73,3 +73,4 @@ HifeSurvival/RealtimeServer/Server/obj/Debug/netcoreapp3.1/Server.csproj.FileLis
 HifeSurvival/RealtimeServer/ServerCore/obj/Debug/netstandard2.1/ServerCore.GeneratedMSBuildEditorConfig.editorconfig
 HifeSurvival/RealtimeServer/ServerCore/obj/Debug/netstandard2.1/ServerCore.csproj.FileListAbsolute.txt
 HifeSurvival/RealtimeServer/Server/obj/Debug/netcoreapp3.1/Server.GeneratedMSBuildEditorConfig.editorconfig
+HifeSurvival/user.keystore

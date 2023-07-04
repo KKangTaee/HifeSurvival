@@ -204,7 +204,7 @@ namespace PacketGenerator
 
                             if (split.Length == 2)
                             {
-                                memberCode += string.Format(PacketFormat.memberFormat_Struct, structName, memberName);
+                                memberCode += string.Format(PacketFormat.memberFormatStruct, structName, memberName);
                                 readCode += string.Format(PacketFormat.readStructFormat, memberName);
                                 writeCode += string.Format(PacketFormat.writeStructFormat, memberName);
                             }
@@ -222,7 +222,7 @@ namespace PacketGenerator
                             if (split.Length == 2)
                             {
                                 memberCode += string.Format(PacketFormat.memberFormat, className, memberName);
-                                readCode += string.Format(PacketFormat.readStructFormat, memberName);
+                                readCode += string.Format(PacketFormat.readClassFormat, memberName);
                                 writeCode += string.Format(PacketFormat.writeStructFormat, memberName);
                             }
                             else if (split.Length == 3 && split[2] == "list")

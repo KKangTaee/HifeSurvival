@@ -102,7 +102,10 @@ namespace Server
             };
 
             Logger.GetInstance().Debug($"Drop Item ID {worldItem.worldId}");
-            ItemDict.TryAdd(worldItem.worldId, worldItem);
+            if(!ItemDict.TryAdd(worldItem.worldId, worldItem))
+            {
+                Logger.GetInstance().Error($"World ID Get Failed ID : {worldItem.worldId}");
+            }
 
             var broadcast = new UpdateRewardBroadcast();
             broadcast.worldId = worldItem.worldId;

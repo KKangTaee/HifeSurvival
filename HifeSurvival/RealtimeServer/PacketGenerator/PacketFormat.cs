@@ -174,15 +174,20 @@ public class {0} : IPacket
 		public static string memberFormat =
 @"public {0} {1} {{ get; set; }}";
 
-		public static string memberFormat_Struct =
-@"public {0} {1};";
+        public static string memberFormatStruct =
+@"private {0} _{1};
+public {0} {1} 
+{{ 
+	get {{ return _{1}; }} 
+	set {{ _{1} = value; }}
+}}";
 
-		// {0} 리스트 이름 [대문자]
-		// {1} 리스트 이름 [소문자]
-		// {2} 멤버 변수들
-		// {3} 멤버 변수 Read
-		// {4} 멤버 변수 Write
-		public static string memberListFormat =
+        // {0} 리스트 이름 [대문자]
+        // {1} 리스트 이름 [소문자]
+        // {2} 멤버 변수들
+        // {3} 멤버 변수 Read
+        // {4} 멤버 변수 Write
+        public static string memberListFormat =
 @"
 public class {0}
 {{
@@ -208,9 +213,10 @@ public struct {0}
 {{
 	{1}
 
-	public void Read(ReadOnlySpan<byte> s, ref ushort count)
+	public {0} Read(ReadOnlySpan<byte> s, ref ushort count)
 	{{
 		{2}
+		return this;
 	}}
 
 	public bool Write(Span<byte> s, ref ushort count)
@@ -305,9 +311,12 @@ foreach ({0} {1} in this.{1}List)
 @"success &= {0}.Write(s,ref count);";
 
 		public static string readStructFormat =
+@"{0} = {0}.Read(s, ref count);";
+
+        public static string readClassFormat =
 @"{0}.Read(s, ref count);";
 
-		public static string memberStructFormat =
+        public static string memberStructFormat =
 @"public List<{0}> {1}List {{ get; set; }} = new List<{0}>();";
 	}
 }

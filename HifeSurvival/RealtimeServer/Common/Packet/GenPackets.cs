@@ -524,8 +524,18 @@ public class CS_Attack : IPacket
 public class MoveRequest : IPacket
 {
 	public int id { get; set; }
-	public PVec3 currentPos;
-	public PVec3 targetPos;
+	private PVec3 _currentPos;
+	public PVec3 currentPos 
+	{ 
+		get { return _currentPos; } 
+		set { _currentPos = value; }
+	}
+	private PVec3 _targetPos;
+	public PVec3 targetPos 
+	{ 
+		get { return _targetPos; } 
+		set { _targetPos = value; }
+	}
 	public float speed { get; set; }
 	public long timestamp { get; set; }
 
@@ -540,8 +550,8 @@ public class MoveRequest : IPacket
 		count += sizeof(ushort);
 		this.id = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
-		currentPos.Read(s, ref count);
-		targetPos.Read(s, ref count);
+		currentPos = currentPos.Read(s, ref count);
+		targetPos = targetPos.Read(s, ref count);
 		this.speed = BitConverter.ToSingle(s.Slice(count, s.Length - count));
 		count += sizeof(float);
 		this.timestamp = BitConverter.ToInt64(s.Slice(count, s.Length - count));
@@ -662,8 +672,18 @@ public class S_Dead : IPacket
 public class S_Respawn : IPacket
 {
 	public int id { get; set; }
-	public PVec3 pos;
-	public PStat stat;
+	private PVec3 _pos;
+	public PVec3 pos 
+	{ 
+		get { return _pos; } 
+		set { _pos = value; }
+	}
+	private PStat _stat;
+	public PStat stat 
+	{ 
+		get { return _stat; } 
+		set { _stat = value; }
+	}
 
 	public ushort Protocol { get { return (ushort)PacketID.S_Respawn; } }
 
@@ -676,8 +696,8 @@ public class S_Respawn : IPacket
 		count += sizeof(ushort);
 		this.id = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
-		pos.Read(s, ref count);
-		stat.Read(s, ref count);
+		pos = pos.Read(s, ref count);
+		stat = stat.Read(s, ref count);
 	}
 
 	public ArraySegment<byte> Write()
@@ -859,7 +879,12 @@ public class PickRewardResponse : IPacket
 	public int rewardType { get; set; }
 	public int gold { get; set; }
 	public int itemSlotId { get; set; }
-	public PItem item;
+	private PItem _item;
+	public PItem item 
+	{ 
+		get { return _item; } 
+		set { _item = value; }
+	}
 
 	public ushort Protocol { get { return (ushort)PacketID.PickRewardResponse; } }
 
@@ -880,7 +905,7 @@ public class PickRewardResponse : IPacket
 		count += sizeof(int);
 		this.itemSlotId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
-		item.Read(s, ref count);
+		item = item.Read(s, ref count);
 	}
 
 	public ArraySegment<byte> Write()
@@ -919,8 +944,18 @@ public class UpdateRewardBroadcast : IPacket
 	public int status { get; set; }
 	public int rewardType { get; set; }
 	public int gold { get; set; }
-	public PItem item;
-	public PVec3 pos;
+	private PItem _item;
+	public PItem item 
+	{ 
+		get { return _item; } 
+		set { _item = value; }
+	}
+	private PVec3 _pos;
+	public PVec3 pos 
+	{ 
+		get { return _pos; } 
+		set { _pos = value; }
+	}
 
 	public ushort Protocol { get { return (ushort)PacketID.UpdateRewardBroadcast; } }
 
@@ -939,8 +974,8 @@ public class UpdateRewardBroadcast : IPacket
 		count += sizeof(int);
 		this.gold = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
-		item.Read(s, ref count);
-		pos.Read(s, ref count);
+		item = item.Read(s, ref count);
+		pos = pos.Read(s, ref count);
 	}
 
 	public ArraySegment<byte> Write()
@@ -975,8 +1010,18 @@ public class UpdateRewardBroadcast : IPacket
 public class UpdateLocationBroadcast : IPacket
 {
 	public int id { get; set; }
-	public PVec3 currentPos;
-	public PVec3 targetPos;
+	private PVec3 _currentPos;
+	public PVec3 currentPos 
+	{ 
+		get { return _currentPos; } 
+		set { _currentPos = value; }
+	}
+	private PVec3 _targetPos;
+	public PVec3 targetPos 
+	{ 
+		get { return _targetPos; } 
+		set { _targetPos = value; }
+	}
 	public float speed { get; set; }
 	public long timestamp { get; set; }
 
@@ -991,8 +1036,8 @@ public class UpdateLocationBroadcast : IPacket
 		count += sizeof(ushort);
 		this.id = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
-		currentPos.Read(s, ref count);
-		targetPos.Read(s, ref count);
+		currentPos = currentPos.Read(s, ref count);
+		targetPos = targetPos.Read(s, ref count);
 		this.speed = BitConverter.ToSingle(s.Slice(count, s.Length - count));
 		count += sizeof(float);
 		this.timestamp = BitConverter.ToInt64(s.Slice(count, s.Length - count));
@@ -1029,8 +1074,18 @@ public class UpdateLocationBroadcast : IPacket
 public class UpdateStatBroadcast : IPacket
 {
 	public int id { get; set; }
-	public PStat originStat;
-	public PStat addStat;
+	private PStat _originStat;
+	public PStat originStat 
+	{ 
+		get { return _originStat; } 
+		set { _originStat = value; }
+	}
+	private PStat _addStat;
+	public PStat addStat 
+	{ 
+		get { return _addStat; } 
+		set { _addStat = value; }
+	}
 
 	public ushort Protocol { get { return (ushort)PacketID.UpdateStatBroadcast; } }
 
@@ -1043,8 +1098,8 @@ public class UpdateStatBroadcast : IPacket
 		count += sizeof(ushort);
 		this.id = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
-		originStat.Read(s, ref count);
-		addStat.Read(s, ref count);
+		originStat = originStat.Read(s, ref count);
+		addStat = addStat.Read(s, ref count);
 	}
 
 	public ArraySegment<byte> Write()
@@ -1241,7 +1296,7 @@ public struct PVec3
 	public float y { get; set; }
 	public float z { get; set; }
 
-	public void Read(ReadOnlySpan<byte> s, ref ushort count)
+	public PVec3 Read(ReadOnlySpan<byte> s, ref ushort count)
 	{
 		this.x = BitConverter.ToSingle(s.Slice(count, s.Length - count));
 		count += sizeof(float);
@@ -1249,6 +1304,7 @@ public struct PVec3
 		count += sizeof(float);
 		this.z = BitConverter.ToSingle(s.Slice(count, s.Length - count));
 		count += sizeof(float);
+		return this;
 	}
 
 	public bool Write(Span<byte> s, ref ushort count)
@@ -1275,7 +1331,7 @@ public struct PStat
 	public float detectRange { get; set; }
 	public float bodyRange { get; set; }
 
-	public void Read(ReadOnlySpan<byte> s, ref ushort count)
+	public PStat Read(ReadOnlySpan<byte> s, ref ushort count)
 	{
 		this.str = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
@@ -1293,6 +1349,7 @@ public struct PStat
 		count += sizeof(float);
 		this.bodyRange = BitConverter.ToSingle(s.Slice(count, s.Length - count));
 		count += sizeof(float);
+		return this;
 	}
 
 	public bool Write(Span<byte> s, ref ushort count)
@@ -1328,7 +1385,7 @@ public struct PItem
 	public int cooltime { get; set; }
 	public bool canUse { get; set; }
 
-	public void Read(ReadOnlySpan<byte> s, ref ushort count)
+	public PItem Read(ReadOnlySpan<byte> s, ref ushort count)
 	{
 		this.itemKey = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
@@ -1344,6 +1401,7 @@ public struct PItem
 		count += sizeof(int);
 		this.canUse = BitConverter.ToBoolean(s.Slice(count, s.Length - count));
 		count += sizeof(bool);
+		return this;
 	}
 
 	public bool Write(Span<byte> s, ref ushort count)
@@ -1372,12 +1430,13 @@ public struct PCurrency
 	public int currencyType { get; set; }
 	public int count { get; set; }
 
-	public void Read(ReadOnlySpan<byte> s, ref ushort count)
+	public PCurrency Read(ReadOnlySpan<byte> s, ref ushort count)
 	{
 		this.currencyType = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
 		this.count = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
+		return this;
 	}
 
 	public bool Write(Span<byte> s, ref ushort count)
@@ -1395,7 +1454,12 @@ public class PlayerSpawn
 {
 	public int id { get; set; }
 	public int herosKey { get; set; }
-	public PVec3 pos;
+	private PVec3 _pos;
+	public PVec3 pos 
+	{ 
+		get { return _pos; } 
+		set { _pos = value; }
+	}
 
 	public void Read(ReadOnlySpan<byte> s, ref ushort count)
 	{
@@ -1403,7 +1467,7 @@ public class PlayerSpawn
 		count += sizeof(int);
 		this.herosKey = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
-		pos.Read(s, ref count);
+		pos = pos.Read(s, ref count);
 	}
 
 	public bool Write(Span<byte> s, ref ushort count)
@@ -1424,7 +1488,12 @@ public class MonsterSpawn
 	public int monstersKey { get; set; }
 	public int groupId { get; set; }
 	public int grade { get; set; }
-	public PVec3 pos;
+	private PVec3 _pos;
+	public PVec3 pos 
+	{ 
+		get { return _pos; } 
+		set { _pos = value; }
+	}
 
 	public void Read(ReadOnlySpan<byte> s, ref ushort count)
 	{
@@ -1436,7 +1505,7 @@ public class MonsterSpawn
 		count += sizeof(int);
 		this.grade = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
-		pos.Read(s, ref count);
+		pos = pos.Read(s, ref count);
 	}
 
 	public bool Write(Span<byte> s, ref ushort count)

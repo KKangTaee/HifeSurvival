@@ -204,7 +204,7 @@ namespace PacketGenerator
 
                             if (split.Length == 2)
                             {
-                                memberCode += string.Format(PacketFormat.memberFormat, structName, memberName);
+                                memberCode += string.Format(PacketFormat.memberFormat_Struct, structName, memberName);
                                 readCode += string.Format(PacketFormat.readStructFormat, memberName);
                                 writeCode += string.Format(PacketFormat.writeStructFormat, memberName);
                             }

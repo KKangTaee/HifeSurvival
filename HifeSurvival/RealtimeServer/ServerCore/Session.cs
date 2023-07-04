@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
@@ -46,7 +47,7 @@ namespace ServerCore
 			RegisterRecv();
 		}
 
-		public void Send(List<ArraySegment<byte>> sendBuffList)
+		public void Send(ConcurrentQueue<ArraySegment<byte>> sendBuffList)
 		{
 			if (sendBuffList.Count == 0)
 				return;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,9 +9,9 @@ namespace Server
 {
     public class Sender : JobQueue
     {
-        private Dictionary<int, ServerSession> _seshDict = new Dictionary<int, ServerSession>();
-        private List<ArraySegment<byte>> _broadcastMessage = new List<ArraySegment<byte>>();
-        private Dictionary<int, List<ArraySegment<byte>>> _sendMessage = new Dictionary<int, List<ArraySegment<byte>>>();
+        private ConcurrentDictionary<int, ServerSession> _seshDict = new ConcurrentDictionary<int, ServerSession>();
+        private ConcurrentQueue<ArraySegment<byte>> _broadcastMessage = new ConcurrentQueue<ArraySegment<byte>>();
+        private ConcurrentDictionary<int, ConcurrentQueue<ArraySegment<byte>>> _sendMessage = new ConcurrentDictionary<int, ConcurrentQueue<ArraySegment<byte>>>();
 
         private bool _existSesh;
 
@@ -26,7 +27,7 @@ namespace Server
                 foreach (var sm in _sendMessage)
                 {
                     var sesh = _seshDict.AsQueryable().Where(ds => ds.Key == sm.Key).FirstOrDefault();
-                    if(sesh.Value == null)
+                    if (sesh.Value == null)
                     {
                         Logger.GetInstance().Warn("Not Found By  Session id {sm.Key}");
                         continue;
@@ -38,7 +39,7 @@ namespace Server
                 _sendMessage.Clear();
             }
 
-            if(_broadcastMessage.Count > 0)
+            if (_broadcastMessage.Count > 0)
             {
                 foreach (var s in _seshDict)
                 {
@@ -56,36 +57,38 @@ namespace Server
             Push(() =>
             {
                 Logger.GetInstance().Log("INF", $"PacketType : {packet.GetType()}", $"{nameof(Broadcast)}");
+                Logger.GetInstance().Trace(packet);
                 ArraySegment<byte> segment = packet.Write();
-                _broadcastMessage.Add(segment);
+                _broadcastMessage.Enqueue(segment);
             });
         }
 
-        public void Send(int id , IPacket packet)
+        public void Send(int id, IPacket packet)
         {
             Push(() =>
             {
                 Logger.GetInstance().Log("INF", $"PacketType : {packet.GetType()}", $"{nameof(Send)}");
+                Logger.GetInstance().Trace(packet);
                 ArraySegment<byte> segment = packet.Write();
-                if(_sendMessage.TryGetValue(id, out var msgList))
+                if (_sendMessage.TryGetValue(id, out var msgList))
                 {
-                    msgList.Add(segment);
+                    msgList.Enqueue(segment);
                 }
                 else
                 {
-                    var initMsgList = new List<ArraySegment<byte>>();
-                    initMsgList.Add(segment);
-                    _sendMessage.Add(id, initMsgList);
+                    var initMsgList = new ConcurrentQueue<ArraySegment<byte>>();
+                    initMsgList.Enqueue(segment);
+                    _sendMessage.TryAdd(id, initMsgList);
                 }
             });
         }
 
         public void OnEnter(ServerSession session)
         {
-            _seshDict.Add(session.SessionId, session);
+            _seshDict.TryAdd(session.SessionId, session);
             Logger.GetInstance().Debug($"Session id {session.SessionId}");
 
-            if (!_existSesh && _seshDict.Count > 0 )
+            if (!_existSesh && _seshDict.Count > 0)
             {
                 _existSesh = true;
                 Logger.GetInstance().Debug($"FlushSendQueue Start");
@@ -95,9 +98,9 @@ namespace Server
 
         public void OnLeave(int seshId)
         {
-            _seshDict.Remove(seshId);
+            _seshDict.TryRemove(seshId, out _);
 
-            if(_seshDict.Count == 0 && _existSesh)
+            if (_seshDict.Count == 0 && _existSesh)
             {
                 _existSesh = false;
                 Logger.GetInstance().Debug($"FlushSendQueue End");

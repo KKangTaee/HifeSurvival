@@ -122,7 +122,7 @@ public interface IPacket
 
 		// {0} 패킷 이름
 		// {1} 패킷 번호
-		public static string packetEnumFormat = 
+		public static string packetEnumFormat =
 @"{0} = {1},";
 
 		 
@@ -133,6 +133,7 @@ public interface IPacket
         // {3} 멤버 변수 Write
         public static string packetFormat =
 @"
+[Serializable]
 public class {0} : IPacket
 {{
 	{1}
@@ -171,6 +172,9 @@ public class {0} : IPacket
 		// {0} 변수 형식
 		// {1} 변수 이름
 		public static string memberFormat =
+@"public {0} {1} {{ get; set; }}";
+
+		public static string memberFormat_Struct =
 @"public {0} {1};";
 
 		// {0} 리스트 이름 [대문자]
@@ -179,7 +183,8 @@ public class {0} : IPacket
 		// {3} 멤버 변수 Read
 		// {4} 멤버 변수 Write
 		public static string memberListFormat =
-@"public class {0}
+@"
+public class {0}
 {{
 	{2}
 
@@ -195,10 +200,11 @@ public class {0} : IPacket
 		return success;
 	}}	
 }}
-public List<{0}> {1}List = new List<{0}>();";
+public List<{0}> {1}List {{ get; set;}} = new List<{0}>();";
 
 			public static string structFormat =
-@"public struct {0}
+@"
+public struct {0}
 {{
 	{1}
 
@@ -216,7 +222,8 @@ public List<{0}> {1}List = new List<{0}>();";
 }}";
 
 		public static string classFormat =
-@"public class {0}
+@"
+public class {0}
 {{
 	{1}
 
@@ -301,6 +308,6 @@ foreach ({0} {1} in this.{1}List)
 @"{0}.Read(s, ref count);";
 
 		public static string memberStructFormat =
-@"public List<{0}> {1}List = new List<{0}>();";
+@"public List<{0}> {1}List {{ get; set; }} = new List<{0}>();";
 	}
 }

@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Text.Json;
 
 namespace Server
 {
@@ -13,6 +14,10 @@ namespace Server
         private static Logger _ins;
         private string _titleName;
         private bool _bConsoleWirte = true; // TODO: Config
+        private JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions()
+        {
+            WriteIndented = true,
+        };
 
         public static Logger GetInstance()
         {
@@ -86,6 +91,22 @@ namespace Server
                 Console.WriteLine(logMsg);
                 Console.ResetColor();
             }
+
+            sw.Flush();
+            fs.Flush();
+
+            if (fs.Length > 8_388_608)    //8MB
+            {
+                sw.Close();
+                fs.Close();
+                CreateLogFile();
+            }
+        }
+
+        public void Trace(IPacket packet)
+        {
+            string trace = $"{JsonSerializer.Serialize(packet, packet.GetType(), _jsonSerializerOptions)}";
+            sw.WriteLine(trace);
 
             sw.Flush();
             fs.Flush();

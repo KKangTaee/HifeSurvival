@@ -43,10 +43,11 @@ public interface IPacket
 }
 
 
+[Serializable]
 public class C_JoinToGame : IPacket
 {
-	public string userId;
-	public string userName;
+	public string userId { get; set; }
+	public string userName { get; set; }
 
 	public ushort Protocol { get { return (ushort)PacketID.C_JoinToGame; } }
 
@@ -95,14 +96,16 @@ public class C_JoinToGame : IPacket
 	}
 }
 
+[Serializable]
 public class S_JoinToGame : IPacket
 {
+	
 	public class JoinPlayer
 	{
-		public string userId;
-		public string userName;
-		public int id;
-		public int heroKey;
+		public string userId { get; set; }
+		public string userName { get; set; }
+		public int id { get; set; }
+		public int heroKey { get; set; }
 	
 		public void Read(ReadOnlySpan<byte> s, ref ushort count)
 		{
@@ -140,8 +143,8 @@ public class S_JoinToGame : IPacket
 			return success;
 		}	
 	}
-	public List<JoinPlayer> joinPlayerList = new List<JoinPlayer>();
-	public int roomId;
+	public List<JoinPlayer> joinPlayerList { get; set;} = new List<JoinPlayer>();
+	public int roomId { get; set; }
 
 	public ushort Protocol { get { return (ushort)PacketID.S_JoinToGame; } }
 
@@ -189,10 +192,11 @@ public class S_JoinToGame : IPacket
 	}
 }
 
+[Serializable]
 public class S_LeaveToGame : IPacket
 {
-	public string userId;
-	public int id;
+	public string userId { get; set; }
+	public int id { get; set; }
 
 	public ushort Protocol { get { return (ushort)PacketID.S_LeaveToGame; } }
 
@@ -236,10 +240,11 @@ public class S_LeaveToGame : IPacket
 	}
 }
 
+[Serializable]
 public class CS_SelectHero : IPacket
 {
-	public int id;
-	public int heroKey;
+	public int id { get; set; }
+	public int heroKey { get; set; }
 
 	public ushort Protocol { get { return (ushort)PacketID.CS_SelectHero; } }
 
@@ -278,9 +283,10 @@ public class CS_SelectHero : IPacket
 	}
 }
 
+[Serializable]
 public class CS_ReadyToGame : IPacket
 {
-	public int id;
+	public int id { get; set; }
 
 	public ushort Protocol { get { return (ushort)PacketID.CS_ReadyToGame; } }
 
@@ -315,9 +321,10 @@ public class CS_ReadyToGame : IPacket
 	}
 }
 
+[Serializable]
 public class S_Countdown : IPacket
 {
-	public int countdownSec;
+	public int countdownSec { get; set; }
 
 	public ushort Protocol { get { return (ushort)PacketID.S_Countdown; } }
 
@@ -352,11 +359,12 @@ public class S_Countdown : IPacket
 	}
 }
 
+[Serializable]
 public class S_StartGame : IPacket
 {
-	public int playTimeSec;
-	public List<PlayerSpawn> playerList = new List<PlayerSpawn>();
-	public List<MonsterSpawn> monsterList = new List<MonsterSpawn>();
+	public int playTimeSec { get; set; }
+	public List<PlayerSpawn> playerList { get; set; } = new List<PlayerSpawn>();
+	public List<MonsterSpawn> monsterList { get; set; } = new List<MonsterSpawn>();
 
 	public ushort Protocol { get { return (ushort)PacketID.S_StartGame; } }
 
@@ -417,9 +425,10 @@ public class S_StartGame : IPacket
 	}
 }
 
+[Serializable]
 public class S_SpawnMonster : IPacket
 {
-	public List<MonsterSpawn> monsterList = new List<MonsterSpawn>();
+	public List<MonsterSpawn> monsterList { get; set; } = new List<MonsterSpawn>();
 
 	public ushort Protocol { get { return (ushort)PacketID.S_SpawnMonster; } }
 
@@ -463,11 +472,12 @@ public class S_SpawnMonster : IPacket
 	}
 }
 
+[Serializable]
 public class CS_Attack : IPacket
 {
-	public int id;
-	public int targetId;
-	public int attackValue;
+	public int id { get; set; }
+	public int targetId { get; set; }
+	public int attackValue { get; set; }
 
 	public ushort Protocol { get { return (ushort)PacketID.CS_Attack; } }
 
@@ -510,13 +520,14 @@ public class CS_Attack : IPacket
 	}
 }
 
+[Serializable]
 public class MoveRequest : IPacket
 {
-	public int id;
+	public int id { get; set; }
 	public PVec3 currentPos;
 	public PVec3 targetPos;
-	public float speed;
-	public long timestamp;
+	public float speed { get; set; }
+	public long timestamp { get; set; }
 
 	public ushort Protocol { get { return (ushort)PacketID.MoveRequest; } }
 
@@ -563,6 +574,7 @@ public class MoveRequest : IPacket
 	}
 }
 
+[Serializable]
 public class MoveResponse : IPacket
 {
 	
@@ -598,11 +610,12 @@ public class MoveResponse : IPacket
 	}
 }
 
+[Serializable]
 public class S_Dead : IPacket
 {
-	public int id;
-	public int fromId;
-	public int respawnTime;
+	public int id { get; set; }
+	public int fromId { get; set; }
+	public int respawnTime { get; set; }
 
 	public ushort Protocol { get { return (ushort)PacketID.S_Dead; } }
 
@@ -645,9 +658,10 @@ public class S_Dead : IPacket
 	}
 }
 
+[Serializable]
 public class S_Respawn : IPacket
 {
-	public int id;
+	public int id { get; set; }
 	public PVec3 pos;
 	public PStat stat;
 
@@ -688,11 +702,12 @@ public class S_Respawn : IPacket
 	}
 }
 
+[Serializable]
 public class IncreaseStatRequest : IPacket
 {
-	public int id;
-	public int type;
-	public int increase;
+	public int id { get; set; }
+	public int type { get; set; }
+	public int increase { get; set; }
 
 	public ushort Protocol { get { return (ushort)PacketID.IncreaseStatRequest; } }
 
@@ -735,13 +750,14 @@ public class IncreaseStatRequest : IPacket
 	}
 }
 
+[Serializable]
 public class IncreaseStatResponse : IPacket
 {
-	public int id;
-	public int type;
-	public int increase;
-	public int usedGold;
-	public int result;
+	public int id { get; set; }
+	public int type { get; set; }
+	public int increase { get; set; }
+	public int usedGold { get; set; }
+	public int result { get; set; }
 
 	public ushort Protocol { get { return (ushort)PacketID.IncreaseStatResponse; } }
 
@@ -792,10 +808,11 @@ public class IncreaseStatResponse : IPacket
 	}
 }
 
+[Serializable]
 public class PickRewardRequest : IPacket
 {
-	public int id;
-	public int worldId;
+	public int id { get; set; }
+	public int worldId { get; set; }
 
 	public ushort Protocol { get { return (ushort)PacketID.PickRewardRequest; } }
 
@@ -834,13 +851,14 @@ public class PickRewardRequest : IPacket
 	}
 }
 
+[Serializable]
 public class PickRewardResponse : IPacket
 {
-	public int id;
-	public int worldId;
-	public int rewardType;
-	public int gold;
-	public int itemSlotId;
+	public int id { get; set; }
+	public int worldId { get; set; }
+	public int rewardType { get; set; }
+	public int gold { get; set; }
+	public int itemSlotId { get; set; }
 	public PItem item;
 
 	public ushort Protocol { get { return (ushort)PacketID.PickRewardResponse; } }
@@ -894,12 +912,13 @@ public class PickRewardResponse : IPacket
 	}
 }
 
+[Serializable]
 public class UpdateRewardBroadcast : IPacket
 {
-	public int worldId;
-	public int status;
-	public int rewardType;
-	public int gold;
+	public int worldId { get; set; }
+	public int status { get; set; }
+	public int rewardType { get; set; }
+	public int gold { get; set; }
 	public PItem item;
 	public PVec3 pos;
 
@@ -952,13 +971,14 @@ public class UpdateRewardBroadcast : IPacket
 	}
 }
 
+[Serializable]
 public class UpdateLocationBroadcast : IPacket
 {
-	public int id;
+	public int id { get; set; }
 	public PVec3 currentPos;
 	public PVec3 targetPos;
-	public float speed;
-	public long timestamp;
+	public float speed { get; set; }
+	public long timestamp { get; set; }
 
 	public ushort Protocol { get { return (ushort)PacketID.UpdateLocationBroadcast; } }
 
@@ -1005,9 +1025,10 @@ public class UpdateLocationBroadcast : IPacket
 	}
 }
 
+[Serializable]
 public class UpdateStatBroadcast : IPacket
 {
-	public int id;
+	public int id { get; set; }
 	public PStat originStat;
 	public PStat addStat;
 
@@ -1048,10 +1069,11 @@ public class UpdateStatBroadcast : IPacket
 	}
 }
 
+[Serializable]
 public class UpdatePlayerCurrency : IPacket
 {
-	public int id;
-	public List<PCurrency> currencyList = new List<PCurrency>();
+	public int id { get; set; }
+	public List<PCurrency> currencyList { get; set; } = new List<PCurrency>();
 
 	public ushort Protocol { get { return (ushort)PacketID.UpdatePlayerCurrency; } }
 
@@ -1099,9 +1121,10 @@ public class UpdatePlayerCurrency : IPacket
 	}
 }
 
+[Serializable]
 public class PlayStartRequest : IPacket
 {
-	public int id;
+	public int id { get; set; }
 
 	public ushort Protocol { get { return (ushort)PacketID.PlayStartRequest; } }
 
@@ -1136,9 +1159,10 @@ public class PlayStartRequest : IPacket
 	}
 }
 
+[Serializable]
 public class PlayStartResponse : IPacket
 {
-	public int id;
+	public int id { get; set; }
 
 	public ushort Protocol { get { return (ushort)PacketID.PlayStartResponse; } }
 
@@ -1173,9 +1197,10 @@ public class PlayStartResponse : IPacket
 	}
 }
 
+[Serializable]
 public class UpdateGameModeStatusBroadcast : IPacket
 {
-	public int status;
+	public int status { get; set; }
 
 	public ushort Protocol { get { return (ushort)PacketID.UpdateGameModeStatusBroadcast; } }
 
@@ -1209,11 +1234,12 @@ public class UpdateGameModeStatusBroadcast : IPacket
 		return SendBufferHelper.Close(count);
 	}
 }
+
 public struct PVec3
 {
-	public float x;
-	public float y;
-	public float z;
+	public float x { get; set; }
+	public float y { get; set; }
+	public float z { get; set; }
 
 	public void Read(ReadOnlySpan<byte> s, ref ushort count)
 	{
@@ -1237,16 +1263,17 @@ public struct PVec3
 		return success;
 	}	
 }
-	public struct PStat
+	
+public struct PStat
 {
-	public int str;
-	public int def;
-	public int hp;
-	public float moveSpeed;
-	public float attackSpeed;
-	public float attackRange;
-	public float detectRange;
-	public float bodyRange;
+	public int str { get; set; }
+	public int def { get; set; }
+	public int hp { get; set; }
+	public float moveSpeed { get; set; }
+	public float attackSpeed { get; set; }
+	public float attackRange { get; set; }
+	public float detectRange { get; set; }
+	public float bodyRange { get; set; }
 
 	public void Read(ReadOnlySpan<byte> s, ref ushort count)
 	{
@@ -1290,15 +1317,16 @@ public struct PVec3
 		return success;
 	}	
 }
-	public struct PItem
+	
+public struct PItem
 {
-	public int itemKey;
-	public int level;
-	public int str;
-	public int def;
-	public int hp;
-	public int cooltime;
-	public bool canUse;
+	public int itemKey { get; set; }
+	public int level { get; set; }
+	public int str { get; set; }
+	public int def { get; set; }
+	public int hp { get; set; }
+	public int cooltime { get; set; }
+	public bool canUse { get; set; }
 
 	public void Read(ReadOnlySpan<byte> s, ref ushort count)
 	{
@@ -1338,10 +1366,11 @@ public struct PVec3
 		return success;
 	}	
 }
-	public struct PCurrency
+	
+public struct PCurrency
 {
-	public int currencyType;
-	public int count;
+	public int currencyType { get; set; }
+	public int count { get; set; }
 
 	public void Read(ReadOnlySpan<byte> s, ref ushort count)
 	{
@@ -1361,10 +1390,11 @@ public struct PVec3
 		return success;
 	}	
 }
-	public class PlayerSpawn
+	
+public class PlayerSpawn
 {
-	public int id;
-	public int herosKey;
+	public int id { get; set; }
+	public int herosKey { get; set; }
 	public PVec3 pos;
 
 	public void Read(ReadOnlySpan<byte> s, ref ushort count)
@@ -1387,12 +1417,13 @@ public struct PVec3
 		return success;
 	}	
 }
-	public class MonsterSpawn
+	
+public class MonsterSpawn
 {
-	public int id;
-	public int monstersKey;
-	public int groupId;
-	public int grade;
+	public int id { get; set; }
+	public int monstersKey { get; set; }
+	public int groupId { get; set; }
+	public int grade { get; set; }
 	public PVec3 pos;
 
 	public void Read(ReadOnlySpan<byte> s, ref ushort count)

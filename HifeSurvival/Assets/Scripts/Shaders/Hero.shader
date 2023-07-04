@@ -3,7 +3,8 @@ Shader "Heros"
     Properties
     {
         _MainTex("MainTex", 2D) = "white" {}
-        [KeywordEnum(Twist, Spawn)] _Status("Status", int) = 0
+        _Color("Color", Color) = (1,1,1,1)
+        [KeywordEnum(None, Twist, Spawn)] _Status("Status", int) = 0
 
         //--------------
         // Spawn
@@ -56,6 +57,7 @@ Shader "Heros"
             float4 _MainTex_ST; // tiling �� offset ����
             Texture2D _MainTex;
             SamplerState sampler_MainTex;
+            half4 _Color;
             int _Status;
 
 
@@ -90,8 +92,14 @@ Shader "Heros"
 
             half4 frag(Varyings o) : SV_Target
             {
-                
+                // None   
                 if (_Status == 0)
+                {
+                    half4  col = _MainTex.Sample(sampler_MainTex, o.uv);
+                    return col * _Color;
+                }
+                // Twist
+                else if(_Status == 1)
                 {
                     half2 tiling = half2(0.5 * _MainTex_ST.x, 0.5 * _MainTex_ST.y);
 
@@ -109,9 +117,10 @@ Shader "Heros"
 
                     half4 col = _MainTex.Sample(sampler_MainTex, o.uv);
 
-                    return col;
+                    return col * _Color;
                 }
-                else if(_Status == 1)
+                // Spawn
+                else if(_Status == 2)
                 {
                     half4 col = _MainTex.Sample(sampler_MainTex, o.uv);
 

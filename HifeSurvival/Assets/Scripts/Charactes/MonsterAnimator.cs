@@ -90,7 +90,7 @@ public class MonsterAnimator : MonoBehaviour
         var scaleX = dir.x > 0 ? -1 : 1;
         transform.localScale = new Vector3()
         {
-            x = scaleX * transform.localScale.x,
+            x = scaleX * Mathf.Abs(transform.localScale.x),
             y = transform.localScale.y,
             z = transform.localScale.z,
         };

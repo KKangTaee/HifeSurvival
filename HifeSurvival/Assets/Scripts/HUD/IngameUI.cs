@@ -208,7 +208,7 @@ public class IngameUI : MonoBehaviour
                 break;
 
             case ERewardType.ITEM:
-                _itemSlotList.EquipItem(entity.itemSlot[0]);
+                _itemSlotList.EquipItem(entity.itemSlot[packet.itemSlotId]);
                 break;
         }
     }

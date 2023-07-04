@@ -16,8 +16,6 @@ public partial class Player : EntityObject
 
     private HashSet<EntityObject> _targetSet;
 
-    private EntityItem[] _itemSlot;
-
     private Action<int> _getItemCallback;
 
     private WorldMap _worldMap;
@@ -64,7 +62,7 @@ public partial class Player : EntityObject
         _detectTrigger.enabled = false;
         _playerTrigger.enabled = false;
 
-        _playerTrigger.tag = TagName.PLAYER_OTHER;
+        this.tag = TagName.PLAYER_OTHER;
         _playerTrigger.gameObject.layer = LayerMask.NameToLayer(LayerName.PLAYER_OTHER);
 
         _detectRange?.SetActive(false);
@@ -80,8 +78,9 @@ public partial class Player : EntityObject
 
         SetTrigger();
 
-        _playerTrigger.tag = TagName.PLAEYR_SELF;
-        _detectTrigger.tag = TagName.DETECT_SELF;
+        this.tag = TagName.PLAEYR_SELF;
+        // _playerTrigger.tag = TagName.PLAEYR_SELF;
+        // _detectTrigger.tag = TagName.DETECT_SELF;
 
         _playerTrigger.gameObject.layer = LayerMask.NameToLayer(LayerName.PLAYER_SELF);
         _detectTrigger.gameObject.layer = LayerMask.NameToLayer(LayerName.DETECT_SELF);
@@ -108,32 +107,6 @@ public partial class Player : EntityObject
 
                 // 여기에 브로드캐스팅 처리
                 _getItemCallback?.Invoke(dropItem.WorldId);
-                // dropItem.PlayGetItem();
-            }
-        });
-
-        _playerTrigger.AddTriggerStay((col) =>
-        {
-            if (col.CompareTag(TagName.WORLDMAP_WALL) == true)
-            {
-                if (_worldMap == null)
-                    _worldMap = col.gameObject.GetComponentInParent<WorldMap>();
-
-                Vector3 playerPos = transform.position;
-                Vector3 hitPoint = col.ClosestPoint(playerPos);
-
-                _worldMap?.UpdateWallMasking(hitPoint, playerPos);
-            }
-        });
-
-        _playerTrigger.AddTriggerExit((col) =>
-        {
-            if (col.CompareTag(TagName.WORLDMAP_WALL) == true)
-            {
-                if (_worldMap == null)
-                    _worldMap = col.gameObject.GetComponentInParent<WorldMap>();
-
-                _worldMap?.DoneWallMasking();
             }
         });
 
@@ -173,12 +146,6 @@ public partial class Player : EntityObject
     }
 
 
-    public void SetItemSlot(EntityItem [] inItemSlot)
-    {
-        _itemSlot = inItemSlot;
-    }
-
-
     //-------------------
     // Player State
     //-------------------
@@ -215,13 +182,8 @@ public partial class Player : EntityObject
 
     public void OnIdle(in Vector3 inPos, in Vector3 inDir = default)
     {
-        // SetPoint(inPos, Color.red);
-
         _anim.OnIdle();
-
         StopMoveEntity(inPos);
-
-        RemovePoint();
     }
 
 
@@ -253,15 +215,9 @@ public partial class Player : EntityObject
     }
 
 
-    public void UpdateItemSlot()
+    public void UpdateItemView(EntityItem entityItem)
     {
-        if (_itemSlot == null)
-            return;
-
-        foreach(var item in _itemSlot)
-        {
-            // TODO@taeho.kang 업데이트 처리
-        }
+        _playerUI.EquipItem(entityItem);
     }
 
 

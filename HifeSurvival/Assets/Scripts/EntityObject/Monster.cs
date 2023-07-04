@@ -47,6 +47,7 @@ public partial class Monster : EntityObject
         
         var currDir = Vector3.Normalize(inDestPos - GetPos());    
         
+        _anim.OnWalk(currDir);
         MoveLerpExpect(inCurrPos, inDestPos, inSpeed, inTimeStamp);
     }
 

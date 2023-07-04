@@ -64,6 +64,7 @@ public class JoystickController : ControllerBase, TouchController.ITouchUpdate
 
         _joystickMachine.AddPointUpEvent(() => _playerController.OnStopMoveSelf());
 
+        ShowJoystick();
     }
 
     public void OnTouchUpdate(TouchController.ETouchCommand inCommand, Vector2[] inTouchPos, Collider2D collider = null)

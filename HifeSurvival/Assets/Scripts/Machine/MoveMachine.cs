@@ -46,15 +46,13 @@ public class MoveMachine : MonoBehaviour
         _currSpeed = inSpeed;
     }
 
-    public void MoveStopSelf(in Vector2 inPos)
+    public void MoveStopSelf()
     {
         _inputDirection = Vector2.zero;
     }
 
     public void StartMoveLerpExpect(in Vector3 inCurrPos, in Vector3 inDestPos, float inSpeed, long inTimeStamp, Action doneCallback = null)
     {
-        StopMoveLerpExpect();
-
         _currPos = inCurrPos;
         _destPos = inDestPos;
         _currSpeed = inSpeed;

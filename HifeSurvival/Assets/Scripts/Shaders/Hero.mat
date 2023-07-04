@@ -53,10 +53,10 @@ Material:
     m_Floats:
     - _DstBlend: 0
     - _EnableExternalAlpha: 0
-    - _Spawn_Val: 1.69
+    - _Spawn_Val: 2
     - _SrcBlend: 1
     - _Status: 0
-    - _TwistUvAmount: 1
+    - _TwistUvAmount: 0
     - _TwistUvRadius: 0.75
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}

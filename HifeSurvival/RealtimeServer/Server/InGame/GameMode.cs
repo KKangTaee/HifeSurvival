@@ -166,6 +166,7 @@ namespace Server
                                 monsterGroup = new MonsterGroup(group.groupId, group.respawnTime);
                                 _monsterGroupDict.Add(group.groupId, monsterGroup);
                             }
+
                             Logger.GetInstance().Debug($"monster id {id}, reward id {data.rewardIds}");
                             MonsterEntity monsterEntity = new MonsterEntity(_room, monsterGroup, _worldMap)
                             {
@@ -356,7 +357,7 @@ namespace Server
 
             if (CanLoadGame())
             {
-                UpdateModeStatus(EGameModeStatus.LOAD_GAME);
+                UpdateModeStatus(EGameModeStatus.COUNT_DOWN);
             }
         }
 

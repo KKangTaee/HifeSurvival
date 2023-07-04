@@ -35,8 +35,15 @@ namespace Server
             _stateMachine = new StateMachine<PlayerEntity>(smDict);
         }
 
-        public void SelectReady() => clientStatus = EClientStatus.SELECT_READY;
-        public void PlayReady() => clientStatus = EClientStatus.PLAY_READY;
+        public void SelectReady()
+        {
+            clientStatus = EClientStatus.SELECT_READY;
+        }
+
+        public void PlayReady()
+        {
+            clientStatus = EClientStatus.PLAY_READY;
+        }
 
 
         protected override void ChangeState<P>(EEntityStatus status, P param)

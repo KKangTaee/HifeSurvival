@@ -46,6 +46,7 @@ public enum EGameModeStatus
 
 public enum EClientStatus
 {
+    NONE,
     SELECT_READY,
     PLAY_READY,
 }

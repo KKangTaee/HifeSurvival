@@ -255,6 +255,9 @@ public sealed class PlayerController : EntityObjectController<Player>
 
     public void OnRecvPickReward(PickRewardResponse packet)
     {
+        if((ERewardType)packet.rewardType != ERewardType.ITEM)
+            return;
+            
         var player = GetEntityObject(packet.id);
         var entity = GameMode.Instance.GetPlayerEntity(packet.id);
         player.UpdateItemView(entity.itemSlot[packet.itemSlotId]);

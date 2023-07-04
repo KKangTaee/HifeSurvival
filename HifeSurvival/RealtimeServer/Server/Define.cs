@@ -90,6 +90,7 @@ public enum ERewardState
 
 public enum EStatType
 {
+    NONE,
     STR,
     DEF,
     HP,

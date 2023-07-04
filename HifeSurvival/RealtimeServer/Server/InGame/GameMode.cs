@@ -438,7 +438,7 @@ namespace Server
             if (increaseValue > player.gold)
             {
                 res.result = DEFINE.ERROR;
-                _room.Broadcast(res);
+                _room.Send(inPacket.id, res);
                 return;
             }
 
@@ -499,6 +499,7 @@ namespace Server
                 case ERewardType.GOLD:
                     {
                         res.gold = broadcast.gold = rewardData.count;
+                        player.gold += rewardData.count;
                         break;
                     }
                 case ERewardType.ITEM:

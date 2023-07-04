@@ -28,11 +28,10 @@ namespace Server
 
             if (equippedItem == null)
             {
-                var nextSlot = NextItemSlot();
-                if(nextSlot >= 0)
+                slot = NextItemSlot();
+                if(slot >= 0)
                 {
-                    _itemSlotArr[nextSlot] = new InvenItem(nextSlot,item);
-                    slot = nextSlot;
+                    _itemSlotArr[slot] = new InvenItem(slot, item);
                 }
             }
             else

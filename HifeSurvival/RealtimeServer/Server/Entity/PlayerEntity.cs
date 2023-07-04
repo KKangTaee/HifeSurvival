@@ -93,7 +93,7 @@ namespace Server
         public int EquipItem(in PItem item)
         {
             int slot = inven.EquipItem(item);
-            if (slot > 0)
+            if (slot >= 0)
             {
                 UpdateItem();
             }

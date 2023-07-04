@@ -502,23 +502,28 @@ namespace Server
                     }
                 case ERewardType.ITEM:
                     {
-                        // Item Layer 나누기. (PItem , GameDataItem, InvenItem, PInvenItem)
-                        var toEquipItem = new PItem()
+                        if(GameDataLoader.Instance.ItemDict.TryGetValue(rewardData.subType, out var mastItem))
                         {
-                            //NOTE : 임시 값. 
-                            itemKey = rewardData.subType,
-                            level = 1,
-                            str = 999,
-                            def = 999,
-                            hp = 999,
-                            cooltime = 12,
-                            canUse = true
-                        };
-                        res.item = broadcast.item = toEquipItem;
+                            // Item Layer 나누기. (PItem , GameDataItem, InvenItem, PInvenItem)
+                            var toEquipItem = new PItem()
+                            {
+                                //NOTE : 임시 값. 
+                                itemKey = mastItem.key,
+                                level = 1,
+                                str = mastItem.str,
+                                def = mastItem.def,
+                                hp = mastItem.hp,
+                                cooltime = 10,
+                                canUse = true
+                            };
+                            res.item = broadcast.item = toEquipItem;
 
-                        int slot = player.EquipItem(toEquipItem);
-                        if (slot > 0)
-                            res.itemSlotId = slot;
+                            int slot = player.EquipItem(toEquipItem);
+                            if (slot > 0)
+                            {
+                                res.itemSlotId = slot;
+                            }
+                        }
                         break;
                     }
                 default:

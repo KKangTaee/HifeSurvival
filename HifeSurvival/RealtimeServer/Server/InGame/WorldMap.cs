@@ -95,20 +95,21 @@ namespace Server
 
             var itemData = RewardData.Parse(itemDataStr).FirstOrDefault();
 
+            var newWorldId = Interlocked.Increment(ref _dropID);
             WorldItemData worldItem = new WorldItemData()
             {
-                worldId = Interlocked.Increment(ref _dropID),
+                worldId = newWorldId,
                 itemData = itemData,
             };
 
-            Logger.GetInstance().Debug($"Drop Item ID {worldItem.worldId}");
-            if(!ItemDict.TryAdd(worldItem.worldId, worldItem))
+            Logger.GetInstance().Debug($"Drop Item ID {newWorldId}");
+            if(!ItemDict.TryAdd(newWorldId, worldItem))
             {
-                Logger.GetInstance().Error($"World ID Get Failed ID : {worldItem.worldId}");
+                Logger.GetInstance().Error($"World ID Get Failed ID : {newWorldId}");
             }
 
             var broadcast = new UpdateRewardBroadcast();
-            broadcast.worldId = worldItem.worldId;
+            broadcast.worldId = newWorldId;
             broadcast.status = (int)ERewardState.DROP;
             broadcast.rewardType = worldItem.itemData.rewardType;
             broadcast.pos = dropPos;
@@ -122,17 +123,25 @@ namespace Server
                     }
                 case ERewardType.ITEM:
                     {
-                        broadcast.item = new PItem()
+                        if (GameDataLoader.Instance.ItemDict.TryGetValue(worldItem.itemData.subType, out var mastItem))
                         {
-                            //NOTE : 임시 값. 
-                            itemKey = worldItem.itemData.subType,
-                            level = 1,
-                            str = 999,
-                            def = 999,
-                            hp = 999,
-                            cooltime = 12,
-                            canUse = true
-                        };
+                            broadcast.item = new PItem()
+                            {
+                                //NOTE : 임시 값. 
+                                itemKey = mastItem.key,
+                                level = 1,
+                                str = mastItem.str,
+                                def = mastItem.def,
+                                hp = mastItem.hp,
+                                cooltime = 10,
+                                canUse = true
+                            };
+                        }
+                        else
+                        {
+                            Logger.GetInstance().Error($"Invalid Item Key : {worldItem.itemData.subType}");
+                        }
+
                         break;
                     }
                 default:

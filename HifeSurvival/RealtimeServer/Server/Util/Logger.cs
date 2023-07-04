@@ -8,10 +8,11 @@ namespace Server
 {
     public class Logger
     {
-        FileStream fs = null;
-        StreamWriter sw = null;
+        private object _lock = new object();
+        private FileStream _fs = null;
+        private StreamWriter _sw = null;
 
-        private static Logger _ins;
+        private static Logger _ins = null;
         private string _titleName;
         private bool _bConsoleWirte = true; // TODO: Config
         private JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions()
@@ -33,13 +34,16 @@ namespace Server
 
         private void CreateLogFile()
         {
-            string title = _titleName + DateTime.Now.ToString(" yyyy-MM-dd-HH-mm-ss");
+            lock (_lock)
+            {
+                string title = _titleName + DateTime.Now.ToString(" yyyy-MM-dd-HH-mm-ss");
 
-            if (Directory.Exists("logs") == false)
-                Directory.CreateDirectory("logs");
+                if (Directory.Exists("logs") == false)
+                    Directory.CreateDirectory("logs");
 
-            fs = new FileStream($"logs\\{title}.log", FileMode.CreateNew);
-            sw = new StreamWriter(fs, Encoding.UTF8);
+                _fs = new FileStream($"logs\\{title}.log", FileMode.CreateNew);
+                _sw = new StreamWriter(_fs, Encoding.UTF8);
+            }
         }
 
         public void Debug(string message)
@@ -66,7 +70,7 @@ namespace Server
             var methodName = manualMethodName == "" ? stackFrame.GetMethod().Name : manualMethodName;
 
             string logMsg = $"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")}   {verbose}   {methodName} - {message}";
-            sw.WriteLine(logMsg);
+            _sw.WriteLine(logMsg);
 
             if(_bConsoleWirte)
             {
@@ -92,13 +96,13 @@ namespace Server
                 Console.ResetColor();
             }
 
-            sw.Flush();
-            fs.Flush();
+            _sw.Flush();
+            _fs.Flush();
 
-            if (fs.Length > 8_388_608)    //8MB
+            if (_fs.Length > 8_388_608)    //8MB
             {
-                sw.Close();
-                fs.Close();
+                _sw.Close();
+                _fs.Close();
                 CreateLogFile();
             }
         }
@@ -106,15 +110,15 @@ namespace Server
         public void Trace(IPacket packet)
         {
             string trace = $"{JsonSerializer.Serialize(packet, packet.GetType(), _jsonSerializerOptions)}";
-            sw.WriteLine(trace);
+            _sw.WriteLine(trace);
 
-            sw.Flush();
-            fs.Flush();
+            _sw.Flush();
+            _fs.Flush();
 
-            if (fs.Length > 8_388_608)    //8MB
+            if (_fs.Length > 8_388_608)    //8MB
             {
-                sw.Close();
-                fs.Close();
+                _sw.Close();
+                _fs.Close();
                 CreateLogFile();
             }
         }

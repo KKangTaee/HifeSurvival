@@ -30,6 +30,7 @@ namespace Server
         private string apiKey = "AIzaSyABnRmQck9SP3Gv7syjremXAjDBDOky8so";
         private string sheetId = "104ZnnXWWorMZOAhuY0o1o1xIL2H41opJlrJLsSEk_C4";
         private string sheetsApiUrl = "https://sheets.googleapis.com/v4/spreadsheets";
+        public int threadCheck = 0;
 
 
         //------------------
@@ -132,18 +133,22 @@ namespace Server
                     var pList = new List<int>();
 
                     data.phase1.Split(":").ToList().ForEach(p => pList.Add(int.Parse(p)));
+                    data.phase1 = null;
                     data.phase1Array = pList.ToArray();
                     pList.Clear();
 
                     data.phase2.Split(":").ToList().ForEach(p => pList.Add(int.Parse(p)));
+                    data.phase2 = null;
                     data.phase2Array = pList.ToArray();
                     pList.Clear();
 
                     data.phase3.Split(":").ToList().ForEach(p => pList.Add(int.Parse(p)));
+                    data.phase3 = null;
                     data.phase3Array = pList.ToArray();
                     pList.Clear();
 
                     data.phase4.Split(":").ToList().ForEach(p => pList.Add(int.Parse(p)));
+                    data.phase4 = null;
                     data.phase4Array = pList.ToArray();
                     pList.Clear();
                 }

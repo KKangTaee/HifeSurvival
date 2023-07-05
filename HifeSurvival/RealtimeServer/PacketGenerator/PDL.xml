@@ -98,7 +98,6 @@
     <int name ="worldId"/>
     <int name="rewardType"/>
 	  <int name ="gold"/>
-    <int name ="itemSlotId"/>
 	  <struct_PDropItem name="item"/>
   </packet>
 
@@ -141,8 +140,11 @@
   <packet name ="UpdateGameModeStatusBroadcast">
     <int name ="status"/>
   </packet>
-  
 
+	<packet name ="UpdateInvenItem">
+		<struct_PInvenItem name ="invenItem"/>
+	</packet>
+  
 	<struct name="PVec3">
     <float name ="x"/>
     <float name ="y"/>
@@ -170,14 +172,13 @@
 		<int name ="str"/>
 		<int name ="def"/>
 		<int name ="hp"/>
+		<struct_PItemSkill name ="skill" />
 	</struct>
 
 	<struct name = "PItemSkill">
 		<int name ="skillKey" />
 		<int name ="type"/>
 		<int name ="coolTime"/>
-		<int name ="def"/>
-		<int name ="hp"/>
 	</struct>
 
 	<struct name ="PCurrency">

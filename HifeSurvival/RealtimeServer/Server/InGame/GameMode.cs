@@ -514,9 +514,9 @@ namespace Server
                             res.item = broadcast.item = toEquipItem;
 
                             int slot = player.EquipItem(mastItem);
-                            if (slot > 0)
+                            if (slot < 0)
                             {
-                                res.itemSlotId = slot;
+                                Logger.GetInstance().Warn("Pick -> Equip Failed");
                             }
                         }
                         break;

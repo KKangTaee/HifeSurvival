@@ -151,6 +151,11 @@ namespace Server
         {
             throw new NotImplementedException();
         }
+
+        public override void UpdateInvenItemHandler(Session session, IPacket packet)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
     }
 }

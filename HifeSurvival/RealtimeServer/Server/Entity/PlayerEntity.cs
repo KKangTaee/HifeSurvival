@@ -45,7 +45,6 @@ namespace Server
             clientStatus = EClientStatus.PLAY_READY;
         }
 
-
         protected override void ChangeState<P>(EEntityStatus status, P param)
         {
             _stateMachine.OnChangeState(status, this, param);
@@ -69,7 +68,7 @@ namespace Server
         {
             bool bChanged = true;   //변화 감지가 필요함. 일단 생략. 
 
-            UpdateItem();
+            UpdateItemStat();
 
             stat = new EntityStat();
             stat += defaultStat;
@@ -92,24 +91,41 @@ namespace Server
             return (this.upgradeStat + this.itemStat).ConvertToPStat();
         }
 
-        public void UpdateItem()
+        public void UpdateItemStat()
         {
             itemStat = inven.TotalItemStat();
         }
 
+        public void UpdateItem(InvenItem updateItem)
+        {
+            UpdateStat();
+
+            var updateInvenItem = new UpdateInvenItem()
+            {
+                invenItem = new PInvenItem()
+                {
+                    slot = updateItem.Slot,
+                    itemKey = updateItem.ItemKey,
+                    str = updateItem.Stat.Str,
+                    def = updateItem.Stat.Def,
+                    hp = updateItem.Stat.MaxHp,
+                }
+            };
+
+            Room.Send(id, updateInvenItem);
+        }
+
         public int EquipItem(in ItemData item)
         {
-            int slot = inven.EquipItem(item);
-            if (slot >= 0)
-            {
-                UpdateItem();
-            }
-            else
+            var invenItem = inven.EquipItem(item);
+            if (invenItem == null)
             {
                 Logger.GetInstance().Warn($"Equip Failed! ");
+                return -1;
             }
 
-            return slot;
+            UpdateItem(invenItem);
+            return invenItem.Slot;
         }
 
         public void RegistRespawnTimer()

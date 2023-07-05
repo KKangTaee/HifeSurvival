@@ -8,7 +8,7 @@ namespace Server
     {
         private InvenItem[] _itemSlotArr = new InvenItem[DEFINE.PLAYER_ITEM_SLOT];
 
-        public int EquipItem(in ItemData item)
+        public InvenItem EquipItem(in ItemData item)
         {
             InvenItem equippedItem = null;
             
@@ -27,22 +27,21 @@ namespace Server
                 }
             }
 
-            int slot = -1;
             if (equippedItem == null)
             {
-                slot = NextItemSlot();
+                int slot = NextItemSlot();
                 if(slot >= 0)
                 {
-                    _itemSlotArr[slot] = new InvenItem(slot, item.key);
+                    equippedItem = new InvenItem(slot, item.key);
+                    _itemSlotArr[slot] = equippedItem;
                 }
             }
             else
             {
                 equippedItem.Upgrade();
-                slot = equippedItem.Slot;
             }
 
-            return slot;
+            return equippedItem;
         }
 
         public int NextItemSlot()

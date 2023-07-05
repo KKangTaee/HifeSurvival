@@ -32,6 +32,7 @@ public enum PacketID
 	PlayStartRequest = 22,
 	PlayStartResponse = 23,
 	UpdateGameModeStatusBroadcast = 24,
+	UpdateInvenItem = 25,
 	
 }
 
@@ -878,7 +879,6 @@ public class PickRewardResponse : IPacket
 	public int worldId { get; set; }
 	public int rewardType { get; set; }
 	public int gold { get; set; }
-	public int itemSlotId { get; set; }
 	private PDropItem _item;
 	public PDropItem item 
 	{ 
@@ -903,8 +903,6 @@ public class PickRewardResponse : IPacket
 		count += sizeof(int);
 		this.gold = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
-		this.itemSlotId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
-		count += sizeof(int);
 		item = item.Read(s, ref count);
 	}
 
@@ -926,8 +924,6 @@ public class PickRewardResponse : IPacket
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.rewardType);
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.gold);
-		count += sizeof(int);
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.itemSlotId);
 		count += sizeof(int);
 		success &= item.Write(s,ref count);
 		success &= BitConverter.TryWriteBytes(s, count);
@@ -1290,6 +1286,47 @@ public class UpdateGameModeStatusBroadcast : IPacket
 	}
 }
 
+[Serializable]
+public class UpdateInvenItem : IPacket
+{
+	private PInvenItem _invenItem;
+	public PInvenItem invenItem 
+	{ 
+		get { return _invenItem; } 
+		set { _invenItem = value; }
+	}
+
+	public ushort Protocol { get { return (ushort)PacketID.UpdateInvenItem; } }
+
+	public void Read(ArraySegment<byte> segment)
+	{
+		ushort count = 0;
+
+		ReadOnlySpan<byte> s = new ReadOnlySpan<byte>(segment.Array, segment.Offset, segment.Count);
+		count += sizeof(ushort);
+		count += sizeof(ushort);
+		invenItem = invenItem.Read(s, ref count);
+	}
+
+	public ArraySegment<byte> Write()
+	{
+		ArraySegment<byte> segment = SendBufferHelper.Open(4096);
+		ushort count = 0;
+		bool success = true;
+
+		Span<byte> s = new Span<byte>(segment.Array, segment.Offset, segment.Count);
+
+		count += sizeof(ushort);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.UpdateInvenItem);
+		count += sizeof(ushort);
+		success &= invenItem.Write(s,ref count);
+		success &= BitConverter.TryWriteBytes(s, count);
+		if (success == false)
+			return null;
+		return SendBufferHelper.Close(count);
+	}
+}
+
 public struct PVec3
 {
 	public float x { get; set; }
@@ -1402,7 +1439,12 @@ public struct PInvenItem
 	public int str { get; set; }
 	public int def { get; set; }
 	public int hp { get; set; }
-	public int cooltime { get; set; }
+	private PItemSkill _skill;
+	public PItemSkill skill 
+	{ 
+		get { return _skill; } 
+		set { _skill = value; }
+	}
 
 	public PInvenItem Read(ReadOnlySpan<byte> s, ref ushort count)
 	{
@@ -1416,8 +1458,7 @@ public struct PInvenItem
 		count += sizeof(int);
 		this.hp = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
-		this.cooltime = BitConverter.ToInt32(s.Slice(count, s.Length - count));
-		count += sizeof(int);
+		skill = skill.Read(s, ref count);
 		return this;
 	}
 
@@ -1434,7 +1475,36 @@ public struct PInvenItem
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.hp);
 		count += sizeof(int);
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.cooltime);
+		success &= skill.Write(s,ref count);
+		return success;
+	}	
+}
+	
+public struct PItemSkill
+{
+	public int skillKey { get; set; }
+	public int type { get; set; }
+	public int coolTime { get; set; }
+
+	public PItemSkill Read(ReadOnlySpan<byte> s, ref ushort count)
+	{
+		this.skillKey = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+		count += sizeof(int);
+		this.type = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+		count += sizeof(int);
+		this.coolTime = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+		count += sizeof(int);
+		return this;
+	}
+
+	public bool Write(Span<byte> s, ref ushort count)
+	{
+		bool success = true;
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.skillKey);
+		count += sizeof(int);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.type);
+		count += sizeof(int);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.coolTime);
 		count += sizeof(int);
 		return success;
 	}	

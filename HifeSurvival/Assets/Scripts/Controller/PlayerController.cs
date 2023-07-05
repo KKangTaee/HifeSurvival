@@ -30,9 +30,11 @@ public sealed class PlayerController : EntityObjectController<Player>, IUpdateIn
 
         _gameMode.OnRecvUpdateStatHandler += OnRecvUpdateStat;
         _gameMode.OnRecvPickRewardHandler += OnRecvPickReward;
-        
-        _gameMode.OnUpdateInvenItemSingleHandler += OnUpdateInvenItemSingle;
 
+        var eventHandler = _gameMode.GetEventHandler<IngamePacketEvent>();
+
+        eventHandler.RegisterClient<UpdateInvenItem>(OnUpdateInvenItemSingle);
+        
         LoadPlayer();
     }
 

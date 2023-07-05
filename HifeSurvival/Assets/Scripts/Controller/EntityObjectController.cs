@@ -17,13 +17,19 @@ public abstract class EntityObjectController<T> : ControllerBase where T : Entit
     public override void Init()
     {
         _gameMode = GameMode.Instance;
+        
+        var eventHandler = _gameMode.GetEventHandler<IngamePacketEvent>();
 
         _gameMode.OnRecvStopMoveHandler  += OnRecvStopMove;
-        _gameMode.OnRecvDeadHandler      += OnRecvDead;
-        _gameMode.OnRecvAttackHandler    += OnRecvAttack;
         _gameMode.OnRecvRespawnHandler   += OnRecvRespawn;
 
-        _gameMode.OnUpdateLocationHandler += OnUpdateLocation;
+        eventHandler.RegisterClient<CS_Attack>(OnRecvAttack);
+        eventHandler.RegisterClient<S_Dead>(OnRecvDead);
+        eventHandler.RegisterClient<UpdateLocationBroadcast>(OnUpdateLocation);
+
+        // _gameMode.OnRecvDeadHandler       += OnRecvDead;
+        // _gameMode.OnRecvAttackHandler     += OnRecvAttack;
+        // _gameMode.OnUpdateLocationHandler += OnUpdateLocation;
     }
 
 

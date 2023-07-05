@@ -25,7 +25,9 @@ public class WorldMap : MonoBehaviour
 
         _objectPoolController = ControllerManager.Instance.GetController<ObjectPoolController>();
         
-        GameMode.Instance.OnRecvUpdateRewardHandler   += OnRecvUpdateReward;
+        // GameMode.Instance.OnRecvUpdateRewardHandler   += OnRecvUpdateReward;
+    
+        GameMode.Instance.GetEventHandler<IngamePacketEvent>().RegisterClient<UpdateRewardBroadcast>(OnRecvUpdateReward);
     }
 
     public void SetupToWorldObject()

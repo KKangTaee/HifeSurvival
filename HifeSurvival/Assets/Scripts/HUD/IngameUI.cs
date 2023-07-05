@@ -40,13 +40,21 @@ public class IngameUI : MonoBehaviour, IUpdateInvenItemSingle, IUpdatePlayerCurr
     {
         GetComponent<Canvas>().worldCamera = ControllerManager.Instance.GetController<CameraController>().MainCamera;
 
-        GameMode.Instance.OnRecvDeadHandler += OnRecvDead;
+        // GameMode.Instance.OnRecvDeadHandler += OnRecvDead;
         GameMode.Instance.OnRecvRespawnHandler += OnRecvRespawn;
         GameMode.Instance.OnRecvPickRewardHandler += OnRecvPickReward;
         GameMode.Instance.OnRecvIncreasStatHandler += OnRecvIncreaseStat;
 
-        GameMode.Instance.OnUpdateInvenItemSingleHandler += OnUpdateInvenItemSingle;
-        GameMode.Instance.OnUpdatePlayerCurrencySingleHandler += OnUpdatePlayerCurrencySingle;
+        // GameMode.Instance.OnUpdateInvenItemSingleHandler += OnUpdateInvenItemSingle;
+        // GameMode.Instance.OnUpdatePlayerCurrencySingleHandler += OnUpdatePlayerCurrencySingle;
+
+        var eventHandler = GameMode.Instance.GetEventHandler<IngamePacketEvent>();
+
+        eventHandler.RegisterClient<S_Dead>(OnRecvDead);
+        eventHandler.RegisterClient<PickRewardResponse>(OnRecvPickReward);
+        eventHandler.RegisterClient<UpdateInvenItem>(OnUpdateInvenItemSingle);
+        eventHandler.RegisterClient<UpdatePlayerCurrency>(OnUpdatePlayerCurrencySingle);
+
 
         SetKDView();
 

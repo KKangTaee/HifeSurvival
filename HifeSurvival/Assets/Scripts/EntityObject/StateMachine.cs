@@ -10,7 +10,7 @@ public class StateMachine<T> where T : EntityObject
     private IState<T> _state = null;
     private Dictionary<EntityObject.EStatus, IState<T>> _stateMachine;
 
-    public StateMachine(Dictionary<EntityObject.EStatus, IState<T>> inStateMachine)
+public StateMachine(Dictionary<EntityObject.EStatus, IState<T>> inStateMachine)
     {
         _stateMachine = inStateMachine;
     }

@@ -41,20 +41,21 @@ public class IngameUI : MonoBehaviour, IUpdateInvenItemSingle, IUpdatePlayerCurr
         GetComponent<Canvas>().worldCamera = ControllerManager.Instance.GetController<CameraController>().MainCamera;
 
         // GameMode.Instance.OnRecvDeadHandler += OnRecvDead;
-        GameMode.Instance.OnRecvRespawnHandler += OnRecvRespawn;
-        GameMode.Instance.OnRecvPickRewardHandler += OnRecvPickReward;
-        GameMode.Instance.OnRecvIncreasStatHandler += OnRecvIncreaseStat;
+        // GameMode.Instance.OnRecvRespawnHandler += OnRecvRespawn;
+        // GameMode.Instance.OnRecvPickRewardHandler += OnRecvPickReward;
+        // GameMode.Instance.OnRecvIncreasStatHandler += OnRecvIncreaseStat;
 
         // GameMode.Instance.OnUpdateInvenItemSingleHandler += OnUpdateInvenItemSingle;
         // GameMode.Instance.OnUpdatePlayerCurrencySingleHandler += OnUpdatePlayerCurrencySingle;
 
-        var eventHandler = GameMode.Instance.GetEventHandler<IngamePacketEvent>();
+        var eventHandler = GameMode.Instance.GetEventHandler<IngamePacketEventHandler>();
 
         eventHandler.RegisterClient<S_Dead>(OnRecvDead);
         eventHandler.RegisterClient<PickRewardResponse>(OnRecvPickReward);
         eventHandler.RegisterClient<UpdateInvenItem>(OnUpdateInvenItemSingle);
         eventHandler.RegisterClient<UpdatePlayerCurrency>(OnUpdatePlayerCurrencySingle);
-
+        eventHandler.RegisterClient<S_Respawn>(OnRecvRespawn);
+        eventHandler.RegisterClient<IncreaseStatResponse>(OnRecvIncreaseStat);
 
         SetKDView();
 
@@ -239,7 +240,7 @@ public class IngameUI : MonoBehaviour, IUpdateInvenItemSingle, IUpdatePlayerCurr
     // Server
     //---------------
 
-    public void OnRecvRespawn(Entity inEntity)
+    public void OnRecvRespawn(S_Respawn packet)
     {
         HideRespawnTimer();
     }

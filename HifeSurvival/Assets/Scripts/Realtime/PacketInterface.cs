@@ -49,6 +49,11 @@ public interface IUpdateGameModeStatusBroadcast
     void OnUpdateGameModeStatusBroadcast(UpdateGameModeStatusBroadcast packet);
 }
 
+public interface IUpdateRespawn
+{
+    void OnUpdateRespawnBroadcast(S_Respawn packet);
+}
+
 
 //------------------
 // Update Single

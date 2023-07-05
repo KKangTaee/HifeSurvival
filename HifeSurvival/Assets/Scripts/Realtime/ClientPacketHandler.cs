@@ -10,7 +10,6 @@ public class ClientPacketHandler : PacketHandler
     public override void S_CountdownHandler(Session session, IPacket packet)
     {
         S_Countdown countdown = packet as S_Countdown;
-        // GameMode.Instance.OnRecvCountdown(countdown);
     }
 
     public override void S_JoinToGameHandler(Session session, IPacket packet)
@@ -46,21 +45,19 @@ public class ClientPacketHandler : PacketHandler
     public override void CS_AttackHandler(Session session, IPacket packet)
     {
         CS_Attack attack = packet as CS_Attack;
-        // GameMode.Instance.OnRecvAttack(attack);
-        GameMode.Instance.GetEventHandler<IngamePacketEvent>().NotifyServer(attack);
+        GameMode.Instance.GetEventHandler<IngamePacketEventHandler>().NotifyServer(attack);
     }
 
     public override void S_DeadHandler(Session session, IPacket packet)
     {
         S_Dead dead = packet as S_Dead;
-        // GameMode.Instance.OnRecvDead(dead);
-         GameMode.Instance.GetEventHandler<IngamePacketEvent>().NotifyServer(dead);
+         GameMode.Instance.GetEventHandler<IngamePacketEventHandler>().NotifyServer(dead);
     }
 
     public override void S_RespawnHandler(Session session, IPacket packet)
     {
         S_Respawn respawn = packet as S_Respawn;
-        GameMode.Instance.OnRecvRespawn(respawn);
+        GameMode.Instance.GetEventHandler<IngamePacketEventHandler>().NotifyServer(respawn);
     }
 
     public override void C_JoinToGameHandler(Session session, IPacket packet)
@@ -75,15 +72,12 @@ public class ClientPacketHandler : PacketHandler
 
     public override void MoveRequestHandler(Session session, IPacket packet)
     {
-        //TODO 좌표 기준 이동 리뉴얼
     }
 
     public override void UpdateLocationBroadcastHandler(Session session, IPacket packet)
     {
-        //TODO 좌표 기준 이동 리뉴얼
         UpdateLocationBroadcast locationBroadcast = packet as UpdateLocationBroadcast;
-        GameMode.Instance.GetEventHandler<IngamePacketEvent>().NotifyServer(locationBroadcast);
-        // GameMode.Instance.OnUpdateLocationBroadcast(locationBroadcast);
+        GameMode.Instance.GetEventHandler<IngamePacketEventHandler>().NotifyServer(locationBroadcast);
     }
 
     public override void MoveResponseHandler(Session session, IPacket packet)
@@ -99,7 +93,7 @@ public class ClientPacketHandler : PacketHandler
     public override void IncreaseStatResponseHandler(Session session, IPacket packet)
     {
         IncreaseStatResponse increaseStat = packet as IncreaseStatResponse;
-        GameMode.Instance.OnRecvIncreasStat(increaseStat);
+        GameMode.Instance.GetEventHandler<IngamePacketEventHandler>().NotifyServer(increaseStat);
     }
 
     public override void UpdateStatBroadcastHandler(Session session, IPacket packet)
@@ -115,14 +109,13 @@ public class ClientPacketHandler : PacketHandler
     public override void PickRewardResponseHandler(Session session, IPacket packet)
     {
         PickRewardResponse pickReward = packet as PickRewardResponse;
-        GameMode.Instance.OnRecvPickReward(pickReward);
+        GameMode.Instance.GetEventHandler<IngamePacketEventHandler>().NotifyServer(pickReward);
     }
 
     public override void UpdateRewardBroadcastHandler(Session session, IPacket packet)
     {
         UpdateRewardBroadcast updateReward = packet as UpdateRewardBroadcast;
-        // GameMode.Instance.OnUpdateRewardBroadcast(updateReward);
-        GameMode.Instance.GetEventHandler<IngamePacketEvent>().NotifyServer(updateReward);
+        GameMode.Instance.GetEventHandler<IngamePacketEventHandler>().NotifyServer(updateReward);
     }
 
 
@@ -146,14 +139,12 @@ public class ClientPacketHandler : PacketHandler
     public override void UpdateInvenItemHandler(Session session, IPacket packet)
     {
         UpdateInvenItem invenItem = packet as UpdateInvenItem;
-        // GameMode.Instance.OnUpdateInvenItemSingle(invenItem);
-        GameMode.Instance.GetEventHandler<IngamePacketEvent>().NotifyServer(invenItem);
+        GameMode.Instance.GetEventHandler<IngamePacketEventHandler>().NotifyServer(invenItem);
     }
 
     public override void UpdatePlayerCurrencyHandler(Session session, IPacket packet)
     {
         UpdatePlayerCurrency playerCurrency = packet as UpdatePlayerCurrency;
-        // GameMode.Instance.OnUpdatePlayerCurrencySingle(playerCurrency);
-        GameMode.Instance.GetEventHandler<IngamePacketEvent>().NotifyServer(playerCurrency);
+        GameMode.Instance.GetEventHandler<IngamePacketEventHandler>().NotifyServer(playerCurrency);
     }
 }

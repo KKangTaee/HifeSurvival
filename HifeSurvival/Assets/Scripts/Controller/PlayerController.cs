@@ -28,12 +28,13 @@ public sealed class PlayerController : EntityObjectController<Player>, IUpdateIn
         _cameraController   = ControllerManager.Instance.GetController<CameraController>();
         _joystickController = ControllerManager.Instance.GetController<JoystickController>();
 
-        _gameMode.OnRecvUpdateStatHandler += OnRecvUpdateStat;
-        _gameMode.OnRecvPickRewardHandler += OnRecvPickReward;
+        // _gameMode.OnRecvUpdateStatHandler += OnRecvUpdateStat;
+        // _gameMode.OnRecvPickRewardHandler += OnRecvPickReward;
 
-        var eventHandler = _gameMode.GetEventHandler<IngamePacketEvent>();
+        var eventHandler = _gameMode.GetEventHandler<IngamePacketEventHandler>();
 
         eventHandler.RegisterClient<UpdateInvenItem>(OnUpdateInvenItemSingle);
+        eventHandler.RegisterClient<PickRewardResponse>(OnRecvPickReward);
         
         LoadPlayer();
     }
@@ -226,11 +227,11 @@ public sealed class PlayerController : EntityObjectController<Player>, IUpdateIn
     }
 
 
-    public override void OnRecvRespawn(Entity inEntity)
+    public override void OnRecvRespawn(S_Respawn packet)
     {
-        base.OnRecvRespawn(inEntity);
+        base.OnRecvRespawn(packet);
 
-        if (Self.id == inEntity.id)
+        if (Self.id == packet.id)
         {
             Self.SetSelf(OnGetItemSelf);
 

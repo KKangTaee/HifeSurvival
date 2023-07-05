@@ -27,7 +27,7 @@ public class WorldMap : MonoBehaviour
         
         // GameMode.Instance.OnRecvUpdateRewardHandler   += OnRecvUpdateReward;
     
-        GameMode.Instance.GetEventHandler<IngamePacketEvent>().RegisterClient<UpdateRewardBroadcast>(OnRecvUpdateReward);
+        GameMode.Instance.GetEventHandler<IngamePacketEventHandler>().RegisterClient<UpdateRewardBroadcast>(OnRecvUpdateReward);
     }
 
     public void SetupToWorldObject()

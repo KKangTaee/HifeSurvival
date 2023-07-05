@@ -16,7 +16,7 @@ public class GameMode
     private SimpleTaskCompletionSource<S_JoinToGame> _joinCompleted = new SimpleTaskCompletionSource<S_JoinToGame>();
 
 
-    private IngamePacketEvent _ingamePacketEvent;
+    private IngamePacketEventHandler _ingamePacketEvent;
 
     /// <summary>
     /// 입장 관련
@@ -36,22 +36,11 @@ public class GameMode
     //---------------
 
 
-    public event Action<Entity>     OnRecvStopMoveHandler;
-    public event Action<Entity>     OnRecvRespawnHandler;
-    public event Action<PlayerEntity>           OnRecvUpdateStatHandler;
-    
-    // public event Action<S_Dead>     OnRecvDeadHandler;
-    // public event Action<CS_Attack>  OnRecvAttackHandler;
-    public event Action<PickRewardResponse>     OnRecvPickRewardHandler;
-    public event Action<IncreaseStatResponse>   OnRecvIncreasStatHandler;
-    
-    // public event Action<UpdateRewardBroadcast>          OnRecvUpdateRewardHandler;
-    // public event Action<UpdateLocationBroadcast>        OnUpdateLocationHandler;
-    
-    // public event Action<UpdateInvenItem>           OnUpdateInvenItemSingleHandler;
-    // public event Action<UpdatePlayerCurrency>      OnUpdatePlayerCurrencySingleHandler;
-
-
+    // public event Action<Entity>     OnRecvStopMoveHandler;
+    // public event Action<Entity>     OnRecvRespawnHandler;
+    // public event Action<PlayerEntity>           OnRecvUpdateStatHandler;
+    // public event Action<PickRewardResponse>     OnRecvPickRewardHandler;
+    // public event Action<IncreaseStatResponse>   OnRecvIncreasStatHandler;
 
     public int RoomId { get; private set; }
     public EGameModeStatus Status  { get; private set; } = EGameModeStatus.None;
@@ -60,13 +49,13 @@ public class GameMode
 
     public GameMode()
     {
-         _ingamePacketEvent = new IngamePacketEvent(this);
+         _ingamePacketEvent = new IngamePacketEventHandler(this);
     }
 
 
-    public T GetEventHandler<T>() where T : PacketEventBase
+    public T GetEventHandler<T>() where T : PacketEventHandlerBase
     {
-        if(typeof(T) == typeof(IngamePacketEvent))
+        if(typeof(T) == typeof(IngamePacketEventHandler))
             return _ingamePacketEvent as T;
 
         return null;
@@ -402,99 +391,44 @@ public class GameMode
     }
 
 
-    // public void OnRecvAttack(CS_Attack inPacket)
+    // public void OnRecvRespawn(S_Respawn packet)
     // {
-    //     Entity toEntity = null;
-
-    //     switch(Entity.GetEntityType(inPacket.targetId))
+    //     switch(Entity.GetEntityType(packet.id))
     //     {
     //         case Entity.EEntityType.PLAYER:
-    //             toEntity = GetPlayerEntity(inPacket.targetId);
+              
+    //         var player = GetPlayerEntity(packet.id);
+
+    //         if (player == null)
+    //             return;
+
+    //         player.pos = packet.pos;
+
+    //         // OnRecvRespawnHandler?.Invoke(player);
     //             break;
             
     //         case Entity.EEntityType.MOSNTER:
-    //             toEntity =GetMonsterEntity(inPacket.targetId);
     //             break;
     //     }
-
-    //     // 공격
-    //     toEntity.stat.AddCurrHp(-inPacket.attackValue);
-
-    //     if (IsSelf(inPacket.id) == false)
-    //         OnRecvAttackHandler?.Invoke(inPacket);
     // }
 
 
-    // public void OnRecvDead(S_Dead inPacket)
+    // public void OnRecvIncreasStat(IncreaseStatResponse packet)
     // {
-    //     OnRecvDeadHandler?.Invoke(inPacket);
+    //     var player = GetPlayerEntity(packet.id);
+
+    //     if (player == null)
+    //         return;
+
+    //     player.stat.IncreaseStat((EStatType)packet.type, packet.increase);
+    //     OnRecvIncreasStatHandler?.Invoke(packet);
     // }
-
-
-    public void OnRecvRespawn(S_Respawn inPacket)
-    {
-        switch(Entity.GetEntityType(inPacket.id))
-        {
-            case Entity.EEntityType.PLAYER:
-              
-            var player = GetPlayerEntity(inPacket.id);
-
-            if (player == null)
-                return;
-
-            player.pos = inPacket.pos;
-
-            OnRecvRespawnHandler?.Invoke(player);
-                break;
-            
-            case Entity.EEntityType.MOSNTER:
-                break;
-        }
-    }
-
-
-    public void OnRecvIncreasStat(IncreaseStatResponse packet)
-    {
-        var player = GetPlayerEntity(packet.id);
-
-        if (player == null)
-            return;
-
-        player.stat.IncreaseStat((EStatType)packet.type, packet.increase);
-        OnRecvIncreasStatHandler?.Invoke(packet);
-    }
-
-
-
-    public void OnRecvPickReward(PickRewardResponse packet)
-    {
-        OnRecvPickRewardHandler?.Invoke(packet);
-    }
 
 
 
     //----------------------
     // UpdateBroadcast
     //----------------------
-
-    // public void OnUpdateLocationBroadcast(UpdateLocationBroadcast inPacket)
-    // {
-    //     Entity entity = null;
-    //     switch(Entity.GetEntityType(inPacket.id))
-    //     {
-    //         case Entity.EEntityType.PLAYER:
-    //             entity = GetPlayerEntity(inPacket.id);
-    //             break;
-            
-    //         case Entity.EEntityType.MOSNTER:
-    //             entity = GetMonsterEntity(inPacket.id);
-    //             break;
-    //     }
-
-    //     entity.pos = inPacket.currentPos;
-    //     OnUpdateLocationHandler.Invoke(inPacket);
-    // }
-
 
     public void OnUpdateGameModeStatusBroadcast(UpdateGameModeStatusBroadcast packet)
     {
@@ -538,38 +472,4 @@ public class GameMode
         entity.stat = new EntityStat(packet.originStat);
     }
 
-
-    // public void OnUpdateRewardBroadcast(UpdateRewardBroadcast inPacket)
-    // {
-    //     // 아이템 드랍 및 월드맵 오브젝트 제거
-    //     OnRecvUpdateRewardHandler?.Invoke(inPacket);
-    // }
-
-
-    //---------------------
-    // Update Single
-    //---------------------
-
-    // public void OnUpdateInvenItemSingle(UpdateInvenItem packet)
-    // {
-    //     var invenItem = new EntityItem(packet.invenItem);
-    //     EntitySelf.itemSlot[packet.invenItem.slot] = invenItem;
-        
-    //     OnUpdateInvenItemSingleHandler?.Invoke(packet);
-    // }
-
-    // public void OnUpdatePlayerCurrencySingle(UpdatePlayerCurrency packet)
-    // {
-    //     foreach(var currency in packet.currencyList)
-    //     {
-    //         switch((ECurrency)currency.currencyType)
-    //         {
-    //             case ECurrency.GOLD:
-    //             EntitySelf.SetGold(currency.count);
-    //             break;
-    //         }
-    //     }
-
-    //     OnUpdatePlayerCurrencySingleHandler.Invoke(packet);
-    // }
 }

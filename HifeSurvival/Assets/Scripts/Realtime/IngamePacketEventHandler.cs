@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public sealed class IngamePacketEvent : PacketEventBase,
+public sealed class IngamePacketEventHandler : PacketEventHandlerBase,
     IUpdateDeadBroadcast, IUpdateAttackBroadcast, IUpdateRewardBroadcast, IResponseIncreaseStat, IResponsePickReward,
-    IUpdateLocationBroadcast, IUpdateInvenItemSingle, IUpdatePlayerCurrencySingle
+    IUpdateLocationBroadcast, IUpdateInvenItemSingle, IUpdatePlayerCurrencySingle, IUpdateRespawn
 {
-    public IngamePacketEvent(GameMode gameMode) : base(gameMode)
+    public IngamePacketEventHandler(GameMode gameMode) : base(gameMode)
     {
         _onEventHanderServerDict = new Dictionary<Type, Delegate>()
         {
@@ -37,14 +37,12 @@ public sealed class IngamePacketEvent : PacketEventBase,
             return;
 
         player.stat.IncreaseStat((EStatType)packet.type, packet.increase);
-        // OnRecvIncreasStatHandler?.Invoke(packet);
 
         NotifyClient(packet);
     }
 
     public void OnResponsePickReward(PickRewardResponse packet)
     {
-        // OnRecvPickRewardHandler?.Invoke(packet);
         NotifyClient(packet);
     }
 
@@ -67,10 +65,7 @@ public sealed class IngamePacketEvent : PacketEventBase,
         toEntity.stat.AddCurrHp(-packet.attackValue);
 
         if (_gameMode.IsSelf(packet.id) == false)
-        {
-            // OnRecvAttackHandler?.Invoke(inPacket);
             NotifyClient(packet);
-        }
     }
 
     public void OnUpdateDeadBroadcast(S_Dead packet)
@@ -118,6 +113,27 @@ public sealed class IngamePacketEvent : PacketEventBase,
         NotifyClient(packet);
     }
 
+    public void OnUpdateRespawnBroadcast(S_Respawn packet)
+    {
+        switch(Entity.GetEntityType(packet.id))
+        {
+            case Entity.EEntityType.PLAYER:
+              
+            var player = _gameMode.GetPlayerEntity(packet.id);
+
+            if (player == null)
+                return;
+
+            player.pos = packet.pos;
+                break;
+            
+            case Entity.EEntityType.MOSNTER:
+                break;
+        }
+
+        NotifyClient(packet);
+    }
+
     public void OnUpdateRewardBroadcast(UpdateRewardBroadcast packet)
     {
         // 아이템 드랍 및 월드맵 오브젝트 제거
@@ -125,61 +141,3 @@ public sealed class IngamePacketEvent : PacketEventBase,
     }
 }
 
-
-public abstract class PacketEventBase
-{
-    protected GameMode _gameMode;
-
-    protected Dictionary<Type, Delegate> _onEventHanderServerDict;
-    protected Dictionary<Type, Delegate> _onEventHandlerClientDict = new Dictionary<Type, Delegate>();
-
-    public PacketEventBase(GameMode gameMode)
-    {
-        _gameMode = gameMode;
-    }
-
-    public void NotifyServer<T>(T packet) where T : IPacket
-    {
-        Type packetType = packet.GetType();
-
-        if (_onEventHanderServerDict.TryGetValue(packetType, out var eventHandler))
-        {
-            var typedAction = eventHandler as Action<T>;
-            typedAction?.Invoke(packet);
-        }
-    }
-
-    public void RegisterClient<T>(Action<T> action) where T : IPacket
-    {
-        Type key = typeof(T);
-        if (_onEventHandlerClientDict.ContainsKey(key))
-        {
-            _onEventHandlerClientDict[key] = Delegate.Combine(_onEventHandlerClientDict[key], action);
-        }
-        else
-        {
-            _onEventHandlerClientDict[key] = action;
-        }
-    }
-
-    // 이벤트 핸들러를 제거하는 메서드
-    public void UnregisterClient<T>(Action<T> action) where T : IPacket
-    {
-        Type key = typeof(T);
-        if (_onEventHandlerClientDict.ContainsKey(key))
-        {
-            _onEventHandlerClientDict[key] = Delegate.Remove(_onEventHandlerClientDict[key], action);
-        }
-    }
-
-    public void NotifyClient<T>(T packet) where T : IPacket
-    {
-        Type packetType = packet.GetType();
-
-        if (_onEventHandlerClientDict.TryGetValue(packetType, out var eventHandler))
-        {
-            var typedAction = eventHandler as Action<T>;
-            typedAction?.Invoke(packet);
-        }
-    }
-}

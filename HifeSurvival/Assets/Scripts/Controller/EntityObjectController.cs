@@ -18,14 +18,14 @@ public abstract class EntityObjectController<T> : ControllerBase where T : Entit
     {
         _gameMode = GameMode.Instance;
         
-        var eventHandler = _gameMode.GetEventHandler<IngamePacketEvent>();
+        var eventHandler = _gameMode.GetEventHandler<IngamePacketEventHandler>();
 
-        _gameMode.OnRecvStopMoveHandler  += OnRecvStopMove;
-        _gameMode.OnRecvRespawnHandler   += OnRecvRespawn;
+        // _gameMode.OnRecvStopMoveHandler  += OnRecvStopMove;
 
         eventHandler.RegisterClient<CS_Attack>(OnRecvAttack);
         eventHandler.RegisterClient<S_Dead>(OnRecvDead);
         eventHandler.RegisterClient<UpdateLocationBroadcast>(OnUpdateLocation);
+        eventHandler.RegisterClient<S_Respawn>(OnRecvRespawn);
 
         // _gameMode.OnRecvDeadHandler       += OnRecvDead;
         // _gameMode.OnRecvAttackHandler     += OnRecvAttack;
@@ -118,14 +118,16 @@ public abstract class EntityObjectController<T> : ControllerBase where T : Entit
                        inPacket.attackValue);
     }
 
-    public virtual void OnRecvRespawn(Entity inEntity)
+    public virtual void OnRecvRespawn(S_Respawn packet)
     {
-        if(ContainEntity(inEntity.id) == false)
+        if(ContainEntity(packet.id) == false)
            return;
            
-        var entityObj = GetEntityObject(inEntity.id);
+        var entityObj = GetEntityObject(packet.id);
 
-        entityObj.Init(inEntity, inEntity.pos.ConvertUnityVector3());
+        //TODO@taeho.kang 수정필요.
+        var entity = _gameMode.GetPlayerEntity(packet.id);
+        entityObj.Init(entity, packet.pos.ConvertUnityVector3());
     }
 
     //------------------

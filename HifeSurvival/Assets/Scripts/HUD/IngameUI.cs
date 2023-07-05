@@ -241,7 +241,7 @@ public class IngameUI : MonoBehaviour, IUpdateInvenItemSingle, IUpdatePlayerCurr
         HideRespawnTimer();
     }
 
-    [Obsolete]
+
     public void OnRecvPickReward(PickRewardResponse packet)
     {
         switch ((ERewardType)packet.rewardType)
@@ -257,16 +257,17 @@ public class IngameUI : MonoBehaviour, IUpdateInvenItemSingle, IUpdatePlayerCurr
     public void OnRecvIncreaseStat(IncreaseStatResponse packet)
     {
         var entity = GameMode.Instance.EntitySelf;
-
         // SetStat(entity.stat);
-        // PlayAnimIncreaseStat((EStatType)packet.type);
+        PlayAnimIncreaseStat(entity.stat.ChangeStat);
     }
+
 
     public void OnUpdateInvenItemSingle(UpdateInvenItem packet)
     {
         var entity = GameMode.Instance.EntitySelf;
         _itemSlotList.EquipItem(entity.itemSlot[packet.invenItem.slot]);
     }
+
 
     public void OnUpdatePlayerCurrencySingle(UpdatePlayerCurrency packet)
     {
@@ -277,12 +278,11 @@ public class IngameUI : MonoBehaviour, IUpdateInvenItemSingle, IUpdatePlayerCurr
 
     public void OnUpdateStatBroadcast(UpdateStatBroadcast packet)
     {
-         if(GameMode.Instance.IsSelf(packet.id) == false)
-            return;
+        if(GameMode.Instance.IsSelf(packet.id) == false)
+           return;
 
         var entity = GameMode.Instance.EntitySelf;
-
+        
         SetStat(entity.stat);
-        PlayAnimIncreaseStat((EStatType)1);
     }
 }

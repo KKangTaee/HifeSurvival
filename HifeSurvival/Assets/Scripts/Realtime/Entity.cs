@@ -113,76 +113,49 @@ public class MonsterEntity : Entity
 
 public class EntityStat
 {
-    public int str { get; private set; }
-    public int def { get; private set; }
-    public int hp { get; private set; }
+    public int str { get => _originStat.str + _addStat.str; }
+    public int def { get => _originStat.def + _addStat.def; }
+    public int hp { get => _originStat.hp + _addStat.hp; }
+    public float detectRange { get => _originStat.detectRange + _addStat.detectRange; }
+    public float attackRange { get => _originStat.attackRange + _addStat.attackRange; }
+    public float bodyRange { get => _originStat.bodyRange + _addStat.bodyRange; }
+    public float moveSpeed { get => _originStat.moveSpeed + _addStat.moveSpeed; }
+    public float attackSpeed { get => _originStat.attackSpeed + _addStat.attackSpeed; }
     public int currHP { get; private set; }
-    public float detectRange { get; private set; }
-    public float attackRange { get; private set; }
-    public float bodyRange { get; private set; }
-    public float moveSpeed { get; private set; }
-    public float attackSpeed { get; private set; }
+    public EStatType ChangeStat { get; private set; }
 
+    private PStat _originStat;
+    private PStat _addStat;
 
     public EntityStat(PStat stat)
     {
-        str = stat.str;
-        def = stat.def;
-
-        currHP = hp = stat.hp;
-
-        detectRange = stat.detectRange;
-        attackRange = stat.attackRange;
-        moveSpeed = stat.moveSpeed;
-        attackSpeed = stat.attackSpeed;
-        bodyRange = stat.bodyRange;
+        _originStat = stat;
     }
 
-    public void AddStr(int str)
+
+    public void UpdateOriginStat(PStat stat)
     {
-        this.str += str;
+        _originStat = stat;
     }
 
-    public void AddDef(int def)
+    public void UpdateAddStat(PStat stat)
     {
-        this.def += def;
-    }
+        EStatType type = EStatType.NONE;
 
-    public void AddHp(int hp)
-    {
-        this.hp += hp;
+        if (_addStat.str != stat.str)
+            type = EStatType.STR;
+        else if (_addStat.def != stat.def)
+            type = EStatType.DEF;
+        else if (_addStat.hp != stat.hp)
+            type = EStatType.HP;
+
+        _addStat = stat;
+        ChangeStat = type;
     }
 
     public void AddCurrHp(int hp)
     {
         currHP += hp;
-    }
-
-    public void IncreaseStat(PStat pStat)
-    {
-        str += pStat.str;
-        def += pStat.def;
-        hp += pStat.hp;
-        currHP += pStat.hp;
-    }
-
-    public void IncreaseStat(EStatType statType, int val)
-    {
-        switch (statType)
-        {
-            case EStatType.STR:
-                AddStr(val);
-                break;
-
-            case EStatType.DEF:
-                AddDef(val);
-                break;
-
-            case EStatType.HP:
-                AddHp(val);
-                AddCurrHp(val);
-                break;
-        }
     }
 }
 
@@ -205,7 +178,7 @@ public class EntityItem
         Slot = invenItem.slot;
         ItemKey = invenItem.itemKey;
         MaxStack = invenItem.maxStack;
-        CurrentStack =invenItem.currentStack;
+        CurrentStack = invenItem.currentStack;
         ItemLevel = invenItem.itemLevel;
         Str = invenItem.str;
         Def = invenItem.def;

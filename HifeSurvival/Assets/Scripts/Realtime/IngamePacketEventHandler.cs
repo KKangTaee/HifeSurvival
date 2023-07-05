@@ -38,8 +38,7 @@ public sealed class IngamePacketEventHandler : PacketEventHandlerBase,
         if (player == null)
             return;
 
-        player.stat.IncreaseStat((EStatType)packet.type, packet.increase);
-
+        // player.stat.IncreaseStat((EStatType)packet.type, packet.increase);
         NotifyClient(packet);
     }
 
@@ -156,7 +155,16 @@ public sealed class IngamePacketEventHandler : PacketEventHandlerBase,
                 break;
         }
 
-        entity.stat = new EntityStat(packet.originStat);
+        if(entity.stat == null)
+        {
+           entity.stat = new EntityStat(packet.originStat);
+        }
+        else
+        {
+            entity.stat.UpdateOriginStat(packet.originStat);
+            entity.stat.UpdateAddStat(packet.addStat);
+        }
+
         NotifyClient(packet);
     }
 }

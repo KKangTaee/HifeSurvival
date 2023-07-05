@@ -18,6 +18,7 @@ public class GameMode
     private IngamePacketEventHandler    _ingameEventHandler;
     private GameReadyPacketEventHandler _gameReadyEventHandler;
 
+
     /// <summary>
     /// 입장 관련
     /// </summary>
@@ -143,8 +144,6 @@ public class GameMode
     }
 
 
-
-
     public async Task<bool> JoinAsync()
     {
         _joinCompleted.Reset();
@@ -187,6 +186,7 @@ public class GameMode
         NetworkManager.Instance.Send(moveRequest);
     }
 
+
     public void OnSendAttack(int toId, int damageValue)
     {
         CS_Attack attack = new CS_Attack()
@@ -198,6 +198,7 @@ public class GameMode
 
         NetworkManager.Instance.Send(attack);
     }
+
 
     public void OnSendSelectHero(int inHeroKey)
     {
@@ -265,7 +266,6 @@ public class GameMode
     }
 
 
-
     //-----------------
     // Receive
     //-----------------
@@ -297,29 +297,5 @@ public class GameMode
         RemovePlayerEntity(inPacket.id);
 
         _onRecvLeaveCB?.Invoke(inPacket.id);
-    }
-
-
-
-    //----------------------
-    // UpdateBroadcast
-    //----------------------
-
-    public void OnUpdateStatBroadcast(UpdateStatBroadcast packet)
-    {
-        Entity entity = null;
-        switch(Entity.GetEntityType(packet.id))
-        {
-            case Entity.EEntityType.PLAYER:
-                entity = GetPlayerEntity(packet.id);
-                break;
-            
-            case Entity.EEntityType.MOSNTER:
-                entity = GetMonsterEntity(packet.id);
-                break;
-        }
-
-        entity.stat = new EntityStat(packet.originStat);
-        // NOTE@taeho.kang OnRecvIncreaseStat 이랑 같이 들어옴
     }
 }

@@ -11,7 +11,8 @@ using DG.Tweening;
 
 [Popup(PATH_IN_RESOURCES_FOLDER = "Prefabs/Popups/PopupSelectHeros/PopupSelectHeros",
        IN_RESOURCES_FORLDER = true)]
-public class PopupSelectHeros : PopupBase
+public class PopupSelectHeros : PopupBase,
+    IUpdateGameModeStatusBroadcast
 {
     [Header("[PopupSelectHeros]")]
     [SerializeField] Button BTN_close;
@@ -240,26 +241,18 @@ public class PopupSelectHeros : PopupBase
         view.Clear();
     }
 
-    public void OnRecvSelectHero(PlayerEntity inEntity)
+    public void OnRecvSelectHero(CS_SelectHero packet)
     {
-        ChangeHeroView(inEntity.id, inEntity.heroId);
+        ChangeHeroView(packet.id, packet.heroKey);
     }
 
-    public void OnRecvReadyToGame(PlayerEntity inEntity)
+    public void OnRecvReadyToGame(CS_ReadyToGame packet)
     {
-        ReadyPlayerView(inEntity.id);
+        ReadyPlayerView(packet.id);
     }
 
-    public void OnRecvCountdown(int inSec)
-    {
-        StopCoroutine(nameof(Co_SelectTimer));
-        StartCoroutine(Co_CountdownTimer(inSec));
-    }
+ 
 
-    public void OnRecvStartGame()
-    {
-        GameStart();
-    }
 
     public void ChangeHeroView(int inPlayerId, int inHeroId)
     {
@@ -332,5 +325,30 @@ public class PopupSelectHeros : PopupBase
     public void SetPlayerIdSelf(int inId)
     {
         _playerIdSelf = inId;
+    }
+
+    public void OnUpdateGameModeStatusBroadcast(UpdateGameModeStatusBroadcast packet)
+    {
+        var status  = (EGameModeStatus)packet.status;
+        switch(status)
+        {
+            // 게임 카운트다운
+            case EGameModeStatus.Countdown:                
+                // TODO@taeho.kang 임시
+                int countdownSec = 10;
+                StopCoroutine(nameof(Co_SelectTimer));
+                StartCoroutine(Co_CountdownTimer(countdownSec));
+                break;
+
+            // 씬 전환
+            case EGameModeStatus.LoadGame:
+                GameStart();
+                break;
+
+            // 완전 게임시작
+            case EGameModeStatus.PlayStart:
+                // OnUpdateGameModeStatusHandler?.Invoke(packet);
+                break;
+        }
     }
 }

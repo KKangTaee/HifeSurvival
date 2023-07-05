@@ -55,6 +55,23 @@ public interface IUpdateRespawn
 }
 
 
+public interface IUpdateSelectHero
+{
+    void OnUpdateSelectHeroBroadcast(CS_SelectHero packet);
+}
+
+public interface IUpdateReadyToGame
+{
+    void UpdateReadyToGameBroadcast(CS_ReadyToGame packet);
+}
+
+public interface IUpdateStartGame
+{
+    void UpdateStartGameBroadcast(S_StartGame packet);
+}
+
+
+
 //------------------
 // Update Single
 //------------------

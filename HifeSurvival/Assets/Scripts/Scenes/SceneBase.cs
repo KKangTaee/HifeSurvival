@@ -44,8 +44,9 @@ public class IngameScene : SceneBase, ISceneLoad, IUpdateGameModeStatusBroadcast
     private bool _playStartToken = false;
 
     public async UniTask<bool> PrevLoadAsync()
-    {
-        GameMode.Instance.OnUpdateGameModeStatusHandler += OnUpdateGameModeStatusBroadcast;
+    {        
+        GameMode.Instance.GetEventHandler<GameReadyPacketEventHandler>()
+                         .RegisterClient<UpdateGameModeStatusBroadcast>(OnUpdateGameModeStatusBroadcast);
         return true;
     }
 
@@ -54,7 +55,9 @@ public class IngameScene : SceneBase, ISceneLoad, IUpdateGameModeStatusBroadcast
         while(_playStartToken == false)
             await UniTask.Yield();
 
-         GameMode.Instance.OnUpdateGameModeStatusHandler -= OnUpdateGameModeStatusBroadcast;
+         GameMode.Instance.GetEventHandler<GameReadyPacketEventHandler>()
+                          .UnregisterClient<UpdateGameModeStatusBroadcast>(OnUpdateGameModeStatusBroadcast);
+        
         _playStartToken = false;
 
         return true;

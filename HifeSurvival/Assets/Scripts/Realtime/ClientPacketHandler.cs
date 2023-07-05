@@ -27,19 +27,19 @@ public class ClientPacketHandler : PacketHandler
     public override void S_StartGameHandler(Session session, IPacket packet)
     {
         S_StartGame startGame = packet as S_StartGame;
-        GameMode.Instance.OnRecvStartGame(startGame);
+        GameMode.Instance.GetEventHandler<GameReadyPacketEventHandler>().NotifyServer(startGame);
     }
 
     public override void CS_SelectHeroHandler(Session session, IPacket packet)
     {
         CS_SelectHero selectHero = packet as CS_SelectHero;
-        GameMode.Instance.OnRecvSelectHero(selectHero);
+        GameMode.Instance.GetEventHandler<GameReadyPacketEventHandler>().NotifyServer(selectHero);
     }
 
     public override void CS_ReadyToGameHandler(Session session, IPacket packet)
     {
         CS_ReadyToGame readyToGame = packet as CS_ReadyToGame;
-        GameMode.Instance.OnRecvReadyToGame(readyToGame);
+         GameMode.Instance.GetEventHandler<GameReadyPacketEventHandler>().NotifyServer(readyToGame);
     }
 
     public override void CS_AttackHandler(Session session, IPacket packet)
@@ -62,7 +62,7 @@ public class ClientPacketHandler : PacketHandler
 
     public override void C_JoinToGameHandler(Session session, IPacket packet)
     {
-        throw new NotImplementedException();
+
     }
 
     public override void S_SpawnMonsterHandler(Session session, IPacket packet)
@@ -133,7 +133,7 @@ public class ClientPacketHandler : PacketHandler
     public override void UpdateGameModeStatusBroadcastHandler(Session session, IPacket packet)
     {
         UpdateGameModeStatusBroadcast gameModeStatus = packet as UpdateGameModeStatusBroadcast;
-        GameMode.Instance.OnUpdateGameModeStatusBroadcast(gameModeStatus);
+        GameMode.Instance.GetEventHandler<GameReadyPacketEventHandler>().NotifyServer(gameModeStatus);
     }
 
     public override void UpdateInvenItemHandler(Session session, IPacket packet)

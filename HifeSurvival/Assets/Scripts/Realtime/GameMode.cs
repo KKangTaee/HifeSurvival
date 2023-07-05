@@ -23,10 +23,9 @@ public class GameMode
     /// </summary>
     private Action<PlayerEntity> _onRecvJoinCB;
     private Action<int>          _onRecvLeaveCB;
-
-
     public int RoomId { get; private set; }
-    public EGameModeStatus Status  { get; private set; } = EGameModeStatus.None;
+    
+    public EGameModeStatus Status     { get; private set; }
     public PlayerEntity    EntitySelf { get; private set; }
 
 

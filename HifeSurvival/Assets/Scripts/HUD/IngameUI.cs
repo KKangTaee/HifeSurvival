@@ -257,6 +257,7 @@ public class IngameUI : MonoBehaviour, IUpdateInvenItemSingle, IUpdatePlayerCurr
     public void OnRecvIncreaseStat(IncreaseStatResponse packet)
     {
         var entity = GameMode.Instance.EntitySelf;
+
         // SetStat(entity.stat);
         // PlayAnimIncreaseStat((EStatType)packet.type);
     }
@@ -273,14 +274,13 @@ public class IngameUI : MonoBehaviour, IUpdateInvenItemSingle, IUpdatePlayerCurr
         SetGold(entity.gold);
     }
 
+
     public void OnUpdateStatBroadcast(UpdateStatBroadcast packet)
     {
          if(GameMode.Instance.IsSelf(packet.id) == false)
             return;
 
         var entity = GameMode.Instance.EntitySelf;
-
-        Debug.Log($"{packet.addStat.str}, {packet.addStat.def}, {packet.addStat.hp}");
 
         SetStat(entity.stat);
         PlayAnimIncreaseStat((EStatType)1);

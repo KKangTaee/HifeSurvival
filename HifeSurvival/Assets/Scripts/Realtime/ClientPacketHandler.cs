@@ -99,12 +99,12 @@ public class ClientPacketHandler : PacketHandler
     public override void UpdateStatBroadcastHandler(Session session, IPacket packet)
     {
         UpdateStatBroadcast updateStat = packet as UpdateStatBroadcast;
-        // GameMode.Instance.OnUpdateStatBroadcast(updateStat);
         GameMode.Instance.GetEventHandler<IngamePacketEventHandler>().NotifyServer(updateStat);
     }
 
     public override void PickRewardRequestHandler(Session session, IPacket packet)
     {
+
     }
 
     public override void PickRewardResponseHandler(Session session, IPacket packet)
@@ -118,8 +118,6 @@ public class ClientPacketHandler : PacketHandler
         UpdateRewardBroadcast updateReward = packet as UpdateRewardBroadcast;
         GameMode.Instance.GetEventHandler<IngamePacketEventHandler>().NotifyServer(updateReward);
     }
-
-
 
     public override void PlayStartRequestHandler(Session session, IPacket packet)
     {
@@ -142,7 +140,7 @@ public class ClientPacketHandler : PacketHandler
         UpdateInvenItem invenItem = packet as UpdateInvenItem;
         GameMode.Instance.GetEventHandler<IngamePacketEventHandler>().NotifyServer(invenItem);
     }
-
+    
     public override void UpdatePlayerCurrencyHandler(Session session, IPacket packet)
     {
         UpdatePlayerCurrency playerCurrency = packet as UpdatePlayerCurrency;

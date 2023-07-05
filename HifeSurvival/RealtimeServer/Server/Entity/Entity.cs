@@ -14,12 +14,12 @@ namespace Server
         public PVec3 currentPos;
         public PVec3 targetPos;
 
-        public EntityStat stat;
-        public EntityStat defaultStat;
+        public EntityStat Stat { get; protected set; }
+        public EntityStat DefaultStat { get; protected set; }
 
         public EEntityStatus status;
 
-        protected GameRoom Room { get; private set; }
+        public GameRoom Room { get; private set; }
 
         public Entity(GameRoom room)
         {
@@ -65,8 +65,6 @@ namespace Server
         public abstract PStat GetDefaultPStat();
         public abstract PStat GetAdditionalPStat();
 
-
-        #region Callback
         public abstract void OnDamaged(in Entity attacker);
 
         public virtual void OnStatChange()
@@ -78,7 +76,6 @@ namespace Server
 
             Room.Broadcast(broadcast);
         }
-        #endregion
 
 
         public virtual void MoveToRespawn()
@@ -87,7 +84,7 @@ namespace Server
             {
                 currentPos = currentPos,
                 targetPos = spawnPos,
-                speed = stat.MoveSpeed,
+                speed = Stat.MoveSpeed,
                 timestamp = ServerTime.GetCurrentTimestamp()
             });
         }
@@ -98,19 +95,19 @@ namespace Server
             {
                 currentPos = currentPos,
                 targetPos = targetPos,
-                speed = stat.MoveSpeed,
+                speed = Stat.MoveSpeed,
                 timestamp = ServerTime.GetCurrentTimestamp()
             });
         }
 
         public virtual void ReduceHP(int hpValue)
         {
-            stat.AddCurrHp(-hpValue);
+            Stat.AddCurrHp(-hpValue);
         }
 
         public virtual bool IsDead()
         {
-            return stat.CurHp < 0 || status == EEntityStatus.DEAD;
+            return Stat.CurHp < 0 || status == EEntityStatus.DEAD;
         }
     }
 }

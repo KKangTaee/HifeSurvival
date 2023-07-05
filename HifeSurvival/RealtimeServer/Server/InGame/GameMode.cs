@@ -168,7 +168,7 @@ namespace Server
                             }
 
                             Logger.GetInstance().Debug($"monster id {id}, reward id {data.rewardIds}");
-                            MonsterEntity monsterEntity = new MonsterEntity(_room, monsterGroup, _worldMap)
+                            MonsterEntity monsterEntity = new MonsterEntity(_room, monsterGroup, _worldMap, data)
                             {
                                 id = _mId++,
                                 groupId = group.groupId,
@@ -177,7 +177,6 @@ namespace Server
                                 targetPos = pos,
                                 spawnPos = pos,
                                 grade = data.grade,
-                                defaultStat = new EntityStat(data),
                                 rewardDatas = data.rewardIds,
                             };
 
@@ -320,13 +319,12 @@ namespace Server
                 return;
             }
 
-            var playerEntity = new PlayerEntity(_room)
+            var playerEntity = new PlayerEntity(_room, data)
             {
                 userId = inPacket.userId,
                 id = inSessionId,
                 heroKey = data.key,
                 userName = inPacket.userName,
-                defaultStat = new EntityStat(data)
             };
 
             _playersDict.Add(inSessionId, playerEntity);
@@ -435,14 +433,15 @@ namespace Server
             int increaseValue = inPacket.increase;
             //NOTE : 현재 1골드 당 해당 스탯 1 증가. 
             //TODO : 골드량 대 스탯 증가량 비례 값은 데이터 시트로 관리할 예정. 
-            if (increaseValue > player.gold)
+            int currentGold = player.Inventory.GetCurrencyByType(ECurrency.GOLD);
+            if (currentGold < increaseValue)
             {
                 res.result = DEFINE.ERROR;
                 _room.Send(inPacket.id, res);
                 return;
             }
 
-            player.gold -= increaseValue;
+            player.Inventory.SpendCurrency(ECurrency.GOLD, increaseValue);
 
             switch ((EStatType)inPacket.type)
             {
@@ -498,8 +497,9 @@ namespace Server
             {
                 case ERewardType.GOLD:
                     {
-                        res.gold = broadcast.gold = rewardData.count;
-                        player.gold += rewardData.count;
+                        var amount = rewardData.count;
+                        res.gold = broadcast.gold = amount;
+                        player.Inventory.EarnCurrency(ECurrency.GOLD, amount);
                         break;
                     }
                 case ERewardType.ITEM:

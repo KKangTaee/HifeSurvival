@@ -101,7 +101,7 @@ namespace Server
             var currentTarget = CurrentTarget();
             Logger.GetInstance().Debug($"playerTarget : {currentTarget.id}, Pos : {currentTarget.currentPos.Print()}");
             Logger.GetInstance().Debug($"monster : {_monster.id}, Pos : {_monster.currentPos.Print()}");
-            var damagedVal = BattleCalculator.ComputeDamagedValue(_monster.stat, currentTarget.stat);
+            var damagedVal = BattleCalculator.ComputeDamagedValue(_monster.Stat, currentTarget.Stat);
 
             currentTarget.ReduceHP(damagedVal);
             currentTarget.OnDamaged(_monster);
@@ -130,7 +130,7 @@ namespace Server
             var targetPos = _lastMoveInfo.Value.targetPos;
 
             var normalizedVec = currentPos.NormalizeToTargetPVec3(targetPos);
-            float ratio = _monster.stat.MoveSpeed * DEFINE.AI_CHECK_MS * DEFINE.MS_TO_SEC;
+            float ratio = _monster.Stat.MoveSpeed * DEFINE.AI_CHECK_MS * DEFINE.MS_TO_SEC;
 
             _monster.currentPos.x = currentPos.x + normalizedVec.x * ratio;
             _monster.currentPos.y = currentPos.y + normalizedVec.y * ratio;
@@ -213,7 +213,7 @@ namespace Server
 
         private bool CanAttack()
         {
-            return ServerTime.GetCurrentTimestamp() - _lastAttackTime > _monster.stat.AttackSpeed * DEFINE.SEC_TO_MS;
+            return ServerTime.GetCurrentTimestamp() - _lastAttackTime > _monster.Stat.AttackSpeed * DEFINE.SEC_TO_MS;
         }
 
         private Entity CurrentTarget()

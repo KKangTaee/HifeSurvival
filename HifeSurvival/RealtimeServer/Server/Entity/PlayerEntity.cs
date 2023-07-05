@@ -12,17 +12,14 @@ namespace Server
         public int  heroKey;
         public EClientStatus clientStatus;
 
-        
         public EntityStat itemStat = new EntityStat();
         public EntityStat upgradeStat = new EntityStat();
 
-        public int  gold;
-        
-        public PlayerInventory inven = new PlayerInventory();
+        public PlayerInventory Inventory { get; private set; }
 
         StateMachine<PlayerEntity> _stateMachine;
 
-        public PlayerEntity(GameRoom room)
+        public PlayerEntity(GameRoom room, HeroData data)
             : base(room)
         {
             var smDict = new Dictionary<EEntityStatus, IState<PlayerEntity, IStateParam>>();
@@ -33,6 +30,8 @@ namespace Server
             smDict[EEntityStatus.DEAD] = new DeadState();
 
             _stateMachine = new StateMachine<PlayerEntity>(smDict);
+            Inventory = new PlayerInventory(this);
+            DefaultStat = new EntityStat(data);
         }
 
         public void SelectReady()
@@ -66,24 +65,19 @@ namespace Server
 
         public override void UpdateStat()
         {
-            bool bChanged = true;   //변화 감지가 필요함. 일단 생략. 
-
             UpdateItemStat();
 
-            stat = new EntityStat();
-            stat += defaultStat;
-            stat += upgradeStat;
-            stat += itemStat;
+            Stat = new EntityStat();
+            Stat += DefaultStat;
+            Stat += upgradeStat;
+            Stat += itemStat;
 
-            if (bChanged)
-            {
-                OnStatChange();
-            }
+            OnStatChange();     //변화 감지가 필요함. 일단 생략. 
         }
 
         public override PStat GetDefaultPStat()
         {
-            return this.defaultStat.ConvertToPStat();
+            return this.DefaultStat.ConvertToPStat();
         }
 
         public override PStat GetAdditionalPStat()
@@ -93,7 +87,7 @@ namespace Server
 
         public void UpdateItemStat()
         {
-            itemStat = inven.TotalItemStat();
+            itemStat = Inventory.TotalItemStat();
         }
 
         public void UpdateItem(InvenItem updateItem)
@@ -118,7 +112,7 @@ namespace Server
 
         public int EquipItem(in ItemData item)
         {
-            var invenItem = inven.EquipItem(item);
+            var invenItem = Inventory.EquipItem(item);
             if (invenItem == null)
             {
                 Logger.GetInstance().Warn($"Equip Failed! ");
@@ -135,13 +129,13 @@ namespace Server
             //TODO : Timer 클래스로 모두 빼야함. (취소 가능 기능 필요)
             JobTimer.Instance.Push(() =>
             {
-                stat.AddCurrHp(stat.MaxHp);
+                Stat.AddCurrHp(Stat.MaxHp);
                 Idle();
 
                 S_Respawn respawn = new S_Respawn()
                 {
                     id = id,
-                    stat = stat.ConvertToPStat(),
+                    stat = Stat.ConvertToPStat(),
                 };
 
                 Room.Broadcast(respawn);

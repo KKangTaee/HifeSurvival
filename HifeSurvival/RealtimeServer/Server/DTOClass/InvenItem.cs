@@ -9,6 +9,7 @@ namespace Server
         public int Slot { get; private set; }
         public int ItemKey { get; private set; }
         public int Level { get; private set; }
+        public int CurrentStack { get; private set; }
 
         public ItemSkill Skill { get; private set; }
         public EntityStat Stat { get; private set; }
@@ -32,7 +33,13 @@ namespace Server
 
             if (!GameData.Instance.ItemSkillDict.TryGetValue(upgradeData.skillKey, out var skilldata))
             {
-                Logger.GetInstance().Error("Item Upgrade Failed");
+                Logger.GetInstance().Error("Item Upgrade Failed (Skill Data Invalid)");
+                return;
+            }
+
+            CurrentStack++;
+            if (CurrentStack < upgradeData.needStack)
+            {
                 return;
             }
 
@@ -40,6 +47,7 @@ namespace Server
             Stat = new EntityStat(upgradeData);
 
             Level = nextLevel;
+            CurrentStack = 0;
         }
     }
 }

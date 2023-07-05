@@ -18,7 +18,7 @@ namespace Server
                         id = self.id,
                         currentPos = idleParam.currentPos,
                         targetPos = idleParam.currentPos,
-                        speed = self.stat.MoveSpeed,
+                        speed = self.Stat.MoveSpeed,
                         timestamp = idleParam.timestamp,
                     };
 

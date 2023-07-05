@@ -77,12 +77,12 @@ namespace Server
                 foreach (var entity in _monstersDict.Values)
                 {
                     entity.Idle();
-                    entity.stat.AddCurrHp(entity.stat.MaxHp);
+                    entity.Stat.AddCurrHp(entity.Stat.MaxHp);
 
                     S_Respawn respawn = new S_Respawn()
                     {
                         id = entity.id,
-                        stat = entity.stat.ConvertToPStat(),
+                        stat = entity.Stat.ConvertToPStat(),
                     };
                 }
             }, RespawnTime * DEFINE.SEC_TO_MS);

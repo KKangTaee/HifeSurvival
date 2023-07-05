@@ -18,7 +18,7 @@ namespace Server
                         id = self.id,
                         currentPos = idleParam.currentPos,
                         targetPos = idleParam.currentPos,
-                        speed = self.stat.MoveSpeed,
+                        speed = self.Stat.MoveSpeed,
                         timestamp = idleParam.timestamp,
                     };
 
@@ -84,7 +84,7 @@ namespace Server
                         return;
                     }
 
-                    var damagedVal = BattleCalculator.ComputeDamagedValue(self.stat, target.stat); 
+                    var damagedVal = BattleCalculator.ComputeDamagedValue(self.Stat, target.Stat); 
                     target.ReduceHP(damagedVal);
                     target.OnDamaged(self);
                 }
@@ -101,7 +101,7 @@ namespace Server
                         return;
                     }
 
-                    var damagedVal = BattleCalculator.ComputeDamagedValue(self.stat, target.stat);
+                    var damagedVal = BattleCalculator.ComputeDamagedValue(self.Stat, target.Stat);
                     target.ReduceHP(damagedVal);
                     target.OnDamaged(self);
                 }

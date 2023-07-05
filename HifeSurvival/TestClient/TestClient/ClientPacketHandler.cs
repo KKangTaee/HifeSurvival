@@ -1,5 +1,6 @@
 ﻿using System;
 using ServerCore;
+using TestClient;
 
 public class ClientPacketHandler : PacketHandler
 {
@@ -10,7 +11,22 @@ public class ClientPacketHandler : PacketHandler
 
     public override void S_JoinToGameHandler(Session session, IPacket packet)
     {
-        
+        var sesh = session as ClientSession;
+        if (sesh == null)
+        {
+            return;
+        }
+
+        if(packet is S_JoinToGame response)
+        {
+            var player = response.joinPlayerList[0];
+            sesh.Player = new PlayerEntity()
+            {
+                Id = player.id,
+                ClientStatus = 0,
+                GameModeStatus = 0,
+            };
+        }
     }
 
     public override void S_LeaveToGameHandler(Session session, IPacket packet)

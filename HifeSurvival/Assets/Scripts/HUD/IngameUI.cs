@@ -115,7 +115,7 @@ public class IngameUI : MonoBehaviour, IUpdateInvenItemSingle, IUpdatePlayerCurr
 
         BTN_addHp.OnPointerDownAsObservable()
            .Where(_ => _onClickButtonType == EStatType.NONE)
-           .Subscribe(_ => _onClickButtonType = EStatType.DEF)
+           .Subscribe(_ => _onClickButtonType = EStatType.HP)
            .AddTo(this);
 
         BTN_addHp.OnPointerUpAsObservable()
@@ -226,7 +226,7 @@ public class IngameUI : MonoBehaviour, IUpdateInvenItemSingle, IUpdatePlayerCurr
         Sequence sequence = DOTween.Sequence();
 
         // 0.1초 동안 scale 1.3으로 확대
-        sequence.Append(targetUI.transform.DOScale(1.3f, 0.1f));
+        sequence.Append(targetUI.transform.DOScale(1.5f, 0.1f));
 
         // 0.2초 동안 scale 1로 축소
         sequence.Append(targetUI.transform.DOScale(1f, 0.2f));

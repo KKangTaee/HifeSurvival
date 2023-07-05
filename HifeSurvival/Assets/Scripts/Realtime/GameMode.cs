@@ -199,7 +199,6 @@ public class GameMode
         NetworkManager.Instance.Send(attack);
     }
 
-
     public void OnSendSelectHero(int inHeroKey)
     {
         CS_SelectHero packet = new CS_SelectHero()

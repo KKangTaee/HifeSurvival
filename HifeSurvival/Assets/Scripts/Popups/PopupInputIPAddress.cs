@@ -150,10 +150,6 @@ public class PopupInputIPAddress : PopupBase
                 GameMode.Instance.AddEvent(
                     inRecvJoin  : entity =>  popup.OnRecvJoin(entity),
                     inRecvLeave : playerId => popup.OnLeave(playerId)
-                    // inRecvCountdown : sec => popup.OnRecvCountdown(sec)
-                    // inRecvSelect : entity => popup.OnRecvSelectHero(entity),
-                    // inRecvReady : entity => popup.OnRecvReadyToGame(entity),
-                    // inRecvGameStart: ()=> popup.OnRecvStartGame()
                 );
 
                 popup.AddEvent(

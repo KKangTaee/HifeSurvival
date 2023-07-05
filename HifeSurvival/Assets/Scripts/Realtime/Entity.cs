@@ -9,7 +9,7 @@ public abstract class Entity
     public enum EEntityType
     {
         NONE,
-        
+
         PLAYER,
         MOSNTER,
     }
@@ -98,9 +98,9 @@ public class PlayerEntity : Entity
         return base.GetTotalStr() + itemSlot.Sum(x => x == null ? 0 : x.Str);
     }
 
-    public void AddGold(int gold)
+    public void SetGold(int gold)
     {
-        this.gold += gold;
+        this.gold = gold;
     }
 }
 

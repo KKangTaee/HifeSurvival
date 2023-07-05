@@ -440,10 +440,7 @@ public class GameMode
         if (player == null)
             return;
 
-        player.AddGold(-packet.usedGold);
-        Debug.Log(player.gold);
         player.stat.IncreaseStat((EStatType)packet.type, packet.increase);
-
         OnRecvIncreasStatHandler?.Invoke(packet);
     }
 
@@ -548,8 +545,7 @@ public class GameMode
             switch((ECurrency)currency.currencyType)
             {
                 case ECurrency.GOLD:
-                Debug.Log(currency.count);
-                EntitySelf.AddGold(currency.count);
+                EntitySelf.SetGold(currency.count);
                 break;
             }
         }

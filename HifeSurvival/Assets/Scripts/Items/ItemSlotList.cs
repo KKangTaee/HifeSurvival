@@ -29,8 +29,6 @@ public class ItemSlotList : MonoBehaviour
             return;
        }
 
-        Debug.Log("임시 호출!");
-
        emptySlot.EquipItem(inEntityItem);
     }
 

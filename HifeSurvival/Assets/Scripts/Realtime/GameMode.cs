@@ -295,7 +295,6 @@ public class GameMode
     public void OnRecvLeave(S_LeaveToGame inPacket)
     {
         RemovePlayerEntity(inPacket.id);
-
         _onRecvLeaveCB?.Invoke(inPacket.id);
     }
 }

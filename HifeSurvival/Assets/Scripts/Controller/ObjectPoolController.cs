@@ -13,7 +13,7 @@ public class ObjectPoolAttribute : System.Attribute
 
 public class ObjectPoolController : ControllerBase
 {
-    private Dictionary<Type, Queue<Component>> _objectPoolDicts = new Dictionary<Type, Queue<Component>>();
+    private Dictionary<Type, Queue<Component>> _objectPoolDict = new Dictionary<Type, Queue<Component>>();
 
 
     //------------------
@@ -30,7 +30,7 @@ public class ObjectPoolController : ControllerBase
     {
         T inst = null;
 
-        if (_objectPoolDicts.TryGetValue(typeof(T), out var poolQueue) == true && poolQueue.Count > 0)
+        if (_objectPoolDict.TryGetValue(typeof(T), out var poolQueue) == true && poolQueue.Count > 0)
         {
             inst = poolQueue.Dequeue() as T;
         }
@@ -57,16 +57,16 @@ public class ObjectPoolController : ControllerBase
         inObj.transform.SetParent(this.transform);
         inObj.transform.position = new Vector3(-9999, -9999, -9999);
 
-        if (_objectPoolDicts.ContainsKey(typeof(T)) == true)
+        if (_objectPoolDict.ContainsKey(typeof(T)) == true)
         {
-            _objectPoolDicts[typeof(T)].Enqueue(inObj);
+            _objectPoolDict[typeof(T)].Enqueue(inObj);
         }
         else
         {
             var poolQueue = new Queue<Component>();
             poolQueue.Enqueue(inObj);
 
-            _objectPoolDicts.Add(typeof(T), poolQueue);
+            _objectPoolDict.Add(typeof(T), poolQueue);
         }
     }
 
@@ -90,7 +90,7 @@ public class ObjectPoolController : ControllerBase
                 }
             }
         }
-
+        
         if(asset == null)
         {
             Debug.LogError($"[{nameof(T)}] is null or empty!");

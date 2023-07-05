@@ -43,8 +43,12 @@ namespace TestClient
             CurrencyLabel = new System.Windows.Forms.Label();
             label4 = new System.Windows.Forms.Label();
             StatTextBox1 = new System.Windows.Forms.RichTextBox();
+            WorldMap = new System.Windows.Forms.GroupBox();
+            richTextBox1 = new System.Windows.Forms.RichTextBox();
+            DropListLabel = new System.Windows.Forms.Label();
             panel1.SuspendLayout();
             PlayerSpecBox.SuspendLayout();
+            WorldMap.SuspendLayout();
             SuspendLayout();
             // 
             // startgameBtn
@@ -114,7 +118,7 @@ namespace TestClient
             panel1.Controls.Add(label2);
             panel1.Location = new System.Drawing.Point(12, 12);
             panel1.Name = "panel1";
-            panel1.Size = new System.Drawing.Size(347, 69);
+            panel1.Size = new System.Drawing.Size(380, 69);
             panel1.TabIndex = 6;
             // 
             // PlayerSpecBox
@@ -127,7 +131,7 @@ namespace TestClient
             PlayerSpecBox.Controls.Add(StatTextBox1);
             PlayerSpecBox.Location = new System.Drawing.Point(12, 116);
             PlayerSpecBox.Name = "PlayerSpecBox";
-            PlayerSpecBox.Size = new System.Drawing.Size(347, 425);
+            PlayerSpecBox.Size = new System.Drawing.Size(193, 425);
             PlayerSpecBox.TabIndex = 7;
             PlayerSpecBox.TabStop = false;
             PlayerSpecBox.Text = "PlayerSpec";
@@ -187,11 +191,41 @@ namespace TestClient
             StatTextBox1.TabIndex = 0;
             StatTextBox1.Text = "";
             // 
+            // WorldMap
+            // 
+            WorldMap.Controls.Add(DropListLabel);
+            WorldMap.Controls.Add(richTextBox1);
+            WorldMap.Location = new System.Drawing.Point(215, 116);
+            WorldMap.Name = "WorldMap";
+            WorldMap.Size = new System.Drawing.Size(177, 425);
+            WorldMap.TabIndex = 8;
+            WorldMap.TabStop = false;
+            WorldMap.Text = "WorldMap";
+            // 
+            // richTextBox1
+            // 
+            richTextBox1.Location = new System.Drawing.Point(6, 42);
+            richTextBox1.Name = "richTextBox1";
+            richTextBox1.ReadOnly = true;
+            richTextBox1.Size = new System.Drawing.Size(165, 109);
+            richTextBox1.TabIndex = 6;
+            richTextBox1.Text = "";
+            // 
+            // DropListLabel
+            // 
+            DropListLabel.AutoSize = true;
+            DropListLabel.Location = new System.Drawing.Point(6, 24);
+            DropListLabel.Name = "DropListLabel";
+            DropListLabel.Size = new System.Drawing.Size(52, 15);
+            DropListLabel.TabIndex = 6;
+            DropListLabel.Text = "DropList";
+            // 
             // Form1
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(371, 553);
+            ClientSize = new System.Drawing.Size(404, 553);
+            Controls.Add(WorldMap);
             Controls.Add(PlayerSpecBox);
             Controls.Add(panel1);
             Controls.Add(connectBtn);
@@ -203,6 +237,8 @@ namespace TestClient
             panel1.PerformLayout();
             PlayerSpecBox.ResumeLayout(false);
             PlayerSpecBox.PerformLayout();
+            WorldMap.ResumeLayout(false);
+            WorldMap.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -222,6 +258,9 @@ namespace TestClient
         private System.Windows.Forms.RichTextBox CurrencyTextBox;
         private System.Windows.Forms.RichTextBox ItemListTextBox;
         private System.Windows.Forms.Label ItemTextBox;
+        private System.Windows.Forms.GroupBox WorldMap;
+        private System.Windows.Forms.Label DropListLabel;
+        private System.Windows.Forms.RichTextBox richTextBox1;
     }
 }
 

@@ -10,10 +10,10 @@ public class HeroSelectButton : MonoBehaviour
     [SerializeField] Image  IMG_hero;
     [SerializeField] Image  IMG_frame;
 
-    private StaticData.Heros _data;
-    private Action<StaticData.Heros> _clickCallback;
+    private GameDataAO.Heros _data;
+    private Action<GameDataAO.Heros> _clickCallback;
 
-    public void SetInfo(StaticData.Heros inData,  Action<StaticData.Heros> inClickCallback, Sprite inSprite)
+    public void SetInfo(GameDataAO.Heros inData,  Action<GameDataAO.Heros> inClickCallback, Sprite inSprite)
     {
         _data = inData;
         _clickCallback = inClickCallback;

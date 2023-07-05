@@ -5,6 +5,7 @@ using SimpleJSON;
 using System;
 using System.Threading.Tasks;
 using System.Linq;
+using GameDataAO;
 
 public class StaticData
 {
@@ -26,9 +27,10 @@ public class StaticData
     // variables
     //------------------
 
-    private string apiKey = "AIzaSyABnRmQck9SP3Gv7syjremXAjDBDOky8so";
-    private string sheetId = "104ZnnXWWorMZOAhuY0o1o1xIL2H41opJlrJLsSEk_C4";
+    private string apiKey       = "AIzaSyABnRmQck9SP3Gv7syjremXAjDBDOky8so";
+    private string sheetId      = "104ZnnXWWorMZOAhuY0o1o1xIL2H41opJlrJLsSEk_C4";
     private string sheetsApiUrl = "https://sheets.googleapis.com/v4/spreadsheets";
+
 
 
     //------------------
@@ -41,6 +43,8 @@ public class StaticData
     public Dictionary<string, MonstersGroup> MonstersGroupDict { get; private set; }
     public Dictionary<string, Item> ItemDict { get; private set; }
     public Dictionary<string, ChapterData> ChapaterDataDict { get; private set; }
+    public Dictionary<string, ItemUpgrade> ItemUpgradeDict { get; private set; }
+    public Dictionary<string, ItemSkill> ItemSkillDict { get; private set; }
 
 
     public async Task Init()
@@ -100,13 +104,21 @@ public class StaticData
                     {
                         MonstersGroupDict = JsonToDictionaryGeneric.ParseJsonToDictionary<MonstersGroup>(node.ToString());
                     }
+                    else if (rangeValue.Equals("chapter_data"))
+                    {
+                        ChapaterDataDict = JsonToDictionaryGeneric.ParseJsonToDictionary<ChapterData>(node.ToString());
+                    }
                     else if (rangeValue.Equals("item"))
                     {
                         ItemDict = JsonToDictionaryGeneric.ParseJsonToDictionary<Item>(node.ToString());
                     }
-                    else if(rangeValue.Equals("chapter_data"))
+                    else if (rangeValue.Equals("item_upgrade"))
                     {
-                        ChapaterDataDict = JsonToDictionaryGeneric.ParseJsonToDictionary<ChapterData>(node.ToString());
+                        ItemUpgradeDict = JsonToDictionaryGeneric.ParseJsonToDictionary<ItemUpgrade>(node.ToString());
+                    }
+                    else if (rangeValue.Equals("item_skill"))
+                    {
+                        ItemSkillDict = JsonToDictionaryGeneric.ParseJsonToDictionary<ItemSkill>(node.ToString());
                     }
                 }
 
@@ -235,82 +247,6 @@ public class StaticData
 
             return values;
         }
-    }
 
-    [System.Serializable]
-    public class Systems
-    {
-        public string key;
-        public string value;
-    }
-
-    [System.Serializable]
-    public class Heros
-    {
-        public int key;
-        public string name;
-        public int str;
-        public int def;
-        public int hp;
-        public float attackSpeed;
-        public float moveSpeed;
-        public float attackRange;
-        public float detectRange;
-        public string desc;
-    }
-
-    [Serializable]
-    public class Monsters
-    {
-        public int key;
-        public string name;
-        public int grade;
-        public int str;
-        public int def;
-        public int hp;
-        public float attackSpeed;
-        public float moveSpeed;
-        public float attackRange;
-        public float detectRange;
-        public string rewardIds;
-        public string desc;
-    }
-
-    [Serializable]
-    public class MonstersGroup
-    {
-        public int key;
-        public int groupId;
-        public string monsterGroups;
-        public int respawnTime;
-        public int enabled;
-    }
-
-    [Serializable]
-    public class Item
-    {
-        public int key;
-        public string name;
-        public int grade;
-        public int str;
-        public int def;
-        public int hp;
-        public float attackSpeed;
-        public float moveSpeed;
-        public float attackRange;
-        public float detectRange;
-    }
-
-    [Serializable]
-    public class ChapterData
-    {
-        public int key;
-        public string name;
-        public string mapData;
-        public string phase1;
-        public string phase2;
-        public string phase3;
-        public string phase4;
-        public int runningTimeSec;
     }
 }

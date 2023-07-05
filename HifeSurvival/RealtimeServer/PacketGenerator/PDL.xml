@@ -169,6 +169,9 @@
 	<struct name = "PInvenItem">
 		<int name ="slot" />
 		<int name ="itemKey"/>
+		<int name ="maxStack"/>
+		<int name ="currentStack"/>
+		<int name ="itemLevel"/>
 		<int name ="str"/>
 		<int name ="def"/>
 		<int name ="hp"/>

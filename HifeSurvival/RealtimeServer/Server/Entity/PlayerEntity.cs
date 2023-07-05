@@ -106,6 +106,7 @@ namespace Server
                 {
                     slot = updateItem.Slot,
                     itemKey = updateItem.ItemKey,
+                    itemLevel = updateItem.Level,
                     str = updateItem.Stat.Str,
                     def = updateItem.Stat.Def,
                     hp = updateItem.Stat.MaxHp,

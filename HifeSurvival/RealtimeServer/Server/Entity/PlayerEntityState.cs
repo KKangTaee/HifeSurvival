@@ -42,13 +42,13 @@ namespace Server
             public void Enter(PlayerEntity self, in IStateParam param = default)
             {
                 var moveParam = (MoveParam)param;
-                updateMove(self, moveParam);
+                UpdateMove(self, moveParam);
             }
 
             public void Update(PlayerEntity self, in IStateParam param = default)
             {
                 var moveParam = (MoveParam)param;
-                updateMove(self, moveParam);
+                UpdateMove(self, moveParam);
             }
 
             public void Exit(PlayerEntity self, in IStateParam param = default)
@@ -56,7 +56,7 @@ namespace Server
                 Logger.GetInstance().Debug("Move Exit");
             }
 
-            private void updateMove(PlayerEntity self, MoveParam param)
+            private void UpdateMove(PlayerEntity self, MoveParam param)
             {
                 UpdateLocationBroadcast move = new UpdateLocationBroadcast()
                 {

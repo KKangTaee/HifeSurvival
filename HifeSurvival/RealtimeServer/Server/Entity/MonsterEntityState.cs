@@ -45,7 +45,7 @@ namespace Server
             {
                 if (param is MoveParam moveParam)
                 {
-                    updateMove(self, moveParam);
+                    UpdateMove(self, moveParam);
                 }
             }
 
@@ -53,7 +53,7 @@ namespace Server
             {
                 if (param is MoveParam moveParam)
                 {
-                    updateMove(self, moveParam);
+                    UpdateMove(self, moveParam);
                 }
             }
 
@@ -62,7 +62,7 @@ namespace Server
 
             }
 
-            private void updateMove(MonsterEntity self, MoveParam param)
+            private void UpdateMove(MonsterEntity self, MoveParam param)
             {
                 self.AIController.UpdateNextMove(param);
 

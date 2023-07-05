@@ -160,6 +160,28 @@ namespace Server
                 }
             }
 
+            ItemUpgradeByLevelDict = new ConcurrentDictionary<int, ConcurrentDictionary<int, ItemUpgradeData>>();
+            foreach ( var itemUpgradeData in ItemUpgradeDict)
+            {
+                if (ItemUpgradeByLevelDict.TryGetValue(itemUpgradeData.Value.itemKey, out var levelDict))
+                {
+                    if (levelDict.TryGetValue(itemUpgradeData.Value.level, out var data))
+                    {
+                        Logger.GetInstance().Warn("duplicated data in itemupgrade");
+                    }
+                    else
+                    {
+                        levelDict.TryAdd(itemUpgradeData.Value.level, itemUpgradeData.Value);
+                    }
+                }
+                else
+                {
+                    var t = new ConcurrentDictionary<int, ItemUpgradeData>();
+                    t.TryAdd(itemUpgradeData.Value.level, itemUpgradeData.Value);
+                    ItemUpgradeByLevelDict.TryAdd(itemUpgradeData.Value.itemKey, t);
+                }
+            }
+
             return true;
         }
 

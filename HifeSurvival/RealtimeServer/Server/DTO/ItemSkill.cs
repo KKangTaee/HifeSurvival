@@ -10,7 +10,6 @@ namespace Server
         public int CoolTime { get; private set; }
         public int FormulaKey { get; private set; }
 
-
         public ItemSkill(ItemSkillData skillData)
         {
             SkillKey = skillData.key;

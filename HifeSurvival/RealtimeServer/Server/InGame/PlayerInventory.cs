@@ -108,7 +108,9 @@ namespace Server
             {
                 var resultAmount = currentAmount - amount;
                 if (resultAmount < 0)
+                {
                     resultAmount = 0;
+                }
 
                 _currencyDict[currencyType] = resultAmount;
             }

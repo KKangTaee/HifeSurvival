@@ -348,7 +348,9 @@ namespace Server
         {
             var player = GetPlayerEntityById(inPacket.id);
             if (player == null)
+            {
                 return;
+            }
 
             player.SelectReady();
             _room.Broadcast(inPacket);
@@ -363,7 +365,9 @@ namespace Server
         {
             var player = GetPlayerEntityById(req.id);
             if (player == null)
+            {
                 return;
+            }
 
             player.PlayReady();
             _room.Send(player.id, new PlayStartResponse() { id = player.id });
@@ -378,7 +382,9 @@ namespace Server
         {
             var player = GetPlayerEntityById(inPacket.id);
             if (player == null)
+            {
                 return;
+            }
 
             player.currentPos = inPacket.currentPos;
             player.targetPos = inPacket.targetPos;

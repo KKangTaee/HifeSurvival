@@ -93,7 +93,7 @@ public class PopupSelectHeros : PopupBase
             return;
         }
 
-        StaticData.Heros hero = null;
+        GameDataAO.Heros hero = null;
 
         foreach (var data in staticData)
         {
@@ -116,7 +116,7 @@ public class PopupSelectHeros : PopupBase
     }
 
 
-    public void SetHeroInfo(StaticData.Heros inData)
+    public void SetHeroInfo(GameDataAO.Heros inData)
     {
         TMP_name.text = inData.name;
 
@@ -133,7 +133,7 @@ public class PopupSelectHeros : PopupBase
 
 
 
-    private void OnClickSelectButton(StaticData.Heros inData)
+    private void OnClickSelectButton(GameDataAO.Heros inData)
     {
         SetHeroInfo(inData);
 

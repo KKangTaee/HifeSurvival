@@ -80,17 +80,17 @@ public class ClientPacketHandler : PacketHandler
     {
         //TODO 좌표 기준 이동 리뉴얼
         UpdateLocationBroadcast locationBroadcast = packet as UpdateLocationBroadcast;
-        GameMode.Instance.OnUpdateLocation(locationBroadcast);
+        GameMode.Instance.OnUpdateLocationBroadcast(locationBroadcast);
     }
 
     public override void MoveResponseHandler(Session session, IPacket packet)
     {
-        throw new NotImplementedException();
+
     }
 
     public override void IncreaseStatRequestHandler(Session session, IPacket packet)
     {
-        throw new NotImplementedException();
+
     }
 
     public override void IncreaseStatResponseHandler(Session session, IPacket packet)
@@ -102,12 +102,11 @@ public class ClientPacketHandler : PacketHandler
     public override void UpdateStatBroadcastHandler(Session session, IPacket packet)
     {
         UpdateStatBroadcast updateStat = packet as UpdateStatBroadcast;
-        GameMode.Instance.OnUpdateStat(updateStat);
+        GameMode.Instance.OnUpdateStatBroadcast(updateStat);
     }
 
     public override void PickRewardRequestHandler(Session session, IPacket packet)
     {
-        
     }
 
     public override void PickRewardResponseHandler(Session session, IPacket packet)
@@ -119,7 +118,7 @@ public class ClientPacketHandler : PacketHandler
     public override void UpdateRewardBroadcastHandler(Session session, IPacket packet)
     {
         UpdateRewardBroadcast updateReward = packet as UpdateRewardBroadcast;
-        GameMode.Instance.OnUpdateReward(updateReward);
+        GameMode.Instance.OnUpdateRewardBroadcast(updateReward);
     }
 
     public override void UpdatePlayerCurrencyHandler(Session session, IPacket packet)
@@ -140,6 +139,11 @@ public class ClientPacketHandler : PacketHandler
     public override void UpdateGameModeStatusBroadcastHandler(Session session, IPacket packet)
     {
         UpdateGameModeStatusBroadcast gameModeStatus = packet as UpdateGameModeStatusBroadcast;
-        GameMode.Instance.OnUpdateGameModeStatus(gameModeStatus);
+        GameMode.Instance.OnUpdateGameModeStatusBroadcast(gameModeStatus);
+    }
+
+    public override void UpdateInvenItemHandler(Session session, IPacket packet)
+    {
+        
     }
 }

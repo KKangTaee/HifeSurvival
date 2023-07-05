@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Net;
 using System.Net.Sockets;
@@ -9,38 +10,69 @@ namespace TestClient
 {
     public partial class Form1 : Form
     {
+        private ClientSession _sesh;
+
+        private (int mainStatus, int subStatus) _lastStatus = default;
+        private (int mainStatus, int subStatus) _status = default;
+
         public Form1()
         {
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            if(_sesh != null)
+            {
+                if (_sesh.IsConntected)
+                {
+                    _status = (1, 1);
+                }
+                else
+                {
+                    _status = (1, 0);
+                }
+            }
+
+
+            if(_lastStatus != _status)
+            {
+                if(_status.mainStatus == 1)
+                {
+                    label2.Text = _status.subStatus == 1 ? "Connected" : "Disconnected";
+                }
+
+                _lastStatus = _status;
+            }
+
+        }
+
+
+        private void StartGameClick(object sender, EventArgs e)
         {
 
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void TestClick(object sender, EventArgs e)
         {
 
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void ConnectBtnClick(object sender, EventArgs e)
         {
-            string host = Dns.GetHostName();
-            IPHostEntry ipHost = Dns.GetHostEntry(host);
-            IPAddress ipAddr = ipHost.AddressList.First(ip => ip.AddressFamily == AddressFamily.InterNetwork);
-            IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
-
-            endPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 7777);
-            // System.Console.WriteLine(ipAddr.Address);
+            var host = Dns.GetHostName();
+            var ipHost = Dns.GetHostEntry(host);
+            var endPoint =  new IPEndPoint(IPAddress.Parse("127.0.0.1"), 7777);
 
             PacketManager.Instance.BindHandler(new ClientPacketHandler());
 
             Connector connector = new Connector();
 
+            _sesh = SessionManager.Instance.Generate();
             connector.Connect(endPoint,
-                () => { return SessionManager.Instance.Generate(); },
+                () => { return _sesh; },
                 1);
         }
+
     }
 }

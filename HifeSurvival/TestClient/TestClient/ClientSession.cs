@@ -4,15 +4,19 @@ using ServerCore;
 
 namespace TestClient
 {
-    class ClientSession : Session
+    public class ClientSession : Session
     {
+        public bool IsConntected { get; private set; }
+
         public override void OnConnected(EndPoint endPoint)
         {
+            IsConntected = true;
             Console.WriteLine($"OnConnected 접속성공!!: {endPoint}");
         }
 
         public override void OnDisconnected(EndPoint endPoint)
         {
+            IsConntected = false;
             Console.WriteLine($"OnDisconnected : {endPoint}");
         }
 

@@ -16,9 +16,7 @@ namespace Server
         public EntityStat itemStat = new EntityStat();
         public EntityStat upgradeStat = new EntityStat();
 
-        public int  gold;
-        
-        public PlayerInventory inven = new PlayerInventory();
+        public PlayerInventory Inventory { get; private set; }
 
         StateMachine<PlayerEntity> _stateMachine;
 
@@ -33,6 +31,7 @@ namespace Server
             smDict[EEntityStatus.DEAD] = new DeadState();
 
             _stateMachine = new StateMachine<PlayerEntity>(smDict);
+            Inventory = new PlayerInventory();
         }
 
         public void SelectReady()
@@ -93,7 +92,7 @@ namespace Server
 
         public void UpdateItemStat()
         {
-            itemStat = inven.TotalItemStat();
+            itemStat = Inventory.TotalItemStat();
         }
 
         public void UpdateItem(InvenItem updateItem)
@@ -118,7 +117,7 @@ namespace Server
 
         public int EquipItem(in ItemData item)
         {
-            var invenItem = inven.EquipItem(item);
+            var invenItem = Inventory.EquipItem(item);
             if (invenItem == null)
             {
                 Logger.GetInstance().Warn($"Equip Failed! ");

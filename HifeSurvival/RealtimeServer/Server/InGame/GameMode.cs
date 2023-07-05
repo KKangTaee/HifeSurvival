@@ -435,14 +435,15 @@ namespace Server
             int increaseValue = inPacket.increase;
             //NOTE : 현재 1골드 당 해당 스탯 1 증가. 
             //TODO : 골드량 대 스탯 증가량 비례 값은 데이터 시트로 관리할 예정. 
-            if (increaseValue > player.gold)
+            int currentGold = player.Inventory.GetCurrencyByType(ECurrency.GOLD);
+            if (currentGold < increaseValue)
             {
                 res.result = DEFINE.ERROR;
                 _room.Send(inPacket.id, res);
                 return;
             }
 
-            player.gold -= increaseValue;
+            player.Inventory.SpendCurrency(ECurrency.GOLD, increaseValue);
 
             switch ((EStatType)inPacket.type)
             {
@@ -498,8 +499,9 @@ namespace Server
             {
                 case ERewardType.GOLD:
                     {
-                        res.gold = broadcast.gold = rewardData.count;
-                        player.gold += rewardData.count;
+                        var amount = rewardData.count;
+                        res.gold = broadcast.gold = amount;
+                        player.Inventory.EarnCurrency(ECurrency.GOLD, amount);
                         break;
                     }
                 case ERewardType.ITEM:

@@ -27,6 +27,9 @@ static class DEFINE
     //Game
     public const int PLAYER_MAX_COUNT = 4;
     public const int START_COUNTDOWN_SEC = 10;
+
+    //Item
+    public const int MAX_ITEM_LEVEL = 4;
 }
 
 
@@ -99,4 +102,10 @@ public enum ESkillSort
     HEAL,
     BUFF,
     DEBUFF,
+}
+
+public enum ECurrency
+{
+    NONE,
+    GOLD,
 }

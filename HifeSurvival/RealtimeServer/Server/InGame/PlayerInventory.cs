@@ -7,11 +7,12 @@ namespace Server
     public class PlayerInventory
     {
         private InvenItem[] _itemSlotArr = new InvenItem[DEFINE.PLAYER_ITEM_SLOT];
+        private Dictionary<ECurrency, int> _currencyDict = new Dictionary<ECurrency, int>();
 
         public InvenItem EquipItem(in ItemData item)
         {
             InvenItem equippedItem = null;
-            
+
             for (int i = 0; i < DEFINE.PLAYER_ITEM_SLOT; i++)
             {
                 var slotItem = _itemSlotArr[i];
@@ -30,7 +31,7 @@ namespace Server
             if (equippedItem == null)
             {
                 int slot = NextItemSlot();
-                if(slot >= 0)
+                if (0 <= slot)
                 {
                     equippedItem = new InvenItem(slot, item.key);
                     _itemSlotArr[slot] = equippedItem;
@@ -38,7 +39,15 @@ namespace Server
             }
             else
             {
-                equippedItem.Upgrade();
+                if (equippedItem.Level < DEFINE.MAX_ITEM_LEVEL)
+                {
+                    equippedItem.Upgrade();
+                }
+                else
+                {
+                    //TODO : Gold 지급. (시트 참조)
+                    EarnCurrency(ECurrency.GOLD, 19941111);
+                }
             }
 
             return equippedItem;
@@ -60,7 +69,7 @@ namespace Server
         public EntityStat TotalItemStat()
         {
             var stat = new EntityStat();
-            foreach(var item in _itemSlotArr)
+            foreach (var item in _itemSlotArr)
             {
                 if (item == null)
                     continue;
@@ -69,6 +78,43 @@ namespace Server
             }
 
             return stat;
+        }
+
+        public void EarnCurrency(ECurrency currencyType, int amount)
+        {
+            if(_currencyDict.TryGetValue(currencyType, out int currentAmount))
+            {
+                _currencyDict[currencyType] += amount;
+            }
+            else
+            {
+                _currencyDict.Add(currencyType, amount);
+            }
+        }
+
+        public void SpendCurrency(ECurrency currencyType, int amount)
+        {
+            if (_currencyDict.TryGetValue(currencyType, out int currentAmount))
+            {
+                var resultAmount = currentAmount - amount;
+                if (resultAmount < 0)
+                    resultAmount = 0;
+
+                _currencyDict[currencyType] = resultAmount;
+            }
+            else
+            {
+                _currencyDict.Add(currencyType, 0);
+            }
+        }
+
+        public int GetCurrencyByType(ECurrency currencyType)
+        {
+            if(_currencyDict.TryGetValue(currencyType, out var amount))
+            {
+                return amount;
+            }
+            return 0;
         }
     }
 }

@@ -6,8 +6,14 @@ namespace Server
 {
     public class PlayerInventory
     {
+        private PlayerEntity _ownerPlayer;
         private InvenItem[] _itemSlotArr = new InvenItem[DEFINE.PLAYER_ITEM_SLOT];
         private Dictionary<ECurrency, int> _currencyDict = new Dictionary<ECurrency, int>();
+
+        public PlayerInventory(PlayerEntity player)
+        {
+            _ownerPlayer = player;
+        }
 
         public InvenItem EquipItem(in ItemData item)
         {
@@ -92,6 +98,8 @@ namespace Server
             {
                 _currencyDict.Add(currencyType, amount);
             }
+
+            UpdateCurrency();
         }
 
         public void SpendCurrency(ECurrency currencyType, int amount)
@@ -108,6 +116,8 @@ namespace Server
             {
                 _currencyDict.Add(currencyType, 0);
             }
+
+            UpdateCurrency();
         }
 
         public int GetCurrencyByType(ECurrency currencyType)
@@ -118,6 +128,26 @@ namespace Server
             }
 
             return 0;
+        }
+
+        public void UpdateCurrency()
+        {
+            var currencyList = new List<PCurrency>();
+            foreach (var currency in _currencyDict)
+            {
+                currencyList.Add(new PCurrency()
+                {
+                    currencyType = (int)currency.Key,
+                    count = currency.Value
+                });
+            }
+
+            var updateCurrency = new UpdatePlayerCurrency()
+            {
+                currencyList = currencyList,
+            };
+
+            _ownerPlayer.Room.Send(_ownerPlayer.id, updateCurrency);
         }
     }
 }

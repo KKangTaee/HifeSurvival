@@ -30,7 +30,7 @@ namespace Server
             smDict[EEntityStatus.DEAD] = new DeadState();
 
             _stateMachine = new StateMachine<PlayerEntity>(smDict);
-            Inventory = new PlayerInventory();
+            Inventory = new PlayerInventory(this);
             DefaultStat = new EntityStat(data);
         }
 

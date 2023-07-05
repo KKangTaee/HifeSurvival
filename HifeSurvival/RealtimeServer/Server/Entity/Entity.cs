@@ -19,7 +19,7 @@ namespace Server
 
         public EEntityStatus status;
 
-        protected GameRoom Room { get; private set; }
+        public GameRoom Room { get; private set; }
 
         public Entity(GameRoom room)
         {

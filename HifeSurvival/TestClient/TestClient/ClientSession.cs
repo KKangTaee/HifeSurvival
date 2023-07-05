@@ -14,9 +14,11 @@ namespace TestClient
 
         public float CountDownSec { get; set; }
 
-        public List<PCurrency> CurrencyList { get; set; }
-        public PStat OriginStat { get; set; }
-        public PStat AdditionalStat { get; set; }
+        public List<PCurrency> CurrencyList { get; set; } = new List<PCurrency>();
+
+        public PStat OriginStat;
+        public PStat AdditionalStat;
+        public List<PInvenItem> InvenItemList { get; set; } = new List<PInvenItem>();
     }
 
     public class ClientSession : Session
@@ -42,6 +44,20 @@ namespace TestClient
 
         public void AutoReady()
         {
+            Player.CurrencyList.Add(new PCurrency()
+            {
+                currencyType = 1,
+                count = 200,
+            });
+            Player.InvenItemList.Add(new PInvenItem()
+            {
+                slot = 0,
+                itemKey = 1,
+                itemLevel = 1,
+                currentStack = 1,
+                maxStack = 5,
+            });
+
             JobTimer.Instance.Push(() =>
             {
                 var req = new CS_SelectHero()

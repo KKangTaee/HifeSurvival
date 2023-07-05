@@ -2,7 +2,7 @@
 using ServerCore;
 using TestClient;
 using System.Collections.Generic;
-
+using System.Linq;
 
 public class ClientPacketHandler : PacketHandler
 {
@@ -21,7 +21,7 @@ public class ClientPacketHandler : PacketHandler
 
         if(packet is S_JoinToGame response)
         {
-            var player = response.joinPlayerList[0];
+            var player = response.joinPlayerList.AsQueryable().Where( p => p.id == sesh.Player.Id).FirstOrDefault();
             sesh.Player = new PlayerEntity()
             {
                 Id = player.id,
@@ -92,7 +92,7 @@ public class ClientPacketHandler : PacketHandler
         if (packet is S_StartGame res)
         {
             sesh.Player.GameModeStatus = 3;
-            sesh.Player.HeroKey = res.playerList[0].herosKey;
+            sesh.Player.HeroKey = res.playerList.AsQueryable().Where(p => p.id == sesh.Player.Id).FirstOrDefault().herosKey;
             sesh.AutoPlayStart();
         }
     }
@@ -213,6 +213,15 @@ public class ClientPacketHandler : PacketHandler
 
     public override void UpdateInvenItemHandler(Session session, IPacket packet)
     {
-        
+        var sesh = session as ClientSession;
+        if (sesh == null)
+        {
+            return;
+        }
+
+        if (packet is UpdateInvenItem res)
+        {
+
+        }
     }
 }

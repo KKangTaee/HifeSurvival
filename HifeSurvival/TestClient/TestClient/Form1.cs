@@ -10,22 +10,26 @@ namespace TestClient
 {
     public partial class Form1 : Form
     {
+        static Timer updateTimer = new Timer();
         private ClientSession _sesh;
 
         private (int mainStatus, int subStatus) _lastStatus = default;
         private (int mainStatus, int subStatus) _status = default;
         /*
-         *  1 연결 상태 , 0: 연결 끊김, 1 : 연결 됨
-         *  2 게임 진입,  0: 진입, 1: 준비, 2: 카운트 다운, 3: 로드 게임, 4: 게임 시작, 5: 게임 종료
+         *  0 연결 상태 , 0: 연결 끊김, 1 : 연결 됨
+         *  1 게임 진입,  0: 진입, 1: 준비, 2: 카운트 다운, 3: 로드 게임, 4: 게임 시작, 5: 게임 종료
          * 
          */
 
         public Form1()
         {
             InitializeComponent();
+            updateTimer.Tick += new EventHandler(Update);
+            updateTimer.Interval = 100;
+            updateTimer.Start();
         }
 
-        protected override void OnPaint(PaintEventArgs e)
+        private void Update(object obj, EventArgs args)
         {
             if (_sesh != null)
             {
@@ -34,49 +38,65 @@ namespace TestClient
                 {
                     if (_sesh.IsConntected)
                     {
-                        _status = (1, 1);
-                        button1.Enabled = true;
+                        _status = (0, 1);
                     }
                     else
                     {
-                        _status = (1, 0);
-                        button1.Enabled = false;
+                        _status = (0, 0);
                     }
                 }
                 else
                 {
-                    if(playerEntity.GameModeStatus == 0)
+                    _status = (1, playerEntity.GameModeStatus);
+                    if(_status.subStatus == 2)
                     {
-                        _status = (2, 0);
+                        playerEntity.CountDownSec -= 100;
+
+                        label2.Text = $"CountDown {(int)(_sesh.Player.CountDownSec * 0.001f)}";
                     }
-                    
-                    label3.Text = playerEntity.Id.ToString();
                 }
             }
             else
             {
                 label2.Text = "Disconnected -";
-                button1.Enabled = false;
             }
 
 
 
             if (_lastStatus != _status)
             {
-                switch(_status.mainStatus)
+                switch (_status.mainStatus)
                 {
-                    case 1:
+                    case 0:
                         {
-                            label2.Text = _status.subStatus == 1 ? "Connected" : "Disconnected";
+                            if (_status.subStatus == 0)
+                            {
+                                label2.Text = "Disconnected";
+                                startgameBtn.Enabled = false;
+                                connectBtn.Enabled = true;
+                            }
+                            else
+                            {
+                                label2.Text = "Connected";
+                                startgameBtn.Enabled = true;
+                                connectBtn.Enabled = false;
+                            }
                         }
                         break;
-                    case 2:
+                    case 1:
                         {
+                            label3.Text = "ID : " + _sesh.Player.Id.ToString();
+                            if(_sesh.Player.HeroKey != 0)
+                            {
+                                label3.Text += $" / Hero key : {_sesh.Player.HeroKey}";
+                            }
+
+                            startgameBtn.Enabled = false;
                             label2.Text = _status.subStatus switch
                             {
                                 0 => "RoomEntered",
                                 1 => "Ready",
-                                2 => "CountDown",
+                                //2 => $"CountDown {(int)(_sesh.Player.CountDownSec* 0.001f)}",
                                 3 => "LoadGame",
                                 4 => "PlayStart",
                                 5 => "FinishGame",
@@ -90,12 +110,21 @@ namespace TestClient
 
                 _lastStatus = _status;
             }
+            JobTimer.Instance.Flush();
         }
 
 
         private void StartGameClick(object sender, EventArgs e)
         {
-
+            if(_status.mainStatus == 0 && _status.subStatus == 1)
+            {
+                var req = new C_JoinToGame()
+                {
+                    userId = "test",
+                    userName = "testClient",
+                };
+                _sesh.Send(req.Write());
+            }
         }
 
         private void TestClick(object sender, EventArgs e)

@@ -879,8 +879,8 @@ public class PickRewardResponse : IPacket
 	public int rewardType { get; set; }
 	public int gold { get; set; }
 	public int itemSlotId { get; set; }
-	private PItem _item;
-	public PItem item 
+	private PDropItem _item;
+	public PDropItem item 
 	{ 
 		get { return _item; } 
 		set { _item = value; }
@@ -944,8 +944,8 @@ public class UpdateRewardBroadcast : IPacket
 	public int status { get; set; }
 	public int rewardType { get; set; }
 	public int gold { get; set; }
-	private PItem _item;
-	public PItem item 
+	private PDropItem _item;
+	public PDropItem item 
 	{ 
 		get { return _item; } 
 		set { _item = value; }
@@ -1375,21 +1375,40 @@ public struct PStat
 	}	
 }
 	
-public struct PItem
+public struct PDropItem
 {
 	public int itemKey { get; set; }
-	public int level { get; set; }
+
+	public PDropItem Read(ReadOnlySpan<byte> s, ref ushort count)
+	{
+		this.itemKey = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+		count += sizeof(int);
+		return this;
+	}
+
+	public bool Write(Span<byte> s, ref ushort count)
+	{
+		bool success = true;
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.itemKey);
+		count += sizeof(int);
+		return success;
+	}	
+}
+	
+public struct PInvenItem
+{
+	public int slot { get; set; }
+	public int itemKey { get; set; }
 	public int str { get; set; }
 	public int def { get; set; }
 	public int hp { get; set; }
 	public int cooltime { get; set; }
-	public bool canUse { get; set; }
 
-	public PItem Read(ReadOnlySpan<byte> s, ref ushort count)
+	public PInvenItem Read(ReadOnlySpan<byte> s, ref ushort count)
 	{
-		this.itemKey = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+		this.slot = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
-		this.level = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+		this.itemKey = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
 		this.str = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
@@ -1399,17 +1418,15 @@ public struct PItem
 		count += sizeof(int);
 		this.cooltime = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
-		this.canUse = BitConverter.ToBoolean(s.Slice(count, s.Length - count));
-		count += sizeof(bool);
 		return this;
 	}
 
 	public bool Write(Span<byte> s, ref ushort count)
 	{
 		bool success = true;
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.itemKey);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.slot);
 		count += sizeof(int);
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.level);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.itemKey);
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.str);
 		count += sizeof(int);
@@ -1419,8 +1436,6 @@ public struct PItem
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.cooltime);
 		count += sizeof(int);
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.canUse);
-		count += sizeof(bool);
 		return success;
 	}	
 }

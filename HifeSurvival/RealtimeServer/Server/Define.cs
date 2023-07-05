@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-
+﻿
 static class DEFINE
 {
     //Util
@@ -94,4 +90,13 @@ public enum EStatType
     STR,
     DEF,
     HP,
+}
+
+public enum ESkillSort
+{
+    NONE,
+    DEALT,
+    HEAL,
+    BUFF,
+    DEBUFF,
 }

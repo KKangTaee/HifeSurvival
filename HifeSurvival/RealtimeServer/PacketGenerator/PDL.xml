@@ -99,7 +99,7 @@
     <int name="rewardType"/>
 	  <int name ="gold"/>
     <int name ="itemSlotId"/>
-    <struct_PItem name="item"/>
+	  <struct_PDropItem name="item"/>
   </packet>
 
 	<packet name ="UpdateRewardBroadcast">
@@ -107,7 +107,7 @@
 		<int name ="status"/>
 		<int name="rewardType"/>
 		<int name ="gold"/>
-		<struct_PItem name="item"/>
+		<struct_PDropItem name="item"/>
 		<struct_PVec3 name ="pos"/>
 	</packet>
 
@@ -160,15 +160,25 @@
     <float name = "bodyRange"/>
   </struct>
 
-  <struct name = "PItem">
+  <struct name = "PDropItem">
     <int name ="itemKey"/>
-    <int name ="level"/>
-    <int name ="str"/>
-    <int name ="def"/>
-    <int name ="hp"/>
-    <int name ="cooltime"/>
-    <bool name ="canUse"/>
   </struct>
+
+	<struct name = "PInvenItem">
+		<int name ="slot" />
+		<int name ="itemKey"/>
+		<int name ="str"/>
+		<int name ="def"/>
+		<int name ="hp"/>
+	</struct>
+
+	<struct name = "PItemSkill">
+		<int name ="skillKey" />
+		<int name ="type"/>
+		<int name ="coolTime"/>
+		<int name ="def"/>
+		<int name ="hp"/>
+	</struct>
 
 	<struct name ="PCurrency">
 		<int name ="currencyType"/>

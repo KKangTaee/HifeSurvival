@@ -75,7 +75,7 @@ namespace Server
                     break;
                 case EGameModeStatus.LOAD_GAME:
                     {
-                        if (GameDataLoader.Instance.ChapaterDataDict.TryGetValue(1, out var chapterData) == false)
+                        if (GameData.Instance.ChapaterDataDict.TryGetValue(1, out var chapterData) == false)
                         {
                             Logger.GetInstance().Error("chapterdata is not found");
                             return;
@@ -133,7 +133,7 @@ namespace Server
 
             foreach (var groupKey in groupKeyArr)
             {
-                if (GameDataLoader.Instance.MonstersGroupDict.TryGetValue(groupKey, out var group) == true)
+                if (GameData.Instance.MonstersGroupDict.TryGetValue(groupKey, out var group) == true)
                 {
                     var monsterKey = group.monsterGroups.Split(':');
                     var spawnData = _worldMap.SpawnList.FirstOrDefault(x => x.spawnType == (int)EWorldMapSpawnType.MONSTER &&
@@ -150,7 +150,7 @@ namespace Server
 
                     foreach (var id in monsterKey)
                     {
-                        if (GameDataLoader.Instance.MonstersDict.TryGetValue(int.Parse(id)/*temp*/, out var data) == true &&
+                        if (GameData.Instance.MonstersDict.TryGetValue(int.Parse(id)/*temp*/, out var data) == true &&
                             pivotIter.MoveNext() == true)
                         {
                             PVec3 pos = pivotIter.Current;
@@ -203,7 +203,7 @@ namespace Server
 
         public void SpawnMonsterTimer(int phase, int timeout)
         {
-            if (!GameDataLoader.Instance.ChapaterDataDict.TryGetValue(phase, out var phaseData))
+            if (!GameData.Instance.ChapaterDataDict.TryGetValue(phase, out var phaseData))
                 return;
                 
 
@@ -314,7 +314,7 @@ namespace Server
 
         public void OnRecvJoin(C_JoinToGame inPacket, int inSessionId)
         {
-            var data = GameDataLoader.Instance.HerosDict.Values.FirstOrDefault();
+            var data = GameData.Instance.HerosDict.Values.FirstOrDefault();
             if (data == null)
             {
                 return;
@@ -504,23 +504,16 @@ namespace Server
                     }
                 case ERewardType.ITEM:
                     {
-                        if(GameDataLoader.Instance.ItemDict.TryGetValue(rewardData.subType, out var mastItem))
+                        if(GameData.Instance.ItemDict.TryGetValue(rewardData.subType, out var mastItem))
                         {
-                            // Item Layer 나누기. (PItem , GameDataItem, InvenItem, PInvenItem)
-                            var toEquipItem = new PItem()
+                            var toEquipItem = new PDropItem()
                             {
-                                //NOTE : 임시 값. 
                                 itemKey = mastItem.key,
-                                level = 1,
-                                str = mastItem.str,
-                                def = mastItem.def,
-                                hp = mastItem.hp,
-                                cooltime = 10,
-                                canUse = true
                             };
+
                             res.item = broadcast.item = toEquipItem;
 
-                            int slot = player.EquipItem(toEquipItem);
+                            int slot = player.EquipItem(mastItem);
                             if (slot > 0)
                             {
                                 res.itemSlotId = slot;

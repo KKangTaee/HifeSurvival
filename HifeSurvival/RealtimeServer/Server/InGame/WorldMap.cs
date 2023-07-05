@@ -123,18 +123,11 @@ namespace Server
                     }
                 case ERewardType.ITEM:
                     {
-                        if (GameDataLoader.Instance.ItemDict.TryGetValue(worldItem.itemData.subType, out var mastItem))
+                        if (GameData.Instance.ItemDict.TryGetValue(worldItem.itemData.subType, out var mastItem))
                         {
-                            broadcast.item = new PItem()
+                            broadcast.item = new PDropItem()
                             {
-                                //NOTE : 임시 값. 
                                 itemKey = mastItem.key,
-                                level = 1,
-                                str = mastItem.str,
-                                def = mastItem.def,
-                                hp = mastItem.hp,
-                                cooltime = 10,
-                                canUse = true
                             };
                         }
                         else

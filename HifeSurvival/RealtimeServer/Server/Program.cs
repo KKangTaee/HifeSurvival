@@ -20,7 +20,7 @@ namespace Server
 			// string host = Dns.GetHostName();
 			// IPHostEntry ipHost = Dns.GetHostEntry(host);
 			// IPAddress ipAddr = ipHost.AddressList.First(ip => ip.AddressFamily == AddressFamily.InterNetwork);
-			await GameDataLoader.Instance.Init();
+			await GameData.Instance.Init();
 
 			//TODO : 포트 번호 Config로 관리하기. 
 			IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 7777);

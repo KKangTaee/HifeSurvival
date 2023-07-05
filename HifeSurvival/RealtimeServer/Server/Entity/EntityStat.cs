@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using static Server.GameDataLoader;
+using static Server.GameData;
 
 namespace Server
 {
@@ -20,7 +20,7 @@ namespace Server
         public float AttackSpeed { get; private set; }
 
         public EntityStat() { }
-        public EntityStat(GameDataLoader.Heros heros)
+        public EntityStat(HeroData heros)
         {
             Str = heros.str;
             Def = heros.def;
@@ -32,7 +32,7 @@ namespace Server
             BodyRange = heros.bodyRange;
         }
 
-        public EntityStat(GameDataLoader.Monsters monsters)
+        public EntityStat(MonsterData monsters)
         {
             Str = monsters.str;
             Def = monsters.def;
@@ -44,11 +44,11 @@ namespace Server
             BodyRange = monsters.bodyRange;
         }
 
-        public EntityStat(in PItem item)
+        public EntityStat(ItemUpgradeData itemUpgradeData)
         {
-            Str = item.str;
-            Def = item.def;
-            MaxHp = item.hp;
+            Str = itemUpgradeData.str;
+            Def = itemUpgradeData.def;
+            MaxHp = itemUpgradeData.hp;
         }
 
         //스탯이 관리하기 충분하여 수동으로 처리했으나, 많은 양의 스탯이 추가될 경우 Generic과 Macro 를 활용해 다시 구현 할 수 있음.

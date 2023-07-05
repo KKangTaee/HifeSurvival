@@ -8,36 +8,38 @@ namespace Server
     {
         private InvenItem[] _itemSlotArr = new InvenItem[DEFINE.PLAYER_ITEM_SLOT];
 
-        public int EquipItem(PItem item)
+        public int EquipItem(in ItemData item)
         {
             InvenItem equippedItem = null;
-            int slot = -1;
-
+            
             for (int i = 0; i < DEFINE.PLAYER_ITEM_SLOT; i++)
             {
                 var slotItem = _itemSlotArr[i];
                 if (slotItem == null)
+                {
                     continue;
+                }
 
-                if (item.itemKey == slotItem.itemKey)
+                if (item.key == slotItem.ItemKey)
                 {
                     equippedItem = slotItem;
                     break;
                 }
             }
 
+            int slot = -1;
             if (equippedItem == null)
             {
                 slot = NextItemSlot();
                 if(slot >= 0)
                 {
-                    _itemSlotArr[slot] = new InvenItem(slot, item);
+                    _itemSlotArr[slot] = new InvenItem(slot, item.key);
                 }
             }
             else
             {
-                equippedItem.LevelUp(item);
-                slot = equippedItem.slot;
+                equippedItem.Upgrade();
+                slot = equippedItem.Slot;
             }
 
             return slot;
@@ -64,7 +66,7 @@ namespace Server
                 if (item == null)
                     continue;
 
-                stat += item.stat;
+                stat += item.Stat;
             }
 
             return stat;

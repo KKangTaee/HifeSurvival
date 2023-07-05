@@ -97,7 +97,7 @@ namespace Server
             itemStat = inven.TotalItemStat();
         }
 
-        public int EquipItem(in PItem item)
+        public int EquipItem(in ItemData item)
         {
             int slot = inven.EquipItem(item);
             if (slot >= 0)

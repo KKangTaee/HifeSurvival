@@ -139,6 +139,7 @@ public class IngameUI : MonoBehaviour, IUpdateInvenItemSingle, IUpdatePlayerCurr
 
     private void IncreaseStat(EStatType statType)
     {
+        PlayAnimIncreaseStat(statType);
         GameMode.Instance.OnSendIncreaseStat((int)statType, 1);
     }
 
@@ -258,7 +259,6 @@ public class IngameUI : MonoBehaviour, IUpdateInvenItemSingle, IUpdatePlayerCurr
     {
         var entity = GameMode.Instance.EntitySelf;
         // SetStat(entity.stat);
-        PlayAnimIncreaseStat(entity.stat.ChangeStat);
     }
 
 
@@ -282,7 +282,6 @@ public class IngameUI : MonoBehaviour, IUpdateInvenItemSingle, IUpdatePlayerCurr
            return;
 
         var entity = GameMode.Instance.EntitySelf;
-        
         SetStat(entity.stat);
     }
 }

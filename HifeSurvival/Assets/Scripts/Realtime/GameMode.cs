@@ -12,8 +12,7 @@ public class GameMode
 
     public Dictionary<int, PlayerEntity> PlayerEntitysDict { get; private set; } = new Dictionary<int, PlayerEntity>();
     public Dictionary<int, MonsterEntity> MonsterEntityDict { get; private set; } = new Dictionary<int, MonsterEntity>();
-
-
+    
     private SimpleTaskCompletionSource<S_JoinToGame> _joinCompleted = new SimpleTaskCompletionSource<S_JoinToGame>();
 
     /// <summary>
@@ -32,18 +31,21 @@ public class GameMode
     // 인게임 진행 관련
     //---------------
 
-    public event Action<Entity> OnRecvMoveHandler;
-    public event Action<Entity> OnRecvStopMoveHandler;
-    public event Action<S_Dead> OnRecvDeadHandler;
-    public event Action<CS_Attack>      OnRecvAttackHandler;
-    public event Action<Entity> OnRecvRespawnHandler;
-    public event Action<PickRewardResponse>    OnRecvPickRewardHandler;
+    public event Action<Entity>     OnRecvMoveHandler;
+    public event Action<Entity>     OnRecvStopMoveHandler;
+    public event Action<S_Dead>     OnRecvDeadHandler;
+    public event Action<CS_Attack>  OnRecvAttackHandler;
+    public event Action<Entity>     OnRecvRespawnHandler;
+    public event Action<PlayerEntity>           OnRecvUpdateStatHandler;
+    public event Action<PickRewardResponse>     OnRecvPickRewardHandler;
     public event Action<IncreaseStatResponse>   OnRecvIncreasStatHandler;
-    public event Action<UpdateRewardBroadcast>  OnRecvUpdateRewardHandler;
     
-    public event Action<PlayerEntity>   OnRecvUpdateStatHandler;
+    public event Action<UpdateRewardBroadcast>          OnRecvUpdateRewardHandler;
     public event Action<UpdateLocationBroadcast>        OnUpdateLocationHandler;
-    public event Action<UpdateGameModeStatusBroadcast> OnUpdateGameModeStatusHandler;
+    public event Action<UpdateGameModeStatusBroadcast>  OnUpdateGameModeStatusHandler;
+    
+    public event Action<UpdateInvenItem>           OnUpdateInvenItemSingleHandler;
+    public event Action<UpdatePlayerCurrency>      OnUpdatePlayerCurrencySingleHandler;
 
 
 
@@ -101,7 +103,6 @@ public class GameMode
             userName = joinPlayer.userName,
             id = joinPlayer.id,
             heroId = joinPlayer.heroKey,
-            // stat = new EntityStat(heros),
         };
 
         // 내 자신일 경우 캐싱처리한다
@@ -134,10 +135,6 @@ public class GameMode
         return null;
     }
 
-
-    //---------------
-    // 서버 관련
-    //---------------
 
     public async Task<bool> JoinAsync()
     {
@@ -277,7 +274,6 @@ public class GameMode
     // Receive
     //-----------------
 
-
     public void OnRecvJoin(S_JoinToGame inPacket)
     {
         if (Status != EGameModeStatus.None)
@@ -316,7 +312,6 @@ public class GameMode
             return;
 
         player.heroId = inPacket.heroKey;
-        // player.stat = new EntityStat(StaticData.Instance.HerosDict[player.heroId.ToString()]);
 
         if (IsSelf(inPacket.id) == false)
             _onRecvSelectCB?.Invoke(player);
@@ -446,6 +441,7 @@ public class GameMode
             return;
 
         player.AddGold(-packet.usedGold);
+        Debug.Log(player.gold);
         player.stat.IncreaseStat((EStatType)packet.type, packet.increase);
 
         OnRecvIncreasStatHandler?.Invoke(packet);
@@ -455,18 +451,6 @@ public class GameMode
 
     public void OnRecvPickReward(PickRewardResponse packet)
     {
-        var player = GetPlayerEntity(packet.id);
-        
-        if(packet.gold == 0)
-        {
-            Debug.LogWarning($"{packet.itemSlotId}, itemKey : {packet.id}");
-            player.itemSlot[packet.itemSlotId] = new EntityItem(packet.item);
-        }
-        else
-        {
-            player.AddGold(packet.gold);
-        }
-
         OnRecvPickRewardHandler?.Invoke(packet);
     }
 
@@ -476,7 +460,7 @@ public class GameMode
     // UpdateBroadcast
     //----------------------
 
-    public void OnUpdateLocation(UpdateLocationBroadcast inPacket)
+    public void OnUpdateLocationBroadcast(UpdateLocationBroadcast inPacket)
     {
         Entity entity = null;
         switch(Entity.GetEntityType(inPacket.id))
@@ -495,7 +479,7 @@ public class GameMode
     }
 
 
-    public void OnUpdateGameModeStatus(UpdateGameModeStatusBroadcast packet)
+    public void OnUpdateGameModeStatusBroadcast(UpdateGameModeStatusBroadcast packet)
     {
         Status = (EGameModeStatus)packet.status;
 
@@ -520,7 +504,7 @@ public class GameMode
         }
     }
 
-    public void OnUpdateStat(UpdateStatBroadcast packet)
+    public void OnUpdateStatBroadcast(UpdateStatBroadcast packet)
     {
         Entity entity = null;
         switch(Entity.GetEntityType(packet.id))
@@ -537,9 +521,39 @@ public class GameMode
         entity.stat = new EntityStat(packet.originStat);
     }
 
-    public void OnUpdateReward(UpdateRewardBroadcast inPacket)
+
+    public void OnUpdateRewardBroadcast(UpdateRewardBroadcast inPacket)
     {
         // 아이템 드랍 및 월드맵 오브젝트 제거
         OnRecvUpdateRewardHandler?.Invoke(inPacket);
+    }
+
+
+    //---------------------
+    // Update Single
+    //---------------------
+
+    public void OnUpdateInvenItemSingle(UpdateInvenItem packet)
+    {
+        var invenItem = new EntityItem(packet.invenItem);
+        EntitySelf.itemSlot[packet.invenItem.slot] = invenItem;
+        
+        OnUpdateInvenItemSingleHandler?.Invoke(packet);
+    }
+
+    public void OnUpdatePlayerCurrencySingle(UpdatePlayerCurrency packet)
+    {
+        foreach(var currency in packet.currencyList)
+        {
+            switch((ECurrency)currency.currencyType)
+            {
+                case ECurrency.GOLD:
+                Debug.Log(currency.count);
+                EntitySelf.AddGold(currency.count);
+                break;
+            }
+        }
+
+        OnUpdatePlayerCurrencySingleHandler.Invoke(packet);
     }
 }

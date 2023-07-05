@@ -36,7 +36,7 @@ public class ItemSlotList : MonoBehaviour
 
     public void RemoveItem(int inItemSlotId)
     {
-        var itemSlot = _itemSlotArr.FirstOrDefault(x=>x.ItemInfo.slotId == inItemSlotId);
+        var itemSlot = _itemSlotArr.FirstOrDefault(x=>x.ItemInfo.Slot == inItemSlotId);
 
         if(itemSlot == null)
         {

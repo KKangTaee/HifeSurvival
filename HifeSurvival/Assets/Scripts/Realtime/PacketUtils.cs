@@ -25,3 +25,9 @@ public enum EStatType
 
     HP,
 }
+
+public enum ECurrency
+{
+    NONE = 0,
+    GOLD,
+}

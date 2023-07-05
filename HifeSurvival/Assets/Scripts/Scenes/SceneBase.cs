@@ -37,7 +37,7 @@ public class TitleScene : SceneBase
     public override string SceneName => nameof(TitleScene);
 }
 
-public class IngameScene : SceneBase, ISceneLoad, IUpdateGameStatus
+public class IngameScene : SceneBase, ISceneLoad, IUpdateGameModeStatusBroadcast
 {
     public override string SceneName => nameof(IngameScene);
 
@@ -45,7 +45,7 @@ public class IngameScene : SceneBase, ISceneLoad, IUpdateGameStatus
 
     public async UniTask<bool> PrevLoadAsync()
     {
-        GameMode.Instance.OnUpdateGameModeStatusHandler += OnUpdateGameStatus;
+        GameMode.Instance.OnUpdateGameModeStatusHandler += OnUpdateGameModeStatusBroadcast;
         return true;
     }
 
@@ -54,13 +54,13 @@ public class IngameScene : SceneBase, ISceneLoad, IUpdateGameStatus
         while(_playStartToken == false)
             await UniTask.Yield();
 
-         GameMode.Instance.OnUpdateGameModeStatusHandler -= OnUpdateGameStatus;
+         GameMode.Instance.OnUpdateGameModeStatusHandler -= OnUpdateGameModeStatusBroadcast;
         _playStartToken = false;
 
         return true;
     } 
 
-    public void OnUpdateGameStatus(UpdateGameModeStatusBroadcast packet)
+    public void OnUpdateGameModeStatusBroadcast(UpdateGameModeStatusBroadcast packet)
     {
         if((EGameModeStatus)packet.status != EGameModeStatus.PlayStart)
             return;

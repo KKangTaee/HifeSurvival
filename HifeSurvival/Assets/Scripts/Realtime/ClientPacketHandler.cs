@@ -121,10 +121,7 @@ public class ClientPacketHandler : PacketHandler
         GameMode.Instance.OnUpdateRewardBroadcast(updateReward);
     }
 
-    public override void UpdatePlayerCurrencyHandler(Session session, IPacket packet)
-    {
 
-    }
 
     public override void PlayStartRequestHandler(Session session, IPacket packet)
     {
@@ -144,6 +141,13 @@ public class ClientPacketHandler : PacketHandler
 
     public override void UpdateInvenItemHandler(Session session, IPacket packet)
     {
-        
+        UpdateInvenItem invenItem = packet as UpdateInvenItem;
+        GameMode.Instance.OnUpdateInvenItemSingle(invenItem);
+    }
+
+    public override void UpdatePlayerCurrencyHandler(Session session, IPacket packet)
+    {
+        UpdatePlayerCurrency playerCurrency = packet as UpdatePlayerCurrency;
+        GameMode.Instance.OnUpdatePlayerCurrencySingle(playerCurrency);
     }
 }

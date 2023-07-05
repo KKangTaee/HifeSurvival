@@ -27,7 +27,7 @@ public class ItemSlot : MonoBehaviour
 
         SetActiveIcon();
 
-        IMG_itemIcon.sprite = GetSpriteIcon(entityItem.itemKey_static);
+        IMG_itemIcon.sprite = GetSpriteIcon(entityItem.ItemKey);
     }
     
     public void RemoveItem()
@@ -39,7 +39,7 @@ public class ItemSlot : MonoBehaviour
 
     public void StartCooltime()
     {
-        int cooltime = ItemInfo.cooltime;
+        int cooltime = ItemInfo.Skill.Cooltime;
         IMG_cooltime.fillAmount = 1f;
 
         var stopwatch = new System.Diagnostics.Stopwatch();

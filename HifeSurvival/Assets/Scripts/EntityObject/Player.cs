@@ -215,9 +215,10 @@ public partial class Player : EntityObject
     }
 
 
-    public void UpdateItemView(EntityItem entityItem)
+    public void UpdateItemView(int slot)
     {
-        _playerUI.EquipItem(entityItem);
+        if(TargetEntity is PlayerEntity entity)
+           _playerUI.EquipItem(entity.itemSlot[slot]);
     }
 
 

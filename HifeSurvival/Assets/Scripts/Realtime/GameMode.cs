@@ -56,7 +56,6 @@ public class GameMode
         Status = gameModeStatus;
     }
 
-
     public void RemovePlayerEntity(int inPlayerId)
     {
         if (PlayerEntitysDict.ContainsKey(inPlayerId) == false)
@@ -233,18 +232,6 @@ public class GameMode
         NetworkManager.Instance.Send(readyToGame);
     }
 
-    public void OnSendUpdateStat(int inUsedGold, int inType, int inIncrease)
-    {
-        IncreaseStatRequest updateStat = new IncreaseStatRequest()
-        {
-            id   = EntitySelf.id,
-            type = inUsedGold,
-            increase = inIncrease
-        };
-
-        NetworkManager.Instance.Send(updateStat);
-    }
-
     public void OnSendPickReward(int inWorldId)
     {
         PickRewardRequest getItem = new PickRewardRequest()
@@ -309,7 +296,7 @@ public class GameMode
     public void OnRecvLeave(S_LeaveToGame inPacket)
     {
         RemovePlayerEntity(inPacket.id);
-        
+
         _onRecvLeaveCB?.Invoke(inPacket.id);
     }
 
@@ -334,5 +321,6 @@ public class GameMode
         }
 
         entity.stat = new EntityStat(packet.originStat);
+        // NOTE@taeho.kang OnRecvIncreaseStat 이랑 같이 들어옴
     }
 }

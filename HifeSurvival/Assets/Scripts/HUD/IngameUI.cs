@@ -9,7 +9,7 @@ using UniRx;
 using System;
 using UniRx.Triggers;
 
-public class IngameUI : MonoBehaviour, IUpdateInvenItemSingle, IUpdatePlayerCurrencySingle
+public class IngameUI : MonoBehaviour, IUpdateInvenItemSingle, IUpdatePlayerCurrencySingle, IUpdateStatBroadcast
 {
 
     [SerializeField] RectTransform RT_kdList;
@@ -40,14 +40,6 @@ public class IngameUI : MonoBehaviour, IUpdateInvenItemSingle, IUpdatePlayerCurr
     {
         GetComponent<Canvas>().worldCamera = ControllerManager.Instance.GetController<CameraController>().MainCamera;
 
-        // GameMode.Instance.OnRecvDeadHandler += OnRecvDead;
-        // GameMode.Instance.OnRecvRespawnHandler += OnRecvRespawn;
-        // GameMode.Instance.OnRecvPickRewardHandler += OnRecvPickReward;
-        // GameMode.Instance.OnRecvIncreasStatHandler += OnRecvIncreaseStat;
-
-        // GameMode.Instance.OnUpdateInvenItemSingleHandler += OnUpdateInvenItemSingle;
-        // GameMode.Instance.OnUpdatePlayerCurrencySingleHandler += OnUpdatePlayerCurrencySingle;
-
         var eventHandler = GameMode.Instance.GetEventHandler<IngamePacketEventHandler>();
 
         eventHandler.RegisterClient<S_Dead>(OnRecvDead);
@@ -56,21 +48,25 @@ public class IngameUI : MonoBehaviour, IUpdateInvenItemSingle, IUpdatePlayerCurr
         eventHandler.RegisterClient<UpdatePlayerCurrency>(OnUpdatePlayerCurrencySingle);
         eventHandler.RegisterClient<S_Respawn>(OnRecvRespawn);
         eventHandler.RegisterClient<IncreaseStatResponse>(OnRecvIncreaseStat);
+        eventHandler.RegisterClient<UpdateStatBroadcast>(OnUpdateStatBroadcast);
 
         SetKDView();
 
         SetButton();
     }
 
-    public void SetStatUI(EntityStat inStat, int inGold)
+    public void SetStat(EntityStat stat)
     {
-        TMP_str.text = inStat.str.ToString();
+        TMP_str.text = stat.str.ToString();
 
-        TMP_def.text = inStat.def.ToString();
+        TMP_def.text = stat.def.ToString();
 
-        TMP_hp.text = inStat.hp.ToString();
+        TMP_hp.text = stat.hp.ToString();
+    }
 
-        TMP_gold.text = inGold.ToString();
+    public void SetGold(int gold)
+    {
+        TMP_gold.text = gold.ToString();
     }
 
 
@@ -89,7 +85,7 @@ public class IngameUI : MonoBehaviour, IUpdateInvenItemSingle, IUpdatePlayerCurr
 
                 // 나 자신이라면..?
                 if (entity.userId == ServerData.Instance.UserData.user_id)
-                    SetStatUI(entity.stat, entity.gold);
+                    SetStat(entity.stat);
             }
         }
     }
@@ -261,8 +257,8 @@ public class IngameUI : MonoBehaviour, IUpdateInvenItemSingle, IUpdatePlayerCurr
     public void OnRecvIncreaseStat(IncreaseStatResponse packet)
     {
         var entity = GameMode.Instance.EntitySelf;
-        SetStatUI(entity.stat, entity.gold);
-        PlayAnimIncreaseStat((EStatType)packet.type);
+        // SetStat(entity.stat);
+        // PlayAnimIncreaseStat((EStatType)packet.type);
     }
 
     public void OnUpdateInvenItemSingle(UpdateInvenItem packet)
@@ -274,6 +270,19 @@ public class IngameUI : MonoBehaviour, IUpdateInvenItemSingle, IUpdatePlayerCurr
     public void OnUpdatePlayerCurrencySingle(UpdatePlayerCurrency packet)
     {
         var entity = GameMode.Instance.EntitySelf;
-        SetStatUI(entity.stat, entity.gold);
+        SetGold(entity.gold);
+    }
+
+    public void OnUpdateStatBroadcast(UpdateStatBroadcast packet)
+    {
+         if(GameMode.Instance.IsSelf(packet.id) == false)
+            return;
+
+        var entity = GameMode.Instance.EntitySelf;
+
+        Debug.Log($"{packet.addStat.str}, {packet.addStat.def}, {packet.addStat.hp}");
+
+        SetStat(entity.stat);
+        PlayAnimIncreaseStat((EStatType)1);
     }
 }

@@ -5,7 +5,7 @@ using System;
 
 public sealed class IngamePacketEventHandler : PacketEventHandlerBase,
     IUpdateDeadBroadcast, IUpdateAttackBroadcast, IUpdateRewardBroadcast, IResponseIncreaseStat, IResponsePickReward,
-    IUpdateLocationBroadcast, IUpdateInvenItemSingle, IUpdatePlayerCurrencySingle, IUpdateRespawn
+    IUpdateLocationBroadcast, IUpdateInvenItemSingle, IUpdatePlayerCurrencySingle, IUpdateRespawn,IUpdateStatBroadcast
 {
     public IngamePacketEventHandler(GameMode gameMode) : base(gameMode)
     {
@@ -26,6 +26,8 @@ public sealed class IngamePacketEventHandler : PacketEventHandlerBase,
             { typeof(UpdatePlayerCurrency),     (Action<UpdatePlayerCurrency>)OnUpdatePlayerCurrencySingle },
 
             { typeof(UpdateRewardBroadcast),    (Action<UpdateRewardBroadcast>)OnUpdateRewardBroadcast },
+
+            { typeof(UpdateStatBroadcast),      (Action<UpdateStatBroadcast>)OnUpdateStatBroadcast },
         };
     }
 
@@ -137,6 +139,24 @@ public sealed class IngamePacketEventHandler : PacketEventHandlerBase,
     public void OnUpdateRewardBroadcast(UpdateRewardBroadcast packet)
     {
         // 아이템 드랍 및 월드맵 오브젝트 제거
+        NotifyClient(packet);
+    }
+
+    public void OnUpdateStatBroadcast(UpdateStatBroadcast packet)
+    {
+        Entity entity = null;
+        switch(Entity.GetEntityType(packet.id))
+        {
+            case Entity.EEntityType.PLAYER:
+                entity = _gameMode.GetPlayerEntity(packet.id);
+                break;
+            
+            case Entity.EEntityType.MOSNTER:
+                entity = _gameMode.GetMonsterEntity(packet.id);
+                break;
+        }
+
+        entity.stat = new EntityStat(packet.originStat);
         NotifyClient(packet);
     }
 }

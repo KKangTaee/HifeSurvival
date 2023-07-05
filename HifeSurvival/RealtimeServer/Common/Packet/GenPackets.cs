@@ -1483,14 +1483,14 @@ public struct PInvenItem
 public struct PItemSkill
 {
 	public int skillKey { get; set; }
-	public int type { get; set; }
+	public int sort { get; set; }
 	public int coolTime { get; set; }
 
 	public PItemSkill Read(ReadOnlySpan<byte> s, ref ushort count)
 	{
 		this.skillKey = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
-		this.type = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+		this.sort = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
 		this.coolTime = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
@@ -1502,7 +1502,7 @@ public struct PItemSkill
 		bool success = true;
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.skillKey);
 		count += sizeof(int);
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.type);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.sort);
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.coolTime);
 		count += sizeof(int);

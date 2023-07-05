@@ -177,7 +177,7 @@
 
 	<struct name = "PItemSkill">
 		<int name ="skillKey" />
-		<int name ="type"/>
+		<int name ="sort"/>
 		<int name ="coolTime"/>
 	</struct>
 

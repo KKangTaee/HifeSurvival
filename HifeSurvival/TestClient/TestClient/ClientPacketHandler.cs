@@ -213,6 +213,15 @@ public class ClientPacketHandler : PacketHandler
 
     public override void UpdateInvenItemHandler(Session session, IPacket packet)
     {
-        
+        var sesh = session as ClientSession;
+        if (sesh == null)
+        {
+            return;
+        }
+
+        if (packet is UpdateInvenItem res)
+        {
+
+        }
     }
 }

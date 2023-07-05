@@ -31,6 +31,9 @@ namespace TestClient
 
         private void Update(object obj, EventArgs args)
         {
+            CurrencyTextBox.Text = string.Empty;
+            ItemListTextBox.Text = string.Empty;
+
             if (_sesh != null)
             {
                 var playerEntity = _sesh.Player;
@@ -48,7 +51,7 @@ namespace TestClient
                 else
                 {
                     _status = (1, playerEntity.GameModeStatus);
-                    if(_status.subStatus == 2)
+                    if (_status.subStatus == 2)
                     {
                         playerEntity.CountDownSec -= 100;
 
@@ -86,7 +89,7 @@ namespace TestClient
                     case 1:
                         {
                             label3.Text = "ID : " + _sesh.Player.Id.ToString();
-                            if(_sesh.Player.HeroKey != 0)
+                            if (_sesh.Player.HeroKey != 0)
                             {
                                 label3.Text += $" / Hero key : {_sesh.Player.HeroKey}";
                             }
@@ -110,13 +113,63 @@ namespace TestClient
 
                 _lastStatus = _status;
             }
+
+
+            if (_sesh != null)
+            {
+                if (_sesh.Player != null)
+                {
+                    var player = _sesh.Player;
+
+                    if (!_sesh.Player.OriginStat.Equals(default(PStat)))
+                    {
+                        string statFormat =
+@"Str : {0} (+{3})
+Def : {1} (+{4})
+Hp : {2} (+{5})";
+                        StatTextBox1.Text = string.Format(statFormat,
+                            _sesh.Player.OriginStat.str,
+                            _sesh.Player.OriginStat.def,
+                            _sesh.Player.OriginStat.hp,
+                            _sesh.Player.AdditionalStat.str,
+                            _sesh.Player.AdditionalStat.def,
+                            _sesh.Player.AdditionalStat.hp);
+                    }
+
+
+                    string currencyFormat = "{0} : {1}\n";
+                    foreach (var c in player.CurrencyList)
+                    {
+                        CurrencyTextBox.Text += string.Format(currencyFormat,
+                            c.currencyType switch
+                            {
+                                1 => "gold",
+                                _ => "",
+                            }, c.count);
+                    }
+
+                    string itemFormat =
+@"--slot {0}
+key {1}, level {2}, stack {3}/{4}
+";
+
+                    foreach (var item in player.InvenItemList)
+                    {
+                        ItemListTextBox.Text += string.Format(itemFormat, item.slot, item.itemKey, item.itemLevel, item.currentStack, item.maxStack);
+                    }
+
+                }
+            }
+
+
+
             JobTimer.Instance.Flush();
         }
 
 
         private void StartGameClick(object sender, EventArgs e)
         {
-            if(_status.mainStatus == 0 && _status.subStatus == 1)
+            if (_status.mainStatus == 0 && _status.subStatus == 1)
             {
                 var req = new C_JoinToGame()
                 {
@@ -147,6 +200,5 @@ namespace TestClient
                 () => { return _sesh; },
                 1);
         }
-
     }
 }

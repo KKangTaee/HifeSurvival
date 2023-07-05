@@ -15,50 +15,45 @@ public class GameMode
     
     private SimpleTaskCompletionSource<S_JoinToGame> _joinCompleted = new SimpleTaskCompletionSource<S_JoinToGame>();
 
-
-    private IngamePacketEventHandler _ingamePacketEvent;
+    private IngamePacketEventHandler    _ingameEventHandler;
+    private GameReadyPacketEventHandler _gameReadyEventHandler;
 
     /// <summary>
     /// 입장 관련
     /// </summary>
     private Action<PlayerEntity> _onRecvJoinCB;
-    private Action<PlayerEntity> _onRecvSelectCB;
-    private Action<PlayerEntity> _onRecvReadyCB;
+    private Action<int>          _onRecvLeaveCB;
 
-    private Action<int> _onRecvLeaveCB;
-    private Action<int> _onRecvCountdownCB;
-    private Action _onRecvStartGameCB;
-    public event Action<UpdateGameModeStatusBroadcast>  OnUpdateGameModeStatusHandler;
-
-
-    //---------------
-    // 인게임 진행 관련
-    //---------------
-
-
-    // public event Action<Entity>     OnRecvStopMoveHandler;
-    // public event Action<Entity>     OnRecvRespawnHandler;
-    // public event Action<PlayerEntity>           OnRecvUpdateStatHandler;
-    // public event Action<PickRewardResponse>     OnRecvPickRewardHandler;
-    // public event Action<IncreaseStatResponse>   OnRecvIncreasStatHandler;
 
     public int RoomId { get; private set; }
     public EGameModeStatus Status  { get; private set; } = EGameModeStatus.None;
-    public PlayerEntity EntitySelf { get; private set; }
+    public PlayerEntity    EntitySelf { get; private set; }
 
 
     public GameMode()
     {
-         _ingamePacketEvent = new IngamePacketEventHandler(this);
+         _ingameEventHandler     = new IngamePacketEventHandler(this);
+         _gameReadyEventHandler  = new GameReadyPacketEventHandler(this);
     }
 
 
     public T GetEventHandler<T>() where T : PacketEventHandlerBase
     {
         if(typeof(T) == typeof(IngamePacketEventHandler))
-            return _ingamePacketEvent as T;
+        {
+            return _ingameEventHandler as T;
+        }
+        else if(typeof(T) == typeof(GameReadyPacketEventHandler))
+        {
+            return _gameReadyEventHandler as T;
+        }
 
         return null;
+    }
+
+    public void SetStatus(EGameModeStatus gameModeStatus)
+    {
+        Status = gameModeStatus;
     }
 
 
@@ -69,18 +64,10 @@ public class GameMode
     }
 
     public void AddEvent(Action<PlayerEntity> inRecvJoin,
-                         Action<PlayerEntity> inRecvSelect,
-                         Action<PlayerEntity> inRecvReady,
-                         Action<int> inRecvLeave,
-                         Action<int> inRecvCountdown,
-                         Action inRecvGameStart)
+                         Action<int> inRecvLeave)
     {
-        _onRecvJoinCB = inRecvJoin;
+        _onRecvJoinCB  = inRecvJoin;
         _onRecvLeaveCB = inRecvLeave;
-        _onRecvSelectCB = inRecvSelect;
-        _onRecvReadyCB = inRecvReady;
-        _onRecvCountdownCB = inRecvCountdown;
-        _onRecvStartGameCB = inRecvGameStart;
     }
 
     public bool IsSelf(int inPlayerId)
@@ -92,35 +79,6 @@ public class GameMode
     {
         PlayerEntitysDict.Clear();
     }
-
-    public void AddPlayerEntity(S_JoinToGame.JoinPlayer joinPlayer)
-    {
-        // 이미 참가중인 유저에 대해서는 패스처리한다.
-        if (PlayerEntitysDict.ContainsKey(joinPlayer.id) == true)
-            return;
-
-
-        if (StaticData.Instance.HerosDict.TryGetValue(joinPlayer.heroKey.ToString(), out var heros) == false)
-        {
-            Debug.LogError("heros static data is null or empty!");
-            return;
-        }
-
-        PlayerEntity entity = new PlayerEntity()
-        {
-            userId = joinPlayer.userId,
-            userName = joinPlayer.userName,
-            id = joinPlayer.id,
-            heroId = joinPlayer.heroKey,
-        };
-
-        // 내 자신일 경우 캐싱처리한다
-        if (joinPlayer.userId == ServerData.Instance.UserData.user_id)
-            EntitySelf = entity;
-
-        PlayerEntitysDict.Add(joinPlayer.id, entity);
-    }
-
 
     public PlayerEntity GetPlayerEntity(int inTargetId)
     {
@@ -144,6 +102,50 @@ public class GameMode
         return null;
     }
 
+    public void AddPlayerEntity(S_JoinToGame.JoinPlayer joinPlayer)
+    {
+        // 이미 참가중인 유저에 대해서는 패스처리한다.
+        if (PlayerEntitysDict.ContainsKey(joinPlayer.id) == true)
+            return;
+
+        PlayerEntity entity = new PlayerEntity()
+        {
+            userId = joinPlayer.userId,
+            userName = joinPlayer.userName,
+            id = joinPlayer.id,
+            heroId = joinPlayer.heroKey,
+        };
+
+        // 내 자신일 경우 캐싱처리한다
+        if (joinPlayer.userId == ServerData.Instance.UserData.user_id)
+            EntitySelf = entity;
+
+        PlayerEntitysDict.Add(joinPlayer.id, entity);
+    }
+
+
+    public MonsterEntity CreateMonsterEntity(MonsterSpawn m)
+    {
+        if (StaticData.Instance.MonstersDict.TryGetValue(m.monstersKey.ToString(), out var monster) == false)
+        {
+            Debug.LogError($"[{nameof(CreateMonsterEntity)}] monster static is null or empty!");
+            return null;
+        }
+
+        var monsterEntity = new MonsterEntity()
+        {
+            id = m.id,
+            monsterId = m.monstersKey,
+            grade = m.grade,
+            pos = m.pos,
+        };
+
+        MonsterEntityDict.Add(m.id, monsterEntity);
+        return monsterEntity;
+    }
+
+
+
 
     public async Task<bool> JoinAsync()
     {
@@ -163,7 +165,6 @@ public class GameMode
         foreach (var joinPlayer in joinPlayerList)
             AddPlayerEntity(joinPlayer);
 
-        // Status = EStatus.JOIN;
 
         return true;
     }
@@ -308,152 +309,15 @@ public class GameMode
     public void OnRecvLeave(S_LeaveToGame inPacket)
     {
         RemovePlayerEntity(inPacket.id);
-
+        
         _onRecvLeaveCB?.Invoke(inPacket.id);
     }
-
-
-    public void OnRecvSelectHero(CS_SelectHero inPacket)
-    {
-        var player = GetPlayerEntity(inPacket.id);
-
-        if (player == null)
-            return;
-
-        player.heroId = inPacket.heroKey;
-
-        if (IsSelf(inPacket.id) == false)
-            _onRecvSelectCB?.Invoke(player);
-    }
-
-
-    public void OnRecvReadyToGame(CS_ReadyToGame inPacket)
-    {
-        var player = GetPlayerEntity(inPacket.id);
-
-        if (player == null)
-            return;
-
-        player.isReady = true;
-
-        if (IsSelf(inPacket.id) == false)
-            _onRecvReadyCB?.Invoke(player);
-    }
-
-
-    public void OnRecvStartGame(S_StartGame inPacket)
-    {
-        var playerList = inPacket.playerList;
-        var monsterList = inPacket.monsterList;
-
-        foreach (PlayerSpawn p in playerList)
-        {
-            var playerEntity = GetPlayerEntity(p.id);
-            playerEntity.heroId = p.herosKey;
-            playerEntity.pos = p.pos;
-        }
-
-        foreach (MonsterSpawn m in monsterList)
-        {
-            var monsterEntity = CreateMonsterEntity(m);
-            MonsterEntityDict.Add(monsterEntity.id, monsterEntity);
-        }
-
-    }
-
-    public void OnRecvSpawnMonster(S_SpawnMonster inPacket)
-    {
-        var monsterList = inPacket.monsterList;
-
-        foreach (MonsterSpawn m in monsterList)
-        {
-            var monsterEntity = CreateMonsterEntity(m);
-            MonsterEntityDict.Add(monsterEntity.id, monsterEntity);
-        }
-    }
-
-    public MonsterEntity CreateMonsterEntity(MonsterSpawn m)
-    {
-        if (StaticData.Instance.MonstersDict.TryGetValue(m.monstersKey.ToString(), out var monster) == false)
-        {
-            Debug.LogError($"[{nameof(OnRecvStartGame)}] monster static is null or empty!");
-            return null;
-        }
-
-        var monsterEntity = new MonsterEntity()
-        {
-            id = m.id,
-            monsterId = m.monstersKey,
-            grade = m.grade,
-            pos = m.pos,
-        };
-        return monsterEntity;
-    }
-
-
-    // public void OnRecvRespawn(S_Respawn packet)
-    // {
-    //     switch(Entity.GetEntityType(packet.id))
-    //     {
-    //         case Entity.EEntityType.PLAYER:
-              
-    //         var player = GetPlayerEntity(packet.id);
-
-    //         if (player == null)
-    //             return;
-
-    //         player.pos = packet.pos;
-
-    //         // OnRecvRespawnHandler?.Invoke(player);
-    //             break;
-            
-    //         case Entity.EEntityType.MOSNTER:
-    //             break;
-    //     }
-    // }
-
-
-    // public void OnRecvIncreasStat(IncreaseStatResponse packet)
-    // {
-    //     var player = GetPlayerEntity(packet.id);
-
-    //     if (player == null)
-    //         return;
-
-    //     player.stat.IncreaseStat((EStatType)packet.type, packet.increase);
-    //     OnRecvIncreasStatHandler?.Invoke(packet);
-    // }
 
 
 
     //----------------------
     // UpdateBroadcast
     //----------------------
-
-    public void OnUpdateGameModeStatusBroadcast(UpdateGameModeStatusBroadcast packet)
-    {
-        Status = (EGameModeStatus)packet.status;
-
-        switch(Status)
-        {
-            // 게임 카운트다운
-            case EGameModeStatus.Countdown:                
-                // TODO@taeho.kang 임시
-                int countdownSec = 10;
-                _onRecvCountdownCB?.Invoke(countdownSec);
-                break;
-
-            // 씬 전환
-            case EGameModeStatus.LoadGame:
-                _onRecvStartGameCB?.Invoke();
-                break;
-
-            // 완전 게임시작
-            case EGameModeStatus.PlayStart:
-                OnUpdateGameModeStatusHandler?.Invoke(packet);
-                break;
-        }
-    }
 
     public void OnUpdateStatBroadcast(UpdateStatBroadcast packet)
     {
@@ -471,5 +335,4 @@ public class GameMode
 
         entity.stat = new EntityStat(packet.originStat);
     }
-
 }

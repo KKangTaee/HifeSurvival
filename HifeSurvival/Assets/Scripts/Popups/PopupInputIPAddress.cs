@@ -132,20 +132,28 @@ public class PopupInputIPAddress : PopupBase
         PopupManager.Instance.Show<PopupSelectHeros>(
             inCreateCallback : popup =>
             {
-                var currPlayerEntitys = GameMode.Instance.PlayerEntitysDict;
+                var gameMode = GameMode.Instance;
+
+                var currPlayerEntitys = gameMode.PlayerEntitysDict;
 
                 foreach(var entity in currPlayerEntitys.Values)
                     popup.AddPlayerView(entity);
 
-                popup.SetPlayerIdSelf(GameMode.Instance.EntitySelf.id);
+                popup.SetPlayerIdSelf(gameMode.EntitySelf.id);
+
+                var eventHandler = gameMode.GetEventHandler<GameReadyPacketEventHandler>();
+                
+                eventHandler.RegisterClient<CS_SelectHero>(popup.OnRecvSelectHero);
+                eventHandler.RegisterClient<CS_ReadyToGame>(popup.OnRecvReadyToGame);
+                eventHandler.RegisterClient<UpdateGameModeStatusBroadcast>(popup.OnUpdateGameModeStatusBroadcast);
 
                 GameMode.Instance.AddEvent(
                     inRecvJoin  : entity =>  popup.OnRecvJoin(entity),
-                    inRecvLeave : playerId => popup.OnLeave(playerId),
-                    inRecvSelect : entity => popup.OnRecvSelectHero(entity),
-                    inRecvReady : entity => popup.OnRecvReadyToGame(entity),
-                    inRecvCountdown : sec => popup.OnRecvCountdown(sec),
-                    inRecvGameStart: ()=> popup.OnRecvStartGame()
+                    inRecvLeave : playerId => popup.OnLeave(playerId)
+                    // inRecvCountdown : sec => popup.OnRecvCountdown(sec)
+                    // inRecvSelect : entity => popup.OnRecvSelectHero(entity),
+                    // inRecvReady : entity => popup.OnRecvReadyToGame(entity),
+                    // inRecvGameStart: ()=> popup.OnRecvStartGame()
                 );
 
                 popup.AddEvent(

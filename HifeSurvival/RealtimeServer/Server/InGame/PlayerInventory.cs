@@ -72,7 +72,9 @@ namespace Server
             foreach (var item in _itemSlotArr)
             {
                 if (item == null)
+                {
                     continue;
+                }
 
                 stat += item.Stat;
             }
@@ -114,6 +116,7 @@ namespace Server
             {
                 return amount;
             }
+
             return 0;
         }
     }

@@ -25,11 +25,9 @@ namespace Server
 
         public HashSet<PVec3> CanGoTiles { get; private set; }
 
-        // 몬스터 혹은 플레이어의 스폰 위치정보
         public List<WorldSpawnData> SpawnList { get; private set; }
 
-        // 월드맵에 스폰된 아이템
-        public ConcurrentDictionary<int, WorldItemData> ItemDict { get; private set; } = new ConcurrentDictionary<int, WorldItemData>();
+        private ConcurrentDictionary<int, WorldItemData> _dropItemDict = new ConcurrentDictionary<int, WorldItemData>();
 
         private int _dropID = 0;
 
@@ -56,7 +54,6 @@ namespace Server
                 CanGoTiles.Add(tile);
             }
 
-            // Parse spawn list
             SpawnList = new List<WorldSpawnData>();
             foreach (JSONNode node in N["spawn_list"].AsArray)
             {
@@ -103,7 +100,7 @@ namespace Server
             };
 
             Logger.GetInstance().Debug($"Drop Item ID {newWorldId}");
-            if(!ItemDict.TryAdd(newWorldId, worldItem))
+            if(!_dropItemDict.TryAdd(newWorldId, worldItem))
             {
                 Logger.GetInstance().Error($"World ID Get Failed ID : {newWorldId}");
             }
@@ -146,15 +143,14 @@ namespace Server
 
         public RewardData PickReward(int worldId)
         {
-            if (ItemDict.TryGetValue(worldId, out var worldItem) == false)
+            if (_dropItemDict.TryGetValue(worldId, out var worldItem) == false)
             {
                 Logger.GetInstance().Error($"invalid worldId : {worldId}");
                 return default;
             }
 
-            ItemDict.TryRemove(worldId, out _);
+            _dropItemDict.TryRemove(worldId, out _);
             return worldItem.itemData;
         }
-
     }
 }

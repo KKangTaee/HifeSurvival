@@ -1436,9 +1436,9 @@ public struct PInvenItem
 {
 	public int slot { get; set; }
 	public int itemKey { get; set; }
+	public int itemLevel { get; set; }
 	public int maxStack { get; set; }
 	public int currentStack { get; set; }
-	public int itemLevel { get; set; }
 	public int str { get; set; }
 	public int def { get; set; }
 	public int hp { get; set; }
@@ -1455,11 +1455,11 @@ public struct PInvenItem
 		count += sizeof(int);
 		this.itemKey = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
+		this.itemLevel = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+		count += sizeof(int);
 		this.maxStack = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
 		this.currentStack = BitConverter.ToInt32(s.Slice(count, s.Length - count));
-		count += sizeof(int);
-		this.itemLevel = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
 		this.str = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
@@ -1478,11 +1478,11 @@ public struct PInvenItem
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.itemKey);
 		count += sizeof(int);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.itemLevel);
+		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.maxStack);
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.currentStack);
-		count += sizeof(int);
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.itemLevel);
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.str);
 		count += sizeof(int);

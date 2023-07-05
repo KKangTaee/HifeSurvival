@@ -18,7 +18,7 @@ namespace Server
 
         public static bool CanAttackDistance(in Entity self , in Entity target)
         {
-            return self.currentPos.DistanceTo(target.currentPos) <= self.stat.AttackRange + target.stat.BodyRange;
+            return self.currentPos.DistanceTo(target.currentPos) <= self.Stat.AttackRange + target.Stat.BodyRange;
         }
 
         public static bool IsOutOfSpawnArea(in Entity entity)

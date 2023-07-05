@@ -168,7 +168,7 @@ namespace Server
                             }
 
                             Logger.GetInstance().Debug($"monster id {id}, reward id {data.rewardIds}");
-                            MonsterEntity monsterEntity = new MonsterEntity(_room, monsterGroup, _worldMap)
+                            MonsterEntity monsterEntity = new MonsterEntity(_room, monsterGroup, _worldMap, data)
                             {
                                 id = _mId++,
                                 groupId = group.groupId,
@@ -177,7 +177,6 @@ namespace Server
                                 targetPos = pos,
                                 spawnPos = pos,
                                 grade = data.grade,
-                                defaultStat = new EntityStat(data),
                                 rewardDatas = data.rewardIds,
                             };
 
@@ -320,13 +319,12 @@ namespace Server
                 return;
             }
 
-            var playerEntity = new PlayerEntity(_room)
+            var playerEntity = new PlayerEntity(_room, data)
             {
                 userId = inPacket.userId,
                 id = inSessionId,
                 heroKey = data.key,
                 userName = inPacket.userName,
-                defaultStat = new EntityStat(data)
             };
 
             _playersDict.Add(inSessionId, playerEntity);

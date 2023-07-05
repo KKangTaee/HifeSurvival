@@ -18,7 +18,7 @@ namespace Server
         private MonsterGroup _group;
         private WorldMap _worldMap;
 
-        public MonsterEntity(GameRoom room, MonsterGroup group, WorldMap worldMap)
+        public MonsterEntity(GameRoom room, MonsterGroup group, WorldMap worldMap, MonsterData data)
             : base(room)
         {
             var smDict = new Dictionary<EEntityStatus, IState<MonsterEntity, IStateParam>>();
@@ -34,6 +34,7 @@ namespace Server
             AIController = new MonsterAIController(this);
 
             _worldMap = worldMap;
+            DefaultStat = new EntityStat(data);
         }
 
 
@@ -44,25 +45,19 @@ namespace Server
 
         public override void UpdateStat()
         {
-            bool bChanged = true;   //변화 감지가 필요함. 일단 생략. 
+            Stat = new EntityStat();
+            Stat += DefaultStat;
 
-            stat = new EntityStat();
-            stat += defaultStat;
-
-            if (bChanged)
-            {
-                OnStatChange();
-            }
+            OnStatChange();     //변화 감지가 필요함. 일단 생략. 
         }
 
         public override PStat GetDefaultPStat()
         {
-            return this.defaultStat.ConvertToPStat();
+            return this.DefaultStat.ConvertToPStat();
         }
 
         public override PStat GetAdditionalPStat()
         {
-            //임시
             return (new EntityStat()).ConvertToPStat();
         }
 
@@ -101,14 +96,6 @@ namespace Server
             Room.Broadcast(attackPacket);
         }
 
-
-        public void ExecuteAI()
-        {
-            AIController.StartAIRoutine();
-        }
-
-        public bool ExistAggro() => AIController.ExistAggro();
-
         public void DropItem()
         {
             if (_worldMap == null)
@@ -128,7 +115,15 @@ namespace Server
             }
             return;
         }
+        public void ExecuteAI()
+        {
+            AIController.StartAIRoutine();
+        }
 
+        public bool ExistAggro()
+        {
+            return AIController.ExistAggro();
+        }
 
         public bool IsGroupAllDead()
         {

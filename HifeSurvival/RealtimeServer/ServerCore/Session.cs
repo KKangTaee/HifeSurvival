@@ -50,7 +50,9 @@ namespace ServerCore
 		public void Send(ConcurrentQueue<ArraySegment<byte>> sendBuffList)
 		{
 			if (sendBuffList.Count == 0)
+            {
 				return;
+			}
 
 			lock (_lock)
 			{
@@ -68,14 +70,18 @@ namespace ServerCore
 			{
 				_sendQueue.Enqueue(sendBuff);
 				if (_pendingList.Count == 0)
+                {
 					RegisterSend();
+				}
 			}
 		}
 
 		public void Disconnect()
 		{
 			if (Interlocked.Exchange(ref _disconnected, 1) == 1)
+            {
 				return;
+			}
 
 			OnDisconnected(_socket.RemoteEndPoint);
 			_socket.Shutdown(SocketShutdown.Both);
@@ -88,7 +94,9 @@ namespace ServerCore
 		private void RegisterSend()
 		{
 			if (_disconnected == 1)
+            {
 				return;
+			}
 
 			while (_sendQueue.Count > 0)
 			{
@@ -100,8 +108,10 @@ namespace ServerCore
 			try
 			{
 				bool pending = _socket.SendAsync(_sendArgs);
-				if (pending == false)
+				if (!pending)
+                {
 					OnSendCompleted(null, _sendArgs);
+				}
 			}
 			catch
 			{
@@ -115,19 +125,14 @@ namespace ServerCore
 			{
 				if (args.BytesTransferred > 0 && args.SocketError == SocketError.Success)
 				{
-					try
-					{
-						_sendArgs.BufferList = null;
-						_pendingList.Clear();
+                    _sendArgs.BufferList = null;
+                    _pendingList.Clear();
 
-						if (_sendQueue.Count > 0)
-							RegisterSend();
-					}
-					catch
-					{
-
-					}
-				}
+                    if (_sendQueue.Count > 0)
+                    {
+                        RegisterSend();
+                    }
+                }
 				else
 				{
 					Disconnect();
@@ -138,21 +143,18 @@ namespace ServerCore
 		void RegisterRecv()
 		{
 			if (_disconnected == 1)
+            {
 				return;
+			}
 
 			_recvBuffer.Clean();
 			ArraySegment<byte> segment = _recvBuffer.WriteSegment;
 			_recvArgs.SetBuffer(segment.Array, segment.Offset, segment.Count);
 
-			try
-			{
-				bool pending = _socket.ReceiveAsync(_recvArgs);
-				if (pending == false)
-					OnRecvCompleted(null, _recvArgs);
-			}
-			catch
-			{
-
+            bool pending = _socket.ReceiveAsync(_recvArgs);
+            if (pending == false)
+            {
+				OnRecvCompleted(null, _recvArgs);
 			}
 		}
 
@@ -165,12 +167,16 @@ namespace ServerCore
 			{
 				// 최소한 헤더는 파싱할 수 있는지 확인
 				if (buffer.Count < HeaderSize)
+                {
 					break;
+				}
 
 				// 패킷이 완전체로 도착했는지 확인
 				ushort dataSize = BitConverter.ToUInt16(buffer.Array, buffer.Offset);
 				if (buffer.Count < dataSize)
+                {
 					break;
+				}
 
 				// 여기까지 왔으면 패킷 조립 가능
 				OnRecv(new ArraySegment<byte>(buffer.Array, buffer.Offset, dataSize));

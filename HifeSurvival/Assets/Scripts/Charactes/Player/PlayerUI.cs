@@ -107,7 +107,7 @@ public class PlayerUI : MonoBehaviour
             return;
         }
 
-        var iconSprite = GetSpriteIcon(entityItem.itemKey_static);
+        var iconSprite = GetSpriteIcon(entityItem.ItemKey);
         emptyView.SetSprite(iconSprite);
     }
 

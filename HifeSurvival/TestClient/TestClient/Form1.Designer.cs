@@ -29,98 +29,97 @@ namespace TestClient
         /// </summary>
         private void InitializeComponent()
         {
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.button3 = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
-            this.SuspendLayout();
+            startgameBtn = new System.Windows.Forms.Button();
+            testBtn = new System.Windows.Forms.Button();
+            label1 = new System.Windows.Forms.Label();
+            label2 = new System.Windows.Forms.Label();
+            connectBtn = new System.Windows.Forms.Button();
+            label3 = new System.Windows.Forms.Label();
+            SuspendLayout();
             // 
-            // button1
+            // startgameBtn
             // 
-            this.button1.Enabled = false;
-            this.button1.Location = new System.Drawing.Point(93, 85);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "StartGameProcess";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.StartGameClick);
+            startgameBtn.Enabled = false;
+            startgameBtn.Location = new System.Drawing.Point(93, 85);
+            startgameBtn.Name = "startgameBtn";
+            startgameBtn.Size = new System.Drawing.Size(75, 23);
+            startgameBtn.TabIndex = 0;
+            startgameBtn.Text = "StartGameProcess";
+            startgameBtn.UseVisualStyleBackColor = true;
+            startgameBtn.Click += StartGameClick;
             // 
-            // button2
+            // testBtn
             // 
-            this.button2.Enabled = false;
-            this.button2.Location = new System.Drawing.Point(93, 114);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 1;
-            this.button2.Text = "TestPacket";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.TestClick);
+            testBtn.Enabled = false;
+            testBtn.Location = new System.Drawing.Point(93, 114);
+            testBtn.Name = "testBtn";
+            testBtn.Size = new System.Drawing.Size(75, 23);
+            testBtn.TabIndex = 1;
+            testBtn.Text = "TestPacket";
+            testBtn.UseVisualStyleBackColor = true;
+            testBtn.Click += TestClick;
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(95, 15);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Current Status : ";
+            label1.AutoSize = true;
+            label1.Location = new System.Drawing.Point(12, 9);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(95, 15);
+            label1.TabIndex = 2;
+            label1.Text = "Current Status : ";
             // 
             // label2
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(104, 9);
-            this.label2.Name = "label2";
-            this.label2.Text = "Disconnected";
-            this.label2.Size = new System.Drawing.Size(0, 15);
-            this.label2.TabIndex = 3;
+            label2.AutoSize = true;
+            label2.Location = new System.Drawing.Point(104, 9);
+            label2.Name = "label2";
+            label2.Size = new System.Drawing.Size(80, 15);
+            label2.TabIndex = 3;
+            label2.Text = "Disconnected";
             // 
-            // button3
+            // connectBtn
             // 
-            this.button3.Location = new System.Drawing.Point(12, 85);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 23);
-            this.button3.TabIndex = 4;
-            this.button3.Text = "Connect";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.ConnectBtnClick);
+            connectBtn.Location = new System.Drawing.Point(12, 85);
+            connectBtn.Name = "connectBtn";
+            connectBtn.Size = new System.Drawing.Size(75, 23);
+            connectBtn.TabIndex = 4;
+            connectBtn.Text = "Connect";
+            connectBtn.UseVisualStyleBackColor = true;
+            connectBtn.Click += ConnectBtnClick;
             // 
             // label3
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 34);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(66, 15);
-            this.label3.TabIndex = 5;
-            this.label3.Text = "Empty Info";
+            label3.AutoSize = true;
+            label3.Location = new System.Drawing.Point(12, 34);
+            label3.Name = "label3";
+            label3.Size = new System.Drawing.Size(66, 15);
+            label3.TabIndex = 5;
+            label3.Text = "Empty Info";
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(192, 357);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.button3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
-            this.Name = "Form1";
-            this.Text = "Form1";
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(192, 357);
+            Controls.Add(label3);
+            Controls.Add(connectBtn);
+            Controls.Add(label2);
+            Controls.Add(label1);
+            Controls.Add(testBtn);
+            Controls.Add(startgameBtn);
+            Name = "Form1";
+            Text = "Form1";
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
 
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button startgameBtn;
+        private System.Windows.Forms.Button testBtn;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button connectBtn;
         private System.Windows.Forms.Label label3;
     }
 }

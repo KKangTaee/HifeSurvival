@@ -60,18 +60,9 @@ public class ClientPacketHandler : PacketHandler
         GameMode.Instance.GetEventHandler<IngamePacketEventHandler>().NotifyServer(respawn);
     }
 
-    public override void C_JoinToGameHandler(Session session, IPacket packet)
-    {
-
-    }
-
     public override void S_SpawnMonsterHandler(Session session, IPacket packet)
     {
 
-    }
-
-    public override void MoveRequestHandler(Session session, IPacket packet)
-    {
     }
 
     public override void UpdateLocationBroadcastHandler(Session session, IPacket packet)
@@ -81,11 +72,6 @@ public class ClientPacketHandler : PacketHandler
     }
 
     public override void MoveResponseHandler(Session session, IPacket packet)
-    {
-
-    }
-
-    public override void IncreaseStatRequestHandler(Session session, IPacket packet)
     {
 
     }
@@ -102,11 +88,6 @@ public class ClientPacketHandler : PacketHandler
         GameMode.Instance.GetEventHandler<IngamePacketEventHandler>().NotifyServer(updateStat);
     }
 
-    public override void PickRewardRequestHandler(Session session, IPacket packet)
-    {
-
-    }
-
     public override void PickRewardResponseHandler(Session session, IPacket packet)
     {
         PickRewardResponse pickReward = packet as PickRewardResponse;
@@ -117,11 +98,6 @@ public class ClientPacketHandler : PacketHandler
     {
         UpdateRewardBroadcast updateReward = packet as UpdateRewardBroadcast;
         GameMode.Instance.GetEventHandler<IngamePacketEventHandler>().NotifyServer(updateReward);
-    }
-
-    public override void PlayStartRequestHandler(Session session, IPacket packet)
-    {
-
     }
 
     public override void PlayStartResponseHandler(Session session, IPacket packet)
@@ -145,15 +121,5 @@ public class ClientPacketHandler : PacketHandler
     {
         UpdatePlayerCurrency playerCurrency = packet as UpdatePlayerCurrency;
         GameMode.Instance.GetEventHandler<IngamePacketEventHandler>().NotifyServer(playerCurrency);
-    }
-
-    public override void CheatRequestHandler(Session session, IPacket packet)
-    {
-        throw new NotImplementedException();
-    }
-
-    public override void CheatResponseHandler(Session session, IPacket packet)
-    {
-        throw new NotImplementedException();
     }
 }

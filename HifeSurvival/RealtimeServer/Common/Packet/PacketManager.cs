@@ -5,33 +5,33 @@ using ServerCore;
 
 public abstract class PacketHandler
 {
-	public abstract void C_JoinToGameHandler(Session session, IPacket packet);
-	public abstract void S_JoinToGameHandler(Session session, IPacket packet);
-	public abstract void S_LeaveToGameHandler(Session session, IPacket packet);
-	public abstract void CS_SelectHeroHandler(Session session, IPacket packet);
-	public abstract void CS_ReadyToGameHandler(Session session, IPacket packet);
-	public abstract void S_CountdownHandler(Session session, IPacket packet);
-	public abstract void S_StartGameHandler(Session session, IPacket packet);
-	public abstract void S_SpawnMonsterHandler(Session session, IPacket packet);
-	public abstract void CS_AttackHandler(Session session, IPacket packet);
-	public abstract void MoveRequestHandler(Session session, IPacket packet);
-	public abstract void MoveResponseHandler(Session session, IPacket packet);
-	public abstract void S_DeadHandler(Session session, IPacket packet);
-	public abstract void S_RespawnHandler(Session session, IPacket packet);
-	public abstract void IncreaseStatRequestHandler(Session session, IPacket packet);
-	public abstract void IncreaseStatResponseHandler(Session session, IPacket packet);
-	public abstract void PickRewardRequestHandler(Session session, IPacket packet);
-	public abstract void PickRewardResponseHandler(Session session, IPacket packet);
-	public abstract void UpdateRewardBroadcastHandler(Session session, IPacket packet);
-	public abstract void UpdateLocationBroadcastHandler(Session session, IPacket packet);
-	public abstract void UpdateStatBroadcastHandler(Session session, IPacket packet);
-	public abstract void UpdatePlayerCurrencyHandler(Session session, IPacket packet);
-	public abstract void PlayStartRequestHandler(Session session, IPacket packet);
-	public abstract void PlayStartResponseHandler(Session session, IPacket packet);
-	public abstract void UpdateGameModeStatusBroadcastHandler(Session session, IPacket packet);
-	public abstract void UpdateInvenItemHandler(Session session, IPacket packet);
-	public abstract void CheatRequestHandler(Session session, IPacket packet);
-	public abstract void CheatResponseHandler(Session session, IPacket packet);
+	public virtual void C_JoinToGameHandler(Session session, IPacket packet) {}
+	public virtual void S_JoinToGameHandler(Session session, IPacket packet) {}
+	public virtual void S_LeaveToGameHandler(Session session, IPacket packet) {}
+	public virtual void CS_SelectHeroHandler(Session session, IPacket packet) {}
+	public virtual void CS_ReadyToGameHandler(Session session, IPacket packet) {}
+	public virtual void S_CountdownHandler(Session session, IPacket packet) {}
+	public virtual void S_StartGameHandler(Session session, IPacket packet) {}
+	public virtual void S_SpawnMonsterHandler(Session session, IPacket packet) {}
+	public virtual void CS_AttackHandler(Session session, IPacket packet) {}
+	public virtual void MoveRequestHandler(Session session, IPacket packet) {}
+	public virtual void MoveResponseHandler(Session session, IPacket packet) {}
+	public virtual void S_DeadHandler(Session session, IPacket packet) {}
+	public virtual void S_RespawnHandler(Session session, IPacket packet) {}
+	public virtual void IncreaseStatRequestHandler(Session session, IPacket packet) {}
+	public virtual void IncreaseStatResponseHandler(Session session, IPacket packet) {}
+	public virtual void PickRewardRequestHandler(Session session, IPacket packet) {}
+	public virtual void PickRewardResponseHandler(Session session, IPacket packet) {}
+	public virtual void UpdateRewardBroadcastHandler(Session session, IPacket packet) {}
+	public virtual void UpdateLocationBroadcastHandler(Session session, IPacket packet) {}
+	public virtual void UpdateStatBroadcastHandler(Session session, IPacket packet) {}
+	public virtual void UpdatePlayerCurrencyHandler(Session session, IPacket packet) {}
+	public virtual void PlayStartRequestHandler(Session session, IPacket packet) {}
+	public virtual void PlayStartResponseHandler(Session session, IPacket packet) {}
+	public virtual void UpdateGameModeStatusBroadcastHandler(Session session, IPacket packet) {}
+	public virtual void UpdateInvenItemHandler(Session session, IPacket packet) {}
+	public virtual void CheatRequestHandler(Session session, IPacket packet) {}
+	public virtual void CheatResponseHandler(Session session, IPacket packet) {}
 
 }
 

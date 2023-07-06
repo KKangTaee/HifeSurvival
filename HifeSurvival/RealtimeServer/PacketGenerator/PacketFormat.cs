@@ -84,7 +84,7 @@ public class PacketManager
 ";
 		// {0} 패킷 이름
 		public static string managerHandlerFormat =
-@"	public abstract void {0}Handler(Session session, IPacket packet);";
+@"	public virtual void {0}Handler(Session session, IPacket packet) {{}}";
 
 
         // {0} 패킷 이름

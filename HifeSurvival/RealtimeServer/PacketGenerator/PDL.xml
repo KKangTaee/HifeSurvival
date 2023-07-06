@@ -40,7 +40,7 @@
     <class_MonsterSpawn_list name ="monster"/>
   </packet>
 
-  <packet name ="S_SpawnMonster">
+  <packet name ="UpdateSpawnMonsterBroadcast">
     <class_MonsterSpawn_list name ="monster"/>
   </packet>
 

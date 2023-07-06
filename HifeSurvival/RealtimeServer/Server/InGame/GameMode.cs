@@ -74,7 +74,8 @@ namespace Server
                     break;
                 case EGameModeStatus.LOAD_GAME:
                     {
-                        if (GameData.Instance.ChapaterDataDict.TryGetValue(1, out var chapterData) == false)
+                        int tempChapterKey = 1;
+                        if (GameData.Instance.ChapaterDataDict.TryGetValue(tempChapterKey, out var chapterData) == false)
                         {
                             Logger.Instance.Error("chapterdata is not found");
                             return;
@@ -96,6 +97,8 @@ namespace Server
                             _monsterGroupDict.AsParallel().ForAll(mg => mg.Value.UpdateStat());
                             _playersDict.AsParallel().ForAll(p => p.Value.UpdateStat());
                         });
+
+                        SpawnPhaseRegist(tempChapterKey);
                     }
                     break;
                 case EGameModeStatus.PLAY_START:
@@ -135,7 +138,7 @@ namespace Server
                 if (GameData.Instance.MonstersGroupDict.TryGetValue(groupKey, out var group) == true)
                 {
                     var monsterKey = group.monsterGroups.Split(':');
-                    var spawnData = _worldMap.SpawnList.FirstOrDefault(x => x.spawnType == (int)EWorldMapSpawnType.MONSTER &&
+                    var spawnData = _worldMap.SpawnList.AsQueryable().FirstOrDefault(x => x.spawnType == (int)EWorldMapSpawnType.MONSTER &&
                                                                          x.groupId == group.groupId);
 
                     if (spawnData == null)
@@ -145,7 +148,6 @@ namespace Server
                     }
 
                     var pivotIter = spawnData.pivotList.GetEnumerator();
-
 
                     foreach (var id in monsterKey)
                     {
@@ -199,23 +201,39 @@ namespace Server
             return monsterList;
         }
 
-        public void SpawnMonsterTimer(int phase, int timeout)
+        public void SpawnPhaseRegist(int chapterKey)
         {
-            if (!GameData.Instance.ChapaterDataDict.TryGetValue(phase, out var phaseData))
+            if (!GameData.Instance.ChapaterDataDict.TryGetValue(chapterKey, out var phaseData))
             {
                 return;
             }
 
-
-            JobTimer.Instance.Push(() =>
+            for (int phase_idx = 1 ; phase_idx <= DEFINE.SPAWN_PHASE_MAX ; phase_idx++)
             {
-                S_SpawnMonster spawnMoster = new S_SpawnMonster()
+                (int[] phaseArr, int ms) dataByPhase = phase_idx switch
                 {
-                    monsterList = SpawnMonster(phaseData.phase1Array)
+                    //1 => (phaseData.phase1Array, phaseData.phaseSecArray[phase_idx -1]), -> StartGame 에서 처리 함.
+                    2 => (phaseData.phase2Array, phaseData.phaseSecArray[phase_idx -1]),
+                    3 => (phaseData.phase3Array, phaseData.phaseSecArray[phase_idx -1]),
+                    4 => (phaseData.phase4Array, phaseData.phaseSecArray[phase_idx -1]),
+                    _ => (null, 0)
                 };
 
-                _room.Broadcast(spawnMoster);
-            }, timeout * DEFINE.SEC_TO_MS);
+                if(dataByPhase.phaseArr == null)
+                {
+                    continue;
+                }
+
+                JobTimer.Instance.Push(() =>
+                {
+                    var spawnMoster = new UpdateSpawnMonsterBroadcast()
+                    {
+                        monsterList = SpawnMonster(dataByPhase.phaseArr)
+                    };
+
+                    _room.Broadcast(spawnMoster);
+                }, dataByPhase.ms);
+            }
         }
 
         public List<PlayerSpawn> SpawnPlayer()

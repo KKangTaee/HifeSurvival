@@ -12,7 +12,7 @@ public abstract class PacketHandler
 	public virtual void CS_ReadyToGameHandler(Session session, IPacket packet) {}
 	public virtual void S_CountdownHandler(Session session, IPacket packet) {}
 	public virtual void S_StartGameHandler(Session session, IPacket packet) {}
-	public virtual void S_SpawnMonsterHandler(Session session, IPacket packet) {}
+	public virtual void UpdateSpawnMonsterBroadcastHandler(Session session, IPacket packet) {}
 	public virtual void CS_AttackHandler(Session session, IPacket packet) {}
 	public virtual void MoveRequestHandler(Session session, IPacket packet) {}
 	public virtual void MoveResponseHandler(Session session, IPacket packet) {}
@@ -61,7 +61,7 @@ public class PacketManager
 		_handler.Add((ushort)PacketID.CS_ReadyToGame, handler.CS_ReadyToGameHandler);
 		_handler.Add((ushort)PacketID.S_Countdown, handler.S_CountdownHandler);
 		_handler.Add((ushort)PacketID.S_StartGame, handler.S_StartGameHandler);
-		_handler.Add((ushort)PacketID.S_SpawnMonster, handler.S_SpawnMonsterHandler);
+		_handler.Add((ushort)PacketID.UpdateSpawnMonsterBroadcast, handler.UpdateSpawnMonsterBroadcastHandler);
 		_handler.Add((ushort)PacketID.CS_Attack, handler.CS_AttackHandler);
 		_handler.Add((ushort)PacketID.MoveRequest, handler.MoveRequestHandler);
 		_handler.Add((ushort)PacketID.MoveResponse, handler.MoveResponseHandler);
@@ -93,7 +93,7 @@ public class PacketManager
 		_makeFunc.Add((ushort)PacketID.CS_ReadyToGame, MakePacket<CS_ReadyToGame>);
 		_makeFunc.Add((ushort)PacketID.S_Countdown, MakePacket<S_Countdown>);
 		_makeFunc.Add((ushort)PacketID.S_StartGame, MakePacket<S_StartGame>);
-		_makeFunc.Add((ushort)PacketID.S_SpawnMonster, MakePacket<S_SpawnMonster>);
+		_makeFunc.Add((ushort)PacketID.UpdateSpawnMonsterBroadcast, MakePacket<UpdateSpawnMonsterBroadcast>);
 		_makeFunc.Add((ushort)PacketID.CS_Attack, MakePacket<CS_Attack>);
 		_makeFunc.Add((ushort)PacketID.MoveRequest, MakePacket<MoveRequest>);
 		_makeFunc.Add((ushort)PacketID.MoveResponse, MakePacket<MoveResponse>);

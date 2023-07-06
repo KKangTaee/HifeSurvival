@@ -100,13 +100,14 @@ namespace Server
         public int key;
         public string name;
         public string mapData;
+        public string phaseSec;
         public string phase1;
         public string phase2;
         public string phase3;
         public string phase4;
         public int playTimeSec;
 
-
+        public int[] phaseSecArray;
         public int[] phase1Array;
         public int[] phase2Array;
         public int[] phase3Array;

@@ -15,7 +15,7 @@ public enum PacketID
 	CS_ReadyToGame = 5,
 	S_Countdown = 6,
 	S_StartGame = 7,
-	S_SpawnMonster = 8,
+	UpdateSpawnMonsterBroadcast = 8,
 	CS_Attack = 9,
 	MoveRequest = 10,
 	MoveResponse = 11,
@@ -429,11 +429,11 @@ public class S_StartGame : IPacket
 }
 
 [Serializable]
-public class S_SpawnMonster : IPacket
+public class UpdateSpawnMonsterBroadcast : IPacket
 {
 	public List<MonsterSpawn> monsterList { get; set; } = new List<MonsterSpawn>();
 
-	public ushort Protocol { get { return (ushort)PacketID.S_SpawnMonster; } }
+	public ushort Protocol { get { return (ushort)PacketID.UpdateSpawnMonsterBroadcast; } }
 
 	public void Read(ArraySegment<byte> segment)
 	{
@@ -462,7 +462,7 @@ public class S_SpawnMonster : IPacket
 		Span<byte> s = new Span<byte>(segment.Array, segment.Offset, segment.Count);
 
 		count += sizeof(ushort);
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.S_SpawnMonster);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.UpdateSpawnMonsterBroadcast);
 		count += sizeof(ushort);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)this.monsterList.Count);
 		count += sizeof(ushort);

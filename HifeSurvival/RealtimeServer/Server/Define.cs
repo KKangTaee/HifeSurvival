@@ -19,7 +19,6 @@ static class DEFINE
     public const int PLAYER_ITEM_SLOT = 4;
 
     //Monster
-    public const int MONSTER_MAX_IN_GROUP = 5;
     public const int AI_CHECK_MS = 50;
     public const int MONSTER_RESPAWN_SEC = 15;
     public const int MONSTER_RESPAWN_AREA_RANGE = 10;
@@ -28,6 +27,7 @@ static class DEFINE
     //Game
     public const int PLAYER_MAX_COUNT = 4;
     public const int START_COUNTDOWN_SEC = 10;
+    public const int SPAWN_PHASE_MAX = 4;
 
     //Item
     public const int MAX_ITEM_LEVEL = 4;

@@ -168,7 +168,18 @@ namespace Server
                     data.phase4.Split(":").ToList().ForEach(p => groupKeyList.Add(int.Parse(p)));
                     data.phase4 = null;
                     data.phase4Array = groupKeyList.ToArray();
-                    groupKeyList.Clear();
+
+                    var phaseSecList = new List<int>();
+
+                    data.phaseSec.Split(":").ToList().ForEach(p => phaseSecList.Add(int.Parse(p) * DEFINE.SEC_TO_MS));
+                    data.phaseSec = null;
+                    data.phaseSecArray = phaseSecList.ToArray();
+
+                    if(phaseSecList.Count != DEFINE.SPAWN_PHASE_MAX)
+                    {
+                        Logger.Instance.DataCheckError($"phase sec need {DEFINE.SPAWN_PHASE_MAX}, chapter key {chapDataKey}");
+                        isSuccess = false;
+                    }
                 }
             }
 
@@ -203,7 +214,6 @@ namespace Server
                 groupKeyList.AddRange(chapData.Value.phase2Array);
                 groupKeyList.AddRange(chapData.Value.phase3Array);
                 groupKeyList.AddRange(chapData.Value.phase4Array);
-
 
                 var groupIdDuplicatedCheck = new HashSet<int>();
                 foreach (var groupKey in groupKeyList)

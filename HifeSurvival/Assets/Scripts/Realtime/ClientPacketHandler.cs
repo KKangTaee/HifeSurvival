@@ -60,7 +60,7 @@ public class ClientPacketHandler : PacketHandler
         GameMode.Instance.GetEventHandler<IngamePacketEventHandler>().NotifyServer(respawn);
     }
 
-    public override void S_SpawnMonsterHandler(Session session, IPacket packet)
+    public override void UpdateSpawnMonsterBroadcastHandler(Session session, IPacket packet)
     {
 
     }

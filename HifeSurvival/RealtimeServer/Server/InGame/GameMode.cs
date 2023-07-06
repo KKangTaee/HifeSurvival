@@ -153,7 +153,7 @@ namespace Server
                         if (GameData.Instance.MonstersDict.TryGetValue(int.Parse(id)/*temp*/, out var data) == true &&
                             pivotIter.MoveNext() == true)
                         {
-                            PVec3 pos = pivotIter.Current;
+                            var pos = pivotIter.Current;
 
                             MonsterGroup monsterGroup = null;
 
@@ -163,12 +163,12 @@ namespace Server
                             }
                             else
                             {
-                                monsterGroup = new MonsterGroup(group.groupId, group.respawnTime);
+                                monsterGroup = new MonsterGroup(group.groupId, group.respawnTimeSec);
                                 _monsterGroupDict.Add(group.groupId, monsterGroup);
                             }
 
                             Logger.GetInstance().Debug($"monster id {id}, reward id {data.rewardIds}");
-                            MonsterEntity monsterEntity = new MonsterEntity(_room, monsterGroup, _worldMap, data)
+                            var monsterEntity = new MonsterEntity(_room, monsterGroup, _worldMap, data)
                             {
                                 id = _mId++,
                                 groupId = group.groupId,
@@ -203,7 +203,9 @@ namespace Server
         public void SpawnMonsterTimer(int phase, int timeout)
         {
             if (!GameData.Instance.ChapaterDataDict.TryGetValue(phase, out var phaseData))
+            {
                 return;
+            }
 
 
             JobTimer.Instance.Push(() =>
@@ -414,11 +416,15 @@ namespace Server
         {
             var fromPlayer = GetPlayerEntityById(inPacket.id);
             if (fromPlayer == null)
+            {
                 return;
+            }
 
             var targetEntity = GetEntityById(inPacket.targetId);
             if (targetEntity == null)
+            {
                 return;
+            }
 
             fromPlayer.Attack(new AttackParam()
             {
@@ -431,7 +437,9 @@ namespace Server
         {
             var player = GetPlayerEntityById(inPacket.id);
             if (player == null)
+            {
                 return;
+            }
 
             var res = new IncreaseStatResponse();
             res.id = player.id;
@@ -478,7 +486,9 @@ namespace Server
         {
             var player = GetPlayerEntityById(req.id);
             if (player == null)
+            {
                 return;
+            }
 
             var worldId = req.worldId;
 

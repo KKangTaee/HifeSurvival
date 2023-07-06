@@ -19,6 +19,7 @@ static class DEFINE
     public const int PLAYER_ITEM_SLOT = 4;
 
     //Monster
+    public const int MONSTER_MAX_IN_GROUP = 5;
     public const int AI_CHECK_MS = 50;
     public const int MONSTER_RESPAWN_SEC = 15;
     public const int MONSTER_RESPAWN_AREA_RANGE = 10;

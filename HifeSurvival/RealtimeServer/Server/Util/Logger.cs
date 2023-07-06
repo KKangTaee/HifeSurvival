@@ -122,5 +122,16 @@ namespace Server
                 CreateLogFile();
             }
         }
+
+
+        public void DataCheckInfo(string message)
+        {
+            Log("INF", message, "DataCheck");
+        }
+
+        public void DataCheckError(string message)
+        {
+            Log("ERR", message, "DataCheck");
+        }
     }
 }

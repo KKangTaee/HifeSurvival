@@ -41,20 +41,25 @@ namespace Server
 
         public async Task Init()
         {
-            // 구글 스프레드 시트의 모든 이름 가져오기
+            var loadSheetTimeStamp = ServerTime.GetCurrentTimestamp();
             var waiter = new AsyncWaiting();
-            List<string> sheetNameList = new List<string>();
+            var sheetNameList = new List<string>();
 
             ServerRequestManager.Instance.AddRequestData(new ServerRequestManager.ServerRequestData()
             {
                 URL = $"{sheetsApiUrl}/{sheetId}?key={apiKey}",
                 doneCallback = (jsonStr) =>
                 {
-                    JSONNode sheetsInfoJson = JSON.Parse(jsonStr);
-                    JSONArray sheetsArray = sheetsInfoJson["sheets"].AsArray;
+                    var sheetsInfoJson = JSON.Parse(jsonStr);
+                    var sheetsArray = sheetsInfoJson["sheets"].AsArray;
 
-                    foreach (JSONNode sheet in sheetsArray)
-                        sheetNameList.Add(sheet["properties"]["title"].Value);
+                    foreach (var sheet in sheetsArray)
+                    {
+                        if (sheet is JSONNode node)
+                        {
+                            sheetNameList.Add(node["properties"]["title"].Value);
+                        }
+                    }
 
                     waiter.Signal();
                 }
@@ -63,7 +68,9 @@ namespace Server
             await waiter.Wait();
             waiter.Reset();
 
-            // 배치로 모든 스프레드 시트의 데이터 가져오기.
+            var dataLoadStartTimestamp = ServerTime.GetCurrentTimestamp();
+            Logger.GetInstance().DataCheckInfo($"Load Sheet Success  elapsed {dataLoadStartTimestamp - loadSheetTimeStamp} ms");
+
             string ranges = string.Join("&", sheetNameList.Select(sheetName => $"ranges={Uri.EscapeDataString(sheetName)}"));
             string batchGetUrl = $"{sheetsApiUrl}/{sheetId}/values:batchGet?{ranges}&key={apiKey}";
 
@@ -72,15 +79,13 @@ namespace Server
                 URL = batchGetUrl,
                 doneCallback = (jsonStr) =>
                 {
-                    JSONNode batchDataJson = JSONNode.Parse(jsonStr);
-
-                    Console.WriteLine(jsonStr);
+                    var batchDataJson = JSONNode.Parse(jsonStr);
 
                     foreach (JSONNode node in batchDataJson["valueRanges"].AsArray)
                     {
                         string trimmed = node["range"].ToString().Trim('\"');
                         string[] partArr = trimmed.Split('!');
-                        var rangeValue = partArr[0];
+                        string rangeValue = partArr[0];
 
                         //if (rangeValue.Equals("systems"))
                         //{
@@ -127,47 +132,61 @@ namespace Server
 
             await waiter.Wait();
 
-            BakeData();
+            var loadedTimeStamp = ServerTime.GetCurrentTimestamp();
+            Logger.GetInstance().DataCheckInfo($"Data Load Success  elapsed {loadedTimeStamp - dataLoadStartTimestamp} ms");
+
+            bool isSuccess = BakeAndValidCheckData();
+            if (isSuccess)
+            {
+                var validTimeStamp = ServerTime.GetCurrentTimestamp();
+                Logger.GetInstance().DataCheckInfo($"Data Bake And Valid Check Success  elapsed {validTimeStamp - loadedTimeStamp} ms");
+            }
+            else
+            {
+                Logger.GetInstance().DataCheckError("Data Bake And Valid Check Failed");
+            }
         }
 
-        private bool BakeData()
+        private bool BakeAndValidCheckData()
         {
+            bool isSuccess = true;
             foreach (var chapDataKey in ChapaterDataDict.Keys)
             {
                 if (ChapaterDataDict.TryGetValue(chapDataKey, out var data))
                 {
-                    var pList = new List<int>();
+                    var groupKeyList = new List<int>();
 
-                    data.phase1.Split(":").ToList().ForEach(p => pList.Add(int.Parse(p)));
+                    data.phase1.Split(":").ToList().ForEach(p => groupKeyList.Add(int.Parse(p)));
                     data.phase1 = null;
-                    data.phase1Array = pList.ToArray();
-                    pList.Clear();
+                    data.phase1Array = groupKeyList.ToArray();
+                    groupKeyList.Clear();
 
-                    data.phase2.Split(":").ToList().ForEach(p => pList.Add(int.Parse(p)));
+                    data.phase2.Split(":").ToList().ForEach(p => groupKeyList.Add(int.Parse(p)));
                     data.phase2 = null;
-                    data.phase2Array = pList.ToArray();
-                    pList.Clear();
+                    data.phase2Array = groupKeyList.ToArray();
+                    groupKeyList.Clear();
 
-                    data.phase3.Split(":").ToList().ForEach(p => pList.Add(int.Parse(p)));
+                    data.phase3.Split(":").ToList().ForEach(p => groupKeyList.Add(int.Parse(p)));
                     data.phase3 = null;
-                    data.phase3Array = pList.ToArray();
-                    pList.Clear();
+                    data.phase3Array = groupKeyList.ToArray();
+                    groupKeyList.Clear();
 
-                    data.phase4.Split(":").ToList().ForEach(p => pList.Add(int.Parse(p)));
+                    data.phase4.Split(":").ToList().ForEach(p => groupKeyList.Add(int.Parse(p)));
                     data.phase4 = null;
-                    data.phase4Array = pList.ToArray();
-                    pList.Clear();
+                    data.phase4Array = groupKeyList.ToArray();
+                    groupKeyList.Clear();
                 }
             }
 
             ItemUpgradeByLevelDict = new ConcurrentDictionary<int, ConcurrentDictionary<int, ItemUpgradeData>>();
-            foreach ( var itemUpgradeData in ItemUpgradeDict)
+            foreach (var itemUpgradeData in ItemUpgradeDict)
             {
                 if (ItemUpgradeByLevelDict.TryGetValue(itemUpgradeData.Value.itemKey, out var levelDict))
                 {
                     if (levelDict.TryGetValue(itemUpgradeData.Value.level, out var data))
                     {
-                        Logger.GetInstance().Warn("duplicated data in itemupgrade");
+                        Logger.GetInstance().DataCheckError("duplicated data in itemupgrade");
+                        isSuccess = false;
                     }
                     else
                     {
@@ -182,15 +201,43 @@ namespace Server
                 }
             }
 
-            return true;
-        }
 
+            foreach (var chapData in ChapaterDataDict)
+            {
+                var groupKeyList = new List<int>();
+                groupKeyList.AddRange(chapData.Value.phase1Array);
+                groupKeyList.AddRange(chapData.Value.phase2Array);
+                groupKeyList.AddRange(chapData.Value.phase3Array);
+                groupKeyList.AddRange(chapData.Value.phase4Array);
+
+
+                var groupIdDuplicatedCheck = new HashSet<int>();
+                foreach (var groupKey in groupKeyList)
+                {
+                    if (MonstersGroupDict.TryGetValue(groupKey, out var mgData))
+                    {
+                        if (!groupIdDuplicatedCheck.Add(mgData.groupId))
+                        {
+                            Logger.GetInstance().DataCheckError($"duplicated Group Id - chapter key {chapData.Key}, group Key {groupKey},  group Id {mgData.groupId}");
+                            isSuccess = false;
+                        }
+                    }
+                    else
+                    {
+                        Logger.GetInstance().DataCheckError($"Invalid goup key - chapter key {chapData.Key}, group key {groupKey}");
+                        isSuccess = false;
+                    }
+                }
+            }
+
+            return isSuccess;
+        }
 
         public ItemUpgradeData GetItemUpgadeDataByLevel(int itemKey, int itemLevel)
         {
             if (ItemUpgradeByLevelDict.TryGetValue(itemKey, out var levelDict))
             {
-                if(levelDict.TryGetValue(itemLevel, out var data))
+                if (levelDict.TryGetValue(itemLevel, out var data))
                 {
                     return data;
                 }

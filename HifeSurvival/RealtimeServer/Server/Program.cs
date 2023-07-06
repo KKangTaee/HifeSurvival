@@ -16,6 +16,8 @@ namespace Server
 		
 		static async Task Main(string[] args)
 		{
+			Logger.GetInstance().Log("INF", "Server", "Start");
+
 			// DNS (Domain Name System)
 			// string host = Dns.GetHostName();
 			// IPHostEntry ipHost = Dns.GetHostEntry(host);
@@ -29,7 +31,7 @@ namespace Server
             PacketManager.Instance.BindHandler(new ServerPacketHandler());
             _listener.Init(endPoint, () => { return SessionManager.Instance.Generate(); });
 
-            Logger.GetInstance().Debug($"Listening... ServerTime {ServerTime.GetCurrentTimestamp()}");
+            Logger.GetInstance().Log("INF", "Listening", "Start");
 
 			while (true)
 			{

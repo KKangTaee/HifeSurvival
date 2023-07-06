@@ -51,7 +51,7 @@ namespace Server
         public int key;
         public int groupId;
         public string monsterGroups;
-        public int respawnTime;
+        public int respawnTimeSec;
         public int enabled;
     }
 

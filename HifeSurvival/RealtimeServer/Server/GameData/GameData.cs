@@ -51,12 +51,9 @@ namespace Server
                     var sheetsInfoJson = JSON.Parse(jsonStr);
                     var sheetsArray = sheetsInfoJson["sheets"].AsArray;
 
-                    foreach (var sheet in sheetsArray)
+                    foreach (JSONNode sheet in sheetsArray)
                     {
-                        if (sheet is JSONNode node)
-                        {
-                            sheetNameList.Add(node["properties"]["title"].Value);
-                        }
+                        sheetNameList.Add(sheet["properties"]["title"].Value);
                     }
 
                     waiter.Signal();

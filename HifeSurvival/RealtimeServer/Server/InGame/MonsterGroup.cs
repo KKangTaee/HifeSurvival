@@ -43,10 +43,12 @@ namespace Server
         public void OnAttack(int damagedId, Entity attacker)
         {
             foreach (var m in _monstersDict.AsQueryable().Where(m => m.Value.id != damagedId && !m.Value.ExistAggro()))
-                m.Value.Attack(new AttackParam() 
-                { 
-                    target = attacker, 
+            {
+                m.Value.Attack(new AttackParam()
+                {
+                    target = attacker,
                 });
+            }
         }
 
         public MonsterEntity GetMonsterEntity(int id)

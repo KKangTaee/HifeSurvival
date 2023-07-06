@@ -9,7 +9,7 @@ namespace Server
     public class StateMachine<T> where T : Entity
     {
         protected EEntityStatus _status;
-        protected IState<T, IStateParam>      _state;
+        protected IState<T, IStateParam> _state;
 
         protected Dictionary<EEntityStatus, IState<T, IStateParam>> _stateMachineDict;
 
@@ -34,9 +34,9 @@ namespace Server
         }
     }
 
-    public interface IState<T, P> where T : Entity where P : notnull,  IStateParam
+    public interface IState<T, P> where T : Entity where P : notnull, IStateParam
     {
-        void Enter(T self, in P param = default) ;
+        void Enter(T self, in P param = default);
 
         void Update(T self, in P param = default);
 

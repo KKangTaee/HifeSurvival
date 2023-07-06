@@ -22,7 +22,9 @@ namespace Server
             get
             {
                 if (_instance == null)
+                {
                     _instance = new ServerRequestManager();
+                }
 
                 return _instance;
             }
@@ -47,7 +49,7 @@ namespace Server
         {
             _requestQueue.Enqueue(data);
 
-            if (_isRunning == false)
+            if (!_isRunning)
             {
                 _cts = new CancellationTokenSource();
                 _ = RequestToServer();

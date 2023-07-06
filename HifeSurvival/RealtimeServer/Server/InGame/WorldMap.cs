@@ -45,7 +45,7 @@ namespace Server
             foreach (JSONNode node in N["can_go_tile"].AsArray)
             {
                 string[] partArr = node.Value.Split(',');
-                PVec3 tile = new PVec3()
+                var tile = new PVec3()
                 {
                     x = float.Parse(partArr[0]),
                     y = float.Parse(partArr[1]),
@@ -100,7 +100,7 @@ namespace Server
             };
 
             Logger.Instance.Debug($"Drop Item ID {newWorldId}");
-            if(!_dropItemDict.TryAdd(newWorldId, worldItem))
+            if (!_dropItemDict.TryAdd(newWorldId, worldItem))
             {
                 Logger.Instance.Error($"World ID Get Failed ID : {newWorldId}");
             }

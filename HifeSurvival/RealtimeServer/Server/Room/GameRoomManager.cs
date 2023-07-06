@@ -28,7 +28,6 @@ namespace Server
                     var newRoom = new GameRoom(_nextRoomNum++);
                     newRoom.Enter(session);
                     _gameRoomDict.Add(newRoom.RoomId, newRoom);
-
                 }
             });
         }

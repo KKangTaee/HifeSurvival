@@ -144,8 +144,22 @@
 	<packet name ="UpdateInvenItem">
 		<struct_PInvenItem name ="invenItem"/>
 	</packet>
-  
-	<struct name="PVec3">
+
+	<packet name ="CheatRequest">
+		<int name ="type"/>
+		<int name ="arg1"/>
+		<int name ="arg2"/>
+		<int name ="arg3"/>
+		<int name ="arg4"/>
+		<int name ="arg5"/>
+	</packet>
+
+	<packet name ="CheatResponse">
+		<int name ="type"/>
+		<int name ="result"/>
+	</packet>
+
+  <struct name="PVec3">
     <float name ="x"/>
     <float name ="y"/>
     <float name ="z"/>

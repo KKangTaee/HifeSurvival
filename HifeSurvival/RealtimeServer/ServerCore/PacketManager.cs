@@ -30,6 +30,8 @@ public abstract class PacketHandler
 	public abstract void PlayStartResponseHandler(Session session, IPacket packet);
 	public abstract void UpdateGameModeStatusBroadcastHandler(Session session, IPacket packet);
 	public abstract void UpdateInvenItemHandler(Session session, IPacket packet);
+	public abstract void CheatRequestHandler(Session session, IPacket packet);
+	public abstract void CheatResponseHandler(Session session, IPacket packet);
 
 }
 
@@ -77,6 +79,8 @@ public class PacketManager
 		_handler.Add((ushort)PacketID.PlayStartResponse, handler.PlayStartResponseHandler);
 		_handler.Add((ushort)PacketID.UpdateGameModeStatusBroadcast, handler.UpdateGameModeStatusBroadcastHandler);
 		_handler.Add((ushort)PacketID.UpdateInvenItem, handler.UpdateInvenItemHandler);
+		_handler.Add((ushort)PacketID.CheatRequest, handler.CheatRequestHandler);
+		_handler.Add((ushort)PacketID.CheatResponse, handler.CheatResponseHandler);
 
 	}
 
@@ -107,6 +111,8 @@ public class PacketManager
 		_makeFunc.Add((ushort)PacketID.PlayStartResponse, MakePacket<PlayStartResponse>);
 		_makeFunc.Add((ushort)PacketID.UpdateGameModeStatusBroadcast, MakePacket<UpdateGameModeStatusBroadcast>);
 		_makeFunc.Add((ushort)PacketID.UpdateInvenItem, MakePacket<UpdateInvenItem>);
+		_makeFunc.Add((ushort)PacketID.CheatRequest, MakePacket<CheatRequest>);
+		_makeFunc.Add((ushort)PacketID.CheatResponse, MakePacket<CheatResponse>);
 
 	}
 

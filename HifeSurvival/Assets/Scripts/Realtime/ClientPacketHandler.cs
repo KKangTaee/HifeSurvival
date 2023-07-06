@@ -146,4 +146,14 @@ public class ClientPacketHandler : PacketHandler
         UpdatePlayerCurrency playerCurrency = packet as UpdatePlayerCurrency;
         GameMode.Instance.GetEventHandler<IngamePacketEventHandler>().NotifyServer(playerCurrency);
     }
+
+    public override void CheatRequestHandler(Session session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void CheatResponseHandler(Session session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
 }

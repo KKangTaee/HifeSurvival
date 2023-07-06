@@ -71,6 +71,11 @@ namespace Server
             push(session, room => room?.Mode.OnPlayStartRequest(req));
         }
 
+        public override void CheatRequestHandler(Session session, IPacket packet)
+        {
+        }
+
+
         #region NOT_HANDLED
         public override void S_JoinToGameHandler(Session session, IPacket packet)
         {
@@ -153,6 +158,11 @@ namespace Server
         }
 
         public override void UpdateInvenItemHandler(Session session, IPacket packet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void CheatResponseHandler(Session session, IPacket packet)
         {
             throw new NotImplementedException();
         }

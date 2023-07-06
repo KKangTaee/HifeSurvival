@@ -131,4 +131,14 @@ public class ClientPacketHandler : PacketHandler
     {
         throw new NotImplementedException();
     }
+
+    public override void CheatRequestHandler(Session session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void CheatResponseHandler(Session session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
 }

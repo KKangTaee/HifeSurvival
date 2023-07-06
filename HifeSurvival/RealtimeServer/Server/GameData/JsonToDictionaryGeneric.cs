@@ -99,12 +99,12 @@ namespace Server
                 {
                     if (!resultDict.TryAdd(numberKey, item))
                     {
-                        Logger.GetInstance().Warn($"DATA LOAD CHECK - duplicated {numberKey}");
+                        Logger.Instance.Warn($"DATA LOAD CHECK - duplicated {numberKey}");
                     }
                 }
                 else
                 {
-                    Logger.GetInstance().Warn($"DATA LOAD CHECK - Key must be int :  {key}");
+                    Logger.Instance.Warn($"DATA LOAD CHECK - Key must be int :  {key}");
                 }
             }
 

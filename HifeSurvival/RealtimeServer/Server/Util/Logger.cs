@@ -20,10 +20,13 @@ namespace Server
             WriteIndented = true,
         };
 
-        public static Logger GetInstance()
+        public static Logger Instance
         {
-            _ins ??= new Logger();
-            return _ins;
+            get
+            {
+                _ins ??= new Logger();
+                return _ins;
+            }
         }
 
         private Logger()
@@ -39,7 +42,9 @@ namespace Server
                 string title = _titleName + DateTime.Now.ToString(" yyyy-MM-dd-HH-mm-ss");
 
                 if (Directory.Exists("logs") == false)
+                {
                     Directory.CreateDirectory("logs");
+                }
 
                 _fs = new FileStream($"logs\\{title}.log", FileMode.CreateNew);
                 _sw = new StreamWriter(_fs, Encoding.UTF8);

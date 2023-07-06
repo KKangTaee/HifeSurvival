@@ -43,7 +43,7 @@ namespace Server
 
         private void UpdateModeStatus(EGameModeStatus updatedStatus)
         {
-            Logger.GetInstance().Warn($"<-----{updatedStatus}----->");
+            Logger.Instance.Warn($"<-----{updatedStatus}----->");
 
             switch (updatedStatus)
             {
@@ -77,7 +77,7 @@ namespace Server
                     {
                         if (GameData.Instance.ChapaterDataDict.TryGetValue(1, out var chapterData) == false)
                         {
-                            Logger.GetInstance().Error("chapterdata is not found");
+                            Logger.Instance.Error("chapterdata is not found");
                             return;
                         }
 
@@ -141,7 +141,7 @@ namespace Server
 
                     if (spawnData == null)
                     {
-                        Logger.GetInstance().Error("spawnData is null or empty!");
+                        Logger.Instance.Error("spawnData is null or empty!");
                         continue;
                     }
 
@@ -167,7 +167,7 @@ namespace Server
                                 _monsterGroupDict.Add(group.groupId, monsterGroup);
                             }
 
-                            Logger.GetInstance().Debug($"monster id {id}, reward id {data.rewardIds}");
+                            Logger.Instance.Debug($"monster id {id}, reward id {data.rewardIds}");
                             var monsterEntity = new MonsterEntity(_room, monsterGroup, _worldMap, data)
                             {
                                 id = _mId++,
@@ -225,7 +225,7 @@ namespace Server
             var playerSpawn = _worldMap.SpawnList.FirstOrDefault(x => x.spawnType == (int)EWorldMapSpawnType.PLAYER);
             if (playerSpawn == null)
             {
-                Logger.GetInstance().Error("player spawn null or empty!");
+                Logger.Instance.Error("player spawn null or empty!");
                 return null;
             }
 
@@ -270,7 +270,7 @@ namespace Server
                 return player;
             }
 
-            Logger.GetInstance().Error($"PlayerEntity is null or Empty id {id}");
+            Logger.Instance.Error($"PlayerEntity is null or Empty id {id}");
             return null;
         }
 
@@ -279,14 +279,14 @@ namespace Server
             var group = _monsterGroupDict.Values.FirstOrDefault(x => x.HaveEntityInGroup(id));
             if (group == null)
             {
-                Logger.GetInstance().Error("MonsterGroup is null or Empty");
+                Logger.Instance.Error("MonsterGroup is null or Empty");
                 return null;
             }
 
             var monster = group.GetMonsterEntity(id);
             if (monster == null)
             {
-                Logger.GetInstance().Error("MonsterEntity is null or Empty");
+                Logger.Instance.Error("MonsterEntity is null or Empty");
                 return null;
             }
 
@@ -469,7 +469,7 @@ namespace Server
                     player.upgradeStat.AddMaxHp(increaseValue, true);
                     break;
                 default:
-                    Logger.GetInstance().Error($"Wrong Stat Type {(EStatType)inPacket.type}");
+                    Logger.Instance.Error($"Wrong Stat Type {(EStatType)inPacket.type}");
                     break; ;
             }
 
@@ -499,7 +499,7 @@ namespace Server
             var rewardData = _worldMap.PickReward(worldId);
             if (rewardData.Equals(default(RewardData)))
             {
-                Logger.GetInstance().Warn($"no reward in world id {worldId}");
+                Logger.Instance.Warn($"no reward in world id {worldId}");
                 return;
             }
 
@@ -532,7 +532,7 @@ namespace Server
                             int slot = player.EquipItem(mastItem);
                             if (slot < 0)
                             {
-                                Logger.GetInstance().Warn("Pick -> Equip Failed");
+                                Logger.Instance.Warn("Pick -> Equip Failed");
                             }
                         }
                         break;

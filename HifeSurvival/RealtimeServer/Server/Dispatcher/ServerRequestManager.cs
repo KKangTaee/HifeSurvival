@@ -71,7 +71,7 @@ namespace Server
                     var response = await _client.GetAsync(requestData.URL, _cts.Token);
                     if (!response.IsSuccessStatusCode)
                     {
-                        Logger.GetInstance().Error($"status code : {response.StatusCode}");
+                        Logger.Instance.Error($"status code : {response.StatusCode}");
                         requestData.doneCallback?.Invoke(null);
                     }
                     else
@@ -82,7 +82,7 @@ namespace Server
                 }
                 catch (Exception e)
                 {
-                    Logger.GetInstance().Error($"Exception {e.Message}");
+                    Logger.Instance.Error($"Exception {e.Message}");
                 }
             }
 

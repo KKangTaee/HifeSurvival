@@ -141,12 +141,12 @@ namespace Server
                 }
                 else
                 {
-                    Logger.GetInstance().Debug("Drop Failed By Probability");
+                    Logger.Instance.Debug("Drop Failed By Probability");
                     return null;
                 }
             }
 
-            Logger.GetInstance().Error("rewardIds is wrong! check static sheet");
+            Logger.Instance.Error("rewardIds is wrong! check static sheet");
             return null;
         }
 

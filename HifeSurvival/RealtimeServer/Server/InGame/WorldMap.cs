@@ -35,7 +35,7 @@ namespace Server
         {
             if (mapData == null)
             {
-                Logger.GetInstance().Error("mapData is null or empty!");
+                Logger.Instance.Error("mapData is null or empty!");
                 return;
             }
 
@@ -99,10 +99,10 @@ namespace Server
                 itemData = itemData,
             };
 
-            Logger.GetInstance().Debug($"Drop Item ID {newWorldId}");
+            Logger.Instance.Debug($"Drop Item ID {newWorldId}");
             if(!_dropItemDict.TryAdd(newWorldId, worldItem))
             {
-                Logger.GetInstance().Error($"World ID Get Failed ID : {newWorldId}");
+                Logger.Instance.Error($"World ID Get Failed ID : {newWorldId}");
             }
 
             var broadcast = new UpdateRewardBroadcast();
@@ -129,7 +129,7 @@ namespace Server
                         }
                         else
                         {
-                            Logger.GetInstance().Error($"Invalid Item Key : {worldItem.itemData.subType}");
+                            Logger.Instance.Error($"Invalid Item Key : {worldItem.itemData.subType}");
                         }
 
                         break;
@@ -145,7 +145,7 @@ namespace Server
         {
             if (_dropItemDict.TryGetValue(worldId, out var worldItem) == false)
             {
-                Logger.GetInstance().Error($"invalid worldId : {worldId}");
+                Logger.Instance.Error($"invalid worldId : {worldId}");
                 return default;
             }
 

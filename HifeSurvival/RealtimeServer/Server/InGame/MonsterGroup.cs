@@ -56,7 +56,7 @@ namespace Server
                 return monster;
             }
 
-            Logger.GetInstance().Error("MonsterEntity is null or empty!");
+            Logger.Instance.Error("MonsterEntity is null or empty!");
             return null;
         }
 

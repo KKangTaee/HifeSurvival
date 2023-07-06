@@ -22,7 +22,7 @@ namespace Server
                 var split = itemIdsSet[i].Split(':');
                 if (split?.Length != 3)
                 {
-                    Logger.GetInstance().Error($"itemData is wrong! : {itemIdsSet[i]}");
+                    Logger.Instance.Error($"itemData is wrong! : {itemIdsSet[i]}");
                     return null;
                 }
 
@@ -30,7 +30,7 @@ namespace Server
                    int.TryParse(split[1], out var sub_type) == false ||
                    int.TryParse(split[2], out var count) == false)
                 {
-                    Logger.GetInstance().Error($"itemData is wrong! : {itemIdsSet[i]}");
+                    Logger.Instance.Error($"itemData is wrong! : {itemIdsSet[i]}");
                     return null;
                 }
 

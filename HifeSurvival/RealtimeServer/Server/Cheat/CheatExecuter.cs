@@ -28,7 +28,7 @@ namespace Server
                     }
                     break;
                 default:
-                    Logger.GetInstance().Warn("invalid cheat type");
+                    Logger.Instance.Warn("invalid cheat type");
                     bSuccess = false;
                     break;
             }

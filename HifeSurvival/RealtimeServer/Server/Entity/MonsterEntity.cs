@@ -106,11 +106,11 @@ namespace Server
             var broadcast = _worldMap.DropItem(rewardDatas, currentPos);
             if (broadcast == null)
             {
-                Logger.GetInstance().Warn("Reward Drop Failed");
+                Logger.Instance.Warn("Reward Drop Failed");
             }
             else
             {
-                Logger.GetInstance().Debug($"Reward Drop worldid : {broadcast.worldId}, pos : {broadcast.pos.Print()}");
+                Logger.Instance.Debug($"Reward Drop worldid : {broadcast.worldId}, pos : {broadcast.pos.Print()}");
                 Room.Broadcast(broadcast);
             }
             return;

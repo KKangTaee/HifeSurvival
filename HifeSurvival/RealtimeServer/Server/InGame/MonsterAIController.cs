@@ -71,7 +71,7 @@ namespace Server
                 _aggroList.Remove(target);
             }
 
-            Logger.GetInstance().Debug($" self : {_monster.id}, aggroid : {target.id}");
+            Logger.Instance.Debug($" self : {_monster.id}, aggroid : {target.id}");
             _aggroList.Add(target);
         }
 
@@ -99,8 +99,8 @@ namespace Server
             }
 
             var currentTarget = CurrentTarget();
-            Logger.GetInstance().Debug($"playerTarget : {currentTarget.id}, Pos : {currentTarget.currentPos.Print()}");
-            Logger.GetInstance().Debug($"monster : {_monster.id}, Pos : {_monster.currentPos.Print()}");
+            Logger.Instance.Debug($"playerTarget : {currentTarget.id}, Pos : {currentTarget.currentPos.Print()}");
+            Logger.Instance.Debug($"monster : {_monster.id}, Pos : {_monster.currentPos.Print()}");
             var damagedVal = BattleCalculator.ComputeDamagedValue(_monster.Stat, currentTarget.Stat);
 
             currentTarget.ReduceHP(damagedVal);
@@ -137,7 +137,7 @@ namespace Server
 
             if (_monster.currentPos.IsSame(targetPos))
             {
-                Logger.GetInstance().Debug($"Arrived !! id : {_monster.id}");
+                Logger.Instance.Debug($"Arrived !! id : {_monster.id}");
 
                 if (_aiMode == EAIMode.RETURN_TO_RESPAWN_AREA)
                 {
@@ -203,7 +203,7 @@ namespace Server
 
             _aiMode = EAIMode.RETURN_TO_RESPAWN_AREA;
             _monster.MoveToRespawn();
-            Logger.GetInstance().Debug("ReturnToRespawnArea");
+            Logger.Instance.Debug("ReturnToRespawnArea");
         }
 
         private bool CanMove()

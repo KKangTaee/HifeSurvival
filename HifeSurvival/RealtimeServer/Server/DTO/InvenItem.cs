@@ -28,13 +28,13 @@ namespace Server
             var upgradeData = GameData.Instance.GetItemUpgadeDataByLevel(ItemKey, nextLevel);
             if (upgradeData == null)
             {
-                Logger.GetInstance().Error("Item Upgrade Failed");
+                Logger.Instance.Error("Item Upgrade Failed");
                 return;
             }
 
             if (!GameData.Instance.ItemSkillDict.TryGetValue(upgradeData.skillKey, out var skilldata))
             {
-                Logger.GetInstance().Error("Item Upgrade Failed (Skill Data Invalid)");
+                Logger.Instance.Error("Item Upgrade Failed (Skill Data Invalid)");
                 return;
             }
 

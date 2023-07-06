@@ -29,7 +29,7 @@ namespace Server
                     var sesh = _seshDict.AsQueryable().Where(ds => ds.Key == sm.Key).FirstOrDefault();
                     if (sesh.Value == null)
                     {
-                        Logger.GetInstance().Warn("Not Found By  Session id {sm.Key}");
+                        Logger.Instance.Warn("Not Found By  Session id {sm.Key}");
                         continue;
                     }
 
@@ -56,8 +56,8 @@ namespace Server
         {
             Push(() =>
             {
-                Logger.GetInstance().Log("INF", $"PacketType : {packet.GetType()}", $"{nameof(Broadcast)}");
-                Logger.GetInstance().Trace(packet);
+                Logger.Instance.Log("INF", $"PacketType : {packet.GetType()}", $"{nameof(Broadcast)}");
+                Logger.Instance.Trace(packet);
                 ArraySegment<byte> segment = packet.Write();
                 _broadcastMessage.Enqueue(segment);
             });
@@ -67,8 +67,8 @@ namespace Server
         {
             Push(() =>
             {
-                Logger.GetInstance().Log("INF", $"PacketType : {packet.GetType()}", $"{nameof(Send)}");
-                Logger.GetInstance().Trace(packet);
+                Logger.Instance.Log("INF", $"PacketType : {packet.GetType()}", $"{nameof(Send)}");
+                Logger.Instance.Trace(packet);
                 ArraySegment<byte> segment = packet.Write();
                 if (_sendMessage.TryGetValue(id, out var msgList))
                 {
@@ -86,12 +86,12 @@ namespace Server
         public void OnEnter(ServerSession session)
         {
             _seshDict.TryAdd(session.SessionId, session);
-            Logger.GetInstance().Debug($"Session id {session.SessionId}");
+            Logger.Instance.Debug($"Session id {session.SessionId}");
 
             if (!_existSesh && _seshDict.Count > 0)
             {
                 _existSesh = true;
-                Logger.GetInstance().Debug($"FlushSendQueue Start");
+                Logger.Instance.Debug($"FlushSendQueue Start");
                 JobTimer.Instance.Push(FlushSendQueue, DEFINE.SEND_TICK_MS);
             }
         }
@@ -103,7 +103,7 @@ namespace Server
             if (_seshDict.Count == 0 && _existSesh)
             {
                 _existSesh = false;
-                Logger.GetInstance().Debug($"FlushSendQueue End");
+                Logger.Instance.Debug($"FlushSendQueue End");
             }
         }
     }

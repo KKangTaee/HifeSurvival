@@ -24,7 +24,7 @@ namespace Server
 				session.SessionId = sessionId;
 				_sessionDict.Add(sessionId, session);
 
-                Logger.GetInstance().Info($"Connected : {sessionId}");
+                Logger.Instance.Info($"Connected : {sessionId}");
 
 				return session;
 			}

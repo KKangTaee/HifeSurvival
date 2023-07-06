@@ -120,7 +120,7 @@ namespace Server
             var invenItem = Inventory.EquipItem(item);
             if (invenItem == null)
             {
-                Logger.GetInstance().Warn($"Equip Failed! ");
+                Logger.Instance.Warn($"Equip Failed! ");
                 return -1;
             }
 

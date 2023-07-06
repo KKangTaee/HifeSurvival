@@ -15,9 +15,7 @@ namespace Server
         {
             get
             {
-                if (_instance == null)
-                    _instance = new GameData();
-
+                _instance ??= new GameData();
                 return _instance;
             }
         }
@@ -69,7 +67,7 @@ namespace Server
             waiter.Reset();
 
             var dataLoadStartTimestamp = ServerTime.GetCurrentTimestamp();
-            Logger.GetInstance().DataCheckInfo($"Load Sheet Success  elapsed {dataLoadStartTimestamp - loadSheetTimeStamp} ms");
+            Logger.Instance.DataCheckInfo($"Load Sheet Success  elapsed {dataLoadStartTimestamp - loadSheetTimeStamp} ms");
 
             string ranges = string.Join("&", sheetNameList.Select(sheetName => $"ranges={Uri.EscapeDataString(sheetName)}"));
             string batchGetUrl = $"{sheetsApiUrl}/{sheetId}/values:batchGet?{ranges}&key={apiKey}";
@@ -133,17 +131,17 @@ namespace Server
             await waiter.Wait();
 
             var loadedTimeStamp = ServerTime.GetCurrentTimestamp();
-            Logger.GetInstance().DataCheckInfo($"Data Load Success  elapsed {loadedTimeStamp - dataLoadStartTimestamp} ms");
+            Logger.Instance.DataCheckInfo($"Data Load Success  elapsed {loadedTimeStamp - dataLoadStartTimestamp} ms");
 
             bool isSuccess = BakeAndValidCheckData();
             if (isSuccess)
             {
                 var validTimeStamp = ServerTime.GetCurrentTimestamp();
-                Logger.GetInstance().DataCheckInfo($"Data Bake And Valid Check Success  elapsed {validTimeStamp - loadedTimeStamp} ms");
+                Logger.Instance.DataCheckInfo($"Data Bake And Valid Check Success  elapsed {validTimeStamp - loadedTimeStamp} ms");
             }
             else
             {
-                Logger.GetInstance().DataCheckError("Data Bake And Valid Check Failed");
+                Logger.Instance.DataCheckError("Data Bake And Valid Check Failed");
             }
         }
 
@@ -185,7 +183,7 @@ namespace Server
                 {
                     if (levelDict.TryGetValue(itemUpgradeData.Value.level, out var data))
                     {
-                        Logger.GetInstance().DataCheckError("duplicated data in itemupgrade");
+                        Logger.Instance.DataCheckError("duplicated data in itemupgrade");
                         isSuccess = false;
                     }
                     else
@@ -218,13 +216,13 @@ namespace Server
                     {
                         if (!groupIdDuplicatedCheck.Add(mgData.groupId))
                         {
-                            Logger.GetInstance().DataCheckError($"duplicated Group Id - chapter key {chapData.Key}, group Key {groupKey},  group Id {mgData.groupId}");
+                            Logger.Instance.DataCheckError($"duplicated Group Id - chapter key {chapData.Key}, group Key {groupKey},  group Id {mgData.groupId}");
                             isSuccess = false;
                         }
                     }
                     else
                     {
-                        Logger.GetInstance().DataCheckError($"Invalid goup key - chapter key {chapData.Key}, group key {groupKey}");
+                        Logger.Instance.DataCheckError($"Invalid goup key - chapter key {chapData.Key}, group key {groupKey}");
                         isSuccess = false;
                     }
                 }

@@ -53,7 +53,7 @@ namespace Server
 
             public void Exit(PlayerEntity self, in IStateParam param = default)
             {
-                Logger.GetInstance().Debug("Move Exit");
+                Logger.Instance.Debug("Move Exit");
             }
 
             private void UpdateMove(PlayerEntity self, MoveParam param)
@@ -80,7 +80,7 @@ namespace Server
                     var target = attackParam.target;
                     if (target == null)
                     {
-                        Logger.GetInstance().Warn($"Target is null");
+                        Logger.Instance.Warn($"Target is null");
                         return;
                     }
 
@@ -97,7 +97,7 @@ namespace Server
                     var target = attackParam.target;
                     if (target == null)
                     {
-                        Logger.GetInstance().Warn($"Target is null");
+                        Logger.Instance.Warn($"Target is null");
                         return;
                     }
 

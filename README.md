@@ -172,3 +172,11 @@
 
 </details>
 
+## Cheat
+<details markdown="1">
+<summary> Cheat Manual </summary>
+
+
+아이템 장착 : equipitem [itemKey]
+
+</detail>

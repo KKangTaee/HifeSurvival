@@ -204,7 +204,7 @@ namespace Server
         {
             if (!GameData.Instance.ChapaterDataDict.TryGetValue(phase, out var phaseData))
                 return;
-                
+
 
             JobTimer.Instance.Push(() =>
             {
@@ -510,7 +510,7 @@ namespace Server
                     }
                 case ERewardType.ITEM:
                     {
-                        if(GameData.Instance.ItemDict.TryGetValue(rewardData.subType, out var mastItem))
+                        if (GameData.Instance.ItemDict.TryGetValue(rewardData.subType, out var mastItem))
                         {
                             var toEquipItem = new PDropItem()
                             {
@@ -534,6 +534,22 @@ namespace Server
             _room.Broadcast(broadcast);
             _room.Send(player.id, res);
             player.UpdateStat();
+        }
+
+
+        public void OnCheatRequest(int id, CheatRequest req)
+        {
+            var player = GetPlayerEntityById(id);
+            if (player == null)
+            {
+                return;
+            }
+
+            var result = player.CheatExecuter.Execute(req);
+            _room.Send(player.id, new CheatResponse()
+            {
+                result = result ? DEFINE.SUCCESS : DEFINE.ERROR,
+            });
         }
     }
 }

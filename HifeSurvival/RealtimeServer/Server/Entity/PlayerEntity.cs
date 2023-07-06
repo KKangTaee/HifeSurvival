@@ -19,6 +19,8 @@ namespace Server
 
         StateMachine<PlayerEntity> _stateMachine;
 
+        public CheatExecuter CheatExecuter { get ; private set; }
+
         public PlayerEntity(GameRoom room, HeroData data)
             : base(room)
         {
@@ -32,6 +34,7 @@ namespace Server
             _stateMachine = new StateMachine<PlayerEntity>(smDict);
             Inventory = new PlayerInventory(this);
             DefaultStat = new EntityStat(data);
+            CheatExecuter = new CheatExecuter(this);
         }
 
         public void SelectReady()

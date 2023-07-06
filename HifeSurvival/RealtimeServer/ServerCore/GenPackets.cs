@@ -1332,8 +1332,7 @@ public class UpdateInvenItem : IPacket
 [Serializable]
 public class CheatRequest : IPacket
 {
-	public int id { get; set; }
-	public int type { get; set; }
+	public string type { get; set; }
 	public int arg1 { get; set; }
 	public int arg2 { get; set; }
 	public int arg3 { get; set; }
@@ -1349,10 +1348,10 @@ public class CheatRequest : IPacket
 		ReadOnlySpan<byte> s = new ReadOnlySpan<byte>(segment.Array, segment.Offset, segment.Count);
 		count += sizeof(ushort);
 		count += sizeof(ushort);
-		this.id = BitConverter.ToInt32(s.Slice(count, s.Length - count));
-		count += sizeof(int);
-		this.type = BitConverter.ToInt32(s.Slice(count, s.Length - count));
-		count += sizeof(int);
+		ushort typeLen = BitConverter.ToUInt16(s.Slice(count, s.Length - count));
+		count += sizeof(ushort);
+		this.type = Encoding.Unicode.GetString(s.Slice(count, typeLen));
+		count += typeLen;
 		this.arg1 = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
 		this.arg2 = BitConverter.ToInt32(s.Slice(count, s.Length - count));
@@ -1376,10 +1375,11 @@ public class CheatRequest : IPacket
 		count += sizeof(ushort);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.CheatRequest);
 		count += sizeof(ushort);
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.id);
-		count += sizeof(int);
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.type);
-		count += sizeof(int);
+		ushort typeLen = (ushort)Encoding.Unicode.GetByteCount(this.type);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), typeLen);
+		count += sizeof(ushort);
+		Encoding.Unicode.GetBytes(this.type, s.Slice(count, s.Length - count));
+		count += typeLen;
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.arg1);
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.arg2);
@@ -1400,8 +1400,6 @@ public class CheatRequest : IPacket
 [Serializable]
 public class CheatResponse : IPacket
 {
-	public int id { get; set; }
-	public int type { get; set; }
 	public int result { get; set; }
 
 	public ushort Protocol { get { return (ushort)PacketID.CheatResponse; } }
@@ -1413,10 +1411,6 @@ public class CheatResponse : IPacket
 		ReadOnlySpan<byte> s = new ReadOnlySpan<byte>(segment.Array, segment.Offset, segment.Count);
 		count += sizeof(ushort);
 		count += sizeof(ushort);
-		this.id = BitConverter.ToInt32(s.Slice(count, s.Length - count));
-		count += sizeof(int);
-		this.type = BitConverter.ToInt32(s.Slice(count, s.Length - count));
-		count += sizeof(int);
 		this.result = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
 	}
@@ -1432,10 +1426,6 @@ public class CheatResponse : IPacket
 		count += sizeof(ushort);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.CheatResponse);
 		count += sizeof(ushort);
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.id);
-		count += sizeof(int);
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.type);
-		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.result);
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s, count);

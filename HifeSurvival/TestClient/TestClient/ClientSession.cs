@@ -3,6 +3,7 @@ using System.Net;
 using System.Collections.Generic;
 using ServerCore;
 
+
 namespace TestClient
 {
     public class PlayerEntity
@@ -24,8 +25,7 @@ namespace TestClient
     public class ClientSession : Session
     {
         public bool IsConntected { get; private set; }
-        public PlayerEntity Player;
-
+        public PlayerEntity Player { get; set; }
 
         public override void OnConnected(EndPoint endPoint)
         {
@@ -42,7 +42,7 @@ namespace TestClient
             PacketManager.Instance.OnRecvPacket(this, buffer);
         }
 
-        public void AutoReady()
+        public void RoomReady()
         {
             JobTimer.Instance.Push(() =>
             {
@@ -67,7 +67,7 @@ namespace TestClient
             }, 2000);
         }
 
-        public void AutoPlayStart()
+        public void PlayStart()
         {
             JobTimer.Instance.Push(() =>
             {
@@ -79,6 +79,47 @@ namespace TestClient
                 Player.ClientStatus = 2;
                 Send(req.Write());
             }, 1000);
+        }
+
+        public void Cheat(string command)
+        {
+            var commandArr = command.Split();
+
+            var cheatReq = new CheatRequest();
+
+            if (commandArr.Length == 0)
+            {
+                return;
+            }
+
+            cheatReq.type = commandArr[0];
+
+            if(commandArr.Length == 2)
+            {
+                cheatReq.arg1 = int.Parse(commandArr[1]);
+            }
+
+            if (commandArr.Length == 3)
+            {
+                cheatReq.arg2 = int.Parse(commandArr[2]);
+            }
+
+            if (commandArr.Length == 4)
+            {
+                cheatReq.arg3 = int.Parse(commandArr[3]);
+            }
+
+            if (commandArr.Length == 5)
+            {
+                cheatReq.arg4 = int.Parse(commandArr[4]);
+            }
+
+            if (commandArr.Length == 6)
+            {
+                cheatReq.arg5 = int.Parse(commandArr[5]);
+            }
+
+            Send(cheatReq.Write());
         }
     }
 }

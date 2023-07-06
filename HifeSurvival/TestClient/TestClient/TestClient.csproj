@@ -7,8 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="NUnit" Version="3.13.3" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="ServerCore">
-      <HintPath>..\..\Assets\Plugins\ServerCore.dll</HintPath>
+      <HintPath>..\..\RealtimeServer\ServerCore\bin\Debug\netstandard2.1\ServerCore.dll</HintPath>
     </Reference>
   </ItemGroup>
 

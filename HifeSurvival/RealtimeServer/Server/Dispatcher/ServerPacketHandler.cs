@@ -73,6 +73,14 @@ namespace Server
 
         public override void CheatRequestHandler(Session session, IPacket packet)
         {
+            var sesh = session as ServerSession;
+            if (sesh == null)
+            {
+                return;
+            }
+
+            var req = packet as CheatRequest;
+            push(session, room => room?.Mode.OnCheatRequest(sesh.SessionId, req));
         }
 
 

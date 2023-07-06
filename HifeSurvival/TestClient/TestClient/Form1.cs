@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Net;
@@ -10,7 +11,8 @@ namespace TestClient
 {
     public partial class Form1 : Form
     {
-        static Timer updateTimer = new Timer();
+        public static ConcurrentQueue<string> LogMsgQ = new ConcurrentQueue<string>();
+        private static Timer _updateTimer = new Timer();
         private ClientSession _sesh;
 
         private (int mainStatus, int subStatus) _lastStatus = default;
@@ -24,9 +26,9 @@ namespace TestClient
         public Form1()
         {
             InitializeComponent();
-            updateTimer.Tick += new EventHandler(Update);
-            updateTimer.Interval = 100;
-            updateTimer.Start();
+            _updateTimer.Tick += new EventHandler(Update);
+            _updateTimer.Interval = 100;
+            _updateTimer.Start();
         }
 
         private void Update(object obj, EventArgs args)
@@ -36,19 +38,18 @@ namespace TestClient
 
             if (_sesh != null)
             {
-                var playerEntity = _sesh.Player;
-                if (playerEntity == null)
+                if (_sesh.IsConntected)
                 {
-                    if (_sesh.IsConntected)
-                    {
-                        _status = (0, 1);
-                    }
-                    else
-                    {
-                        _status = (0, 0);
-                    }
+                    _status = (0, 1);
                 }
                 else
+                {
+                    _status = (0, 0);
+                    _sesh.Player = null;
+                }
+
+                var playerEntity = _sesh.Player;
+                if (playerEntity != null)
                 {
                     _status = (1, playerEntity.GameModeStatus);
                     if (_status.subStatus == 2)
@@ -61,7 +62,7 @@ namespace TestClient
             }
             else
             {
-                label2.Text = "Disconnected -";
+                _status = (0, 0);
             }
 
 
@@ -77,12 +78,14 @@ namespace TestClient
                                 label2.Text = "Disconnected";
                                 startgameBtn.Enabled = false;
                                 connectBtn.Enabled = true;
+                                testBtn.Enabled = false;
                             }
                             else
                             {
                                 label2.Text = "Connected";
                                 startgameBtn.Enabled = true;
                                 connectBtn.Enabled = false;
+                                testBtn.Enabled = true;
                             }
                         }
                         break;
@@ -95,6 +98,7 @@ namespace TestClient
                             }
 
                             startgameBtn.Enabled = false;
+                            testBtn.Enabled = true;
                             label2.Text = _status.subStatus switch
                             {
                                 0 => "RoomEntered",
@@ -159,8 +163,15 @@ key {1}, level {2}, stack {3}/{4}
                     }
                 }
             }
-
-
+            
+            while(!LogMsgQ.IsEmpty)
+            {
+                if(LogMsgQ.TryDequeue(out var logMsg))
+                {
+                    LogTextBox.Text += $"{logMsg}\r\n";
+                }
+            }
+            
 
             JobTimer.Instance.Flush();
         }
@@ -172,7 +183,7 @@ key {1}, level {2}, stack {3}/{4}
             {
                 var req = new C_JoinToGame()
                 {
-                    userId = "test",
+                    userId = DEFINE.TEST_USER_ID,
                     userName = "testClient",
                 };
                 _sesh.Send(req.Write());
@@ -181,7 +192,12 @@ key {1}, level {2}, stack {3}/{4}
 
         private void TestClick(object sender, EventArgs e)
         {
+            if (_status.mainStatus == 0 && _status.subStatus == 0)
+            {
+                return;
+            }
 
+            _sesh.Cheat("equipitem 1");
         }
 
         private void ConnectBtnClick(object sender, EventArgs e)

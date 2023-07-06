@@ -21,7 +21,7 @@ public class ClientPacketHandler : PacketHandler
 
         if(packet is S_JoinToGame response)
         {
-            var player = response.joinPlayerList.AsQueryable().Where( p => p.id == sesh.Player.Id).FirstOrDefault();
+            var player = response.joinPlayerList.AsQueryable().Where( p => p.userId == DEFINE.TEST_USER_ID).FirstOrDefault();
             sesh.Player = new PlayerEntity()
             {
                 Id = player.id,
@@ -30,7 +30,7 @@ public class ClientPacketHandler : PacketHandler
             };
         }
 
-        sesh.AutoReady();
+        sesh.RoomReady();
     }
 
     public override void S_LeaveToGameHandler(Session session, IPacket packet)
@@ -93,7 +93,7 @@ public class ClientPacketHandler : PacketHandler
         {
             sesh.Player.GameModeStatus = 3;
             sesh.Player.HeroKey = res.playerList.AsQueryable().Where(p => p.id == sesh.Player.Id).FirstOrDefault().herosKey;
-            sesh.AutoPlayStart();
+            sesh.PlayStart();
         }
     }
 
@@ -241,6 +241,7 @@ public class ClientPacketHandler : PacketHandler
 
     public override void CheatResponseHandler(Session session, IPacket packet)
     {
-        throw new NotImplementedException();
+        var resultStr = ((CheatResponse)packet).result == 0 ? "Success" : "Failed";
+        Form1.LogMsgQ.Enqueue($"Cheat Result : {resultStr }");
     }
 }

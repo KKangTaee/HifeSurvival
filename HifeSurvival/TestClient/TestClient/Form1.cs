@@ -149,15 +149,14 @@ Hp : {2} (+{5})";
                     }
 
                     string itemFormat =
-@"--slot {0}
+@"-slot {0}
 key {1}, level {2}, stack {3}/{4}
 ";
 
-                    foreach (var item in player.InvenItemList)
+                    foreach (var item in player.InvenItemDict)
                     {
-                        ItemListTextBox.Text += string.Format(itemFormat, item.slot, item.itemKey, item.itemLevel, item.currentStack, item.maxStack);
+                        ItemListTextBox.Text += string.Format(itemFormat, item.Key, item.Value.itemKey, item.Value.itemLevel, item.Value.currentStack, item.Value.maxStack);
                     }
-
                 }
             }
 

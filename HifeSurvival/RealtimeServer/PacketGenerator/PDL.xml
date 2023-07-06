@@ -146,6 +146,7 @@
 	</packet>
 
 	<packet name ="CheatRequest">
+		<int name ="id"/>
 		<int name ="type"/>
 		<int name ="arg1"/>
 		<int name ="arg2"/>
@@ -155,6 +156,7 @@
 	</packet>
 
 	<packet name ="CheatResponse">
+		<int name ="id"/>
 		<int name ="type"/>
 		<int name ="result"/>
 	</packet>

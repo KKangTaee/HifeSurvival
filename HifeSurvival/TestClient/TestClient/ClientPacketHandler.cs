@@ -221,7 +221,26 @@ public class ClientPacketHandler : PacketHandler
 
         if (packet is UpdateInvenItem res)
         {
+            var item = res.invenItem;
 
+            if( sesh.Player.InvenItemDict.ContainsKey(item.slot))
+            {
+                sesh.Player.InvenItemDict[item.slot] = item;
+            }
+            else
+            {
+                sesh.Player.InvenItemDict.Add(item.slot, item);
+            }
         }
+    }
+
+    public override void CheatRequestHandler(Session session, IPacket packet)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void CheatResponseHandler(Session session, IPacket packet)
+    {
+        throw new NotImplementedException();
     }
 }

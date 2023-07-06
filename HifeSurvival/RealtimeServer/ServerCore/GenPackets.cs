@@ -1332,6 +1332,7 @@ public class UpdateInvenItem : IPacket
 [Serializable]
 public class CheatRequest : IPacket
 {
+	public int id { get; set; }
 	public int type { get; set; }
 	public int arg1 { get; set; }
 	public int arg2 { get; set; }
@@ -1348,6 +1349,8 @@ public class CheatRequest : IPacket
 		ReadOnlySpan<byte> s = new ReadOnlySpan<byte>(segment.Array, segment.Offset, segment.Count);
 		count += sizeof(ushort);
 		count += sizeof(ushort);
+		this.id = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+		count += sizeof(int);
 		this.type = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
 		this.arg1 = BitConverter.ToInt32(s.Slice(count, s.Length - count));
@@ -1373,6 +1376,8 @@ public class CheatRequest : IPacket
 		count += sizeof(ushort);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.CheatRequest);
 		count += sizeof(ushort);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.id);
+		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.type);
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.arg1);
@@ -1395,6 +1400,7 @@ public class CheatRequest : IPacket
 [Serializable]
 public class CheatResponse : IPacket
 {
+	public int id { get; set; }
 	public int type { get; set; }
 	public int result { get; set; }
 
@@ -1407,6 +1413,8 @@ public class CheatResponse : IPacket
 		ReadOnlySpan<byte> s = new ReadOnlySpan<byte>(segment.Array, segment.Offset, segment.Count);
 		count += sizeof(ushort);
 		count += sizeof(ushort);
+		this.id = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+		count += sizeof(int);
 		this.type = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
 		this.result = BitConverter.ToInt32(s.Slice(count, s.Length - count));
@@ -1424,6 +1432,8 @@ public class CheatResponse : IPacket
 		count += sizeof(ushort);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.CheatResponse);
 		count += sizeof(ushort);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.id);
+		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.type);
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.result);

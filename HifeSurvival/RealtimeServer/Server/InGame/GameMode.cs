@@ -25,7 +25,9 @@ namespace Server
         {
             var playerInfo = _playersDict.Values.FirstOrDefault(x => x.id == sessionId);
             if (playerInfo == null)
+            {
                 return;
+            }
 
             _playersDict.Remove(playerInfo.id);
 
@@ -310,7 +312,7 @@ namespace Server
             UpdateModeStatus(EGameModeStatus.LOAD_GAME);
         }
 
-        public void OnRecvJoin(C_JoinToGame inPacket, int inSessionId)
+        public void OnRecvJoin(C_JoinToGame req, int sessionId)
         {
             var data = GameData.Instance.HerosDict.Values.FirstOrDefault();
             if (data == null)
@@ -320,39 +322,39 @@ namespace Server
 
             var playerEntity = new PlayerEntity(_room, data)
             {
-                userId = inPacket.userId,
-                id = inSessionId,
+                userId = req.userId,
+                id = sessionId,
                 heroKey = data.key,
-                userName = inPacket.userName,
+                userName = req.userName,
             };
 
-            _playersDict.Add(inSessionId, playerEntity);
+            _playersDict.Add(sessionId, playerEntity);
 
             UpdateModeStatus(EGameModeStatus.READY);
         }
 
-        public void OnRecvSelect(CS_SelectHero inPacket)
+        public void OnRecvSelect(CS_SelectHero req)
         {
-            var player = GetPlayerEntityById(inPacket.id);
+            var player = GetPlayerEntityById(req.id);
             if (player == null)
             {
                 return;
             }
 
-            player.heroKey = inPacket.heroKey;
-            _room.Broadcast(inPacket);
+            player.heroKey = req.heroKey;
+            _room.Broadcast(req);
         }
 
-        public void OnRecvReady(CS_ReadyToGame inPacket)
+        public void OnRecvReady(CS_ReadyToGame req)
         {
-            var player = GetPlayerEntityById(inPacket.id);
+            var player = GetPlayerEntityById(req.id);
             if (player == null)
             {
                 return;
             }
 
             player.SelectReady();
-            _room.Broadcast(inPacket);
+            _room.Broadcast(req);
 
             if (CanLoadGame())
             {
@@ -377,47 +379,47 @@ namespace Server
             }
         }
 
-        public void OnRecvMoveRequest(MoveRequest inPacket)
+        public void OnRecvMoveRequest(MoveRequest req)
         {
-            var player = GetPlayerEntityById(inPacket.id);
+            var player = GetPlayerEntityById(req.id);
             if (player == null)
             {
                 return;
             }
 
-            player.currentPos = inPacket.currentPos;
-            player.targetPos = inPacket.targetPos;
+            player.currentPos = req.currentPos;
+            player.targetPos = req.targetPos;
 
             if (player.currentPos.IsSame(player.targetPos))
             {
                 player.MoveStop(new IdleParam()
                 {
-                    currentPos = inPacket.currentPos,
-                    timestamp = inPacket.timestamp
+                    currentPos = req.currentPos,
+                    timestamp = req.timestamp
                 });
             }
             else
             {
                 player.Move(new MoveParam()
                 {
-                    currentPos = inPacket.currentPos,
-                    targetPos = inPacket.targetPos,
-                    speed = inPacket.speed,
-                    timestamp = inPacket.timestamp
+                    currentPos = req.currentPos,
+                    targetPos = req.targetPos,
+                    speed = req.speed,
+                    timestamp = req.timestamp
                 });
             }
         }
 
 
-        public void OnRecvAttack(CS_Attack inPacket)
+        public void OnRecvAttack(CS_Attack req)
         {
-            var fromPlayer = GetPlayerEntityById(inPacket.id);
+            var fromPlayer = GetPlayerEntityById(req.id);
             if (fromPlayer == null)
             {
                 return;
             }
 
-            var targetEntity = GetEntityById(inPacket.targetId);
+            var targetEntity = GetEntityById(req.targetId);
             if (targetEntity == null)
             {
                 return;
@@ -430,9 +432,9 @@ namespace Server
         }
 
 
-        public void OnRecvIncreaseStatRequest(IncreaseStatRequest inPacket)
+        public void OnRecvIncreaseStatRequest(IncreaseStatRequest req)
         {
-            var player = GetPlayerEntityById(inPacket.id);
+            var player = GetPlayerEntityById(req.id);
             if (player == null)
             {
                 return;
@@ -441,20 +443,20 @@ namespace Server
             var res = new IncreaseStatResponse();
             res.id = player.id;
 
-            int increaseValue = inPacket.increase;
+            int increaseValue = req.increase;
             //NOTE : 현재 1골드 당 해당 스탯 1 증가. 
             //TODO : 골드량 대 스탯 증가량 비례 값은 데이터 시트로 관리할 예정. 
             int currentGold = player.Inventory.GetCurrencyByType(ECurrency.GOLD);
             if (currentGold < increaseValue)
             {
                 res.result = DEFINE.ERROR;
-                _room.Send(inPacket.id, res);
+                _room.Send(req.id, res);
                 return;
             }
 
             player.Inventory.SpendCurrency(ECurrency.GOLD, increaseValue);
 
-            switch ((EStatType)inPacket.type)
+            switch ((EStatType)req.type)
             {
                 case EStatType.STR:
                     player.upgradeStat.AddStr(increaseValue);
@@ -466,7 +468,7 @@ namespace Server
                     player.upgradeStat.AddMaxHp(increaseValue, true);
                     break;
                 default:
-                    Logger.Instance.Error($"Wrong Stat Type {(EStatType)inPacket.type}");
+                    Logger.Instance.Error($"Wrong Stat Type {(EStatType)req.type}");
                     break; ;
             }
 

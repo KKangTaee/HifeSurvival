@@ -35,20 +35,20 @@ namespace Server
 
         public override void CS_AttackHandler(Session session, IPacket packet)
         {
-            var attack = packet as CS_Attack;
-            PushJob(session, room => room?.Mode.OnRecvAttack(attack));
+            var req = packet as CS_Attack;
+            PushJob(session, room => room?.Mode.OnRecvAttack(req));
         }
 
         public override void CS_ReadyToGameHandler(Session session, IPacket packet)
         {
-            var readyToGame = packet as CS_ReadyToGame;
-            PushJob(session, room => room?.Mode.OnRecvReady(readyToGame));
+            var req = packet as CS_ReadyToGame;
+            PushJob(session, room => room?.Mode.OnRecvReady(req));
         }
 
         public override void MoveRequestHandler(Session session, IPacket packet)
         {
-            var move = packet as MoveRequest;
-            PushJob(session, room => room?.Mode.OnRecvMoveRequest(move));
+            var req = packet as MoveRequest;
+            PushJob(session, room => room?.Mode.OnRecvMoveRequest(req));
         }
 
         public override void IncreaseStatRequestHandler(Session session, IPacket packet)

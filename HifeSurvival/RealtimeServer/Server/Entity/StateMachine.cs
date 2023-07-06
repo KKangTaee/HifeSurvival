@@ -2,7 +2,6 @@
 
 namespace Server
 {
-
     public class StateMachine<T> where T : Entity
     {
         protected EEntityStatus _status;

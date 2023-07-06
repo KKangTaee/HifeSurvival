@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Server
 {
@@ -144,12 +142,12 @@ namespace Server
                 });
             }
 
-            var updateCurrency = new UpdatePlayerCurrency()
+            var currencyBroadcast = new UpdatePlayerCurrency()
             {
                 currencyList = currencyList,
             };
 
-            _ownerPlayer.Room.Send(_ownerPlayer.id, updateCurrency);
+            _ownerPlayer.Room.Send(_ownerPlayer.id, currencyBroadcast);
         }
     }
 }

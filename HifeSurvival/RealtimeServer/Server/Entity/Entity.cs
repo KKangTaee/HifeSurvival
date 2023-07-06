@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using ServerCore;
 
 namespace Server
 {
@@ -69,12 +64,12 @@ namespace Server
 
         public virtual void OnStatChange()
         {
-            var broadcast = new UpdateStatBroadcast();
-            broadcast.id = id;
-            broadcast.originStat = GetDefaultPStat();
-            broadcast.addStat = GetAdditionalPStat();
+            var statBroadcast = new UpdateStatBroadcast();
+            statBroadcast.id = id;
+            statBroadcast.originStat = GetDefaultPStat();
+            statBroadcast.addStat = GetAdditionalPStat();
 
-            Room.Broadcast(broadcast);
+            Room.Broadcast(statBroadcast);
         }
 
 

@@ -1,17 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Server
 {
-    using ServerCore;
-    using System;
-    using System.Collections.Generic;
-    using System.Net.Http;
-    using System.Threading;
-    using System.Threading.Tasks;
-
     public class ServerRequestManager
     {
         private static ServerRequestManager _instance;

@@ -1,8 +1,4 @@
-﻿using ServerCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿
 namespace Server
 {
     public partial class MonsterEntity
@@ -13,7 +9,7 @@ namespace Server
             {
                 if(param is IdleParam idleParam)
                 {
-                    UpdateLocationBroadcast move = new UpdateLocationBroadcast()
+                    var locationBroadcast = new UpdateLocationBroadcast()
                     {
                         id = self.id,
                         currentPos = idleParam.currentPos,
@@ -24,7 +20,7 @@ namespace Server
 
                     Logger.Instance.Debug($"IdleState monster : {self.id}, param current/target Pos : {idleParam.currentPos.Print()}");
 
-                    self.Room.Broadcast(move);
+                    self.Room.Broadcast(locationBroadcast);
                 }
             }
 

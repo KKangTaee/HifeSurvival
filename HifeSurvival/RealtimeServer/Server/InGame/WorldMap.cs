@@ -3,8 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
-using ServerCore;
 
 namespace Server
 {
@@ -105,24 +103,24 @@ namespace Server
                 Logger.Instance.Error($"World ID Get Failed ID : {newWorldId}");
             }
 
-            var broadcast = new UpdateRewardBroadcast();
-            broadcast.worldId = newWorldId;
-            broadcast.status = (int)ERewardState.DROP;
-            broadcast.rewardType = worldItem.itemData.rewardType;
-            broadcast.pos = dropPos;
+            var rewardBroadcast = new UpdateRewardBroadcast();
+            rewardBroadcast.worldId = newWorldId;
+            rewardBroadcast.status = (int)ERewardState.DROP;
+            rewardBroadcast.rewardType = worldItem.itemData.rewardType;
+            rewardBroadcast.pos = dropPos;
 
             switch ((ERewardType)worldItem.itemData.rewardType)
             {
                 case ERewardType.GOLD:
                     {
-                        broadcast.gold = worldItem.itemData.count;
+                        rewardBroadcast.gold = worldItem.itemData.count;
                         break;
                     }
                 case ERewardType.ITEM:
                     {
                         if (GameData.Instance.ItemDict.TryGetValue(worldItem.itemData.subType, out var mastItem))
                         {
-                            broadcast.item = new PDropItem()
+                            rewardBroadcast.item = new PDropItem()
                             {
                                 itemKey = mastItem.key,
                             };
@@ -138,7 +136,7 @@ namespace Server
                     break;
             }
 
-            return broadcast;
+            return rewardBroadcast;
         }
 
         public RewardData PickReward(int worldId)

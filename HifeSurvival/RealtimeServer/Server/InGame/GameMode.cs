@@ -1,7 +1,4 @@
-using ServerCore;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace Server
@@ -503,10 +500,10 @@ namespace Server
                 return;
             }
 
-            var broadcast = new UpdateRewardBroadcast();
-            broadcast.worldId = worldId;
-            broadcast.status = (int)ERewardState.PICK;
-            broadcast.rewardType = rewardData.rewardType;
+            var rewardBroadcast = new UpdateRewardBroadcast();
+            rewardBroadcast.worldId = worldId;
+            rewardBroadcast.status = (int)ERewardState.PICK;
+            rewardBroadcast.rewardType = rewardData.rewardType;
             res.rewardType = rewardData.rewardType;
 
             switch ((ERewardType)rewardData.rewardType)
@@ -514,7 +511,7 @@ namespace Server
                 case ERewardType.GOLD:
                     {
                         var amount = rewardData.count;
-                        res.gold = broadcast.gold = amount;
+                        res.gold = rewardBroadcast.gold = amount;
                         player.Inventory.EarnCurrency(ECurrency.GOLD, amount);
                         break;
                     }
@@ -527,7 +524,7 @@ namespace Server
                                 itemKey = mastItem.key,
                             };
 
-                            res.item = broadcast.item = toEquipItem;
+                            res.item = rewardBroadcast.item = toEquipItem;
 
                             int slot = player.EquipItem(mastItem);
                             if (slot < 0)
@@ -541,7 +538,7 @@ namespace Server
                     break;
             }
 
-            _room.Broadcast(broadcast);
+            _room.Broadcast(rewardBroadcast);
             _room.Send(player.id, res);
             player.UpdateStat();
         }

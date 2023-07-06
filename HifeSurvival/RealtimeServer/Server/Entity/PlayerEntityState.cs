@@ -1,8 +1,4 @@
-﻿using ServerCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿
 namespace Server
 {
     public partial class PlayerEntity
@@ -13,7 +9,7 @@ namespace Server
             {
                 if (param is IdleParam idleParam)
                 {
-                    UpdateLocationBroadcast broadcast = new UpdateLocationBroadcast()
+                    var locationBroadcast = new UpdateLocationBroadcast()
                     {
                         id = self.id,
                         currentPos = idleParam.currentPos,
@@ -22,7 +18,7 @@ namespace Server
                         timestamp = idleParam.timestamp,
                     };
 
-                    self.Room.Broadcast(broadcast);
+                    self.Room.Broadcast(locationBroadcast);
                 }
             }
 
@@ -58,7 +54,7 @@ namespace Server
 
             private void UpdateMove(PlayerEntity self, MoveParam param)
             {
-                UpdateLocationBroadcast move = new UpdateLocationBroadcast()
+                var updateBroadcast = new UpdateLocationBroadcast()
                 {
                     id = self.id,
                     currentPos = param.currentPos,
@@ -67,7 +63,7 @@ namespace Server
                     timestamp = param.timestamp,
                 };
 
-                self.Room.Broadcast(move);
+                self.Room.Broadcast(updateBroadcast);
             }
         }
 

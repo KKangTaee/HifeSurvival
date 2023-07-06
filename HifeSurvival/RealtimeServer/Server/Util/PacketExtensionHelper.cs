@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using ServerCore;
 using System.Linq;
 
 namespace Server

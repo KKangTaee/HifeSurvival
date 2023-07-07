@@ -9,7 +9,7 @@ public sealed class IngamePacketEventHandler : PacketEventHandlerBase,
 {
     public IngamePacketEventHandler(GameMode gameMode) : base(gameMode)
     {
-        _onEventHanderServerDict = new Dictionary<Type, Delegate>()
+        _onEventHanderGameModeDict = new Dictionary<Type, Delegate>()
         {
             { typeof(IncreaseStatResponse),     (Action<IncreaseStatResponse>)OnResponseIncreaseStat },
             

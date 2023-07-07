@@ -8,7 +8,7 @@ public class GameReadyPacketEventHandler : PacketEventHandlerBase,
 {
     public GameReadyPacketEventHandler(GameMode gameMode) : base(gameMode)
     {
-        _onEventHanderServerDict = new Dictionary<System.Type, System.Delegate>()
+        _onEventHanderGameModeDict = new Dictionary<System.Type, System.Delegate>()
         {
             {typeof(CS_SelectHero),     (Action<CS_SelectHero>)OnUpdateSelectHeroBroadcast},
 

@@ -8,7 +8,7 @@ public abstract class PacketEventHandlerBase
 {
     protected GameMode _gameMode;
 
-    protected Dictionary<Type, Delegate> _onEventHanderServerDict;
+    protected Dictionary<Type, Delegate> _onEventHanderGameModeDict;
     protected Dictionary<Type, Delegate> _onEventHandlerClientDict = new Dictionary<Type, Delegate>();
 
     public PacketEventHandlerBase(GameMode gameMode)
@@ -16,11 +16,11 @@ public abstract class PacketEventHandlerBase
         _gameMode = gameMode;
     }
 
-    public void NotifyServer<T>(T packet) where T : IPacket
+    public void NotifyGameMode<T>(T packet) where T : IPacket
     {
         Type packetType = packet.GetType();
 
-        if (_onEventHanderServerDict.TryGetValue(packetType, out var eventHandler))
+        if (_onEventHanderGameModeDict.TryGetValue(packetType, out var eventHandler))
         {
             var typedAction = eventHandler as Action<T>;
             typedAction?.Invoke(packet);

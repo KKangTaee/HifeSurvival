@@ -95,6 +95,7 @@ public class PlayerUI : MonoBehaviour
         // 바로 감소시키는 hpBar
         SLD_hpBar.value    = (float)_currHP / _maxHP;
         SLD_hpInner.value  = (float)_currHP / _maxHP;
+        TMP_hp.text = _currHP.ToString();
     }
 
     public void EquipItem(EntityItem entityItem)

@@ -122,7 +122,6 @@ public class EntityStat
     public float moveSpeed { get => _originStat.moveSpeed + _addStat.moveSpeed; }
     public float attackSpeed { get => _originStat.attackSpeed + _addStat.attackSpeed; }
     public int currHP { get; private set; }
-    public EStatType ChangeStat { get; private set; }
 
     private PStat _originStat;
     private PStat _addStat;
@@ -130,8 +129,8 @@ public class EntityStat
     public EntityStat(PStat stat)
     {
         _originStat = stat;
+        currHP = stat.hp;
     }
-
 
     public void UpdateOriginStat(PStat stat)
     {
@@ -140,22 +139,13 @@ public class EntityStat
 
     public void UpdateAddStat(PStat stat)
     {
-        EStatType type = EStatType.NONE;
-
-        if (_addStat.str != stat.str)
-            type = EStatType.STR;
-        else if (_addStat.def != stat.def)
-            type = EStatType.DEF;
-        else if (_addStat.hp != stat.hp)
-            type = EStatType.HP;
-
         _addStat = stat;
-        ChangeStat = type;
     }
 
     public void AddCurrHp(int hp)
     {
         currHP += hp;
+        Debug.Log(currHP);
     }
 }
 

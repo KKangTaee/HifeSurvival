@@ -20,16 +20,10 @@ public abstract class EntityObjectController<T> : ControllerBase where T : Entit
         
         var eventHandler = _gameMode.GetEventHandler<IngamePacketEventHandler>();
 
-        // _gameMode.OnRecvStopMoveHandler  += OnRecvStopMove;
-
         eventHandler.RegisterClient<CS_Attack>(OnRecvAttack);
         eventHandler.RegisterClient<S_Dead>(OnRecvDead);
         eventHandler.RegisterClient<UpdateLocationBroadcast>(OnUpdateLocation);
         eventHandler.RegisterClient<S_Respawn>(OnRecvRespawn);
-
-        // _gameMode.OnRecvDeadHandler       += OnRecvDead;
-        // _gameMode.OnRecvAttackHandler     += OnRecvAttack;
-        // _gameMode.OnUpdateLocationHandler += OnUpdateLocation;
     }
 
 

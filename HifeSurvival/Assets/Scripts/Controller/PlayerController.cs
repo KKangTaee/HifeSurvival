@@ -5,7 +5,8 @@ using System.Linq;
 using System;
 using UniRx;
 
-public sealed class PlayerController : EntityObjectController<Player>, IUpdateInvenItemSingle
+public sealed class PlayerController : EntityObjectController<Player>, 
+    IUpdateInvenItemSingle, IUpdateStatBroadcast
 {
     [SerializeField] private Player _playerPrefab;
 
@@ -28,13 +29,11 @@ public sealed class PlayerController : EntityObjectController<Player>, IUpdateIn
         _cameraController   = ControllerManager.Instance.GetController<CameraController>();
         _joystickController = ControllerManager.Instance.GetController<JoystickController>();
 
-        // _gameMode.OnRecvUpdateStatHandler += OnRecvUpdateStat;
-        // _gameMode.OnRecvPickRewardHandler += OnRecvPickReward;
-
         var eventHandler = _gameMode.GetEventHandler<IngamePacketEventHandler>();
 
         eventHandler.RegisterClient<UpdateInvenItem>(OnUpdateInvenItemSingle);
         eventHandler.RegisterClient<PickRewardResponse>(OnRecvPickReward);
+        eventHandler.RegisterClient<UpdateStatBroadcast>(OnUpdateStatBroadcast);
         
         LoadPlayer();
     }
@@ -249,23 +248,20 @@ public sealed class PlayerController : EntityObjectController<Player>, IUpdateIn
         base.OnUpdateLocation(inPacket);
     }
 
-
-    public void OnRecvUpdateStat(PlayerEntity inEntity)
-    {
-        var player = GetEntityObject(inEntity.id);
-        player.UpdateHp();
-    }
-
-
     public void OnRecvPickReward(PickRewardResponse packet)
     {
-        // if((ERewardType)packet.rewardType != ERewardType.ITEM)
-        //     return;
+
     }
 
     
     public void OnUpdateInvenItemSingle(UpdateInvenItem invenItem)
     {
         Self.UpdateItemView(invenItem.invenItem.slot);
+    }
+
+    public void OnUpdateStatBroadcast(UpdateStatBroadcast packet)
+    {
+        var target = GetEntityObject(packet.id);
+        target.UpdateHp();
     }
 }

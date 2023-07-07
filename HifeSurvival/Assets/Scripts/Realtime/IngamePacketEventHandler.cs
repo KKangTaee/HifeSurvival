@@ -38,7 +38,6 @@ public sealed class IngamePacketEventHandler : PacketEventHandlerBase,
         if (player == null)
             return;
 
-        // player.stat.IncreaseStat((EStatType)packet.type, packet.increase);
         NotifyClient(packet);
     }
 

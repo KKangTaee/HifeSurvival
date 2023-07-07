@@ -210,6 +210,8 @@ public partial class Player : EntityObject
 
     public void UpdateHp()
     {
+        // Debug.Log($"{TargetEntity.stat.hp}, {TargetEntity.stat.currHP}");
+
         _playerUI.SetMaxHP(TargetEntity.stat.hp);
         _playerUI.SetHP(TargetEntity.stat.currHP);
     }

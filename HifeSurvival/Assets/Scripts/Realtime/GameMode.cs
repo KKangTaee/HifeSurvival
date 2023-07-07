@@ -79,25 +79,25 @@ public class GameMode
         PlayerEntitysDict.Clear();
     }
 
-    public PlayerEntity GetPlayerEntity(int inTargetId)
+    public PlayerEntity GetPlayerEntity(int targetId)
     {
-        if (PlayerEntitysDict.TryGetValue(inTargetId, out var player) && player != null)
+        if (PlayerEntitysDict.TryGetValue(targetId, out var player) && player != null)
         {
             return player;
         }
 
-        Debug.LogError($"[{nameof(GetPlayerEntity)}] playerEntity is null or empty!");
+        Debug.LogError($"[{nameof(GetPlayerEntity)}] playerEntity is null or empty! : {targetId}");
         return null;
     }
 
-    public MonsterEntity GetMonsterEntity(int inTargetId)
+    public MonsterEntity GetMonsterEntity(int targetId)
     {
-         if (MonsterEntityDict.TryGetValue(inTargetId, out var monster) && monster != null)
+         if (MonsterEntityDict.TryGetValue(targetId, out var monster) && monster != null)
         {
             return monster;
         }
 
-        Debug.LogError($"[{nameof(GetMonsterEntity)}] monsterEntity is null or empty!");
+        Debug.LogError($"[{nameof(GetMonsterEntity)}] monsterEntity is null or empty! : {targetId}");
         return null;
     }
 

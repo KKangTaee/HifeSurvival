@@ -94,3 +94,8 @@ HifeSurvival/RealtimeServer/ServerCore/obj/project.assets.json
 HifeSurvival/RealtimeServer/ServerCore/obj/ServerCore.csproj.nuget.dgspec.json
 HifeSurvival/RealtimeServer/ServerCore/obj/ServerCore.csproj.nuget.g.props
 HifeSurvival/RealtimeServer/ServerCore/obj/ServerCore.csproj.nuget.g.targets
+HifeSurvival/TestClient/TestClient/obj/Debug/net5.0-windows/TestClient.csproj.FileListAbsolute.txt
+HifeSurvival/TestClient/TestClient/bin/Debug/net5.0-windows/TestClient.runtimeconfig.dev.json
+HifeSurvival/TestClient/TestClient/obj/TestClient.csproj.nuget.dgspec.json
+HifeSurvival/TestClient/TestClient/obj/TestClient.csproj.nuget.g.props
+HifeSurvival/TestClient/TestClient/obj/TestClient.csproj.nuget.g.targets

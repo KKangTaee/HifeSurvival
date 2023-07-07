@@ -118,7 +118,7 @@ public class ClientPacketHandler : PacketHandler
         {
             foreach(var mon in broadcast.monsterList)
             {
-                Form1.LogMsgQ.Enqueue($"UpdateSpawn  gid {mon.groupId } key {mon.monstersKey}");
+                Form1.LogMsgQ.Enqueue($"UpdateSpawn  gid {mon.groupId } key {mon.monstersKey} ");
             }
         }
     }
@@ -148,8 +148,13 @@ public class ClientPacketHandler : PacketHandler
 
         if (packet is UpdateStatBroadcast res)
         {
-            sesh.Player.OriginStat = res.originStat;
-            sesh.Player.AdditionalStat = res.addStat;
+            if (res.id == sesh.Player.Id)
+            {
+                sesh.Player.OriginStat = res.originStat;
+                sesh.Player.AdditionalStat = res.addStat;
+            }
+
+            Form1.LogMsgQ.Enqueue($"Stat Update id :{res.id}");
         }
     }
 

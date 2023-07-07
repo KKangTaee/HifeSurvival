@@ -152,22 +152,22 @@ namespace Server
 
                     data.phase1.Split(":").ToList().ForEach(p => groupKeyList.Add(int.Parse(p)));
                     data.phase1 = null;
-                    data.phase1Array = groupKeyList.ToArray();
+                    data.phase1GkeyArr = groupKeyList.ToArray();
                     groupKeyList.Clear();
 
                     data.phase2.Split(":").ToList().ForEach(p => groupKeyList.Add(int.Parse(p)));
                     data.phase2 = null;
-                    data.phase2Array = groupKeyList.ToArray();
+                    data.phase2GkeyArr = groupKeyList.ToArray();
                     groupKeyList.Clear();
 
                     data.phase3.Split(":").ToList().ForEach(p => groupKeyList.Add(int.Parse(p)));
                     data.phase3 = null;
-                    data.phase3Array = groupKeyList.ToArray();
+                    data.phase3GkeyArr = groupKeyList.ToArray();
                     groupKeyList.Clear();
 
                     data.phase4.Split(":").ToList().ForEach(p => groupKeyList.Add(int.Parse(p)));
                     data.phase4 = null;
-                    data.phase4Array = groupKeyList.ToArray();
+                    data.phase4GkeyArr = groupKeyList.ToArray();
 
                     var phaseSecList = new List<int>();
 
@@ -210,10 +210,10 @@ namespace Server
             foreach (var chapData in ChapaterDataDict)
             {
                 var groupKeyList = new List<int>();
-                groupKeyList.AddRange(chapData.Value.phase1Array);
-                groupKeyList.AddRange(chapData.Value.phase2Array);
-                groupKeyList.AddRange(chapData.Value.phase3Array);
-                groupKeyList.AddRange(chapData.Value.phase4Array);
+                groupKeyList.AddRange(chapData.Value.phase1GkeyArr);
+                groupKeyList.AddRange(chapData.Value.phase2GkeyArr);
+                groupKeyList.AddRange(chapData.Value.phase3GkeyArr);
+                groupKeyList.AddRange(chapData.Value.phase4GkeyArr);
 
                 var groupIdDuplicatedCheck = new HashSet<int>();
                 foreach (var groupKey in groupKeyList)

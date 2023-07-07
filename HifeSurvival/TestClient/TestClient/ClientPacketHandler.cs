@@ -112,9 +112,15 @@ public class ClientPacketHandler : PacketHandler
         
     }
 
-    public override void S_SpawnMonsterHandler(Session session, IPacket packet)
+    public override void UpdateSpawnMonsterBroadcastHandler(Session session, IPacket packet)
     {
-        
+        if (packet is UpdateSpawnMonsterBroadcast broadcast)
+        {
+            foreach(var mon in broadcast.monsterList)
+            {
+                Form1.LogMsgQ.Enqueue($"UpdateSpawn  gid {mon.groupId } key {mon.monstersKey}");
+            }
+        }
     }
 
     public override void MoveRequestHandler(Session session, IPacket packet)

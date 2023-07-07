@@ -108,9 +108,9 @@ namespace Server
         public int playTimeSec;
 
         public int[] phaseSecArray;
-        public int[] phase1Array;
-        public int[] phase2Array;
-        public int[] phase3Array;
-        public int[] phase4Array;
+        public int[] phase1GkeyArr;
+        public int[] phase2GkeyArr;
+        public int[] phase3GkeyArr;
+        public int[] phase4GkeyArr;
     }
 }

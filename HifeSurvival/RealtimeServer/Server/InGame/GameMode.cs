@@ -87,7 +87,7 @@ namespace Server
                         {
                             playTimeSec = chapterData.playTimeSec,
                             playerList = SpawnPlayer(),
-                            monsterList = SpawnMonster(chapterData.phase1Array)
+                            monsterList = SpawnMonster(chapterData.phase1GkeyArr)
                         };
 
                         _room.Broadcast(gameStart);
@@ -213,9 +213,9 @@ namespace Server
                 (int[] phaseArr, int ms) dataByPhase = phase_idx switch
                 {
                     //1 => (phaseData.phase1Array, phaseData.phaseSecArray[phase_idx -1]), -> StartGame 에서 처리 함.
-                    2 => (phaseData.phase2Array, phaseData.phaseSecArray[phase_idx -1]),
-                    3 => (phaseData.phase3Array, phaseData.phaseSecArray[phase_idx -1]),
-                    4 => (phaseData.phase4Array, phaseData.phaseSecArray[phase_idx -1]),
+                    2 => (phaseData.phase2GkeyArr, phaseData.phaseSecArray[phase_idx -1]),
+                    3 => (phaseData.phase3GkeyArr, phaseData.phaseSecArray[phase_idx -1]),
+                    4 => (phaseData.phase4GkeyArr, phaseData.phaseSecArray[phase_idx -1]),
                     _ => (null, 0)
                 };
 
@@ -230,8 +230,19 @@ namespace Server
                     {
                         monsterList = SpawnMonster(dataByPhase.phaseArr)
                     };
-
                     _room.Broadcast(spawnMoster);
+
+                    dataByPhase.phaseArr.ToList().ForEach(k =>
+                   {
+                       if (GameData.Instance.MonstersGroupDict.TryGetValue(k, out var mgdata))
+                       {
+                           var monsterList = _monsterGroupDict.AsQueryable().Where(mg => mgdata.groupId == mg.Key).ToList();
+
+                           monsterList.ForEach(smg => smg.Value.UpdateStat());
+                           monsterList.ForEach(smg => smg.Value.OnPlayStart());
+                       }
+                   });
+
                 }, dataByPhase.ms);
             }
         }

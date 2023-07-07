@@ -155,7 +155,14 @@ public sealed class IngamePacketEventHandler : PacketEventHandlerBase,
                 break;
         }
 
-        if(entity.stat == null)
+        //TODO : @Yodle_94 :  Spawn 대응 되기 전까지는 필히 발생되므로, 예외처리 
+        if (entity == null)
+        {
+            return;
+        }
+        //TODO end
+
+        if (entity.stat == null)
         {
            entity.stat = new EntityStat(packet.originStat);
         }

@@ -97,7 +97,7 @@ public class GameMode
             return monster;
         }
 
-        Debug.LogError($"[{nameof(GetMonsterEntity)}] playerEntity is null or empty!");
+        Debug.LogError($"[{nameof(GetMonsterEntity)}] monsterEntity is null or empty!");
         return null;
     }
 

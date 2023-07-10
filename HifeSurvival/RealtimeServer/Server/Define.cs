@@ -8,7 +8,8 @@ static class DEFINE
     //System
     public const int SEND_TICK_MS = 50;
     public const int TIMER_SEQ_MAX_PER_GAME = 300;
-    public const int MONSTER_ID = 1000;
+    public const int PC_BEGIN_ID = 10000;
+    public const float POS_EPSILON = 0.25f;
 
     //ResponseResult
     public const int SUCCESS = 0;
@@ -44,11 +45,13 @@ public enum EGameModeStatus
     FINISH_GAME,
 }
 
-public enum EClientStatus
+public enum EPlayerGameStatus
 {
     NONE,
+    ENTERED_ROOM,
     SELECT_READY,
     PLAY_READY,
+    PLAYING,
 }
 
 

@@ -4,45 +4,84 @@ namespace Server
 {
     public partial class PlayerEntity : Entity
     {
-        public string userId;
-        public string userName;
-        
-        public int  heroKey;
-        public EClientStatus clientStatus;
+        private string _userId;
+        private string _userName;
+        private int  _heroKey;
+        private StateMachine<PlayerEntity> _stateMachine;
 
-        public EntityStat itemStat = new EntityStat();
-        public EntityStat upgradeStat = new EntityStat();
-
+        public EPlayerGameStatus PlayerGameStatus;
+        public EntityStat ItemStat { get; private set; } =  new EntityStat();
+        public EntityStat UpgradedStat { get; private set; } = new EntityStat();
         public PlayerInventory Inventory { get; private set; }
-
-        StateMachine<PlayerEntity> _stateMachine;
-
         public CheatExecuter CheatExecuter { get ; private set; }
 
-        public PlayerEntity(GameRoom room, HeroData data)
+        public PlayerEntity(GameRoom room, int playerId, string userId, string userName, int heroKey)
             : base(room)
         {
+            ID = playerId;
+
+            _userId = userId;
+            _userName = userName;
+            _heroKey = heroKey;
+
+            CheatExecuter = new CheatExecuter(this);
+
+            PlayerGameStatus = EPlayerGameStatus.ENTERED_ROOM;
+        }
+
+        public void InitGamePlayer(in PVec3 startPos)
+        {
+            if (!GameData.Instance.HerosDict.TryGetValue(_heroKey, out var heroData))
+            {
+                Logger.Instance.Error($"Spawn Hero Key is Invalid - key {_heroKey}");
+                return;
+            }
+
+            currentPos = startPos;
+            targetPos = startPos;
+            spawnPos = startPos;
+
             var smDict = new Dictionary<EEntityStatus, IState<PlayerEntity, IStateParam>>();
             smDict[EEntityStatus.IDLE] = new IdleState();
             smDict[EEntityStatus.ATTACK] = new AttackState();
             smDict[EEntityStatus.MOVE] = new MoveState();
             smDict[EEntityStatus.USESKILL] = new UseSkillState();
             smDict[EEntityStatus.DEAD] = new DeadState();
-
             _stateMachine = new StateMachine<PlayerEntity>(smDict);
+
             Inventory = new PlayerInventory(this);
-            DefaultStat = new EntityStat(data);
-            CheatExecuter = new CheatExecuter(this);
+            DefaultStat = new EntityStat(heroData);
         }
 
-        public void SelectReady()
+        public void ChangeHeroKey(int heroKey)
         {
-            clientStatus = EClientStatus.SELECT_READY;
+            if (PlayerGameStatus != EPlayerGameStatus.ENTERED_ROOM)
+            {
+                return;
+            }
+
+            _heroKey = heroKey;
         }
 
-        public void PlayReady()
+        public S_JoinToGame.JoinPlayer MakeJoinPlayer()
         {
-            clientStatus = EClientStatus.PLAY_READY;
+            return new S_JoinToGame.JoinPlayer()
+            {
+                userId = _userId,
+                userName = _userName,
+                id = ID,
+                heroKey = _heroKey,
+            };
+        }
+
+        public PlayerSpawn MakePlayerSpawn()
+        {
+           return  new PlayerSpawn()
+            {
+                id = ID,
+                herosKey = _heroKey,
+                pos = spawnPos
+           };
         }
 
         protected override void ChangeState<P>(EEntityStatus status, P param)
@@ -70,8 +109,8 @@ namespace Server
 
             Stat = new EntityStat();
             Stat += DefaultStat;
-            Stat += upgradeStat;
-            Stat += itemStat;
+            Stat += UpgradedStat;
+            Stat += ItemStat;
 
             OnStatChange();     //변화 감지가 필요함. 일단 생략. 
         }
@@ -83,12 +122,12 @@ namespace Server
 
         public override PStat GetAdditionalPStat()
         {
-            return (this.upgradeStat + this.itemStat).ConvertToPStat();
+            return (this.UpgradedStat + this.ItemStat).ConvertToPStat();
         }
 
         public void UpdateItemStat()
         {
-            itemStat = Inventory.TotalItemStat();
+            ItemStat = Inventory.TotalItemStat();
         }
 
         public void UpdateItem(InvenItem updateItem)
@@ -110,7 +149,7 @@ namespace Server
                 }
             };
 
-            Room.Send(id, updateInvenItem);
+            Room.Send(ID, updateInvenItem);
         }
 
         public int EquipItem(in ItemData item)
@@ -137,7 +176,7 @@ namespace Server
 
                 S_Respawn respawn = new S_Respawn()
                 {
-                    id = id,
+                    id = ID,
                     stat = Stat.ConvertToPStat(),
                 };
 

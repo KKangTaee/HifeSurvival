@@ -4,34 +4,52 @@ namespace Server
 {
     public partial class MonsterEntity : Entity
     {
-        public int monsterId;
-        public int groupId;
-        public int grade;
-        public string rewardDatas;
-
-        StateMachine<MonsterEntity> _stateMachine;
-
-        private MonsterAIController AIController { get; set; }
+        private int _monsterKey;
+        private int _grade;
+        private string _rewardIds;
         private MonsterGroup _group;
         private WorldMap _worldMap;
+        private StateMachine<MonsterEntity> _stateMachine;
 
-        public MonsterEntity(GameRoom room, MonsterGroup group, WorldMap worldMap, MonsterData data)
+        public MonsterAIController AIController { get; private set; }
+
+        public MonsterEntity(GameRoom room, int mId, MonsterGroup group, MonsterData data, WorldMap worldMap, in PVec3 startPos)
             : base(room)
         {
+            ID = mId;
+
+            currentPos = startPos;
+            targetPos = startPos;
+            spawnPos = startPos;
+
+            _monsterKey = data.key;
+            _grade = data.grade;
+            _rewardIds = data.rewardIds;
+            _group = group;
+            _worldMap = worldMap;
+
             var smDict = new Dictionary<EEntityStatus, IState<MonsterEntity, IStateParam>>();
             smDict[EEntityStatus.IDLE] = new IdleState();
             smDict[EEntityStatus.ATTACK] = new AttackState();
             smDict[EEntityStatus.MOVE] = new MoveState();
             smDict[EEntityStatus.USESKILL] = new UseSkillState();
             smDict[EEntityStatus.DEAD] = new DeadState();
-
-            this._group = group;
-
             _stateMachine = new StateMachine<MonsterEntity>(smDict);
-            AIController = new MonsterAIController(this);
 
-            _worldMap = worldMap;
+            AIController = new MonsterAIController(this);
             DefaultStat = new EntityStat(data);
+        }
+
+        public MonsterSpawn MakeSpawnData()
+        {
+            return new MonsterSpawn()
+            {
+                id = ID,
+                monstersKey = _monsterKey,
+                groupId = _group.GroupId,
+                grade = _grade,
+                pos = spawnPos,
+            };
         }
 
 
@@ -76,7 +94,7 @@ namespace Server
                         target = playerAttacker,
                     });
 
-                    _group.OnAttack(id, playerAttacker);
+                    _group.OnAttack(ID, playerAttacker);
                 }
             }
         }
@@ -85,8 +103,8 @@ namespace Server
         {
             CS_Attack attackPacket = new CS_Attack()
             {
-                id = id,
-                targetId = target.id,
+                id = ID,
+                targetId = target.ID,
                 attackValue = damageValue,
             };
 
@@ -100,7 +118,7 @@ namespace Server
                 return;
             }
 
-            var broadcast = _worldMap.DropItem(rewardDatas, currentPos);
+            var broadcast = _worldMap.DropItem(_rewardIds, currentPos);
             if (broadcast == null)
             {
                 Logger.Instance.Warn("Reward Drop Failed");

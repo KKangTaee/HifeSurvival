@@ -147,7 +147,7 @@ namespace Server
                 currencyList = currencyList,
             };
 
-            _ownerPlayer.Room.Send(_ownerPlayer.id, currencyBroadcast);
+            _ownerPlayer.Room.Send(_ownerPlayer.ID, currencyBroadcast);
         }
     }
 }

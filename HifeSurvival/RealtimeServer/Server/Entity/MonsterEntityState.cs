@@ -11,14 +11,14 @@ namespace Server
                 {
                     var locationBroadcast = new UpdateLocationBroadcast()
                     {
-                        id = self.id,
+                        id = self.ID,
                         currentPos = idleParam.currentPos,
                         targetPos = idleParam.currentPos,
                         speed = self.Stat.MoveSpeed,
                         timestamp = idleParam.timestamp,
                     };
 
-                    Logger.Instance.Debug($"IdleState monster : {self.id}, param current/target Pos : {idleParam.currentPos.Print()}");
+                    Logger.Instance.Debug($"IdleState monster : {self.ID}, param current/target Pos : {idleParam.currentPos.Print()}");
 
                     self.Room.Broadcast(locationBroadcast);
                 }
@@ -64,14 +64,14 @@ namespace Server
 
                 UpdateLocationBroadcast move = new UpdateLocationBroadcast()
                 {
-                    id = self.id,
+                    id = self.ID,
                     currentPos = param.currentPos,
                     targetPos = param.targetPos,
                     speed = param.speed,
                     timestamp = param.timestamp,
                 };
 
-                Logger.Instance.Debug($"monster : {self.id}, param current Pos : {param.currentPos.Print()} , targetPos : {param.targetPos.Print()}");
+                Logger.Instance.Debug($"monster : {self.ID}, param current Pos : {param.currentPos.Print()} , targetPos : {param.targetPos.Print()}");
                 self.Room.Broadcast(move);
             }
         }
@@ -125,8 +125,8 @@ namespace Server
 
                     S_Dead deadPacket = new S_Dead()
                     {
-                        id = self.id,
-                        fromId = deadParam.killerTarget.id,
+                        id = self.ID,
+                        fromId = deadParam.killerTarget.ID,
                         respawnTime = DEFINE.MONSTER_RESPAWN_SEC,
                     };
 

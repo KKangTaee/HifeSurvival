@@ -3,7 +3,7 @@ namespace Server
 {
     public abstract class Entity
     {
-        public int id;
+        public int ID { get; protected set; }
 
         public PVec3 spawnPos;
         public PVec3 currentPos;
@@ -65,7 +65,7 @@ namespace Server
         public virtual void OnStatChange()
         {
             var statBroadcast = new UpdateStatBroadcast();
-            statBroadcast.id = id;
+            statBroadcast.id = ID;
             statBroadcast.originStat = GetDefaultPStat();
             statBroadcast.addStat = GetAdditionalPStat();
 

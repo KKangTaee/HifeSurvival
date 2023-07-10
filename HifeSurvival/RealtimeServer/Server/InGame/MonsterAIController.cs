@@ -63,7 +63,7 @@ namespace Server
         {
             if (ExistAggro())
             {
-                if (CurrentTarget().id == target.id)
+                if (CurrentTarget().ID == target.ID)
                 {
                     return;
                 }
@@ -71,7 +71,7 @@ namespace Server
                 _aggroList.Remove(target);
             }
 
-            Logger.Instance.Debug($" self : {_monster.id}, aggroid : {target.id}");
+            Logger.Instance.Debug($" self : {_monster.ID}, aggroid : {target.ID}");
             _aggroList.Add(target);
         }
 
@@ -99,8 +99,8 @@ namespace Server
             }
 
             var currentTarget = CurrentTarget();
-            Logger.Instance.Debug($"playerTarget : {currentTarget.id}, Pos : {currentTarget.currentPos.Print()}");
-            Logger.Instance.Debug($"monster : {_monster.id}, Pos : {_monster.currentPos.Print()}");
+            Logger.Instance.Debug($"playerTarget : {currentTarget.ID}, Pos : {currentTarget.currentPos.Print()}");
+            Logger.Instance.Debug($"monster : {_monster.ID}, Pos : {_monster.currentPos.Print()}");
             var damagedVal = BattleCalculator.ComputeDamagedValue(_monster.Stat, currentTarget.Stat);
 
             currentTarget.ReduceHP(damagedVal);
@@ -137,7 +137,7 @@ namespace Server
 
             if (_monster.currentPos.IsSame(targetPos))
             {
-                Logger.Instance.Debug($"Arrived !! id : {_monster.id}");
+                Logger.Instance.Debug($"Arrived !! id : {_monster.ID}");
 
                 if (_aiMode == EAIMode.RETURN_TO_RESPAWN_AREA)
                 {

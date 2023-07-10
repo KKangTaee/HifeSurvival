@@ -32,7 +32,6 @@ namespace Server
 				JobTimer.Instance.Flush();
 			}
 		}
-
     }
 }
 

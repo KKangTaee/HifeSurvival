@@ -9,7 +9,7 @@ namespace Server
         public static bool IsSame(this PVec3 selfPos, in PVec3 otherPos)
         {
             var dist = selfPos.DistanceTo(otherPos);
-            return dist < 0.25f;     //해당 값보다 작으면, 같다고 상정한다.
+            return dist < DEFINE.POS_EPSILON;     //해당 값보다 작으면, 같다고 상정한다.
         }
 
         public static bool IsDifferent(this PVec3 selfPos, in PVec3 otherPos)

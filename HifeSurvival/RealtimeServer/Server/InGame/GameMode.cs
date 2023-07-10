@@ -9,7 +9,7 @@ namespace Server
         private Dictionary<int, MonsterGroup> _monsterGroupDict = new Dictionary<int, MonsterGroup>();
 
         private WorldMap _worldMap;
-        private int _mId = DEFINE.MONSTER_ID;
+        private int _mId = 0;
 
         private GameRoom _room;
 
@@ -23,18 +23,17 @@ namespace Server
 
         public void OnSessionRemove(int sessionId)
         {
-            var playerInfo = _playersDict.Values.FirstOrDefault(x => x.id == sessionId);
+            var playerInfo = _playersDict.Values.FirstOrDefault(x => x.ID == sessionId);
             if (playerInfo == null)
             {
                 return;
             }
 
-            _playersDict.Remove(playerInfo.id);
+            _playersDict.Remove(playerInfo.ID);
 
-            S_LeaveToGame packet = new S_LeaveToGame()
+            var packet = new S_LeaveToGame()
             {
-                userId = playerInfo.userId,
-                id = playerInfo.id,
+                id = playerInfo.ID,
             };
 
             _room.Broadcast(packet);
@@ -49,13 +48,7 @@ namespace Server
                 case EGameModeStatus.READY:
                     {
                         var packet = new S_JoinToGame() { joinPlayerList = new List<S_JoinToGame.JoinPlayer>() };
-                        _playersDict.AsParallel().ForAll(p => packet.joinPlayerList.Add(new S_JoinToGame.JoinPlayer()
-                        {
-                            userId = p.Value.userId,
-                            userName = p.Value.userName,
-                            id = p.Value.id,
-                            heroKey = p.Value.heroKey,
-                        }));
+                        _playersDict.ToList().ForEach(p => packet.joinPlayerList.Add( p.Value.MakeJoinPlayer()));
 
                         _room.Broadcast(packet);
                     }
@@ -106,6 +99,7 @@ namespace Server
                         JobTimer.Instance.Push(() =>
                         {
                             _monsterGroupDict.AsParallel().ForAll(mg => mg.Value.OnPlayStart());
+                            _playersDict.AsParallel().ForAll(p => p.Value.PlayerGameStatus = EPlayerGameStatus.PLAYING);
                         });
                     }
                     break;
@@ -138,8 +132,9 @@ namespace Server
                 if (GameData.Instance.MonstersGroupDict.TryGetValue(groupKey, out var group) == true)
                 {
                     var monsterKey = group.monsterGroups.Split(':');
-                    var spawnData = _worldMap.SpawnList.AsQueryable().FirstOrDefault(x => x.spawnType == (int)EWorldMapSpawnType.MONSTER &&
-                                                                         x.groupId == group.groupId);
+                    var spawnData = _worldMap.SpawnList.AsQueryable()
+                        .Where(x => x.spawnType == (int)EWorldMapSpawnType.MONSTER && x.groupId == group.groupId)
+                        .FirstOrDefault();
 
                     if (spawnData == null)
                     {
@@ -148,52 +143,41 @@ namespace Server
                     }
 
                     var pivotIter = spawnData.pivotList.GetEnumerator();
+                    Logger.Instance.Info($"Spawn Pivot Count : {spawnData.pivotList.Count}");
 
-                    foreach (var id in monsterKey)
+                    foreach (var key in monsterKey)
                     {
-                        if (GameData.Instance.MonstersDict.TryGetValue(int.Parse(id)/*temp*/, out var data) == true &&
-                            pivotIter.MoveNext() == true)
+                        if (!GameData.Instance.MonstersDict.TryGetValue(int.Parse(key)/*temp*/, out var data))
                         {
-                            var pos = pivotIter.Current;
-
-                            MonsterGroup monsterGroup = null;
-
-                            if (_monsterGroupDict.TryGetValue(group.groupId, out var mg) == true)
-                            {
-                                monsterGroup = mg;
-                            }
-                            else
-                            {
-                                monsterGroup = new MonsterGroup(group.groupId, group.respawnTimeSec);
-                                _monsterGroupDict.Add(group.groupId, monsterGroup);
-                            }
-
-                            Logger.Instance.Debug($"monster id {id}, reward id {data.rewardIds}");
-                            var monsterEntity = new MonsterEntity(_room, monsterGroup, _worldMap, data)
-                            {
-                                id = _mId++,
-                                groupId = group.groupId,
-                                monsterId = int.Parse(id),
-                                currentPos = pos,
-                                targetPos = pos,
-                                spawnPos = pos,
-                                grade = data.grade,
-                                rewardDatas = data.rewardIds,
-                            };
-
-                            monsterGroup.Add(monsterEntity);
-
-                            var mData = new MonsterSpawn()
-                            {
-                                id = monsterEntity.id,
-                                monstersKey = monsterEntity.monsterId,
-                                groupId = monsterEntity.groupId,
-                                grade = monsterEntity.grade,
-                                pos = monsterEntity.spawnPos,
-                            };
-
-                            monsterList.Add(mData);
+                            Logger.Instance.Error($"Spawn Monster Key is Invalid - key {key}");
+                            continue;
                         }
+
+                        if(!pivotIter.MoveNext())
+                        {
+                            Logger.Instance.Warn($"Can't Spawn ,,, Not Enough Pivot");
+                            continue;
+                        }
+
+                        var pos = pivotIter.Current;
+                        int monsterId = _mId++;
+
+                        if(DEFINE.PC_BEGIN_ID <= _mId)
+                        {
+                            _mId = 0;
+                        }
+
+                        if (!_monsterGroupDict.TryGetValue(group.groupId, out var monsterGroup))
+                        {
+                            monsterGroup = new MonsterGroup(group.groupId, group.respawnTimeSec);
+                            _monsterGroupDict.Add(group.groupId, monsterGroup);
+                        }
+
+                        Logger.Instance.Debug($"monster key {key}, reward id {data.rewardIds}");
+                        var monsterEntity = new MonsterEntity(_room, monsterId, monsterGroup, data, _worldMap, pos);
+                        monsterGroup.Add(monsterEntity);
+
+                        monsterList.Add(monsterEntity.MakeSpawnData());
                     }
                 }
             }
@@ -258,21 +242,17 @@ namespace Server
             }
 
             var pivotIter = playerSpawn.pivotList.Shuffle().GetEnumerator();
-            foreach (var info in _playersDict.Values)
+            foreach (var player in _playersDict.Values)
             {
-                if (pivotIter.MoveNext() == true)
+                if (!pivotIter.MoveNext())
                 {
-                    var pos = pivotIter.Current;
-
-                    var data = new PlayerSpawn()
-                    {
-                        id = info.id,
-                        herosKey = info.heroKey,
-                        pos = pos
-                    };
-
-                    playerList.Add(data);
+                    continue;
                 }
+
+                var pos = pivotIter.Current;
+                player.InitGamePlayer(pos);
+
+                playerList.Add(player.MakePlayerSpawn());
             }
 
             return playerList;
@@ -280,14 +260,14 @@ namespace Server
 
         public Entity GetEntityById(int id)
         {
-            // monster id 이하보다 작으면 플레이어라고 상정.
-            if (id < DEFINE.MONSTER_ID)
+            // PC_BEGIN_ID 작으면 몬스터라고 상정.
+            if (id < DEFINE.PC_BEGIN_ID)
             {
-                return GetPlayerEntityById(id);
+                return GetMonsterEntityById(id);
             }
             else
             {
-                return GetMonsterEntityById(id);
+                return GetPlayerEntityById(id);
             }
         }
 
@@ -328,12 +308,12 @@ namespace Server
 
         public bool CanLoadGame()
         {
-            return _playersDict.Values.All(x => x.clientStatus == EClientStatus.SELECT_READY);
+            return _playersDict.Values.All(x => x.PlayerGameStatus == EPlayerGameStatus.SELECT_READY);
         }
 
         public bool CanPlayStart()
         {
-            return _playersDict.Values.All(x => x.clientStatus == EClientStatus.PLAY_READY);
+            return _playersDict.Values.All(x => x.PlayerGameStatus == EPlayerGameStatus.PLAY_READY);
         }
 
         public void StartLoadGame()
@@ -343,20 +323,14 @@ namespace Server
 
         public void OnRecvJoin(C_JoinToGame req, int sessionId)
         {
-            var data = GameData.Instance.HerosDict.Values.FirstOrDefault();
-            if (data == null)
-            {
-                return;
-            }
+            /* 진입점. 
+             *  1. 진입점은 로비 플레이어로 변경해야한다. 
+             *  2. 세션 ID 는 플레이어 고유 ID 가 될 수 없다. 
+             *  3. 플레이어 고유 ID 는 게임 내의 ID 값들과 같은 대역대를 사용한다. ( 0 ~ 9999, 10000 ~)
+             *  4. DB에 저장되는 유저 ID 값은 10000 대역대부터 생성되도록 작업한다. 
+             */
 
-            var playerEntity = new PlayerEntity(_room, data)
-            {
-                userId = req.userId,
-                id = sessionId,
-                heroKey = data.key,
-                userName = req.userName,
-            };
-
+            var playerEntity = new PlayerEntity(_room, sessionId, req.userId, req.userName, /*req.heroKey*/ 1);
             _playersDict.Add(sessionId, playerEntity);
 
             UpdateModeStatus(EGameModeStatus.READY);
@@ -370,7 +344,12 @@ namespace Server
                 return;
             }
 
-            player.heroKey = req.heroKey;
+            if (!GameData.Instance.HerosDict.TryGetValue(req.heroKey, out var heroData))
+            {
+                return;
+            }
+
+            player.ChangeHeroKey(heroData.key);
             _room.Broadcast(req);
         }
 
@@ -382,7 +361,8 @@ namespace Server
                 return;
             }
 
-            player.SelectReady();
+            player.PlayerGameStatus = EPlayerGameStatus.SELECT_READY;
+
             _room.Broadcast(req);
 
             if (CanLoadGame())
@@ -399,8 +379,8 @@ namespace Server
                 return;
             }
 
-            player.PlayReady();
-            _room.Send(player.id, new PlayStartResponse() { id = player.id });
+            player.PlayerGameStatus = EPlayerGameStatus.PLAY_READY;
+            _room.Send(player.ID, new PlayStartResponse() { id = player.ID });
 
             if (CanPlayStart())
             {
@@ -470,7 +450,7 @@ namespace Server
             }
 
             var res = new IncreaseStatResponse();
-            res.id = player.id;
+            res.id = player.ID;
 
             int increaseValue = req.increase;
             //NOTE : 현재 1골드 당 해당 스탯 1 증가. 
@@ -488,13 +468,13 @@ namespace Server
             switch ((EStatType)req.type)
             {
                 case EStatType.STR:
-                    player.upgradeStat.AddStr(increaseValue);
+                    player.UpgradedStat.AddStr(increaseValue);
                     break;
                 case EStatType.DEF:
-                    player.upgradeStat.AddDef(increaseValue);
+                    player.UpgradedStat.AddDef(increaseValue);
                     break;
                 case EStatType.HP:
-                    player.upgradeStat.AddMaxHp(increaseValue, true);
+                    player.UpgradedStat.AddMaxHp(increaseValue, true);
                     break;
                 default:
                     Logger.Instance.Error($"Wrong Stat Type {(EStatType)req.type}");
@@ -506,7 +486,7 @@ namespace Server
 
             player.UpdateStat();
 
-            _room.Send(player.id, res);
+            _room.Send(player.ID, res);
         }
 
 
@@ -521,7 +501,7 @@ namespace Server
             var worldId = req.worldId;
 
             var res = new PickRewardResponse();
-            res.id = player.id;
+            res.id = player.ID;
             res.worldId = worldId;
 
             var rewardData = _worldMap.PickReward(worldId);
@@ -570,7 +550,7 @@ namespace Server
             }
 
             _room.Broadcast(rewardBroadcast);
-            _room.Send(player.id, res);
+            _room.Send(player.ID, res);
             player.UpdateStat();
         }
 
@@ -584,7 +564,7 @@ namespace Server
             }
 
             var result = player.CheatExecuter.Execute(req);
-            _room.Send(player.id, new CheatResponse()
+            _room.Send(player.ID, new CheatResponse()
             {
                 result = result ? DEFINE.SUCCESS : DEFINE.ERROR,
             });

@@ -11,7 +11,7 @@ namespace Server
                 {
                     var locationBroadcast = new UpdateLocationBroadcast()
                     {
-                        id = self.id,
+                        id = self.ID,
                         currentPos = idleParam.currentPos,
                         targetPos = idleParam.currentPos,
                         speed = self.Stat.MoveSpeed,
@@ -56,7 +56,7 @@ namespace Server
             {
                 var updateBroadcast = new UpdateLocationBroadcast()
                 {
-                    id = self.id,
+                    id = self.ID,
                     currentPos = param.currentPos,
                     targetPos = param.targetPos,
                     speed = param.speed,
@@ -135,8 +135,8 @@ namespace Server
                 {
                     S_Dead deadPacket = new S_Dead()
                     {
-                        id = self.id,
-                        fromId = deadParam.killerTarget.id,
+                        id = self.ID,
+                        fromId = deadParam.killerTarget.ID,
                         respawnTime = DEFINE.MONSTER_RESPAWN_SEC,
                     };
                     self.Room.Broadcast(deadPacket);

@@ -18,7 +18,7 @@ namespace Server
 
         public void Add(MonsterEntity monsterEntity)
         {
-            _monstersDict.Add(monsterEntity.id, monsterEntity);
+            _monstersDict.Add(monsterEntity.ID, monsterEntity);
         }
 
         public void OnPlayStart()
@@ -39,7 +39,7 @@ namespace Server
 
         public void OnAttack(int damagedId, Entity attacker)
         {
-            foreach (var m in _monstersDict.AsQueryable().Where(m => m.Value.id != damagedId && !m.Value.ExistAggro()))
+            foreach (var m in _monstersDict.AsQueryable().Where(m => m.Value.ID != damagedId && !m.Value.ExistAggro()))
             {
                 m.Value.Attack(new AttackParam()
                 {
@@ -80,7 +80,7 @@ namespace Server
 
                     S_Respawn respawn = new S_Respawn()
                     {
-                        id = entity.id,
+                        id = entity.ID,
                         stat = entity.Stat.ConvertToPStat(),
                     };
                 }

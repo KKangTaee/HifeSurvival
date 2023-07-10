@@ -99,7 +99,7 @@ namespace Server
                         JobTimer.Instance.Push(() =>
                         {
                             _monsterGroupDict.AsParallel().ForAll(mg => mg.Value.OnPlayStart());
-                            _playersDict.AsParallel().ForAll(p => p.Value.PlayerGameStatus = EPlayerGameStatus.PLAYING);
+                            _playersDict.AsParallel().ForAll(p => p.Value.ClientStatus = EClientStatus.PLAYING);
                         });
                     }
                     break;
@@ -308,12 +308,12 @@ namespace Server
 
         public bool CanLoadGame()
         {
-            return _playersDict.Values.All(x => x.PlayerGameStatus == EPlayerGameStatus.SELECT_READY);
+            return _playersDict.Values.All(x => x.ClientStatus == EClientStatus.SELECT_READY);
         }
 
         public bool CanPlayStart()
         {
-            return _playersDict.Values.All(x => x.PlayerGameStatus == EPlayerGameStatus.PLAY_READY);
+            return _playersDict.Values.All(x => x.ClientStatus == EClientStatus.PLAY_READY);
         }
 
         public void StartLoadGame()
@@ -331,8 +331,9 @@ namespace Server
              */
 
             var playerEntity = new PlayerEntity(_room, sessionId, req.userId, req.userName, /*req.heroKey*/ 1);
-            _playersDict.Add(sessionId, playerEntity);
+            playerEntity.ClientStatus = EClientStatus.ENTERED_ROOM;
 
+            _playersDict.Add(sessionId, playerEntity);
             UpdateModeStatus(EGameModeStatus.READY);
         }
 
@@ -361,8 +362,7 @@ namespace Server
                 return;
             }
 
-            player.PlayerGameStatus = EPlayerGameStatus.SELECT_READY;
-
+            player.ClientStatus = EClientStatus.SELECT_READY;
             _room.Broadcast(req);
 
             if (CanLoadGame())
@@ -379,7 +379,7 @@ namespace Server
                 return;
             }
 
-            player.PlayerGameStatus = EPlayerGameStatus.PLAY_READY;
+            player.ClientStatus = EClientStatus.PLAY_READY;
             _room.Send(player.ID, new PlayStartResponse() { id = player.ID });
 
             if (CanPlayStart())

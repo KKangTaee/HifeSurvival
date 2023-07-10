@@ -9,7 +9,7 @@ namespace Server
         private int  _heroKey;
         private StateMachine<PlayerEntity> _stateMachine;
 
-        public EPlayerGameStatus PlayerGameStatus;
+        public EClientStatus ClientStatus;
         public EntityStat ItemStat { get; private set; } =  new EntityStat();
         public EntityStat UpgradedStat { get; private set; } = new EntityStat();
         public PlayerInventory Inventory { get; private set; }
@@ -25,8 +25,6 @@ namespace Server
             _heroKey = heroKey;
 
             CheatExecuter = new CheatExecuter(this);
-
-            PlayerGameStatus = EPlayerGameStatus.ENTERED_ROOM;
         }
 
         public void InitGamePlayer(in PVec3 startPos)
@@ -55,7 +53,7 @@ namespace Server
 
         public void ChangeHeroKey(int heroKey)
         {
-            if (PlayerGameStatus != EPlayerGameStatus.ENTERED_ROOM)
+            if (ClientStatus != EClientStatus.ENTERED_ROOM)
             {
                 return;
             }

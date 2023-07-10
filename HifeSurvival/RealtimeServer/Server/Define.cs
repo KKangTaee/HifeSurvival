@@ -45,7 +45,7 @@ public enum EGameModeStatus
     FINISH_GAME,
 }
 
-public enum EPlayerGameStatus
+public enum EClientStatus
 {
     NONE,
     ENTERED_ROOM,

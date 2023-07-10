@@ -18,15 +18,22 @@ public class FXController : ControllerBase
 
     public override void Init()
     {
-
+        PreLoad();
     }
 
     private void PreLoad()
     {
+        foreach(EFX_ID type in Enum.GetValues(typeof(EFX_ID)))
+        {
+            if(type == EFX_ID.NONE)
+                continue;
 
+            var fx = SpawnFX(type);
+            StoreFX(fx);
+        }
     }
 
-    public void Play(EFX_ID etype, in Vector3 pos, Action doneCallback)
+    public void Play(EFX_ID etype, in Vector3 pos, Action doneCallback = null)
     {
         var fx = SpawnFX(etype);
         fx.transform.position = pos;

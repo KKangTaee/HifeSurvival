@@ -41,6 +41,8 @@ public class ControllerManager
             nameof(PlayerController),
 
             nameof(MonsterController),
+
+            nameof(FXController),
         };
 
         foreach (var name in controllerName)

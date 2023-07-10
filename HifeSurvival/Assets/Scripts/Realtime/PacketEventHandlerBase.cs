@@ -22,6 +22,7 @@ public abstract class PacketEventHandlerBase
 
         if (_onEventHanderGameModeDict.TryGetValue(packetType, out var eventHandler))
         {
+            Debug.LogWarning($"[{nameof(NotifyGameMode)}] {packet.GetType()} is Called!");
             var typedAction = eventHandler as Action<T>;
             typedAction?.Invoke(packet);
         }

@@ -5,13 +5,6 @@ using ServerCore;
 
 public class ClientPacketHandler : PacketHandler
 {
-    
-    [Obsolete]
-    public override void S_CountdownHandler(Session session, IPacket packet)
-    {
-        S_Countdown countdown = packet as S_Countdown;
-    }
-
     public override void S_JoinToGameHandler(Session session, IPacket packet)
     {
         S_JoinToGame joinToGame = packet as S_JoinToGame;
@@ -62,7 +55,8 @@ public class ClientPacketHandler : PacketHandler
 
     public override void UpdateSpawnMonsterBroadcastHandler(Session session, IPacket packet)
     {
-
+        UpdateSpawnMonsterBroadcast spawnMonsterBroadcast = packet as UpdateSpawnMonsterBroadcast;
+        GameMode.Instance.GetEventHandler<IngamePacketEventHandler>().NotifyGameMode(spawnMonsterBroadcast);
     }
 
     public override void UpdateLocationBroadcastHandler(Session session, IPacket packet)

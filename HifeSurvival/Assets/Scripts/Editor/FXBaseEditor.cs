@@ -27,11 +27,11 @@ public class FXBaseEditor : Editor
         var splitted = fxObject.name.Split('_');
         if (splitted.Length > 1)
         {
-            int fxNumber = int.TryParse(splitted[1], out var parsedNumber) ? parsedNumber : (int) fxObject.Id;
+            int fxNumber = int.TryParse(splitted[1], out var parsedNumber) ? parsedNumber : (int) fxObject.FX_ID;
             fxObject.SetId((EFX_ID)fxNumber);
         }
 
-        EditorGUILayout.EnumPopup("ID",  fxObject.Id);
+        EditorGUILayout.EnumPopup("ID",  fxObject.FX_ID);
         GUI.enabled = true;
     }
 }

@@ -20,7 +20,6 @@ public class ControllerManager
             return _instance;
         }
     }
-    
 
     public const string RESOURCES_PATH = "Prefabs/Controllers";
 
@@ -72,7 +71,6 @@ public class ControllerManager
         foreach(var controller in _controllerDict.Values)
             controller.Init();
     }
-
 
     public void Release()
     {

@@ -55,7 +55,12 @@ public class FXController : ControllerBase
         else
         {
             // TODO@taeho.kang 에셋번들 관련 코드 수정
-            fx = Resources.Load<FXBase>($"{RESOURCE_LOAD_PATH}/{(EFX_ID)etype}");
+            fx = Resources.Load<FXBase>($"{RESOURCE_LOAD_PATH}/FXBase_{(int)etype}");
+            
+            Debug.Log($"{nameof(SpawnFX)} : {fx.FX_ID}");
+            
+            fx = Instantiate(fx);
+
             fx.transform.parent = this.transform;
         }
 
@@ -67,7 +72,9 @@ public class FXController : ControllerBase
     {
         Queue<FXBase> targetPool = null;
 
-        if(_fxPoolDict.TryGetValue(fxBase.Id, out var fxQueue) == true)
+        Debug.Log($"[{nameof(StoreFX)}] : {fxBase.FX_ID}");
+
+        if(_fxPoolDict.TryGetValue(fxBase.FX_ID, out var fxQueue) == true)
         {
             targetPool = fxQueue;
         }
@@ -75,8 +82,7 @@ public class FXController : ControllerBase
         {
             // TODO@taeho.kang 에셋번들 관련 코드 수정
             targetPool = new Queue<FXBase>();
-            _fxPoolDict.Add(fxBase.Id, targetPool);
-        }
-        
+            _fxPoolDict.Add(fxBase.FX_ID, targetPool);
+        }       
     }
 }

@@ -68,6 +68,8 @@ public partial class Player
 
             if (fromPlayer.IsSelf == true)
                 ActionDisplayUI.Show(ActionDisplayUI.ESpawnType.ATTACK, param.attackValue, toEntity.GetPos() + Vector3.up);
+
+            ControllerManager.Instance.GetController<FXController>().Play(EFX_ID.HIT_A_DIRECTIONAL_RED, toEntity.GetPos() + Vector3.up);
         }
         #endregion
     }

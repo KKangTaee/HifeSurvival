@@ -5,10 +5,11 @@ using System;
 
 public class FXBase : MonoBehaviour
 {
-    [SerializeField]  ParticleSystem _fx;
-    private Action _doneCallback;
+    [SerializeField] ParticleSystem _fx;
+    [SerializeField] EFX_ID _id;
 
-    public   EFX_ID Id { get; private set; }
+    private Action _doneCallback;
+    public   EFX_ID FX_ID { get => _id; }
     
     public void Play(Action doneCallback = null)
     {
@@ -23,7 +24,7 @@ public class FXBase : MonoBehaviour
 
     public void SetId(EFX_ID id)
     {
-        Id = id;
+        _id = id;
     }
 
     IEnumerator Co_Update()

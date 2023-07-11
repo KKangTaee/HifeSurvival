@@ -40,11 +40,6 @@ namespace Server
             DefaultStat = new EntityStat(data);
         }
 
-        public void FinalizeGameMonster()
-        {
-            _stateMachine = null;
-        }
-
         public MonsterSpawn MakeSpawnData()
         {
             return new MonsterSpawn()
@@ -133,6 +128,7 @@ namespace Server
                 Logger.Instance.Debug($"Reward Drop worldid : {broadcast.worldId}, pos : {broadcast.pos.Print()}");
                 Room.Broadcast(broadcast);
             }
+
             return;
         }
         public void ExecuteAI()

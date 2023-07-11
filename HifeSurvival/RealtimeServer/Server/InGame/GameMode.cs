@@ -122,7 +122,7 @@ namespace Server
                     {
                         JobTimer.Instance.Push(() =>
                         {
-                            _playersDict.AsParallel().ForAll(p => p.Value.FinalizeGamePlayer());
+                            _playersDict.AsParallel().ForAll(p => p.Value.TerminateGamePlayer());
                             _monsterGroupDict.Clear();
                         });
                     }
@@ -409,6 +409,11 @@ namespace Server
 
         public void OnRecvMoveRequest(MoveRequest req)
         {
+            if (IsPlayControlLocked())
+            {
+                return;
+            }
+
             var player = GetPlayerEntityById(req.id);
             if (player == null)
             {
@@ -441,6 +446,11 @@ namespace Server
 
         public void OnRecvAttack(CS_Attack req)
         {
+            if (IsPlayControlLocked())
+            {
+                return;
+            }
+
             var fromPlayer = GetPlayerEntityById(req.id);
             if (fromPlayer == null)
             {
@@ -462,6 +472,11 @@ namespace Server
 
         public void OnRecvIncreaseStatRequest(IncreaseStatRequest req)
         {
+            if (IsPlayControlLocked())
+            {
+                return;
+            }
+
             var player = GetPlayerEntityById(req.id);
             if (player == null)
             {
@@ -511,6 +526,11 @@ namespace Server
 
         public void OnRecvPickRewardRequest(PickRewardRequest req)
         {
+            if (IsPlayControlLocked())
+            {
+                return;
+            }
+
             var player = GetPlayerEntityById(req.id);
             if (player == null)
             {
@@ -571,6 +591,11 @@ namespace Server
             _room.Broadcast(rewardBroadcast);
             _room.Send(player.ID, res);
             player.UpdateStat();
+        }
+
+        public bool IsPlayControlLocked()
+        {
+            return Status != EGameModeStatus.PLAY_START;
         }
 
 

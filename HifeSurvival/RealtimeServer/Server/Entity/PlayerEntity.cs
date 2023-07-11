@@ -51,7 +51,7 @@ namespace Server
             DefaultStat = new EntityStat(heroData);
         }
 
-        public void FinalizeGamePlayer()
+        public void TerminateGamePlayer()
         {
             _stateMachine = null;
         }

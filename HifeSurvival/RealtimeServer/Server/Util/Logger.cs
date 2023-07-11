@@ -46,7 +46,7 @@ namespace Server
                     Directory.CreateDirectory("logs");
                 }
 
-                _fs = new FileStream($"logs\\{title}.log", FileMode.CreateNew);
+                _fs = new FileStream($"logs//{title}.log", FileMode.CreateNew);
                 _sw = new StreamWriter(_fs, Encoding.UTF8);
             }
         }

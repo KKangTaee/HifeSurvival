@@ -76,9 +76,10 @@ namespace Server
 
                         _worldMap.LoadMap(chapterData.mapData);
 
+                        int playTimeSec = chapterData.playTimeSec;
                         var gameStart = new S_StartGame()
                         {
-                            playTimeSec = chapterData.playTimeSec,
+                            playTimeSec = playTimeSec,
                             playerList = SpawnPlayer(),
                             monsterList = SpawnMonster(chapterData.phase1GkeyArr)
                         };

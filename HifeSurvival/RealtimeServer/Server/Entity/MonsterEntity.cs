@@ -101,7 +101,7 @@ namespace Server
 
         public void OnAttackSuccess(in Entity target, int damageValue)
         {
-            CS_Attack attackPacket = new CS_Attack()
+            var attackPacket = new CS_Attack()
             {
                 id = ID,
                 targetId = target.ID,

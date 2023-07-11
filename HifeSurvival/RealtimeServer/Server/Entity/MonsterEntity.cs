@@ -40,6 +40,11 @@ namespace Server
             DefaultStat = new EntityStat(data);
         }
 
+        public void FinalizeGameMonster()
+        {
+            _stateMachine = null;
+        }
+
         public MonsterSpawn MakeSpawnData()
         {
             return new MonsterSpawn()
@@ -55,7 +60,7 @@ namespace Server
 
         protected override void ChangeState<P>(EEntityStatus status, P param)
         {
-            _stateMachine.OnChangeState(status, this, param);
+            _stateMachine?.OnChangeState(status, this, param);
         }
 
         public override void UpdateStat()
@@ -68,7 +73,7 @@ namespace Server
 
         public override PStat GetDefaultPStat()
         {
-            return this.DefaultStat.ConvertToPStat();
+            return this.DefaultStat?.ConvertToPStat() ?? new PStat();
         }
 
         public override PStat GetAdditionalPStat()

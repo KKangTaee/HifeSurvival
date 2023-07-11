@@ -6,14 +6,14 @@ namespace Server
     {
         private string _userId;
         private string _userName;
-        private int  _heroKey;
+        private int _heroKey;
         private StateMachine<PlayerEntity> _stateMachine;
 
         public EClientStatus ClientStatus;
-        public EntityStat ItemStat { get; private set; } =  new EntityStat();
+        public EntityStat ItemStat { get; private set; } = new EntityStat();
         public EntityStat UpgradedStat { get; private set; } = new EntityStat();
         public PlayerInventory Inventory { get; private set; }
-        public CheatExecuter CheatExecuter { get ; private set; }
+        public CheatExecuter CheatExecuter { get; private set; }
 
         public PlayerEntity(GameRoom room, int playerId, string userId, string userName, int heroKey)
             : base(room)
@@ -24,6 +24,7 @@ namespace Server
             _userName = userName;
             _heroKey = heroKey;
 
+            Inventory = new PlayerInventory(this);
             CheatExecuter = new CheatExecuter(this);
         }
 
@@ -47,8 +48,12 @@ namespace Server
             smDict[EEntityStatus.DEAD] = new DeadState();
             _stateMachine = new StateMachine<PlayerEntity>(smDict);
 
-            Inventory = new PlayerInventory(this);
             DefaultStat = new EntityStat(heroData);
+        }
+
+        public void FinalizeGamePlayer()
+        {
+            _stateMachine = null;
         }
 
         public void ChangeHeroKey(int heroKey)
@@ -84,7 +89,7 @@ namespace Server
 
         protected override void ChangeState<P>(EEntityStatus status, P param)
         {
-            _stateMachine.OnChangeState(status, this, param);
+            _stateMachine?.OnChangeState(status, this, param);
         }
 
 
@@ -125,7 +130,7 @@ namespace Server
 
         public void UpdateItemStat()
         {
-            ItemStat = Inventory.TotalItemStat();
+            ItemStat = Inventory?.TotalItemStat();
         }
 
         public void UpdateItem(InvenItem updateItem)
@@ -152,7 +157,7 @@ namespace Server
 
         public int EquipItem(in ItemData item)
         {
-            var invenItem = Inventory.EquipItem(item);
+            var invenItem = Inventory?.EquipItem(item);
             if (invenItem == null)
             {
                 Logger.Instance.Warn($"Equip Failed! ");

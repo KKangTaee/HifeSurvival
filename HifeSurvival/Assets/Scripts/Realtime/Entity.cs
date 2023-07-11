@@ -60,12 +60,18 @@ public abstract class Entity
 
     public static EEntityType GetEntityType(int inId)
     {
-        if (inId < PLAYER_ID_MAX)
-            return EEntityType.PLAYER;
-        else if (inId < MONSTER_ID_MAX)
+        // NOTO : 형주 :  임시 작업 
+        if (inId < 10000)
             return EEntityType.MOSNTER;
 
-        return EEntityType.NONE;
+        return EEntityType.PLAYER;
+
+        //if (inId < PLAYER_ID_MAX)
+        //    return EEntityType.PLAYER;
+        //else if (inId < MONSTER_ID_MAX)
+        //    return EEntityType.MOSNTER;
+
+        //return EEntityType.NONE;
     }
 }
 

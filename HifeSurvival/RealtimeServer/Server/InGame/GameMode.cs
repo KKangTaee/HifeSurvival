@@ -102,11 +102,29 @@ namespace Server
                             _monsterGroupDict.AsParallel().ForAll(mg => mg.Value.OnPlayStart());
                             _playersDict.AsParallel().ForAll(p => p.Value.ClientStatus = EClientStatus.PLAYING);
                         });
+
+                        int tempChapterKey = 1;
+                        if (GameData.Instance.ChapaterDataDict.TryGetValue(tempChapterKey, out var chapterData) == false)
+                        {
+                            Logger.Instance.Error("chapterdata is not found");
+                            return;
+                        }
+
+                        int playTimeSec = chapterData.playTimeSec;
+
+                        JobTimer.Instance.Push(() =>
+                        {
+                            UpdateModeStatus(EGameModeStatus.FINISH_GAME);
+                        }, playTimeSec * DEFINE.SEC_TO_MS);
                     }
                     break;
                 case EGameModeStatus.FINISH_GAME:
                     {
-
+                        JobTimer.Instance.Push(() =>
+                        {
+                            _playersDict.AsParallel().ForAll(p => p.Value.FinalizeGamePlayer());
+                            _monsterGroupDict.Clear();
+                        });
                     }
                     break;
                 default:
@@ -456,7 +474,7 @@ namespace Server
             int increaseValue = req.increase;
             //NOTE : 현재 1골드 당 해당 스탯 1 증가. 
             //TODO : 골드량 대 스탯 증가량 비례 값은 데이터 시트로 관리할 예정. 
-            int currentGold = player.Inventory.GetCurrencyByType(ECurrency.GOLD);
+            int currentGold = player.Inventory?.GetCurrencyByType(ECurrency.GOLD) ?? 0;
             if (currentGold < increaseValue)
             {
                 res.result = DEFINE.ERROR;
@@ -524,7 +542,7 @@ namespace Server
                     {
                         var amount = rewardData.count;
                         res.gold = rewardBroadcast.gold = amount;
-                        player.Inventory.EarnCurrency(ECurrency.GOLD, amount);
+                        player.Inventory?.EarnCurrency(ECurrency.GOLD, amount);
                         break;
                     }
                 case ERewardType.ITEM:

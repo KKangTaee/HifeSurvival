@@ -24,7 +24,7 @@ namespace Server
             {
                 _status = status;
                 _state?.Exit(entity, param);
-                _state = _stateMachineDict[_status];
+                _state = _stateMachineDict?[_status];
                 _state?.Enter(entity, param);
             }
         }

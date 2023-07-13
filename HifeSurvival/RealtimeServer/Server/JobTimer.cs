@@ -21,7 +21,7 @@ namespace Server
 
 		public static JobTimer Instance { get; } = new JobTimer();
 
-		public void Push(Action action, int tickAfter = 0)
+		public void Push(Action action, int tickAfter = 1)
 		{
 			JobTimerElem job;
 			job.execTick = System.Environment.TickCount + tickAfter;
@@ -35,26 +35,23 @@ namespace Server
 
 		public void Flush()
 		{
-			while (true)
-			{
-				int now = System.Environment.TickCount;
+			int now = System.Environment.TickCount;
 
+			lock(_lock)
+            {
 				JobTimerElem job;
-
-				lock (_lock)
-				{
-					if (_pq.Count == 0)
-						break;
-
+				while (_pq.Count != 0)
+                {
 					job = _pq.Peek();
 					if (job.execTick > now)
+                    {
 						break;
+					}
 
+					job.action.Invoke();
 					_pq.Pop();
 				}
-
-				job.action.Invoke();
-			}
+            }
 		}
 	}
 }

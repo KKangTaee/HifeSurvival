@@ -14,6 +14,10 @@
 - [Game Data](https://docs.google.com/spreadsheets/d/104ZnnXWWorMZOAhuY0o1o1xIL2H41opJlrJLsSEk_C4/edit#gid=0)
 - [User Data](https://console.firebase.google.com/u/0/project/planar-hangout-385012/overview?hl=ko)
 
+
+## Manual
+- dotnet publish -r ubuntu.20.04-x64 -c Release -f netcoreapp3.1 -p:PublishSingleFile=true --no-self-contained
+
 ## Convention
 <details markdown="1">
 <summary> Code Convention</summary>
@@ -181,8 +185,4 @@
 
 </detail>
 
-
-### RELEASE
-
-- dotnet publish -r ubuntu.20.04-x64 -c Release -f netcoreapp3.1 -p:PublishSingleFile=true --no-self-contained
 

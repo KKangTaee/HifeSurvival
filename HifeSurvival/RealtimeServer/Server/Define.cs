@@ -6,7 +6,7 @@ static class DEFINE
     public const int SEC_TO_MS = 1000;
 
     //System
-    public const int SEND_TICK_MS = 50;
+    public const int SERVER_TICK = 50;
     public const int TIMER_SEQ_MAX_PER_GAME = 300;
     public const int PC_BEGIN_ID = 10000;
     public const float POS_EPSILON = 0.25f;
@@ -20,7 +20,6 @@ static class DEFINE
     public const int PLAYER_ITEM_SLOT = 4;
 
     //Monster
-    public const int AI_CHECK_MS = 50;
     public const int MONSTER_RESPAWN_SEC = 15;
     public const int MONSTER_RESPAWN_AREA_RANGE = 10;
     public const int MONSTER_ATTACK_ANIM_TIME = 300;   //TODO : (임시) 유니티에서 추출해야할 anim 데이터 읽어야 할 듯. -> entity 가 들고 있어야 함. 

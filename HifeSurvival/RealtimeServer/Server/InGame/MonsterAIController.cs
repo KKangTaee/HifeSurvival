@@ -56,7 +56,7 @@ namespace Server
             JobTimer.Instance.Push(() =>
             {
                 StartAIRoutine();
-            }, DEFINE.AI_CHECK_MS);
+            }, DEFINE.SERVER_TICK);
         }
 
         public void UpdateAggro(Entity target)
@@ -130,7 +130,7 @@ namespace Server
             var targetPos = _lastMoveInfo.Value.targetPos;
 
             var normalizedVec = currentPos.NormalizeToTargetPVec3(targetPos);
-            float ratio = _monster.Stat.MoveSpeed * DEFINE.AI_CHECK_MS * DEFINE.MS_TO_SEC;
+            float ratio = _monster.Stat.MoveSpeed * DEFINE.SERVER_TICK * DEFINE.MS_TO_SEC;
 
             _monster.currentPos.x = currentPos.x + normalizedVec.x * ratio;
             _monster.currentPos.y = currentPos.y + normalizedVec.y * ratio;

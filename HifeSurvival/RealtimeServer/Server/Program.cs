@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using ServerCore;
 
@@ -30,6 +31,7 @@ namespace Server
 			while (true)
 			{
 				JobTimer.Instance.Flush();
+				Thread.Sleep(DEFINE.SERVER_TICK);
 			}
 		}
     }

@@ -47,7 +47,7 @@ namespace Server
                 _broadcastMessage.Clear();
             }
 
-            JobTimer.Instance.Push(FlushSendQueue, DEFINE.SEND_TICK_MS);
+            JobTimer.Instance.Push(FlushSendQueue, DEFINE.SERVER_TICK);
         }
 
         public void Broadcast(IPacket packet)
@@ -90,7 +90,7 @@ namespace Server
             {
                 _existSesh = true;
                 Logger.Instance.Debug($"FlushSendQueue Start");
-                JobTimer.Instance.Push(FlushSendQueue, DEFINE.SEND_TICK_MS);
+                JobTimer.Instance.Push(FlushSendQueue, DEFINE.SERVER_TICK);
             }
         }
 

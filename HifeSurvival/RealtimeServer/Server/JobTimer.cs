@@ -21,7 +21,7 @@ namespace Server
 
 		public static JobTimer Instance { get; } = new JobTimer();
 
-		public void Push(Action action, int tickAfter = 1)
+		public void Push(Action action, int tickAfter = 0)
 		{
 			JobTimerElem job;
 			job.execTick = System.Environment.TickCount + tickAfter;

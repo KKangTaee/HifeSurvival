@@ -88,8 +88,8 @@ namespace Server
 
                         JobTimer.Instance.Push(() =>
                         {
-                            _monsterGroupDict.AsParallel().ForAll(mg => mg.Value.UpdateStat());
-                            _playersDict.AsParallel().ForAll(p => p.Value.UpdateStat());
+                            _monsterGroupDict.ToList().ForEach(mg => mg.Value.UpdateStat());
+                            _playersDict.ToList().ForEach(p => p.Value.UpdateStat());
                         });
 
                         SpawnPhaseRegist(tempChapterKey);
@@ -99,8 +99,8 @@ namespace Server
                     {
                         JobTimer.Instance.Push(() =>
                         {
-                            _monsterGroupDict.AsParallel().ForAll(mg => mg.Value.OnPlayStart());
-                            _playersDict.AsParallel().ForAll(p => p.Value.ClientStatus = EClientStatus.PLAYING);
+                            _monsterGroupDict.ToList().ForEach(mg => mg.Value.OnPlayStart());
+                            _playersDict.ToList().ForEach(p => p.Value.ClientStatus = EClientStatus.PLAYING);
                         });
 
                         int tempChapterKey = 1;
@@ -122,7 +122,7 @@ namespace Server
                     {
                         JobTimer.Instance.Push(() =>
                         {
-                            _playersDict.AsParallel().ForAll(p => p.Value.TerminateGamePlayer());
+                            _playersDict.ToList().ForEach(p => p.Value.TerminateGamePlayer());
                             _monsterGroupDict.Clear();
                         });
                     }

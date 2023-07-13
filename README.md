@@ -180,3 +180,9 @@
 아이템 장착 : equipitem [itemKey]
 
 </detail>
+
+
+### RELEASE
+
+- dotnet publish -r ubuntu.20.04-x64 -c Release -f netcoreapp3.1 -p:PublishSingleFile=true --no-self-contained
+

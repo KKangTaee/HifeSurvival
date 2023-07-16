@@ -48,7 +48,7 @@ public class FXController : ControllerBase
     {
         FXBase fx = null;
 
-        if(_fxPoolDict.TryGetValue(etype, out var fxQueue) == true)
+        if(_fxPoolDict.TryGetValue(etype, out var fxQueue) == true && fxQueue?.Count > 0)
         {
             fx = fxQueue.Dequeue();
         }
@@ -82,6 +82,7 @@ public class FXController : ControllerBase
         {
             // TODO@taeho.kang 에셋번들 관련 코드 수정
             targetPool = new Queue<FXBase>();
+            targetPool.Enqueue(fxBase);
             _fxPoolDict.Add(fxBase.FX_ID, targetPool);
         }       
     }

@@ -57,8 +57,6 @@ public class FXController : ControllerBase
             // TODO@taeho.kang 에셋번들 관련 코드 수정
             fx = Resources.Load<FXBase>($"{RESOURCE_LOAD_PATH}/FXBase_{(int)etype}");
             
-            Debug.Log($"{nameof(SpawnFX)} : {fx.FX_ID}");
-            
             fx = Instantiate(fx);
 
             fx.transform.parent = this.transform;

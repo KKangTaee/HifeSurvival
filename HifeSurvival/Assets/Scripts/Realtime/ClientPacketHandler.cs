@@ -65,11 +65,6 @@ public class ClientPacketHandler : PacketHandler
         GameMode.Instance.GetEventHandler<IngamePacketEventHandler>().NotifyGameMode(locationBroadcast);
     }
 
-    public override void MoveResponseHandler(Session session, IPacket packet)
-    {
-
-    }
-
     public override void IncreaseStatResponseHandler(Session session, IPacket packet)
     {
         IncreaseStatResponse increaseStat = packet as IncreaseStatResponse;
@@ -92,11 +87,6 @@ public class ClientPacketHandler : PacketHandler
     {
         UpdateRewardBroadcast updateReward = packet as UpdateRewardBroadcast;
         GameMode.Instance.GetEventHandler<IngamePacketEventHandler>().NotifyGameMode(updateReward);
-    }
-
-    public override void PlayStartResponseHandler(Session session, IPacket packet)
-    {
-        
     }
 
     public override void UpdateGameModeStatusBroadcastHandler(Session session, IPacket packet)

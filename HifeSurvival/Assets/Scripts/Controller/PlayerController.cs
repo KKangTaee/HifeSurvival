@@ -261,7 +261,11 @@ public sealed class PlayerController : EntityObjectController<Player>,
 
     public void OnUpdateStatBroadcast(UpdateStatBroadcast packet)
     {
+        if(ContainEntity(packet.id) == false)
+           return;
+
         var target = GetEntityObject(packet.id);
+        
         target.UpdateHp();
     }
 }

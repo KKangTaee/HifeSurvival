@@ -54,6 +54,10 @@ public interface IUpdateStatBroadcast
     void OnUpdateStatBroadcast(UpdateStatBroadcast packet);
 }
 
+public interface IUpdateSpawnMonsterBroadcast
+{
+    void OnUpdateSpwanMonsterBroadcast(UpdateSpawnMonsterBroadcast packet);   
+}
 
 public interface IUpdateRespawn
 {

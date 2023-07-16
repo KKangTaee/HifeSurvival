@@ -26,12 +26,9 @@ public partial class Monster : EntityObject
     // override
     //---------------
 
-    public override void Init(Entity inEntity, in Vector3 inPos)
+    public override void Init(Entity entity, in Vector3 inPos)
     {
-        base.Init(inEntity, inPos);
-
-        _monsterUI.Init(inEntity.stat.hp);
-        _monsterUI.gameObject.SetActive(true);
+        base.Init(entity, inPos);
     }
 
     public override void ChangeState<P>(EStatus inStatus, in P inParam = default) where P : struct
@@ -95,5 +92,13 @@ public partial class Monster : EntityObject
             // 아마 오브젝트 풀에 넣는 작업으로 이루어질듯
             ControllerManager.Instance.GetController<ObjectPoolController>().StoreToPool(this);
         });
+    }
+
+    public void UpdateHp()
+    {
+        _monsterUI.gameObject.SetActive(true);
+        
+        _monsterUI.SetMaxHP(TargetEntity.stat.hp);
+        _monsterUI.SetHP(TargetEntity.stat.currHP);
     }
 }

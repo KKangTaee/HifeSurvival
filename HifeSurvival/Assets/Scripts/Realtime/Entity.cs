@@ -60,18 +60,11 @@ public abstract class Entity
 
     public static EEntityType GetEntityType(int inId)
     {
-        // NOTO : ÇüÁÖ :  ÀÓ½Ã ÀÛ¾÷ 
-        if (inId < 10000)
+        // NOTO : ï¿½ï¿½ï¿½ï¿½ :  ï¿½Ó½ï¿½ ï¿½Û¾ï¿½ 
+        if (inId < MONSTER_ID_MAX)
             return EEntityType.MOSNTER;
 
         return EEntityType.PLAYER;
-
-        //if (inId < PLAYER_ID_MAX)
-        //    return EEntityType.PLAYER;
-        //else if (inId < MONSTER_ID_MAX)
-        //    return EEntityType.MOSNTER;
-
-        //return EEntityType.NONE;
     }
 }
 

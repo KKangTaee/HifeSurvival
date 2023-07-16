@@ -128,13 +128,13 @@ public abstract class EntityObjectController<T> : ControllerBase where T : Entit
     // functions
     //------------------
 
-    public T GetEntityObject(int inTargetId)
+    public T GetEntityObject(int targetId)
     {
-        if (_entityObjectDict.TryGetValue(inTargetId, out var entityObj) == true && entityObj != null)
+        if (_entityObjectDict.TryGetValue(targetId, out var entityObj) == true && entityObj != null)
             return entityObj;
 
-        Debug.LogError($"[{nameof(GetEntityObject)}] entityObject null or empty!");
-
+        Debug.LogError($"[{nameof(GetEntityObject)}] entityObject null or empty! id : {targetId}");
+        
         return null;
     }
 

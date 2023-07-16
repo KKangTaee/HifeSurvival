@@ -5,29 +5,32 @@ using System;
 
 public sealed class IngamePacketEventHandler : PacketEventHandlerBase,
     IUpdateDeadBroadcast, IUpdateAttackBroadcast, IUpdateRewardBroadcast, IResponseIncreaseStat, IResponsePickReward,
-    IUpdateLocationBroadcast, IUpdateInvenItemSingle, IUpdatePlayerCurrencySingle, IUpdateRespawn,IUpdateStatBroadcast
+    IUpdateLocationBroadcast, IUpdateInvenItemSingle, IUpdatePlayerCurrencySingle, IUpdateRespawn,IUpdateStatBroadcast,
+    IUpdateSpawnMonsterBroadcast
 {
     public IngamePacketEventHandler(GameMode gameMode) : base(gameMode)
     {
         _onEventHanderGameModeDict = new Dictionary<Type, Delegate>()
         {
-            { typeof(IncreaseStatResponse),     (Action<IncreaseStatResponse>)OnResponseIncreaseStat },
+            { typeof(IncreaseStatResponse),             (Action<IncreaseStatResponse>)OnResponseIncreaseStat },
             
-            { typeof(PickRewardResponse),       (Action<PickRewardResponse>)OnResponsePickReward },
+            { typeof(PickRewardResponse),               (Action<PickRewardResponse>)OnResponsePickReward },
 
-            { typeof(S_Dead),                   (Action<S_Dead>)OnUpdateDeadBroadcast },
+            { typeof(S_Dead),                           (Action<S_Dead>)OnUpdateDeadBroadcast },
 
-            { typeof(CS_Attack),                (Action<CS_Attack>)OnUpdateAttackBroadcast },
+            { typeof(CS_Attack),                        (Action<CS_Attack>)OnUpdateAttackBroadcast },
 
-            { typeof(UpdateInvenItem),          (Action<UpdateInvenItem>)OnUpdateInvenItemSingle },
+            { typeof(UpdateInvenItem),                  (Action<UpdateInvenItem>)OnUpdateInvenItemSingle },
 
-            { typeof(UpdateLocationBroadcast),  (Action<UpdateLocationBroadcast>)OnUpdateLocationBroadcast },
+            { typeof(UpdatePlayerCurrency),             (Action<UpdatePlayerCurrency>)OnUpdatePlayerCurrencySingle },
+            
+            { typeof(UpdateLocationBroadcast),          (Action<UpdateLocationBroadcast>)OnUpdateLocationBroadcast },
 
-            { typeof(UpdatePlayerCurrency),     (Action<UpdatePlayerCurrency>)OnUpdatePlayerCurrencySingle },
+            { typeof(UpdateRewardBroadcast),            (Action<UpdateRewardBroadcast>)OnUpdateRewardBroadcast },
 
-            { typeof(UpdateRewardBroadcast),    (Action<UpdateRewardBroadcast>)OnUpdateRewardBroadcast },
+            { typeof(UpdateStatBroadcast),              (Action<UpdateStatBroadcast>)OnUpdateStatBroadcast },
 
-            { typeof(UpdateStatBroadcast),      (Action<UpdateStatBroadcast>)OnUpdateStatBroadcast },
+            { typeof(UpdateSpawnMonsterBroadcast),      (Action<UpdateSpawnMonsterBroadcast>)OnUpdateSpwanMonsterBroadcast },
         };
     }
 
@@ -137,6 +140,16 @@ public sealed class IngamePacketEventHandler : PacketEventHandlerBase,
     public void OnUpdateRewardBroadcast(UpdateRewardBroadcast packet)
     {
         // 아이템 드랍 및 월드맵 오브젝트 제거
+        NotifyClient(packet);
+    }
+
+    public void OnUpdateSpwanMonsterBroadcast(UpdateSpawnMonsterBroadcast packet)
+    {
+        foreach(MonsterSpawn m in packet.monsterList)
+        {
+            _gameMode.CreateMonsterEntity(m);
+        }
+
         NotifyClient(packet);
     }
 

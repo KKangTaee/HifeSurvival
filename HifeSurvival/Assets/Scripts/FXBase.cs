@@ -6,7 +6,7 @@ using System;
 public class FXBase : MonoBehaviour
 {
     [SerializeField] ParticleSystem _fx;
-    [SerializeField] EFX_ID _id;
+    [SerializeField] [HideInInspector] EFX_ID _id;
 
     private Action _doneCallback;
     public   EFX_ID FX_ID { get => _id; }

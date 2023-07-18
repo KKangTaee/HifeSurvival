@@ -11,6 +11,7 @@ namespace TestClient
 {
     public partial class Form1 : Form
     {
+        public static GameRoom Room;
         public static ConcurrentQueue<string> LogMsgQ = new ConcurrentQueue<string>();
         private static Timer _updateTimer = new Timer();
         private ClientSession _sesh;
@@ -33,8 +34,7 @@ namespace TestClient
 
         private void Update(object obj, EventArgs args)
         {
-            CurrencyTextBox.Text = string.Empty;
-            ItemListTextBox.Text = string.Empty;
+            CurrencyTextBox.Text = dropItemListBox.Text = ItemListTextBox.Text =  string.Empty;
 
             if (_sesh != null)
             {
@@ -73,6 +73,11 @@ namespace TestClient
                 {
                     case 0:
                         {
+                            if (Room != null)
+                            {
+                                Room = null;
+                            }
+
                             if (_status.subStatus == 0)
                             {
                                 label2.Text = "Disconnected";
@@ -95,6 +100,11 @@ namespace TestClient
                             if (_sesh.Player.HeroKey != 0)
                             {
                                 label3.Text += $" / Hero key : {_sesh.Player.HeroKey}";
+                            }
+
+                            if(_status.subStatus == 3)
+                            {
+                                Room = new GameRoom();
                             }
 
                             startgameBtn.Enabled = false;
@@ -161,17 +171,30 @@ key {1}, level {2}, stack {3}/{4}
                     {
                         ItemListTextBox.Text += string.Format(itemFormat, item.Key, item.Value.itemKey, item.Value.itemLevel, item.Value.currentStack, item.Value.maxStack);
                     }
+
+
+                    if(Room != null)
+                    {
+                        string dropFormat =
+@" drop ID : {0} - {1}";
+
+                        foreach(var dropItem in Room.DropDict)
+                        {
+                            dropItemListBox.Text += string.Format(dropFormat, dropItem.Key, dropItem.Value.type == 1 ? "gold" : "item");
+                        }
+                    }
+
                 }
             }
-            
-            while(!LogMsgQ.IsEmpty)
+
+            while (!LogMsgQ.IsEmpty)
             {
-                if(LogMsgQ.TryDequeue(out var logMsg))
+                if (LogMsgQ.TryDequeue(out var logMsg))
                 {
                     LogTextBox.Text += $"{logMsg}\r\n";
                 }
             }
-            
+
 
             JobTimer.Instance.Flush();
         }
@@ -214,6 +237,17 @@ key {1}, level {2}, stack {3}/{4}
             connector.Connect(endPoint,
                 () => { return _sesh; },
                 1);
+        }
+
+
+        private void CheatBtnClick(object sender, EventArgs e)
+        {
+            if (_status.mainStatus == 0 && _status.subStatus == 0)
+            {
+                return;
+            }
+
+            _sesh.Cheat(cheatCommandBox.Text);
         }
     }
 }

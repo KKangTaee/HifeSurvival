@@ -45,9 +45,11 @@ namespace TestClient
             this.StatTextBox1 = new System.Windows.Forms.RichTextBox();
             this.WorldMap = new System.Windows.Forms.GroupBox();
             this.DropListLabel = new System.Windows.Forms.Label();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.dropItemListBox = new System.Windows.Forms.RichTextBox();
             this.LogBox = new System.Windows.Forms.GroupBox();
             this.LogTextBox = new System.Windows.Forms.RichTextBox();
+            this.cheatCommandBox = new System.Windows.Forms.TextBox();
+            this.cheatCommandBtn = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.PlayerSpecBox.SuspendLayout();
             this.WorldMap.SuspendLayout();
@@ -64,7 +66,6 @@ namespace TestClient
             this.startgameBtn.Text = "StartGameProcess";
             this.startgameBtn.UseVisualStyleBackColor = true;
             this.startgameBtn.Click += new System.EventHandler(this.StartGameClick);
-
             // 
             // testBtn
             // 
@@ -198,7 +199,7 @@ namespace TestClient
             // WorldMap
             // 
             this.WorldMap.Controls.Add(this.DropListLabel);
-            this.WorldMap.Controls.Add(this.richTextBox1);
+            this.WorldMap.Controls.Add(this.dropItemListBox);
             this.WorldMap.Location = new System.Drawing.Point(211, 116);
             this.WorldMap.Name = "WorldMap";
             this.WorldMap.Size = new System.Drawing.Size(181, 425);
@@ -215,14 +216,14 @@ namespace TestClient
             this.DropListLabel.TabIndex = 6;
             this.DropListLabel.Text = "DropList";
             // 
-            // richTextBox1
+            // dropItemListBox
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(6, 42);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(165, 109);
-            this.richTextBox1.TabIndex = 6;
-            this.richTextBox1.Text = "";
+            this.dropItemListBox.Location = new System.Drawing.Point(6, 42);
+            this.dropItemListBox.Name = "dropItemListBox";
+            this.dropItemListBox.ReadOnly = true;
+            this.dropItemListBox.Size = new System.Drawing.Size(165, 145);
+            this.dropItemListBox.TabIndex = 6;
+            this.dropItemListBox.Text = "";
             // 
             // LogBox
             // 
@@ -245,11 +246,31 @@ namespace TestClient
             this.LogTextBox.TabIndex = 0;
             this.LogTextBox.Text = "";
             // 
+            // cheatCommandBox
+            // 
+            this.cheatCommandBox.Location = new System.Drawing.Point(256, 87);
+            this.cheatCommandBox.Name = "cheatCommandBox";
+            this.cheatCommandBox.Size = new System.Drawing.Size(104, 23);
+            this.cheatCommandBox.TabIndex = 10;
+            // 
+            // cheatCommandBtn
+            // 
+            this.cheatCommandBtn.BackColor = System.Drawing.Color.Red;
+            this.cheatCommandBtn.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.cheatCommandBtn.Location = new System.Drawing.Point(363, 86);
+            this.cheatCommandBtn.Name = "cheatCommandBtn";
+            this.cheatCommandBtn.Size = new System.Drawing.Size(26, 24);
+            this.cheatCommandBtn.TabIndex = 11;
+            this.cheatCommandBtn.UseVisualStyleBackColor = false;
+            this.cheatCommandBtn.Click += new System.EventHandler(this.CheatBtnClick);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(683, 551);
+            this.Controls.Add(this.cheatCommandBtn);
+            this.Controls.Add(this.cheatCommandBox);
             this.Controls.Add(this.LogBox);
             this.Controls.Add(this.WorldMap);
             this.Controls.Add(this.PlayerSpecBox);
@@ -267,6 +288,7 @@ namespace TestClient
             this.WorldMap.PerformLayout();
             this.LogBox.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -288,9 +310,11 @@ namespace TestClient
         private System.Windows.Forms.Label ItemTextBox;
         private System.Windows.Forms.GroupBox WorldMap;
         private System.Windows.Forms.Label DropListLabel;
-        private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.RichTextBox dropItemListBox;
         private System.Windows.Forms.GroupBox LogBox;
         private System.Windows.Forms.RichTextBox LogTextBox;
+        private System.Windows.Forms.TextBox cheatCommandBox;
+        private System.Windows.Forms.Button cheatCommandBtn;
     }
 }
 

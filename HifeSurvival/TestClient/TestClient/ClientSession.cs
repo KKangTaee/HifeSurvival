@@ -35,6 +35,13 @@ namespace TestClient
         public override void OnDisconnected(EndPoint endPoint)
         {
             IsConntected = false;
+            var packet = new S_LeaveToGame()
+            {
+                id = Player?.Id ?? 0,
+                userId = DEFINE.TEST_USER_ID,
+            };
+
+            Send(packet.Write());
         }
 
         public override void OnRecv(ArraySegment<byte> buffer)

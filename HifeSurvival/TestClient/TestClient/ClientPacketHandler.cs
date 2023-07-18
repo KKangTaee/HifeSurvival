@@ -180,7 +180,28 @@ public class ClientPacketHandler : PacketHandler
 
     public override void UpdateRewardBroadcastHandler(Session session, IPacket packet)
     {
-        
+        var sesh = session as ClientSession;
+        if (sesh == null)
+        {
+            return;
+        }
+
+        if(packet is UpdateRewardBroadcast rewardBroadcast)
+        {
+            if(rewardBroadcast.status == 1) //drop
+            {
+                Form1.Room.DropDict.Add(rewardBroadcast.worldId, new DropItem()
+                {
+                    key = rewardBroadcast.item.itemKey,
+                    amount = rewardBroadcast.gold, // TODO : gold only..?
+                    type = rewardBroadcast.rewardType,
+                }) ;
+            }
+            else if(rewardBroadcast.status == 2)    //pick
+            {
+
+            }
+        }
     }
 
     public override void UpdatePlayerCurrencyHandler(Session session, IPacket packet)

@@ -180,6 +180,9 @@
 
 아이템 장착 : equipitem [itemKey]
 
+
+아이템 드롭 : dropitem [itemKey = 1] [itemCount = 1]
+
 </detail>
 
 

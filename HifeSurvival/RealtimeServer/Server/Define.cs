@@ -26,7 +26,7 @@ static class DEFINE
 
     //Game
     public const int PLAYER_MAX_COUNT = 4;
-    public const int START_COUNTDOWN_SEC = 10;
+    public const int START_COUNTDOWN_SEC = 5;
     public const int SPAWN_PHASE_MAX = 4;
 
     //Item

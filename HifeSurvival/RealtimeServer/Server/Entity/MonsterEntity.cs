@@ -8,12 +8,11 @@ namespace Server
         private int _grade;
         private string _rewardIds;
         private MonsterGroup _group;
-        private WorldMap _worldMap;
         private StateMachine<MonsterEntity> _stateMachine;
 
         public MonsterAIController AIController { get; private set; }
 
-        public MonsterEntity(GameRoom room, int mId, MonsterGroup group, MonsterData data, WorldMap worldMap, in PVec3 startPos)
+        public MonsterEntity(GameRoom room, int mId, MonsterGroup group, MonsterData data, in PVec3 startPos)
             : base(room)
         {
             ID = mId;
@@ -26,7 +25,6 @@ namespace Server
             _grade = data.grade;
             _rewardIds = data.rewardIds;
             _group = group;
-            _worldMap = worldMap;
 
             var smDict = new Dictionary<EEntityStatus, IState<MonsterEntity, IStateParam>>();
             smDict[EEntityStatus.IDLE] = new IdleState();
@@ -113,12 +111,7 @@ namespace Server
 
         public void DropItem()
         {
-            if (_worldMap == null)
-            {
-                return;
-            }
-
-            var broadcast = _worldMap.DropItem(_rewardIds, currentPos);
+            var broadcast = Room.Mode.DropItem(_rewardIds, currentPos);
             if (broadcast == null)
             {
                 Logger.Instance.Warn("Reward Drop Failed");

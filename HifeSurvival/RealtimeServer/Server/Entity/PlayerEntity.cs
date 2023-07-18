@@ -25,7 +25,7 @@ namespace Server
             _heroKey = heroKey;
 
             Inventory = new PlayerInventory(this);
-            CheatExecuter = new CheatExecuter(this);
+            CheatExecuter = new CheatExecuter(room, this);
         }
 
         public void InitGamePlayer(in PVec3 startPos)

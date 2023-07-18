@@ -193,7 +193,7 @@ namespace Server
                         }
 
                         Logger.Instance.Debug($"monster key {key}, reward id {data.rewardIds}");
-                        var monsterEntity = new MonsterEntity(_room, monsterId, monsterGroup, data, _worldMap, pos);
+                        var monsterEntity = new MonsterEntity(_room, monsterId, monsterGroup, data, pos);
                         monsterGroup.Add(monsterEntity);
 
                         monsterList.Add(monsterEntity.MakeSpawnData());
@@ -202,6 +202,12 @@ namespace Server
             }
 
             return monsterList;
+        }
+
+        //NOTE : drop 된 reason 기록하기. 
+        public UpdateRewardBroadcast DropItem(string rewardIds, PVec3 dropPos)
+        {
+            return _worldMap.DropItem(rewardIds, dropPos);
         }
 
         public void SpawnPhaseRegist(int chapterKey)

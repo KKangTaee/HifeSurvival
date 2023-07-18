@@ -43,7 +43,7 @@ namespace Server
 
                         for (int i = 0; i < itemCount; i++)
                         {
-                            float fixedX = i / 2.0f;
+                            float fixedX = i  * 1.25f;
                             PVec3 fixedPos;
                             if( i == 0)
                             {

@@ -59,6 +59,9 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+# For Sever Debug
+!/HifeSurvival/RealtimeServer/Server/bin/**/*.pdb
+
 
 HifeSurvival/Library/
 HifeSurvival/Logs/

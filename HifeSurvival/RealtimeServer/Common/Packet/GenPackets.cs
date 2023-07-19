@@ -198,7 +198,6 @@ public class S_JoinToGame : IPacket
 [Serializable]
 public class S_LeaveToGame : IPacket
 {
-	public string userId { get; set; }
 	public int id { get; set; }
 
 	public ushort Protocol { get { return (ushort)PacketID.S_LeaveToGame; } }
@@ -210,10 +209,6 @@ public class S_LeaveToGame : IPacket
 		ReadOnlySpan<byte> s = new ReadOnlySpan<byte>(segment.Array, segment.Offset, segment.Count);
 		count += sizeof(ushort);
 		count += sizeof(ushort);
-		ushort userIdLen = BitConverter.ToUInt16(s.Slice(count, s.Length - count));
-		count += sizeof(ushort);
-		this.userId = Encoding.Unicode.GetString(s.Slice(count, userIdLen));
-		count += userIdLen;
 		this.id = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
 	}
@@ -229,11 +224,6 @@ public class S_LeaveToGame : IPacket
 		count += sizeof(ushort);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.S_LeaveToGame);
 		count += sizeof(ushort);
-		ushort userIdLen = (ushort)Encoding.Unicode.GetByteCount(this.userId);
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), userIdLen);
-		count += sizeof(ushort);
-		Encoding.Unicode.GetBytes(this.userId, s.Slice(count, s.Length - count));
-		count += userIdLen;
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.id);
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s, count);

@@ -17,7 +17,6 @@
   </packet>
 
   <packet name ="S_LeaveToGame">
-    <string name = "userId"/>
     <int name ="id"/>
   </packet>
 

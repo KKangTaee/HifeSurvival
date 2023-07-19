@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using ServerCore;
@@ -11,7 +12,8 @@ namespace Server
 		
 		static async Task Main(string[] args)
 		{
-			Logger.Instance.Log("INF", "Server", "Start");
+            AppDomain.CurrentDomain.UnhandledException += Dump.UnhandledExceptionHandler;
+            Logger.Instance.Log("INF", "Server", "Start");
 
 			// DNS (Domain Name System)
 			// string host = Dns.GetHostName();

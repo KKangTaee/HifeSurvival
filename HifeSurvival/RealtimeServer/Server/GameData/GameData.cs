@@ -126,7 +126,9 @@ namespace Server
 
             await waiter.Wait();
 
-            var loadedTimeStamp = ServerTime.GetCurrentTimestamp();
+            ServerRequestManager.Instance.Clear();
+
+           var loadedTimeStamp = ServerTime.GetCurrentTimestamp();
             Logger.Instance.DataCheckInfo($"Data Load Success  elapsed {loadedTimeStamp - dataLoadStartTimestamp} ms");
 
             bool isSuccess = BakeAndValidCheckData();

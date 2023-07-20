@@ -87,6 +87,7 @@ namespace Server
 
         public void Clear()
         {
+            _client.Dispose();
             _requestQueue.Clear();
             _isRunning = false;
             _cts.Cancel();

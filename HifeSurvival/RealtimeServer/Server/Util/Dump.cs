@@ -12,7 +12,8 @@ namespace Server
         public static void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs e)
         {
             Exception exception = e.ExceptionObject as Exception;
-            CreateCrashDump(exception);
+            Logger.Instance.Error($"CRASH !! {exception.Message} \n{exception.StackTrace}");
+            CreateDump(exception);
         }
 
         [Flags]
@@ -28,9 +29,8 @@ namespace Server
                                      MiniDumpType dumpType, IntPtr exceptionParam,
                                      IntPtr userStreamParam, IntPtr callbackParam);
 
-        static void CreateCrashDump(Exception exception)
+        static void CreateDump(Exception exception)
         {
-            Logger.Instance.Error($"CRASH !! {exception.Message}");
             try
             {
                 var time = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss");

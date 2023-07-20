@@ -7,14 +7,8 @@ using System.Linq;
 public class MonsterController : EntityObjectController<Monster>,
     IUpdateSpawnMonsterBroadcast, IUpdateStatBroadcast
 {
-    [Serializable]
-    public class MonsterPrefabs
-    {
-        public int grade;
-        public Monster prefab;
-    }
 
-    [SerializeField] List<MonsterPrefabs> _prefabList;
+    public const string PREFAB_PATH = "Prefabs/Monsters";
 
     public override void Init()
     {
@@ -47,18 +41,12 @@ public class MonsterController : EntityObjectController<Monster>,
 
     public void CreateMonsterObject(MonsterEntity entity)
     {
-        var prefabData = _prefabList.FirstOrDefault(x => x.grade == entity.grade);
+        var prefab = Resources.Load<Monster>($"{PREFAB_PATH}/Monster_{entity.monsterKey}");
 
-        if (prefabData == null)
-        {
-            Debug.LogError("prefab is null or empty!");
-            return;
-        }
-
-        var inst = Instantiate(prefabData.prefab, transform);
+        var inst = Instantiate(prefab, transform);
         inst.Init(entity, entity.pos.ConvertUnityVector3());
-        inst.SetMonster(entity.monsterId);
-
+        inst.SetMonster();
+        
         _entityObjectDict.Add(inst.id, inst);
     }
 

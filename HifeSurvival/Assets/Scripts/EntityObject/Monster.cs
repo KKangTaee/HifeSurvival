@@ -3,10 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+
+public enum EMonster
+{
+    NONE = 0,
+    CHICKEN = 1001,
+}
+
 public partial class Monster : EntityObject
 {
     [SerializeField] MonsterAnimator _anim;
-    [SerializeField] MonsterUI _monsterUI;
+    [SerializeField] MonsterUI       _monsterUI;
+    [SerializeField] EMonster        _eMonster;
 
     private StateMachine<Monster> _stateMachine;
 
@@ -80,11 +88,9 @@ public partial class Monster : EntityObject
         _monsterUI.DecreaseHP(inDamageValue);
     }
 
-    public void SetMonster(int inMosterId)
+    public void SetMonster()
     {
-        _anim.SetTargetAnim(inMosterId);
-
-        _monsterUI.transform.position = _anim.GetPosPivotUI();
+        _anim.SetAnim();
 
         _anim.AddEventDeathCompleted(() =>
         {

@@ -11,67 +11,39 @@ using MonsterState = Assets.FantasyMonsters.Scripts.MonsterState;
 
 public class MonsterAnimator : MonoBehaviour
 {
-    [System.Serializable]
-    public class MonsterAnimData
+    [SerializeField] MonsterAnim _anim;
+
+    public void SetAnim()
     {
-        public int id;
-        public MonsterAnim anim;
-        public Transform pivotUI;
-    }
-
-
-    [SerializeField] private MonsterAnimData[] _animDataArr;
-
-    MonsterAnim _targetAnim;
-    Vector3     _targetPivotUIPos;
-
-    public void SetTargetAnim(int inMosterId)
-    {
-        var animData = _animDataArr.FirstOrDefault(x => x.id == inMosterId);
-
-        if (animData == null)
-        {
-            Debug.LogError($"[{nameof(SetTargetAnim)}] targetAnim is null or empty! : monsterId : {inMosterId}");
-            return;
-        }
-
-        _targetAnim = animData.anim;
-        _targetAnim.ResetAlphaParts();
-        _targetAnim.gameObject.SetActive(true);
-
-        _targetPivotUIPos = animData.pivotUI.position;
-    }
-
-    public Vector3 GetPosPivotUI()
-    {
-        return _targetPivotUIPos;
+        _anim.ResetAlphaParts();
+        _anim.gameObject.SetActive(true);
     }
 
     public void AddEventDeathCompleted(Action inDeathCallback)
     {
-        _targetAnim.OnDeathCompletedHandler = inDeathCallback;
+        _anim.OnDeathCompletedHandler = inDeathCallback;
     }
 
     public void OnIdle()
     {
-        _targetAnim.SetState(MonsterState.Idle);
+        _anim.SetState(MonsterState.Idle);
     }
 
     public void OnAttack(in Vector3 dir)
     {
         SetDir(dir);
-        _targetAnim.Attack();
+        _anim.Attack();
     }
 
     public void OnDead()
     {
-        _targetAnim.Die();
+        _anim.Die();
     }
 
     public void OnWalk(in Vector3 dir)
     {
         SetDir(dir);
-        _targetAnim.SetState(MonsterState.Walk);
+        _anim.SetState(MonsterState.Walk);
     }
 
     public void OnDamaged()
@@ -82,7 +54,7 @@ public class MonsterAnimator : MonoBehaviour
         // Shake object along x-axis
         transform.DOShakePosition(0.2f, new Vector3(1f, 0f, 0f), 2, 90, false, true).SetId(this);
 
-        _targetAnim.Damage();
+        _anim.Damage();
     }
 
     public void SetDir(in Vector3 dir)

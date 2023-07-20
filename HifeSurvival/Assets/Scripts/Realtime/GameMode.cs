@@ -134,7 +134,7 @@ public class GameMode
         var monsterEntity = new MonsterEntity()
         {
             id = m.id,
-            monsterId = m.monstersKey,
+            monsterKey = m.monstersKey,
             grade = m.grade,
             pos = m.pos,
         };

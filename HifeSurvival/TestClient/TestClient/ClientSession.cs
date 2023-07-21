@@ -38,7 +38,6 @@ namespace TestClient
             var packet = new S_LeaveToGame()
             {
                 id = Player?.Id ?? 0,
-                userId = DEFINE.TEST_USER_ID,
             };
 
             Send(packet.Write());

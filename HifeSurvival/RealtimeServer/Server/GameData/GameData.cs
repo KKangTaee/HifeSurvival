@@ -114,7 +114,7 @@ namespace Server
                         {
                             FormulaDict = JsonToDictionaryGeneric.ParseJsonToDictionary<FormulaData>(node.ToString());
                         }
-                        else if (rangeValue.Equals("chapter_data_test"))
+                        else if (rangeValue.Equals("chapter_data"))
                         {
                             ChapaterDataDict = JsonToDictionaryGeneric.ParseJsonToDictionary<ChapterData>(node.ToString());
                         }

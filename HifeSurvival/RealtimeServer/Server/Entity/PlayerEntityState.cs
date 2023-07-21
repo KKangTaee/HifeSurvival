@@ -137,7 +137,6 @@ namespace Server
                     {
                         id = self.ID,
                         fromId = deadParam.killerTarget.ID,
-                        respawnTime = DEFINE.MONSTER_RESPAWN_SEC,
                     };
                     self.Room.Broadcast(deadPacket);
 

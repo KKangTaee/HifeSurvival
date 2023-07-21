@@ -10,6 +10,7 @@ namespace Server
         public int RoomId { get; private set; }
 
         public GameMode Mode { get; private set; }
+        public int SessionCount { get; private set; }
 
         private Sender _sender;
 
@@ -24,6 +25,7 @@ namespace Server
         {
             session.Room = this;
             _sender.OnEnter(session);
+            SessionCount++;
         }
 
         public void Leave(ServerSession session)
@@ -31,6 +33,7 @@ namespace Server
             var seshId = session.SessionId;
             _sender.OnLeave(seshId);
             Mode.OnSessionRemove(seshId);
+            SessionCount--;
             //TODO : 리펙토링 중 : GameRoom 등록된 곳에서 삭제 처리 필요. 
         }
 

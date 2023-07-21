@@ -11,7 +11,7 @@ namespace Server
 
 		public override void OnConnected(EndPoint endPoint)
 		{
-            Logger.Instance.Info($"OnConnected : {endPoint}");
+            Logger.Instance.Info($"OnConnected : {endPoint}, id {SessionId}");
 			GameRoomManager.Instance.EnterRoom(this);
 		}
 
@@ -23,7 +23,7 @@ namespace Server
 		public override void OnDisconnected(EndPoint endPoint)
 		{
 			GameRoomManager.Instance.LeaveRoom(this);
-            Logger.Instance.Info($"OnDisconnected : {endPoint}");
+            Logger.Instance.Info($"OnDisconnected : {endPoint}, id {SessionId}");
 		}
 	}
 }

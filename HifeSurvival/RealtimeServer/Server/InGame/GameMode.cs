@@ -5,6 +5,7 @@ namespace Server
 {
     public class GameMode
     {
+        private int _winner_id;
         private Dictionary<int, PlayerEntity> _playersDict = new Dictionary<int, PlayerEntity>();
         private Dictionary<int, MonsterGroup> _monsterGroupDict = new Dictionary<int, MonsterGroup>();
 
@@ -42,6 +43,8 @@ namespace Server
         private void UpdateModeStatus(EGameModeStatus updatedStatus)
         {
             Logger.Instance.Warn($"<-----{updatedStatus}----->");
+
+            int param1 = 0;
 
             switch (updatedStatus)
             {
@@ -114,16 +117,28 @@ namespace Server
 
                         JobTimer.Instance.Push(() =>
                         {
-                            UpdateModeStatus(EGameModeStatus.FINISH_GAME);
+                            UpdateModeStatus(EGameModeStatus.PLAY_FINISH);
                         }, playTimeSec * DEFINE.SEC_TO_MS);
                     }
                     break;
-                case EGameModeStatus.FINISH_GAME:
+                case EGameModeStatus.PLAY_FINISH:
                     {
                         JobTimer.Instance.Push(() =>
                         {
                             _playersDict.ToList().ForEach(p => p.Value.TerminateGamePlayer());
                             _monsterGroupDict.Clear();
+                        });
+
+                        UpdateModeStatus(EGameModeStatus.FINISH_GAME);
+                    }
+                    break;
+                case EGameModeStatus.FINISH_GAME:
+                    {
+                        param1 = _winner_id;
+
+                        JobTimer.Instance.Push(() =>
+                        {
+                            GameRoomManager.Instance.TerminateRoom(_room.RoomId);
                         });
                     }
                     break;
@@ -135,7 +150,8 @@ namespace Server
             {
                 _room.Broadcast(new UpdateGameModeStatusBroadcast()
                 {
-                    status = (int)updatedStatus
+                    status = (int)updatedStatus,
+                    param1 = param1
                 });
             }
 
@@ -281,6 +297,19 @@ namespace Server
             }
 
             return playerList;
+        }
+
+        public void SetWinnerID(int id)
+        {
+            if(_winner_id > 0)
+            {
+                Logger.Instance.Error($"Already Winner Set ! {_winner_id}, try set {id}");
+                return;
+            }
+
+            _winner_id = id;
+            UpdateModeStatus(EGameModeStatus.PLAY_FINISH);
+            return;
         }
 
         public Entity GetEntityById(int id)

@@ -127,12 +127,18 @@ namespace Server
                     {
                         id = self.ID,
                         fromId = deadParam.killerTarget.ID,
-                        respawnTime = DEFINE.MONSTER_RESPAWN_SEC,
                     };
 
                     self.Room.Broadcast(deadPacket);
 
                     self.DropItem();
+
+
+                    if (self.Grade == EMonsterGrade.BOSS)
+                    {
+                        self.Room.Mode.SetWinnerID(deadParam.killerTarget.ID);
+                        return;
+                    }
 
                     if (self.IsGroupAllDead())
                     {

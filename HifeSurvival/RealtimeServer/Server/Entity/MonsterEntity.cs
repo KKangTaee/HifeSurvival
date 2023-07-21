@@ -5,12 +5,13 @@ namespace Server
     public partial class MonsterEntity : Entity
     {
         private int _monsterKey;
-        private int _grade;
         private string _rewardIds;
         private MonsterGroup _group;
         private StateMachine<MonsterEntity> _stateMachine;
 
         public MonsterAIController AIController { get; private set; }
+        public EMonsterGrade Grade { get; private set; }
+
 
         public MonsterEntity(GameRoom room, int mId, MonsterGroup group, MonsterData data, in PVec3 startPos)
             : base(room)
@@ -22,7 +23,7 @@ namespace Server
             spawnPos = startPos;
 
             _monsterKey = data.key;
-            _grade = data.grade;
+            Grade = (EMonsterGrade)data.grade;
             _rewardIds = data.rewardIds;
             _group = group;
 
@@ -45,7 +46,7 @@ namespace Server
                 id = ID,
                 monstersKey = _monsterKey,
                 groupId = _group.GroupId,
-                grade = _grade,
+                grade = (int)Grade,
                 pos = spawnPos,
             };
         }
@@ -141,7 +142,7 @@ namespace Server
 
         public void StartRespawning()
         {
-            _group.SendRespawnGroup(); 
+            _group.SendRespawnGroup();
         }
     }
 }

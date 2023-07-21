@@ -22,7 +22,6 @@ static class DEFINE
     public const int PLAYER_ITEM_SLOT = 4;
 
     //Monster
-    public const int MONSTER_RESPAWN_SEC = 15;
     public const int MONSTER_RESPAWN_AREA_RANGE = 10;
     public const int MONSTER_ATTACK_ANIM_TIME = 300;   //TODO : (임시) 유니티에서 추출해야할 anim 데이터 읽어야 할 듯. -> entity 가 들고 있어야 함. 
 
@@ -43,6 +42,7 @@ public enum EGameModeStatus
     COUNT_DOWN,
     LOAD_GAME,
     PLAY_START,
+    PLAY_FINISH,
     FINISH_GAME,
 }
 
@@ -113,4 +113,13 @@ public enum ECurrency
 {
     NONE,
     GOLD,
+}
+
+public enum EMonsterGrade
+{
+    NONE,
+    NORMAL,
+    ELITE,
+    BOSS,
+
 }

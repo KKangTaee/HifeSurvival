@@ -7,6 +7,7 @@ namespace Server
         private string _userId;
         private string _userName;
         private int _heroKey;
+
         private StateMachine<PlayerEntity> _stateMachine;
 
         public EClientStatus ClientStatus;

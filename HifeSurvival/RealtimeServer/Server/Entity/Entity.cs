@@ -11,10 +11,8 @@ namespace Server
 
         public EntityStat Stat { get; protected set; }
         public EntityStat DefaultStat { get; protected set; }
-
-        public EEntityStatus status;
-
         public GameRoom Room { get; private set; }
+        public EEntityStatus status;
 
         public Entity(GameRoom room)
         {

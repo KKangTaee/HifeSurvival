@@ -6,12 +6,11 @@ namespace Server
     public class GameMode
     {
         private int _winner_id;
-        private Dictionary<int, PlayerEntity> _playersDict = new Dictionary<int, PlayerEntity>();
-        private Dictionary<int, MonsterGroup> _monsterGroupDict = new Dictionary<int, MonsterGroup>();
-
-        private WorldMap _worldMap;
         private int _mId = 0;
 
+        private Dictionary<int, PlayerEntity> _playersDict = new Dictionary<int, PlayerEntity>();
+        private Dictionary<int, MonsterGroup> _monsterGroupDict = new Dictionary<int, MonsterGroup>();
+        private WorldMap _worldMap;
         private GameRoom _room;
 
         public EGameModeStatus Status { get; private set; } = EGameModeStatus.NONE;

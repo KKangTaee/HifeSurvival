@@ -6,12 +6,12 @@ namespace Server
     {
         private int _monsterKey;
         private string _rewardIds;
+
         private MonsterGroup _group;
         private StateMachine<MonsterEntity> _stateMachine;
 
         public MonsterAIController AIController { get; private set; }
         public EMonsterGrade Grade { get; private set; }
-
 
         public MonsterEntity(GameRoom room, int mId, MonsterGroup group, MonsterData data, in PVec3 startPos)
             : base(room)

@@ -8,7 +8,6 @@ namespace Server
     public class GameRoom : JobQueue
     {
         public int RoomId { get; private set; }
-
         public GameMode Mode { get; private set; }
         public int SessionCount { get; private set; }
 

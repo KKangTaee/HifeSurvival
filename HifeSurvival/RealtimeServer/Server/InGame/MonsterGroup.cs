@@ -5,10 +5,10 @@ namespace Server
 {
     public class MonsterGroup
     {
-        private Dictionary<int, MonsterEntity> _monstersDict = new Dictionary<int, MonsterEntity>();
-
         public int GroupId { get; private set; }
         public int RespawnTime { get; private set; }
+
+        private Dictionary<int, MonsterEntity> _monstersDict = new Dictionary<int, MonsterEntity>();
 
         public MonsterGroup(int groupId, int respawnTime)
         {

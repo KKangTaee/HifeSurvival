@@ -6,6 +6,8 @@ static class DEFINE
     public const int SEC_TO_MS = 1000;
 
     //System
+    public const int SERVER_PORT = 7777;
+    public const int MAIN_THREAD_STACK_SIZE = 4 * 1024 * 1024;
     public const int SERVER_TICK = 50;
     public const int TIMER_SEQ_MAX_PER_GAME = 300;
     public const int PC_BEGIN_ID = 10000;

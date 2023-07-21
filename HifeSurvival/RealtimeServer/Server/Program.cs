@@ -14,6 +14,8 @@ namespace Server
 		static void Main(string[] args)
 		{
 			Logger.Instance.Log("INF", "Server", "Start");
+			ThreadPool.GetMaxThreads(out var wtc, out int cptc);
+			Logger.Instance.Log("DBG",$"{Environment.OSVersion} core [{Environment.ProcessorCount}] worker [{wtc}] I/O [{cptc}]", "System");
 			AppDomain.CurrentDomain.UnhandledException += Dump.UnhandledExceptionHandler;
             
             PacketManager.Instance.BindHandler(new ServerPacketHandler());

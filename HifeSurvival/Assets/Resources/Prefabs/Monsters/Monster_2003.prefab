@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e34289d98b11b4bc3a9f4117d360f14a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _anim: {fileID: 0}
+  _anim: {fileID: 4419679901726142628}
 --- !u!58 &9179227254243120708
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -247,6 +247,17 @@ SortingGroup:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
+--- !u!114 &4419679901726142628 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1423470163212545530, guid: 2473815fed4abc44582e86f2af87f4e7, type: 3}
+  m_PrefabInstance: {fileID: 3356577990790569310}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4419679901726142624}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62b9a7e211ea2074c83a96a2ab1e590f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &3664885927302117031
 PrefabInstance:
   m_ObjectHideFlags: 0

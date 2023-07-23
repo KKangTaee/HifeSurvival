@@ -139,7 +139,7 @@ MonoBehaviour:
   _pointPrefab: {fileID: 8032217318937753618, guid: 1a271eab004fe477cb7a97803c9c2e82, type: 3}
   _anim: {fileID: 6737970535116875680}
   _monsterUI: {fileID: 6315223451271288267}
-  _eMonster: 1001
+  _monsterName: 1001
 --- !u!58 &3015923987609851537
 CircleCollider2D:
   m_ObjectHideFlags: 0

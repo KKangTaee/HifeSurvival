@@ -6,17 +6,33 @@ using System;
 
 public enum EMonster
 {
-    NONE = 0,
-    CHICKEN = 1001,
+    NONE            = 0,
+
+    CHICKEN         = 1001,
+    CHICK           = 1002,
+    DUCK            = 1003,
+    DRAKE           = 1004,
+    DUNNY           = 1005,
+    PIG             = 1006,
+    PIGGY           = 1007,
+
+    ADVANCED_HEN    = 2001,
+    BULLY_ROOSTER   = 2002,
+    TURKEY          = 2003,
+    GOOSE           = 2004,
+    DARK_BUNNY      = 2005,
+    PORKY           = 2006,
+    SWINE           = 2007
 }
 
 public partial class Monster : EntityObject
 {
     [SerializeField] MonsterAnimator _anim;
     [SerializeField] MonsterUI       _monsterUI;
-    [SerializeField] EMonster        _eMonster;
+    [SerializeField] [HideInInspector] EMonster        _monsterName;
 
     private StateMachine<Monster> _stateMachine;
+    public EMonster MonsterName => _monsterName;
 
     private void Awake()
     {
@@ -106,5 +122,10 @@ public partial class Monster : EntityObject
         
         _monsterUI.SetMaxHP(TargetEntity.stat.hp);
         _monsterUI.SetHP(TargetEntity.stat.currHP);
+    }
+
+    public void SetMonsterName(EMonster monster)
+    {
+        _monsterName = monster;
     }
 }

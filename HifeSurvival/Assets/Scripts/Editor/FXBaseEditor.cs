@@ -18,9 +18,8 @@ public class FXBaseEditor : Editor
     {
         base.OnInspectorGUI();
 
-
         GUILayout.Space(10);
-        EditorGUILayout.LabelField("[FX]");
+        EditorGUILayout.LabelField("[FXBase Editor]");
         
         GUI.enabled = false;
         

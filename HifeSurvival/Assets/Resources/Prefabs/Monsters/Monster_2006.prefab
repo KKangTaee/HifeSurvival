@@ -64,7 +64,7 @@ MonoBehaviour:
   _pointPrefab: {fileID: 8032217318937753618, guid: 1a271eab004fe477cb7a97803c9c2e82, type: 3}
   _anim: {fileID: 3052832294681575419}
   _monsterUI: {fileID: 3540248940119956696}
-  _eMonster: 0
+  _monsterName: 2006
 --- !u!58 &4066770945181943260
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -245,7 +245,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8154166297509617220, guid: e3c010a6adce34da8bc126b398189642, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 2.121
+      value: 2.187
       objectReference: {fileID: 0}
     - target: {fileID: 8154166297509617220, guid: e3c010a6adce34da8bc126b398189642, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

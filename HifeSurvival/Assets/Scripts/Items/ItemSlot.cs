@@ -13,6 +13,8 @@ public class ItemSlot : MonoBehaviour
     [SerializeField] Image IMG_cooltime;
     [SerializeField] TMP_Text TMP_cooltime;
     [SerializeField] Button BTN_click;
+    [SerializeField] Slider SLD_stackRatio;
+    [SerializeField] Image [] _stackFrameLineArr;
 
     private IDisposable updateSubscription;
     private IDisposable countdownSubscription;
@@ -28,6 +30,8 @@ public class ItemSlot : MonoBehaviour
         SetActiveIcon();
 
         IMG_itemIcon.sprite = GetSpriteIcon(entityItem.ItemKey);
+
+        UpdateStack(entityItem);
     }
     
     public void RemoveItem()
@@ -70,6 +74,7 @@ public class ItemSlot : MonoBehaviour
     {
         IMG_itemAdd.gameObject.SetActive(IsEquipping == false);
         IMG_itemIcon.gameObject.SetActive(IsEquipping == true);
+        SLD_stackRatio.gameObject.SetActive(IsEquipping == true);
     }
 
     public void StopCooltime()
@@ -92,5 +97,13 @@ public class ItemSlot : MonoBehaviour
         // TODO@taeho.kang 임시
         string path = "Textures/Items";
         return Resources.Load<Sprite>($"{path}/item_icon_{itemKey}");
+    }
+
+    private void UpdateStack(EntityItem entityItem)
+    {
+        for(int i =0; i<_stackFrameLineArr.Length; i++)
+           _stackFrameLineArr[i].gameObject.SetActive(i < entityItem.MaxStack - 1);
+
+        SLD_stackRatio.value = entityItem.CurrentStack / (float)entityItem.MaxStack;
     }
 }

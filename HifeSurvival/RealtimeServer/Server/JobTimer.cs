@@ -35,7 +35,7 @@ namespace Server
 
 		public void Flush()
 		{
-			int now = System.Environment.TickCount;
+			int now = Environment.TickCount;
 
 			lock(_lock)
             {

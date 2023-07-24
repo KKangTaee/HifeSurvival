@@ -7,6 +7,7 @@ namespace Server
         private string _userId;
         private string _userName;
         private int _heroKey;
+
         private StateMachine<PlayerEntity> _stateMachine;
 
         public EClientStatus ClientStatus;
@@ -184,7 +185,7 @@ namespace Server
                 };
 
                 Room.Broadcast(respawn);
-            }, DEFINE.PLAYER_RESPAWN_MS);
+            }, DEFINE.PLAYER_RESPAWN_SEC);
         }
     }
 }

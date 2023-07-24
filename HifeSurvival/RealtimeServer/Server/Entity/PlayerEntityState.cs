@@ -133,11 +133,11 @@ namespace Server
             {
                 if (param is DeadParam deadParam)
                 {
-                    S_Dead deadPacket = new S_Dead()
+                    var deadPacket = new S_Dead()
                     {
                         id = self.ID,
                         fromId = deadParam.killerTarget.ID,
-                        respawnTime = DEFINE.MONSTER_RESPAWN_SEC,
+                        respawnTime = DEFINE.PLAYER_RESPAWN_SEC,
                     };
                     self.Room.Broadcast(deadPacket);
 

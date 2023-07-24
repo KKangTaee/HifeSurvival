@@ -16,11 +16,41 @@ namespace Server
         {
             Slot = slot;
             ItemKey = itemKey;
-            Upgrade();
+            Initialize();
+        }
+
+        public void Initialize()
+        {
+            var startLevel = 1;
+            var startData = GameData.Instance.GetItemUpgadeDataByLevel(ItemKey, startLevel);
+            if (startData == null)
+            {
+                Logger.Instance.Error("Item Init Failed");
+                return;
+            }
+
+            if (!GameData.Instance.ItemSkillDict.TryGetValue(startData.skillKey, out var skilldata))
+            {
+                Logger.Instance.Error("Item Init Failed (Skill Data Invalid)");
+                return;
+            }
+
+            Level = startLevel;
+            CurrentStack = 0;
+            MaxStack = startData.needStack;
+
+            Skill = new ItemSkill(skilldata);
+            Stat = new EntityStat(startData);
         }
 
         public void Upgrade()
         {
+            CurrentStack++;
+            if (CurrentStack < MaxStack)
+            {
+                return;
+            }
+
             var nextLevel = Level + 1;
             var upgradeData = GameData.Instance.GetItemUpgadeDataByLevel(ItemKey, nextLevel);
             if (upgradeData == null)
@@ -35,18 +65,13 @@ namespace Server
                 return;
             }
 
-            CurrentStack++;
+            CurrentStack = 0;
             MaxStack = upgradeData.needStack;
-            if (CurrentStack < upgradeData.needStack)
-            {
-                return;
-            }
 
             Skill = new ItemSkill(skilldata);
             Stat = new EntityStat(upgradeData);
 
             Level = nextLevel;
-            CurrentStack = 0;
         }
     }
 }

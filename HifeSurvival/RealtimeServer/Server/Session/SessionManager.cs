@@ -18,12 +18,13 @@ namespace Server
 			{
 				int sessionId = ++_sessionId;
 
-				ServerSession session = new ServerSession();
-				session.SessionId = sessionId;
+				var session = new ServerSession()
+				{
+					SessionId = sessionId,
+				};
 				_sessionDict.Add(sessionId, session);
 
                 Logger.Instance.Info($"Connected : {sessionId}");
-
 				return session;
 			}
 		}
@@ -32,8 +33,7 @@ namespace Server
 		{
 			lock (_lock)
 			{
-				ServerSession session = null;
-				_sessionDict.TryGetValue(id, out session);
+				_sessionDict.TryGetValue(id, out var session);
 				return session;
 			}
 		}

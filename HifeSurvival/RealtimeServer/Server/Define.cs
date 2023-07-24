@@ -6,6 +6,8 @@ static class DEFINE
     public const int SEC_TO_MS = 1000;
 
     //System
+    public const int SERVER_PORT = 7777;
+    public const int MAIN_THREAD_STACK_SIZE = 4 * 1024 * 1024;
     public const int SERVER_TICK = 50;
     public const int TIMER_SEQ_MAX_PER_GAME = 300;
     public const int PC_BEGIN_ID = 10000;
@@ -16,11 +18,10 @@ static class DEFINE
     public const int ERROR = 1;
 
     //Player
-    public const int PLAYER_RESPAWN_MS = 15000;
+    public const int PLAYER_RESPAWN_SEC = 15;
     public const int PLAYER_ITEM_SLOT = 4;
 
     //Monster
-    public const int MONSTER_RESPAWN_SEC = 15;
     public const int MONSTER_RESPAWN_AREA_RANGE = 10;
     public const int MONSTER_ATTACK_ANIM_TIME = 300;   //TODO : (임시) 유니티에서 추출해야할 anim 데이터 읽어야 할 듯. -> entity 가 들고 있어야 함. 
 
@@ -31,6 +32,7 @@ static class DEFINE
 
     //Item
     public const int MAX_ITEM_LEVEL = 4;
+    public const int GOLD_WHEN_MAX_ITEM_LEVEL = 50;
 }
 
 
@@ -41,6 +43,7 @@ public enum EGameModeStatus
     COUNT_DOWN,
     LOAD_GAME,
     PLAY_START,
+    PLAY_FINISH,
     FINISH_GAME,
 }
 
@@ -111,4 +114,13 @@ public enum ECurrency
 {
     NONE,
     GOLD,
+}
+
+public enum EMonsterGrade
+{
+    NONE,
+    NORMAL,
+    ELITE,
+    BOSS,
+
 }

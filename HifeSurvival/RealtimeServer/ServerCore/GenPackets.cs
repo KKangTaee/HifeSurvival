@@ -1244,6 +1244,7 @@ public class PlayStartResponse : IPacket
 public class UpdateGameModeStatusBroadcast : IPacket
 {
 	public int status { get; set; }
+	public int param1 { get; set; }
 
 	public ushort Protocol { get { return (ushort)PacketID.UpdateGameModeStatusBroadcast; } }
 
@@ -1255,6 +1256,8 @@ public class UpdateGameModeStatusBroadcast : IPacket
 		count += sizeof(ushort);
 		count += sizeof(ushort);
 		this.status = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+		count += sizeof(int);
+		this.param1 = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
 	}
 
@@ -1270,6 +1273,8 @@ public class UpdateGameModeStatusBroadcast : IPacket
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.UpdateGameModeStatusBroadcast);
 		count += sizeof(ushort);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.status);
+		count += sizeof(int);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.param1);
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s, count);
 		if (success == false)

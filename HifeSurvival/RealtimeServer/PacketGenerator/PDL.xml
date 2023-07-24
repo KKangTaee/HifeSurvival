@@ -64,7 +64,7 @@
   <packet name ="S_Dead">
     <int name  ="id"/>
     <int name  ="fromId"/>
-    <int name  ="respawnTime"/>
+	  <int name  ="respawnTime"/>
   </packet>
 
   <packet name ="S_Respawn">
@@ -137,13 +137,14 @@
   </packet>
 
   <packet name ="UpdateGameModeStatusBroadcast">
-    <int name ="status"/>
+	  <int name ="status"/>
+	  <int name ="param1"/>
   </packet>
 
 	<packet name ="UpdateInvenItem">
 		<struct_PInvenItem name ="invenItem"/>
 	</packet>
-
+	
 	<packet name ="CheatRequest">
 		<string name ="type"/>
 		<int name ="arg1"/>

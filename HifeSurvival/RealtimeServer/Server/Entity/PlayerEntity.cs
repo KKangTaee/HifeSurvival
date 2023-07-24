@@ -185,7 +185,7 @@ namespace Server
                 };
 
                 Room.Broadcast(respawn);
-            }, DEFINE.PLAYER_RESPAWN_MS);
+            }, DEFINE.PLAYER_RESPAWN_SEC);
         }
     }
 }

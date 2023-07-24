@@ -5,13 +5,19 @@ using ServerCore;
 
 namespace Server
 {
-    public class Sender : JobQueue
+    public class SendManager
     {
         private ConcurrentDictionary<int, ServerSession> _seshDict = new ConcurrentDictionary<int, ServerSession>();
         private ConcurrentQueue<ArraySegment<byte>> _broadcastMessage = new ConcurrentQueue<ArraySegment<byte>>();
         private ConcurrentDictionary<int, ConcurrentQueue<ArraySegment<byte>>> _sendMessage = new ConcurrentDictionary<int, ConcurrentQueue<ArraySegment<byte>>>();
 
         private bool _existSesh;
+        private WorkManager _worker;
+
+        public SendManager(WorkManager worker)
+        {
+            _worker = worker;
+        }
 
         private void FlushSendQueue()
         {
@@ -47,38 +53,32 @@ namespace Server
                 _broadcastMessage.Clear();
             }
 
-            JobTimer.Instance.Push(FlushSendQueue, DEFINE.SERVER_TICK);
+            _worker.Push(FlushSendQueue, DEFINE.SERVER_TICK);
         }
 
         public void Broadcast(IPacket packet)
         {
-            Push(() =>
-            {
-                Logger.Instance.Log("INF", $"PacketType : {packet.GetType()}", $"{nameof(Broadcast)}");
-                Logger.Instance.Trace(packet);
-                ArraySegment<byte> segment = packet.Write();
-                _broadcastMessage.Enqueue(segment);
-            });
+            Logger.Instance.Info($"PacketType : {packet.GetType()}");
+            Logger.Instance.Trace(packet);
+            ArraySegment<byte> segment = packet.Write();
+            _broadcastMessage.Enqueue(segment);
         }
 
         public void Send(int id, IPacket packet)
         {
-            Push(() =>
+            Logger.Instance.Info($"PacketType : {packet.GetType()}");
+            Logger.Instance.Trace(packet);
+            ArraySegment<byte> segment = packet.Write();
+            if (_sendMessage.TryGetValue(id, out var msgList))
             {
-                Logger.Instance.Log("INF", $"PacketType : {packet.GetType()}", $"{nameof(Send)}");
-                Logger.Instance.Trace(packet);
-                ArraySegment<byte> segment = packet.Write();
-                if (_sendMessage.TryGetValue(id, out var msgList))
-                {
-                    msgList.Enqueue(segment);
-                }
-                else
-                {
-                    var initMsgList = new ConcurrentQueue<ArraySegment<byte>>();
-                    initMsgList.Enqueue(segment);
-                    _sendMessage.TryAdd(id, initMsgList);
-                }
-            });
+                msgList.Enqueue(segment);
+            }
+            else
+            {
+                var initMsgList = new ConcurrentQueue<ArraySegment<byte>>();
+                initMsgList.Enqueue(segment);
+                _sendMessage.TryAdd(id, initMsgList);
+            }
         }
 
         public void OnEnter(ServerSession session)
@@ -90,7 +90,7 @@ namespace Server
             {
                 _existSesh = true;
                 Logger.Instance.Debug($"FlushSendQueue Start");
-                JobTimer.Instance.Push(FlushSendQueue, DEFINE.SERVER_TICK);
+                _worker.Push(FlushSendQueue, DEFINE.SERVER_TICK);
             }
         }
 

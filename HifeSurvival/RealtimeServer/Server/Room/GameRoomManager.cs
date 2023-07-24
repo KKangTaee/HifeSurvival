@@ -13,11 +13,24 @@ namespace Server
         private ConcurrentDictionary<int, GameRoom> _gameRoomDict = new ConcurrentDictionary<int, GameRoom>();
         private int _nextRoomNum;
 
+        public void FlushAllRoom()
+        {
+            foreach(var gr in _gameRoomDict)
+            {
+                gr.Value.Worker.Flush();
+            }
+        }
+
+        public int GetRoomCount()
+        {
+            return _gameRoomDict.Count;
+        }
+
         public void EnterRoom(ServerSession session)
         {
             Push(() =>
             {
-                var canJoinRoom = _gameRoomDict.Values.FirstOrDefault(x => x.Mode.CanJoinRoom());
+                var canJoinRoom = _gameRoomDict.Values.FirstOrDefault(x => x.CanJoinRoom());
                 if (canJoinRoom != null)
                 {
                     canJoinRoom.Enter(session);
@@ -42,7 +55,7 @@ namespace Server
                     var room = session.Room;
                     room.Leave(session);
 
-                    if(session.Room.SessionCount <= 0)
+                    if(session.Room.IsEmptyRoom())
                     {
                         TerminateRoom(room.RoomId);
                     }
@@ -54,7 +67,7 @@ namespace Server
         {
             if(_gameRoomDict.TryRemove(roomId, out var room))
             {
-                //TODO : Room 이 만든 타이머 혹은 얽힌 것들 모두 지워야함.. 
+                room.Worker.ClearTimer();
                 Logger.Instance.Warn($"Room Deleted {roomId}");
             }
         }

@@ -35,7 +35,7 @@ namespace Server
             smDict[EEntityStatus.DEAD] = new DeadState();
             _stateMachine = new StateMachine<MonsterEntity>(smDict);
 
-            AIController = new MonsterAIController(this);
+            AIController = new MonsterAIController(this, room);
             DefaultStat = new EntityStat(data);
         }
 
@@ -112,7 +112,7 @@ namespace Server
 
         public void DropItem()
         {
-            var broadcast = Room.Mode.DropItem(_rewardIds, currentPos);
+            var broadcast = Room.DropItem(_rewardIds, currentPos);
             if (broadcast == null)
             {
                 Logger.Instance.Warn("Reward Drop Failed");

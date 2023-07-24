@@ -10,7 +10,9 @@ namespace Server
     class Program
 	{
 		private static Listener _listener = new Listener();
-		
+
+		//public static JobTimer MainJobTimer = new JobTimer();
+
 		static void Main(string[] args)
 		{
 			Logger.Instance.Log("INF", "Server", "Start");
@@ -26,9 +28,12 @@ namespace Server
 			new Thread(() =>
 			{
 				Logger.Instance.Log("INF", "Listening", "Start");
+				
 				while (true)
 				{
-					JobTimer.Instance.Flush();
+					Console.Title = $"Room Count : {GameRoomManager.Instance.GetRoomCount()}";
+					//MainJobTimer.Flush();
+					GameRoomManager.Instance.FlushAllRoom();
 					Thread.Sleep(DEFINE.SERVER_TICK);
 				}
 			}, DEFINE.MAIN_THREAD_STACK_SIZE)

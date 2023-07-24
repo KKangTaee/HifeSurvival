@@ -58,7 +58,7 @@ namespace Server
                                 fixedPos = dropPos.AddPVec3(new PVec3() { x = -fixedX });
                             }
 
-                            var broadcast = _room.Mode.DropItem($"2:{itemKey}:100", fixedPos);
+                            var broadcast = _room.DropItem($"2:{itemKey}:100", fixedPos);
                             if (broadcast == null)
                             {
                                 Logger.Instance.Warn("Reward Drop Failed");

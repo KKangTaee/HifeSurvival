@@ -9,9 +9,11 @@ namespace Server
         public int RespawnTime { get; private set; }
 
         private Dictionary<int, MonsterEntity> _monstersDict = new Dictionary<int, MonsterEntity>();
+        private GameRoom _room;
 
-        public MonsterGroup(int groupId, int respawnTime)
+        public MonsterGroup(GameRoom room, int groupId, int respawnTime)
         {
+            _room = room;
             GroupId = groupId;
             RespawnTime = respawnTime;
         }
@@ -71,7 +73,7 @@ namespace Server
 
         public void SendRespawnGroup()
         {
-            JobTimer.Instance.Push(() =>
+            _room.Worker.Push(() =>
             {
                 foreach (var entity in _monstersDict.Values)
                 {

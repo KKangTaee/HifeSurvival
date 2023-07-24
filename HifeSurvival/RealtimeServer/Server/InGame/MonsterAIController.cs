@@ -5,6 +5,7 @@ namespace Server
     public class MonsterAIController
     {
         private MonsterEntity _monster;
+        private GameRoom _room;
 
         private List<Entity> _aggroList = new List<Entity>();
         private long _lastAttackTime;
@@ -15,9 +16,10 @@ namespace Server
 
         private EAIMode _aiMode;
 
-        public MonsterAIController(MonsterEntity monster)
+        public MonsterAIController(MonsterEntity monster, GameRoom room)
         {
             _monster = monster;
+            _room = room;
         }
 
         //NOTE: Timer 클래스에 등록하게 될 예정.
@@ -53,7 +55,7 @@ namespace Server
 
             MoveRoutine();
 
-            JobTimer.Instance.Push(() =>
+            _room.Worker.Push(() =>
             {
                 StartAIRoutine();
             }, DEFINE.SERVER_TICK);

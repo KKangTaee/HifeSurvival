@@ -64,6 +64,7 @@
   <packet name ="S_Dead">
     <int name  ="id"/>
     <int name  ="fromId"/>
+	  <int name  ="respawnTime"/>
   </packet>
 
   <packet name ="S_Respawn">

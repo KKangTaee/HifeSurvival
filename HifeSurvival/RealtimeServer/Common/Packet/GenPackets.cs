@@ -618,6 +618,7 @@ public class S_Dead : IPacket
 {
 	public int id { get; set; }
 	public int fromId { get; set; }
+	public int respawnTime { get; set; }
 
 	public ushort Protocol { get { return (ushort)PacketID.S_Dead; } }
 
@@ -631,6 +632,8 @@ public class S_Dead : IPacket
 		this.id = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
 		this.fromId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+		count += sizeof(int);
+		this.respawnTime = BitConverter.ToInt32(s.Slice(count, s.Length - count));
 		count += sizeof(int);
 	}
 
@@ -648,6 +651,8 @@ public class S_Dead : IPacket
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.id);
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.fromId);
+		count += sizeof(int);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.respawnTime);
 		count += sizeof(int);
 		success &= BitConverter.TryWriteBytes(s, count);
 		if (success == false)

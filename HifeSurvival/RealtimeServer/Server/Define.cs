@@ -18,7 +18,7 @@ static class DEFINE
     public const int ERROR = 1;
 
     //Player
-    public const int PLAYER_RESPAWN_MS = 15000;
+    public const int PLAYER_RESPAWN_SEC = 15;
     public const int PLAYER_ITEM_SLOT = 4;
 
     //Monster

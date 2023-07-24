@@ -32,6 +32,7 @@ static class DEFINE
 
     //Item
     public const int MAX_ITEM_LEVEL = 4;
+    public const int GOLD_WHEN_MAX_ITEM_LEVEL = 50;
 }
 
 

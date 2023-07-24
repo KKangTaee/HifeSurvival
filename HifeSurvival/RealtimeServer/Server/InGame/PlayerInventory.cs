@@ -49,8 +49,7 @@ namespace Server
                 }
                 else
                 {
-                    //TODO : Gold 지급. (시트 참조)
-                    EarnCurrency(ECurrency.GOLD, 19941111);
+                    EarnCurrency(ECurrency.GOLD, DEFINE.GOLD_WHEN_MAX_ITEM_LEVEL);
                 }
             }
 

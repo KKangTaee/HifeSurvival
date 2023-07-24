@@ -18,7 +18,7 @@ namespace Server
 
         public override void CS_SelectHeroHandler(Session session, IPacket packet)
         {
-            PushJob(session, room => { room?.Mode.OnRecvSelect(packet as CS_SelectHero); });
+            PushJob(session, room => { room?.OnRecvSelect(packet as CS_SelectHero); });
         }
 
         public override void C_JoinToGameHandler(Session session, IPacket packet)
@@ -30,43 +30,43 @@ namespace Server
             }
 
             var room = sesh.Room;
-            room.Push(() => room?.Mode.OnRecvJoin(packet as C_JoinToGame, sesh.SessionId));
+            room.Push(() => room?.OnRecvJoin(packet as C_JoinToGame, sesh.SessionId));
         }
 
         public override void CS_AttackHandler(Session session, IPacket packet)
         {
             var req = packet as CS_Attack;
-            PushJob(session, room => room?.Mode.OnRecvAttack(req));
+            PushJob(session, room => room?.OnRecvAttack(req));
         }
 
         public override void CS_ReadyToGameHandler(Session session, IPacket packet)
         {
             var req = packet as CS_ReadyToGame;
-            PushJob(session, room => room?.Mode.OnRecvReady(req));
+            PushJob(session, room => room?.OnRecvReady(req));
         }
 
         public override void MoveRequestHandler(Session session, IPacket packet)
         {
             var req = packet as MoveRequest;
-            PushJob(session, room => room?.Mode.OnRecvMoveRequest(req));
+            PushJob(session, room => room?.OnRecvMoveRequest(req));
         }
 
         public override void IncreaseStatRequestHandler(Session session, IPacket packet)
         {
             var req = packet as IncreaseStatRequest;
-            PushJob(session, room => room?.Mode.OnRecvIncreaseStatRequest(req));
+            PushJob(session, room => room?.OnRecvIncreaseStatRequest(req));
         }
 
         public override void PickRewardRequestHandler(Session session, IPacket packet)
         {
             var req = packet as PickRewardRequest;
-            PushJob(session, room => room?.Mode.OnRecvPickRewardRequest(req));
+            PushJob(session, room => room?.OnRecvPickRewardRequest(req));
         }
 
         public override void PlayStartRequestHandler(Session session, IPacket packet)
         {
             var req = packet as PlayStartRequest;
-            PushJob(session, room => room?.Mode.OnPlayStartRequest(req));
+            PushJob(session, room => room?.OnPlayStartRequest(req));
         }
 
         public override void CheatRequestHandler(Session session, IPacket packet)
@@ -78,7 +78,7 @@ namespace Server
             }
 
             var req = packet as CheatRequest;
-            PushJob(session, room => room?.Mode.OnCheatRequest(sesh.SessionId, req));
+            PushJob(session, room => room?.OnCheatRequest(sesh.SessionId, req));
         }
     }
 }

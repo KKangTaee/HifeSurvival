@@ -136,7 +136,7 @@ namespace Server
 
                     if (self.Grade == EMonsterGrade.BOSS)
                     {
-                        self.Room.Mode.SetWinnerID(deadParam.killerTarget.ID);
+                        self.Room.SetWinnerID(deadParam.killerTarget.ID);
                         return;
                     }
 

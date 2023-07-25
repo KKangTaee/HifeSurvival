@@ -55,7 +55,7 @@ namespace Server
 
             MoveRoutine();
 
-            _room.Worker.Push(() =>
+            _room.Push(() =>
             {
                 StartAIRoutine();
             }, DEFINE.SERVER_TICK);

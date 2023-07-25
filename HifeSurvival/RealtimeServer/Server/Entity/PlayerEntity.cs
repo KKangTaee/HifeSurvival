@@ -173,7 +173,7 @@ namespace Server
         {
             //중복해서 들어오는 것을 막아야함. 
             //TODO : Timer 클래스로 모두 빼야함. (취소 가능 기능 필요)
-            Room.Worker.Push(() =>
+            Room.Push(() =>
             {
                 Stat.AddCurrHp(Stat.MaxHp);
                 Idle();

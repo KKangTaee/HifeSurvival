@@ -11,12 +11,21 @@ namespace Server
     public struct JobTimerElem : IComparable<JobTimerElem>
     {
         public int ExecTime;
-        public Task TaskUnit;       //TODO : 취소 기능 들어가야함. 
+        public Task CancellableTask;       //TODO : 취소 기능 들어가야함. 
+        public Action NonCancelTask;
 
         public JobTimerElem(Action action, int tickAfter)
         {
             ExecTime = Environment.TickCount + tickAfter;
-            TaskUnit = new Task(action);
+            CancellableTask = null;
+            NonCancelTask = action;
+        }
+
+        public JobTimerElem(Task task, int tickAfter)
+        {
+            ExecTime = Environment.TickCount + tickAfter;
+            NonCancelTask = null;
+            CancellableTask = task;
         }
 
         public int CompareTo(JobTimerElem obj)
@@ -25,45 +34,43 @@ namespace Server
         }
     }
 
-    public class WorkManager
+    public class WorkQueue
     {
         private object _lock = new object();
         private List<JobTimerElem> _taskList = new List<JobTimerElem>();
         private Task _mainWork;
-        private string _name;
-        private bool _isRun;
+        private CancellationTokenSource _cts = new CancellationTokenSource();
 
-        public WorkManager(string name)
-        {
-            _name = name;
-        }
-
-        public void Start()
+        public void Start(string name)
         {
             _mainWork = Task.Run(() =>
             {
-                Thread.CurrentThread.Name = _name;
-                while (_isRun)
+                Thread.CurrentThread.Name = name;
+                var token = _cts.Token;
+                while (!token.IsCancellationRequested)
                 {
                     Flush();
                     Thread.Sleep(DEFINE.SERVER_TICK);
                 }
             });
-
-            _isRun = true;
         }
 
         public void Stop()
         {
-            _taskList.Clear();
-            _isRun = false;
+            _cts.Cancel();
+
+            lock (_lock)
+            {
+                _taskList.Clear();
+                _taskList = null;
+            }
         }
 
         public void Push(Action action, int tickAfter = 0)
         {
             lock(_lock)
             {
-                _taskList.Add(new JobTimerElem(action, tickAfter));
+                _taskList?.Add(new JobTimerElem(action, tickAfter));
             }
         }
 
@@ -72,23 +79,30 @@ namespace Server
             int now = Environment.TickCount;
             lock(_lock)
             {
-                _taskList.Sort();
+                _taskList?.Sort();
 
                 int rmIndex = 0;
-                for (int i = 0; i < _taskList.Count; i++)
+                for (int i = 0; i < _taskList?.Count; i++)
                 {
-                    if(_taskList[i].ExecTime > now)
+                    if(now < _taskList?[i].ExecTime)
                     {
                         break;
                     }
 
                     rmIndex = i + 1;
-                    _taskList[i].TaskUnit.Start();
+                    if (_taskList?[i].NonCancelTask != null)
+                    {
+                        _taskList?[i].NonCancelTask.Invoke();
+                    }
+                    else
+                    {
+                        _taskList?[i].CancellableTask.Start();
+                    }
                 }
 
                 if(rmIndex != 0)
                 {
-                    _taskList.RemoveRange(0, rmIndex);
+                    _taskList?.RemoveRange(0, rmIndex);
                 }
             }
         }

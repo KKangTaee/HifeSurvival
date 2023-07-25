@@ -6,10 +6,9 @@ using ServerCore;
 
 namespace Server
 {
-    public class GameRoom
+    public class GameRoom : WorkQueue
     {
         public int RoomId { get; private set; }
-        public WorkManager Worker { get; private set; }
         public SendManager Sender { get; private set; }
 
         public EGameModeStatus Status { get; private set; } = EGameModeStatus.NONE;
@@ -24,15 +23,9 @@ namespace Server
         public GameRoom(int roomId)
         {
             RoomId = roomId;
-            Worker = new WorkManager($"GameRoom {RoomId}");
-            Worker.Start();
+            Start($"GameRoom {RoomId}");
 
-            Sender = new SendManager(Worker);
-        }
-
-        public void Push(Action action)
-        {
-            Worker.Push(action);
+            Sender = new SendManager();
         }
 
         public void Enter(ServerSession session)
@@ -46,6 +39,12 @@ namespace Server
             var seshId = session.SessionId;
             Sender.OnLeave(seshId);
             OnSessionRemove(seshId);
+        }
+
+        public void ReleaseRoom()
+        {
+            Stop();
+            Sender.Stop();
         }
 
         public bool IsEmptyRoom()
@@ -105,7 +104,7 @@ namespace Server
 
                         Broadcast(countdown);
 
-                        Worker.Push(StartLoadGame, DEFINE.START_COUNTDOWN_SEC * DEFINE.SEC_TO_MS);
+                        Push(StartLoadGame, DEFINE.START_COUNTDOWN_SEC * DEFINE.SEC_TO_MS);
                     }
                     break;
                 case EGameModeStatus.LOAD_GAME:
@@ -146,7 +145,7 @@ namespace Server
                         }
 
                         int playTimeSec = chapterData.playTimeSec;
-                        Worker.Push(() =>
+                        Push(() =>
                         {
                             UpdateModeStatus(EGameModeStatus.PLAY_FINISH);
                         }, playTimeSec * DEFINE.SEC_TO_MS);
@@ -166,7 +165,7 @@ namespace Server
                     {
                         param1 = _winner_id;
 
-                        Worker.Push(() =>
+                        Push(() =>
                         {
                             GameRoomManager.Instance.TerminateRoom(RoomId);
                         }, DEFINE.SERVER_TICK);
@@ -279,7 +278,7 @@ namespace Server
                     continue;
                 }
 
-                Worker.Push(() =>
+                Push(() =>
                 {
                     var spawnMoster = new UpdateSpawnMonsterBroadcast()
                     {

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using ServerCore;
 
 namespace Server
@@ -12,40 +14,47 @@ namespace Server
         private ConcurrentDictionary<int, ConcurrentQueue<ArraySegment<byte>>> _sendMessage = new ConcurrentDictionary<int, ConcurrentQueue<ArraySegment<byte>>>();
 
         private bool _existSesh;
-        private WorkManager _worker;
+        private bool _isRun;
 
-        public SendManager(WorkManager worker)
-        {
-            _worker = worker;
-        }
 
-        private void FlushSendQueue()
+        private async void Run()
         {
-            if (!_existSesh)
+            if(_isRun)
             {
                 return;
             }
 
-            _seshDict.AsParallel().ForAll(sesh =>
+
+            _isRun = true;
+
+            while (_isRun)
             {
-                sesh.Value.Send(_broadcastMessage);
-                if (_sendMessage.TryGetValue(sesh.Key, out var msg))
+                _seshDict.AsParallel().ForAll(sesh =>
                 {
-                    sesh.Value.Send(msg);
+                    sesh.Value.Send(_broadcastMessage);
+                    if (_sendMessage.TryGetValue(sesh.Key, out var msg))
+                    {
+                        sesh.Value.Send(msg);
+                    }
+                });
+
+                if (_sendMessage.Count != 0)
+                {
+                    _sendMessage.Clear();
                 }
-            });
 
-            if (_sendMessage.Count != 0)
-            {
-                _sendMessage.Clear();
+                if (_broadcastMessage.Count != 0)
+                {
+                    _broadcastMessage.Clear();
+                }
+
+                await Task.Delay(DEFINE.SERVER_TICK);
             }
+        }
 
-            if (_broadcastMessage.Count != 0)
-            {
-                _broadcastMessage.Clear();
-            }
-
-            _worker?.Push(FlushSendQueue, DEFINE.SERVER_TICK);
+        public void Stop()
+        {
+            _isRun = false;
         }
 
         public void Broadcast(IPacket packet)
@@ -81,20 +90,14 @@ namespace Server
             if (!_existSesh && _seshDict.Count > 0)
             {
                 _existSesh = true;
-                Logger.Instance.Debug($"FlushSendQueue Start");
-                _worker.Push(FlushSendQueue);
+                Logger.Instance.Debug($"SendManager Run!");
+                Run();
             }
         }
 
         public void OnLeave(int seshId)
         {
             _seshDict.TryRemove(seshId, out _);
-
-            if (_seshDict.Count == 0 && _existSesh)
-            {
-                _existSesh = false;
-                Logger.Instance.Debug($"FlushSendQueue End");
-            }
         }
     }
 }

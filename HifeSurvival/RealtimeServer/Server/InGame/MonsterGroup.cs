@@ -73,7 +73,7 @@ namespace Server
 
         public void SendRespawnGroup()
         {
-            _room.Worker.Push(() =>
+            _room.Push(() =>
             {
                 foreach (var entity in _monstersDict.Values)
                 {

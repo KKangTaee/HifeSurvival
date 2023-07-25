@@ -5,7 +5,7 @@ using ServerCore;
 
 namespace Server
 {
-    public class GameRoomManager
+    public class GameRoomManager : WorkQueue
     {
         private static GameRoomManager _ins;
 
@@ -18,23 +18,17 @@ namespace Server
             }
         }
 
-        private WorkManager _worker = new WorkManager("GameRoomManager");
         private ConcurrentDictionary<int, GameRoom> _gameRoomDict = new ConcurrentDictionary<int, GameRoom>();
         private int _nextRoomNum;
 
         private GameRoomManager()
         {
-            _worker.Start();
-        }
-
-        public int GetRoomCount()
-        {
-            return _gameRoomDict.Count;
+            Start("GameRoomManager");
         }
 
         public void EnterRoom(ServerSession session)
         {
-            _worker.Push(() =>
+            Push(() =>
             {
                 var canJoinRoom = _gameRoomDict.Values.FirstOrDefault(x => x.CanJoinRoom());
                 if (canJoinRoom != null)
@@ -47,16 +41,15 @@ namespace Server
                     if (_gameRoomDict.TryAdd(newRoom.RoomId, newRoom))
                     {
                         newRoom.Enter(session);
+                        Logger.Instance.Warn($"Room Created {_nextRoomNum}");
                     }
-
-                    Logger.Instance.Warn($"Room Created {_nextRoomNum}");
                 }
             });
         }
 
         public void LeaveRoom(ServerSession session)
         {
-            _worker.Push(() =>
+            Push(() =>
             {
                 SessionManager.Instance.Remove(session);
                 if (session.Room != null)
@@ -76,7 +69,7 @@ namespace Server
         {
             if (_gameRoomDict.TryRemove(roomId, out var room))
             {
-                room.Worker.Stop();
+                room.ReleaseRoom();
                 Logger.Instance.Warn($"Room Deleted {roomId}");
             }
         }

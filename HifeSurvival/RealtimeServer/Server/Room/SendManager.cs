@@ -26,34 +26,26 @@ namespace Server
                 return;
             }
 
-            if (_sendMessage.Count > 0)
+            _seshDict.AsParallel().ForAll(sesh =>
             {
-                foreach (var sm in _sendMessage)
+                sesh.Value.Send(_broadcastMessage);
+                if (_sendMessage.TryGetValue(sesh.Key, out var msg))
                 {
-                    var sesh = _seshDict.AsQueryable().Where(ds => ds.Key == sm.Key).FirstOrDefault();
-                    if (sesh.Value == null)
-                    {
-                        Logger.Instance.Warn("Not Found By  Session id {sm.Key}");
-                        continue;
-                    }
-
-                    sesh.Value.Send(sm.Value);
+                    sesh.Value.Send(msg);
                 }
+            });
 
+            if (_sendMessage.Count != 0)
+            {
                 _sendMessage.Clear();
             }
 
-            if (_broadcastMessage.Count > 0)
+            if (_broadcastMessage.Count != 0)
             {
-                foreach (var s in _seshDict)
-                {
-                    s.Value.Send(_broadcastMessage);
-                }
-
                 _broadcastMessage.Clear();
             }
 
-            _worker.Push(FlushSendQueue, DEFINE.SERVER_TICK);
+            _worker?.Push(FlushSendQueue, DEFINE.SERVER_TICK);
         }
 
         public void Broadcast(IPacket packet)
@@ -90,7 +82,7 @@ namespace Server
             {
                 _existSesh = true;
                 Logger.Instance.Debug($"FlushSendQueue Start");
-                _worker.Push(FlushSendQueue, DEFINE.SERVER_TICK);
+                _worker.Push(FlushSendQueue);
             }
         }
 

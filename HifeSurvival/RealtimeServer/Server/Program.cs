@@ -19,21 +19,18 @@ namespace Server
 			ThreadPool.GetMaxThreads(out var wtc, out int cptc);
 			Logger.Instance.Log("DBG",$"{Environment.OSVersion} core [{Environment.ProcessorCount}] worker [{wtc}] I/O [{cptc}]", "System");
 			AppDomain.CurrentDomain.UnhandledException += Dump.UnhandledExceptionHandler;
-            
-            PacketManager.Instance.BindHandler(new ServerPacketHandler());
-            _listener.Init(new IPEndPoint(IPAddress.Any, DEFINE.SERVER_PORT), () => { return SessionManager.Instance.Generate(); });
+
+			Logger.Instance.Log("INF", "Listening", "Start");
+			PacketManager.Instance.BindHandler(new ServerPacketHandler());
+				_listener.Init(new IPEndPoint(IPAddress.Any, DEFINE.SERVER_PORT), () => { return SessionManager.Instance.Generate(); });
 
 			GameData.Instance.Init().Wait();
 
 			new Thread(() =>
 			{
-				Logger.Instance.Log("INF", "Listening", "Start");
-				
 				while (true)
 				{
-					Console.Title = $"Room Count : {GameRoomManager.Instance.GetRoomCount()}";
 					//MainJobTimer.Flush();
-					GameRoomManager.Instance.FlushAllRoom();
 					Thread.Sleep(DEFINE.SERVER_TICK);
 				}
 			}, DEFINE.MAIN_THREAD_STACK_SIZE)

@@ -5,20 +5,26 @@ using ServerCore;
 
 namespace Server
 {
-    public class GameRoomManager : JobQueue
+    public class GameRoomManager
     {
-        public static GameRoomManager Instance { get => _instance; }
+        private static GameRoomManager _ins;
 
-        private static GameRoomManager _instance = new GameRoomManager();
+        public static GameRoomManager Instance
+        {
+            get
+            {
+                _ins ??= new GameRoomManager();
+                return _ins;
+            }
+        }
+
+        private WorkManager _worker = new WorkManager("GameRoomManager");
         private ConcurrentDictionary<int, GameRoom> _gameRoomDict = new ConcurrentDictionary<int, GameRoom>();
         private int _nextRoomNum;
 
-        public void FlushAllRoom()
+        private GameRoomManager()
         {
-            foreach(var gr in _gameRoomDict)
-            {
-                gr.Value.Worker.Flush();
-            }
+            _worker.Start();
         }
 
         public int GetRoomCount()
@@ -28,7 +34,7 @@ namespace Server
 
         public void EnterRoom(ServerSession session)
         {
-            Push(() =>
+            _worker.Push(() =>
             {
                 var canJoinRoom = _gameRoomDict.Values.FirstOrDefault(x => x.CanJoinRoom());
                 if (canJoinRoom != null)
@@ -38,8 +44,11 @@ namespace Server
                 else
                 {
                     var newRoom = new GameRoom(++_nextRoomNum);
-                    newRoom.Enter(session);
-                    _gameRoomDict.TryAdd(newRoom.RoomId, newRoom);
+                    if (_gameRoomDict.TryAdd(newRoom.RoomId, newRoom))
+                    {
+                        newRoom.Enter(session);
+                    }
+
                     Logger.Instance.Warn($"Room Created {_nextRoomNum}");
                 }
             });
@@ -47,7 +56,7 @@ namespace Server
 
         public void LeaveRoom(ServerSession session)
         {
-            Push(() =>
+            _worker.Push(() =>
             {
                 SessionManager.Instance.Remove(session);
                 if (session.Room != null)
@@ -55,7 +64,7 @@ namespace Server
                     var room = session.Room;
                     room.Leave(session);
 
-                    if(session.Room.IsEmptyRoom())
+                    if (session.Room.IsEmptyRoom())
                     {
                         TerminateRoom(room.RoomId);
                     }
@@ -65,9 +74,9 @@ namespace Server
 
         public void TerminateRoom(int roomId)
         {
-            if(_gameRoomDict.TryRemove(roomId, out var room))
+            if (_gameRoomDict.TryRemove(roomId, out var room))
             {
-                room.Worker.ClearTimer();
+                room.Worker.Stop();
                 Logger.Instance.Warn($"Room Deleted {roomId}");
             }
         }

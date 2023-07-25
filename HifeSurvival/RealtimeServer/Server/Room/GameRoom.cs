@@ -6,7 +6,7 @@ using ServerCore;
 
 namespace Server
 {
-    public class GameRoom : JobQueue
+    public class GameRoom
     {
         public int RoomId { get; private set; }
         public WorkManager Worker { get; private set; }
@@ -24,8 +24,15 @@ namespace Server
         public GameRoom(int roomId)
         {
             RoomId = roomId;
-            Worker = new WorkManager();
+            Worker = new WorkManager($"GameRoom {RoomId}");
+            Worker.Start();
+
             Sender = new SendManager(Worker);
+        }
+
+        public void Push(Action action)
+        {
+            Worker.Push(action);
         }
 
         public void Enter(ServerSession session)
@@ -39,7 +46,6 @@ namespace Server
             var seshId = session.SessionId;
             Sender.OnLeave(seshId);
             OnSessionRemove(seshId);
-            //TODO : 리펙토링 중 : GameRoom 등록된 곳에서 삭제 처리 필요. 
         }
 
         public bool IsEmptyRoom()
@@ -123,22 +129,14 @@ namespace Server
 
                         Broadcast(gameStart);
 
-                        Worker.Push(() =>
-                        {
-                            _monsterGroupDict.ToList().ForEach(mg => mg.Value.UpdateStat());
-                            _playersDict.ToList().ForEach(p => p.Value.UpdateStat());
-                        });
-
-                        SpawnPhaseRegist(tempChapterKey);
+                        _monsterGroupDict.ToList().ForEach(mg => mg.Value.UpdateStat());
+                        _playersDict.ToList().ForEach(p => p.Value.UpdateStat());
                     }
                     break;
                 case EGameModeStatus.PLAY_START:
                     {
-                        Worker.Push(() =>
-                        {
-                            _monsterGroupDict.ToList().ForEach(mg => mg.Value.OnPlayStart());
-                            _playersDict.ToList().ForEach(p => p.Value.ClientStatus = EClientStatus.PLAYING);
-                        });
+                        _monsterGroupDict.ToList().ForEach(mg => mg.Value.OnPlayStart());
+                        _playersDict.ToList().ForEach(p => p.Value.ClientStatus = EClientStatus.PLAYING);
 
                         int tempChapterKey = 1;
                         if (GameData.Instance.ChapaterDataDict.TryGetValue(tempChapterKey, out var chapterData) == false)
@@ -148,20 +146,18 @@ namespace Server
                         }
 
                         int playTimeSec = chapterData.playTimeSec;
-
                         Worker.Push(() =>
                         {
                             UpdateModeStatus(EGameModeStatus.PLAY_FINISH);
                         }, playTimeSec * DEFINE.SEC_TO_MS);
+
+                        SpawnPhaseRegist(tempChapterKey);
                     }
                     break;
                 case EGameModeStatus.PLAY_FINISH:
                     {
-                        Worker.Push(() =>
-                        {
-                            _playersDict.ToList().ForEach(p => p.Value.TerminateGamePlayer());
-                            _monsterGroupDict.Clear();
-                        });
+                        _playersDict.ToList().ForEach(p => p.Value.TerminateGamePlayer());
+                        _monsterGroupDict.Clear();
 
                         UpdateModeStatus(EGameModeStatus.FINISH_GAME);
                     }
@@ -173,7 +169,7 @@ namespace Server
                         Worker.Push(() =>
                         {
                             GameRoomManager.Instance.TerminateRoom(RoomId);
-                        });
+                        }, DEFINE.SERVER_TICK);
                     }
                     break;
                 default:

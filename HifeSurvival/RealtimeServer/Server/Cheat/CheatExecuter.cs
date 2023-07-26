@@ -43,15 +43,15 @@ namespace Server
 
                         for (int i = 0; i < itemCount; i++)
                         {
-                            float fixedX = i  * 1.25f;
+                            float fixedX = i * 1.25f;
                             PVec3 fixedPos;
-                            if( i == 0)
+                            if (i == 0)
                             {
                                 fixedPos = dropPos;
                             }
                             else if (i % 2 == 0)
                             {
-                                fixedPos = dropPos.AddPVec3(new PVec3() { x =  fixedX });
+                                fixedPos = dropPos.AddPVec3(new PVec3() { x = fixedX });
                             }
                             else
                             {

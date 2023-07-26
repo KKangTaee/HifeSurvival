@@ -80,12 +80,12 @@ namespace Server
 
         public PlayerSpawn MakePlayerSpawn()
         {
-           return  new PlayerSpawn()
+            return new PlayerSpawn()
             {
                 id = ID,
                 herosKey = _heroKey,
                 pos = spawnPos
-           };
+            };
         }
 
         protected override void ChangeState<P>(EEntityStatus status, P param)

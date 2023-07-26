@@ -80,7 +80,7 @@ namespace Server
                         return;
                     }
 
-                    var damagedVal = BattleCalculator.ComputeDamagedValue(self.Stat, target.Stat); 
+                    var damagedVal = BattleCalculator.ComputeDamagedValue(self.Stat, target.Stat);
                     target.ReduceHP(damagedVal);
                     target.OnDamaged(self);
                 }

@@ -7,7 +7,7 @@ namespace Server
         {
             public void Enter(MonsterEntity self, in IStateParam param = default)
             {
-                if(param is IdleParam idleParam)
+                if (param is IdleParam idleParam)
                 {
                     var locationBroadcast = new UpdateLocationBroadcast()
                     {
@@ -80,7 +80,7 @@ namespace Server
         {
             public void Enter(MonsterEntity self, in IStateParam param = default)
             {
-                if(param is AttackParam attackParam)
+                if (param is AttackParam attackParam)
                 {
                     self.AIController.UpdateAggro(attackParam.target);
                 }

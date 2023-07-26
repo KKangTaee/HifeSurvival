@@ -87,7 +87,7 @@ namespace Server
 
         public void EarnCurrency(ECurrency currencyType, int amount)
         {
-            if(_currencyDict.TryGetValue(currencyType, out int currentAmount))
+            if (_currencyDict.TryGetValue(currencyType, out int currentAmount))
             {
                 _currencyDict[currencyType] += amount;
             }
@@ -121,7 +121,7 @@ namespace Server
 
         public int GetCurrencyByType(ECurrency currencyType)
         {
-            if(_currencyDict.TryGetValue(currencyType, out var amount))
+            if (_currencyDict.TryGetValue(currencyType, out var amount))
             {
                 return amount;
             }

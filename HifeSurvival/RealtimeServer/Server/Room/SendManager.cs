@@ -29,14 +29,14 @@ namespace Server
 
             while (_isRun)
             {
-                _seshDict.AsParallel().ForAll(sesh =>
+                foreach(var sesh in _seshDict)
                 {
                     sesh.Value.Send(_broadcastMessage);
                     if (_sendMessage.TryGetValue(sesh.Key, out var msg))
                     {
                         sesh.Value.Send(msg);
                     }
-                });
+                }
 
                 if (_sendMessage.Count != 0)
                 {

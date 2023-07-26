@@ -8,7 +8,7 @@ namespace Server
         private void PushJob(Session session, Action<GameRoom> job)
         {
             var sesh = session as ServerSession;
-            if (sesh == null || sesh.Room == null)
+            if (sesh == null || sesh.Room == null || sesh.Room.IsDeactivatedRoom())
             {
                 return;
             }
@@ -29,8 +29,7 @@ namespace Server
                 return;
             }
 
-            var room = sesh.Room;
-            room.Push(() => room?.OnRecvJoin(packet as C_JoinToGame, sesh.SessionId));
+            PushJob(session, room => room?.OnRecvJoin(packet as C_JoinToGame, sesh.SessionId));
         }
 
         public override void CS_AttackHandler(Session session, IPacket packet)

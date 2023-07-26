@@ -8,27 +8,30 @@ using ServerCore;
 
 namespace Server
 {
-    public struct JobTimerElem : IComparable<JobTimerElem>
+    public struct WorkItem : IComparable<WorkItem>
     {
+        public bool CanCancel;
         public int ExecTime;
         public Task CancellableTask;       //TODO : 취소 기능 들어가야함. 
-        public Action NonCancelTask;
+        public Action Job;
 
-        public JobTimerElem(Action action, int tickAfter)
+        public WorkItem(Action action, int tickAfter)
         {
+            CanCancel = false;
             ExecTime = Environment.TickCount + tickAfter;
             CancellableTask = null;
-            NonCancelTask = action;
+            Job = action;
         }
 
-        public JobTimerElem(Task task, int tickAfter)
+        public WorkItem(Task task, int tickAfter)
         {
+            CanCancel = true;
             ExecTime = Environment.TickCount + tickAfter;
-            NonCancelTask = null;
             CancellableTask = task;
+            Job = null;
         }
 
-        public int CompareTo(JobTimerElem obj)
+        public int CompareTo(WorkItem obj)
         {
             return ExecTime.CompareTo(obj.ExecTime);
         }
@@ -37,40 +40,38 @@ namespace Server
     public class WorkQueue
     {
         private object _lock = new object();
-        private List<JobTimerElem> _taskList = new List<JobTimerElem>();
+        private List<WorkItem> _taskList = new List<WorkItem>();
         private Task _mainWork;
-        private CancellationTokenSource _cts = new CancellationTokenSource();
+        private CancellationTokenSource _mainCts = new CancellationTokenSource();
 
         public void Start(string name)
         {
             _mainWork = Task.Run(() =>
             {
                 Thread.CurrentThread.Name = name;
-                var token = _cts.Token;
+                var token = _mainCts.Token;
                 while (!token.IsCancellationRequested)
                 {
                     Flush();
                     Thread.Sleep(DEFINE.SERVER_TICK);
                 }
+
+                _taskList.Clear();
+                _taskList = null;
             });
         }
 
         public void Stop()
         {
-            _cts.Cancel();
-
-            lock (_lock)
-            {
-                _taskList.Clear();
-                _taskList = null;
-            }
+            _mainCts.Cancel();
+            _mainCts = null;
         }
 
         public void Push(Action action, int tickAfter = 0)
         {
             lock(_lock)
             {
-                _taskList?.Add(new JobTimerElem(action, tickAfter));
+                _taskList?.Add(new WorkItem(action, tickAfter));
             }
         }
 
@@ -79,31 +80,32 @@ namespace Server
             int now = Environment.TickCount;
             lock(_lock)
             {
-                _taskList?.Sort();
+                _taskList.Sort();
 
                 int rmIndex = 0;
-                for (int i = 0; i < _taskList?.Count; i++)
+                for (int i = 0; i < _taskList.Count; i++)
                 {
-                    if(now < _taskList?[i].ExecTime)
+                    if(now < _taskList[i].ExecTime)
                     {
                         break;
                     }
 
                     rmIndex = i + 1;
-                    if (_taskList?[i].NonCancelTask != null)
+                    if (_taskList[i].CanCancel)
                     {
-                        _taskList?[i].NonCancelTask.Invoke();
+                        _taskList[i].CancellableTask.Start();
                     }
                     else
                     {
-                        _taskList?[i].CancellableTask.Start();
+                        _taskList[i].Job.Invoke();
                     }
                 }
 
                 if(rmIndex != 0)
                 {
-                    _taskList?.RemoveRange(0, rmIndex);
+                    _taskList.RemoveRange(0, rmIndex);
                 }
+            
             }
         }
     }

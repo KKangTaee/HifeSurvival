@@ -11,7 +11,7 @@ namespace Server
         public int RoomId { get; private set; }
         public SendManager Sender { get; private set; }
 
-        public EGameModeStatus Status { get; private set; } = EGameModeStatus.NONE;
+        public EGameRoomStatus Status { get; private set; } = EGameRoomStatus.NONE;
 
         private int _winner_id;
         private int _mId = 0;
@@ -43,6 +43,7 @@ namespace Server
 
         public void ReleaseRoom()
         {
+            UpdateModeStatus(EGameRoomStatus.REALEASED_ROOM);
             Stop();
             Sender.Stop();
         }
@@ -79,7 +80,7 @@ namespace Server
             Broadcast(packet);
         }
 
-        private void UpdateModeStatus(EGameModeStatus updatedStatus)
+        private void UpdateModeStatus(EGameRoomStatus updatedStatus)
         {
             Logger.Instance.Warn($"<-----{updatedStatus}----->");
 
@@ -87,7 +88,7 @@ namespace Server
 
             switch (updatedStatus)
             {
-                case EGameModeStatus.READY:
+                case EGameRoomStatus.READY:
                     {
                         var packet = new S_JoinToGame() { joinPlayerList = new List<S_JoinToGame.JoinPlayer>() };
                         _playersDict.ToList().ForEach(p => packet.joinPlayerList.Add(p.Value.MakeJoinPlayer()));
@@ -95,7 +96,7 @@ namespace Server
                         Broadcast(packet);
                     }
                     break;
-                case EGameModeStatus.COUNT_DOWN:
+                case EGameRoomStatus.COUNT_DOWN:
                     {
                         var countdown = new S_Countdown()
                         {
@@ -107,7 +108,7 @@ namespace Server
                         Push(StartLoadGame, DEFINE.START_COUNTDOWN_SEC * DEFINE.SEC_TO_MS);
                     }
                     break;
-                case EGameModeStatus.LOAD_GAME:
+                case EGameRoomStatus.LOAD_GAME:
                     {
                         int tempChapterKey = 1;
                         if (GameData.Instance.ChapaterDataDict.TryGetValue(tempChapterKey, out var chapterData) == false)
@@ -132,7 +133,7 @@ namespace Server
                         _playersDict.ToList().ForEach(p => p.Value.UpdateStat());
                     }
                     break;
-                case EGameModeStatus.PLAY_START:
+                case EGameRoomStatus.PLAY_START:
                     {
                         _monsterGroupDict.ToList().ForEach(mg => mg.Value.OnPlayStart());
                         _playersDict.ToList().ForEach(p => p.Value.ClientStatus = EClientStatus.PLAYING);
@@ -147,21 +148,21 @@ namespace Server
                         int playTimeSec = chapterData.playTimeSec;
                         Push(() =>
                         {
-                            UpdateModeStatus(EGameModeStatus.PLAY_FINISH);
+                            UpdateModeStatus(EGameRoomStatus.PLAY_FINISH);
                         }, playTimeSec * DEFINE.SEC_TO_MS);
 
                         SpawnPhaseRegist(tempChapterKey);
                     }
                     break;
-                case EGameModeStatus.PLAY_FINISH:
+                case EGameRoomStatus.PLAY_FINISH:
                     {
                         _playersDict.ToList().ForEach(p => p.Value.TerminateGamePlayer());
                         _monsterGroupDict.Clear();
 
-                        UpdateModeStatus(EGameModeStatus.FINISH_GAME);
+                        UpdateModeStatus(EGameRoomStatus.FINISH_GAME);
                     }
                     break;
-                case EGameModeStatus.FINISH_GAME:
+                case EGameRoomStatus.FINISH_GAME:
                     {
                         param1 = _winner_id;
 
@@ -169,6 +170,11 @@ namespace Server
                         {
                             GameRoomManager.Instance.TerminateRoom(RoomId);
                         }, DEFINE.SERVER_TICK);
+                    }
+                    break;
+                case EGameRoomStatus.REALEASED_ROOM:
+                    {
+                        // GC 에 의해 GameRoom 인스턴스가 삭제되길 바라는 상태. 
                     }
                     break;
                 default:
@@ -337,7 +343,7 @@ namespace Server
             }
 
             _winner_id = id;
-            UpdateModeStatus(EGameModeStatus.PLAY_FINISH);
+            UpdateModeStatus(EGameRoomStatus.PLAY_FINISH);
             return;
         }
 
@@ -386,7 +392,7 @@ namespace Server
 
         public bool CanJoinRoom()
         {
-            return Status == EGameModeStatus.READY && _playersDict.Count < DEFINE.PLAYER_MAX_COUNT;
+            return Status == EGameRoomStatus.READY && _playersDict.Count < DEFINE.PLAYER_MAX_COUNT;
         }
 
         public bool CanLoadGame()
@@ -399,9 +405,14 @@ namespace Server
             return _playersDict.Values.All(x => x.ClientStatus == EClientStatus.PLAY_READY);
         }
 
+        public bool IsDeactivatedRoom()
+        {
+            return /*Status == EGameRoomStatus.NONE ||*/ Status == EGameRoomStatus.REALEASED_ROOM;
+        }
+
         public void StartLoadGame()
         {
-            UpdateModeStatus(EGameModeStatus.LOAD_GAME);
+            UpdateModeStatus(EGameRoomStatus.LOAD_GAME);
         }
 
         public void OnRecvJoin(C_JoinToGame req, int sessionId)
@@ -417,7 +428,7 @@ namespace Server
             playerEntity.ClientStatus = EClientStatus.ENTERED_ROOM;
 
             _playersDict.Add(sessionId, playerEntity);
-            UpdateModeStatus(EGameModeStatus.READY);
+            UpdateModeStatus(EGameRoomStatus.READY);
         }
 
         public void OnRecvSelect(CS_SelectHero req)
@@ -450,7 +461,7 @@ namespace Server
 
             if (CanLoadGame())
             {
-                UpdateModeStatus(EGameModeStatus.COUNT_DOWN);
+                UpdateModeStatus(EGameRoomStatus.COUNT_DOWN);
             }
         }
 
@@ -467,7 +478,7 @@ namespace Server
 
             if (CanPlayStart())
             {
-                UpdateModeStatus(EGameModeStatus.PLAY_START);
+                UpdateModeStatus(EGameRoomStatus.PLAY_START);
             }
         }
 
@@ -659,7 +670,7 @@ namespace Server
 
         public bool IsPlayControlLocked()
         {
-            return Status != EGameModeStatus.PLAY_START;
+            return Status != EGameRoomStatus.PLAY_START;
         }
 
 

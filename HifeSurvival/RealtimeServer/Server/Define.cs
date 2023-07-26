@@ -36,7 +36,7 @@ static class DEFINE
 }
 
 
-public enum EGameModeStatus
+public enum EGameRoomStatus
 {
     NONE,
     READY,
@@ -45,6 +45,7 @@ public enum EGameModeStatus
     PLAY_START,
     PLAY_FINISH,
     FINISH_GAME,
+    REALEASED_ROOM,
 }
 
 public enum EClientStatus
